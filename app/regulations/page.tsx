@@ -42,14 +42,14 @@ export default function RegulationsPage() {
         {/* AML & KYC */}
         <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-4">4. AML & KYC Compliance</h2>
         <p className="text-gray-600 mb-6">
-          We follow Anti–Money Laundering (AML) and Know Your Customer (KYC) guidelines to 
+          We follow Anti Money Laundering (AML) and Know Your Customer (KYC) guidelines to 
           prevent fraud, identity theft, and financial crimes.
         </p>
 
         {/* Employment Law */}
         <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-4">5. Employment Law Alignment</h2>
         <p className="text-gray-600 mb-6">
-          KaziAdvance integrates with employers' payroll systems in compliance with employment laws 
+          KaziAdvance integrates with employers&apos; payroll systems in compliance with employment laws 
           to ensure wage advances are lawful and transparent.
         </p>
 

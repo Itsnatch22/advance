@@ -4,6 +4,7 @@ import { useEffect,useRef } from "react"
 import gsap from "gsap"
 import { motion } from 'framer-motion'
 import Image from "next/image"
+import Link from "next/link"
 
 export default function Hero() {
     const textRef = useRef(null)
@@ -34,7 +35,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 30}}
                     animate={{ opacity: 1, y: 0}}
                     transition={{ duration: 1, delay: 0.3 }}>
-                        KaziAdvance helps Kenyan employees access part of their salary they've already earned, reducing financial stress and improving productivity. Not a loan - just early access to your wages.
+                        KaziAdvance helps Kenyan employees access part of their salary they&apos;ve already earned, reducing financial stress and improving productivity. Not a loan - just early access to your wages.
                     </motion.p>
 
                     <motion.div
@@ -43,17 +44,17 @@ export default function Hero() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1, delay: 0.6 }}
                     >
-                        <a href="/register"
+                        <Link href="/register"
                         className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-green-700 transition"
                         >
                             Get Started Now
                             <BiChevronRight className="w-5 h-5 "/>
-                        </a>
-                        <button
+                        </Link>
+                        <Link href="/employers"
                         className="bg-white border-green-500 border px-6 py-3 rounded-xl text-lg font-medium hover:bg-green-50 transition text-green-700"
                         >
                             For Employers
-                        </button>
+                        </Link>
                     </motion.div>
                 </div>
 

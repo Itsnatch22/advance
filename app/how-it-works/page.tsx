@@ -1,8 +1,7 @@
 "use client";
 
-import { FiCalendar, FiClipboard, FiPhone, FiCheckCircle, FiLock } from "react-icons/fi"
+import { FiCalendar, FiPhone, FiCheckCircle, FiLock } from "react-icons/fi"
 import { Calculator } from "lucide-react";
-import { motion } from "framer-motion"
 
 export default function HowItWorksPage() {
   const steps = [

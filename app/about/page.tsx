@@ -1,6 +1,7 @@
 "use client"
 import { motion } from "framer-motion"
 import { ShieldCheck, Cpu, Users, Eye } from "lucide-react"
+import Image from "next/image"
 
 export default function AboutPage() {
     return(
@@ -101,7 +102,7 @@ export default function AboutPage() {
                             { name: "Joel", title: "Backend Engineer", img: "/team4.jpg" },
                         ].map((member,i) => (
                             <div key={i} className="flex flex-col items-center">
-                                <img src={member.img} alt={member.name}
+                                <Image src={member.img} alt={member.name}
                                 className="w-28 h-28 rounded-full object-cover mb-4 shadow" 
                                 />
                                 <h3>{member.name}</h3>
