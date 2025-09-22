@@ -38,7 +38,7 @@ export default function CareersPage() {
       <div className="max-w-5xl mx-auto text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900">Join Our Team</h1>
         <p className="mt-4 text-lg text-gray-600">
-          Be part of a team that’s redefining work and innovation. Explore our openings below.
+          Be part of a team that&apos;s redefining work and innovation. Explore our openings below.
         </p>
       </div>
 

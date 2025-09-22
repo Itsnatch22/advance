@@ -102,7 +102,7 @@ export default function AboutPage() {
                             { name: "Joel", title: "Backend Engineer", img: "/team4.jpg" },
                         ].map((member,i) => (
                             <div key={i} className="flex flex-col items-center">
-                                <Image src={member.img} alt={member.name}
+                                <Image src={member.img} alt={member.name} width={28} height={28}
                                 className="w-28 h-28 rounded-full object-cover mb-4 shadow" 
                                 />
                                 <h3>{member.name}</h3>
