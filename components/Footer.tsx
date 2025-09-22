@@ -98,7 +98,7 @@ export default function Footer() {
                         <h3 className='text-white font-semibold mb-4'>Product</h3>
                         <ul className='space-y-2'>
                             {[
-                                {name: 'How It Works', href: 'works'},
+                                {name: 'How It Works', href: 'how-it-works'},
                                 {name: 'Pricing', href: 'pricing'},
                                 {name: 'Security', href: 'security'},
                                 {name: 'API Documentation', href: 'api-documentation'},
