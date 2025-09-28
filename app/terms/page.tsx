@@ -9,7 +9,7 @@ export default function TermsOfServicePage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="max-w-4xl mx-auto bg-white rounded-2xl shadow p-8 md:p-12"
+        className="max-w-4xl mx-auto bg-white rounded-2xl shadow p-8 md:p-12 mt-10"
       >
         <h1 className="text-4xl font-bold text-gray-900 mb-6">Terms of Service</h1>
         <p className="text-gray-600 mb-12">
