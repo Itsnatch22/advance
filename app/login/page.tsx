@@ -15,7 +15,7 @@ export default function LoginPage() {
           transition={{ duration: 0.6 }}
           className="flex flex-col justify-center text-white md:pr-8"
         >
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight font-serif">
             Welcome Back to KaziAdvance
           </h1>
           <p className="mt-4 text-lg text-green-100">

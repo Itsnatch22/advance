@@ -13,7 +13,7 @@ export default function CTA() {
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.7}}
                 viewport={{ once: true }}
-                className="text-3xl  lg:text-5xl font-bold"
+                className="text-3xl  lg:text-5xl font-bold font-serif"
                 >
                     Ready To Transform Your Workplace?
                 </motion.h2>

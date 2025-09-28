@@ -178,14 +178,14 @@ export default function Footer() {
 
                 <div className="w-full flex justify-center mt-16 md:mt-20">
                     <h1
-                    className="text-[80px] md:text-[160px] font-black leading-none bg-gradient-to-r from-green-500 to-gray-50 bg-clip-text text-transparent tracking-tight"
+                    className="text-[80px] md:text-[160px] hidden lg:flex font-black leading-none bg-gradient-to-r from-green-500 to-gray-50 bg-clip-text text-transparent tracking-tight"
                     >
                     KaziAdvance
                     </h1>
                 </div>
             </div>
             <div className='bg-gray-700'>
-                <p className='text-xs text-white ml-20 p-2 items-center flex justify-center'>
+                <p className='text-xs text-white ml-20 p-2 items-center justify-center hidden lg:flex'>
                     KaziAdvance is regulated by the Central Bank of Kenya. All funds are provided by licensed banking partners.
                     This service does not constitute lending under the Banking Act.
                 </p>

@@ -27,7 +27,7 @@ export default function Hero() {
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0}}
                     transition={{ duration: 0.8 }}
-                    className="text-4xl lg:text-6xl font-bold text-black leading-tight">
+                    className="text-4xl lg:text-6xl font-bold text-black leading-tight font-serif">
                         Access Your <span className="text-green-700">Earned Wages</span> Before PayDay
                     </motion.h1>
                     <motion.p

@@ -55,7 +55,7 @@ export default function Needs() {
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.7}}
                 viewport={{ once: true }}
-                className="text-4xl font-bold text-gray-900">
+                className="text-4xl font-bold text-gray-900 font-serif">
                     Built for the Kenyan Market
                 </motion.h2>
                 <motion.p

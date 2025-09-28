@@ -8,7 +8,7 @@ export default function AboutPage() {
         <div className="min-h-screen bg-white text-gray-300">
             <section className="relative bg-gray-50 text-center py-24 px-6">
                 <motion.h1
-                className="text-4xl md:text-6xl font-bold text-gray-700"
+                className="text-4xl md:text-6xl font-bold text-gray-700 font-serif"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6}}>
@@ -114,9 +114,9 @@ export default function AboutPage() {
             </section>
 
             <section className="bg-green-700 text-white py-16 text-center">
-                <h2 className="text-2xl font-semibold mb-4">Ready to Partner With Us?</h2>
+                <h2 className="text-2xl font-semibold mb-4 font-serif">Ready to Partner With Us?</h2>
                 <p className="mb-8 text-lg max-w-2xl mx-auto">
-                    Discover how KaziAdvance can transform your workplace finance and support
+                    Discover how WageUp can transform your workplace finance and support
                     employee wellbeing.
                 </p>
                 <a

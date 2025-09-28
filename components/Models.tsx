@@ -43,7 +43,7 @@ export default function Models() {
         <section className="py-16 bg-gray-50" id="pricing">
             <div className="max-w-5xl mx-auto px-6">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold">Flexible Pricing Models</h2>
+                    <h2 className="text-3xl font-bold font-serif">Flexible Pricing Models</h2>
                     <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
                         Choose the pricing model that works best for your organisation and employees.
                     </p>
