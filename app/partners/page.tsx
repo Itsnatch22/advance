@@ -13,7 +13,7 @@ export default function PartnersPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="text-4xl text-black font-bold md:text-6xl">
+                className="text-4xl text-black font-bold md:text-6xl font-serif">
                     Our Partners
                 </motion.h1>
                 <motion.p
@@ -26,7 +26,7 @@ export default function PartnersPage() {
             </section>
 
             <section className="max-w-6xl mb-24 mx-auto py-6">
-                <h2 className="text-3xl font-bold text-gray-800 text-center">Our Banking Backbone</h2>
+                <h2 className="text-3xl font-bold text-gray-800 text-center font-mono">Our Banking Backbone</h2>
                 <p className="mt-4 text-gray-600 text-center">
                     We collaborate with leading financial institutions to guarantee fast, secure and reliable salary advances for employees.
                 </p>
