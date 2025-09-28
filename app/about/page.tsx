@@ -40,7 +40,7 @@ export default function AboutPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1 }}
                 >
-                    <h2 className="text-2xl ont-semibold mb-4 text-green-700">Our Mission</h2>
+                    <h2 className="text-2xl ont-semibold mb-4 text-green-700 font-mono">Our Mission</h2>
                     <p className="text-gray-600 leading-relaxed">
                         To empower employees and employers with a safe and seamless platform that
                         provides early access to earned wages, eliminating financial stress while
@@ -52,7 +52,7 @@ export default function AboutPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1 }}
                 >
-                    <h2 className="text-2xl ont-semibold mb-4 text-green-700">Our Vision</h2>
+                    <h2 className="text-2xl ont-semibold mb-4 text-green-700 font-mono">Our Vision</h2>
                     <p className="text-gray-600 leading-relaxed">
                         To be Africa&apos;s leading workplace finance partner, enabling financial wellness
                         through innovation, transparency, and secure technology.
@@ -62,7 +62,7 @@ export default function AboutPage() {
 
             <section className="bg-gray-50 py-20 px-6">
                 <div ref={storyRef} className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-2xl font-semibold text-green-700 mb-6">Our Story</h2>
+                    <h2 className="text-2xl font-semibold text-green-700 mb-6 font-mono">Our Story</h2>
                     <p className="text-gray-600 leading-relaxed mb-4">
                         KaziAdvance was born out of a simple but urgent reality: most Kenyan workers
                         struggle to stretch their income until payday, often turning to expensive mobile
@@ -79,7 +79,7 @@ export default function AboutPage() {
             </section>
 
             <section ref={valuesRef} className="max-w-6xl mx-auto py-20 px-6 text-center">
-                <h2 className="text-2xl font-semibold mb-12 text-green-700">Our Core Values</h2>
+                <h2 className="text-2xl font-semibold mb-12 text-green-700 font-mono">Our Core Values</h2>
                 <div className="grid md:grid-cols-4 gap-10">
                     <div className="flex flex-col items-center bg-white shadow-sm rounded-lg p-6 hover:shadow-md transition">
                         <ShieldCheck className="w-10 h-10 text-green-600 mb-4" />
@@ -114,7 +114,7 @@ export default function AboutPage() {
 
             <section className="bg-gray-50 py-20 px-6 hidden lg:flex">
                 <div className="max-w-6xl mx-auto text-center">
-                    <h2 className="text-2xl font-semibold text-green-700">Meet the team</h2>
+                    <h2 className="text-2xl font-semibold text-green-700 font-mono">Meet the team</h2>
                     <div className="grid md:grid-cols-4 gap-10">
                         {[
                             { name: "Jason", title: "Co-Founder & CEO", img: "/team1.jpg" },
@@ -137,7 +137,7 @@ export default function AboutPage() {
             <section className="bg-green-700 text-white py-16 text-center">
                 <h2 className="text-2xl font-semibold mb-4 font-serif">Ready to Partner With Us?</h2>
                 <p className="mb-8 text-lg max-w-2xl mx-auto">
-                    Discover how WageUp can transform your workplace finance and support
+                    Discover how KaziAdvance can transform your workplace finance and support
                     employee wellbeing.
                 </p>
                 <a

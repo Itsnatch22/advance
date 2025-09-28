@@ -64,7 +64,7 @@ export default function HowItWorksPage() {
     <div className="min-h-screen bg-white text-gray-800">
       {/* Hero */}
       <section className="bg-gray-50 py-24 px-6 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold text-green-700">
+        <h1 className="text-4xl md:text-6xl font-bold text-green-700 font-serif">
           How KaziAdvance Works
         </h1>
         <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-gray-600">
@@ -88,7 +88,7 @@ export default function HowItWorksPage() {
               </div>
             </div>
             <div className="max-w-xl">
-              <h2 className="text-2xl font-semibold mb-4 text-green-700">{step.title}</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-green-700 font-mono">{step.title}</h2>
               {step.description.map((line, idx) => (
                 <p key={idx} className="text-gray-600 leading-relaxed mb-2">
                   {line}
@@ -101,7 +101,7 @@ export default function HowItWorksPage() {
 
       {/* CTA */}
       <section className="bg-green-700 text-white py-16 text-center">
-        <h2 className="text-2xl font-semibold mb-4">Ready to Streamline Workplace Finance?</h2>
+        <h2 className="text-2xl font-semibold mb-4 font-serif">Ready to Streamline Workplace Finance?</h2>
         <p className="mb-8 text-lg max-w-2xl mx-auto">
           Join KaziAdvance and empower your employees with safe, seamless salary advances.
         </p>

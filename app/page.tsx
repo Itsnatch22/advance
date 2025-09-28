@@ -12,8 +12,8 @@ export default function App() {
     <Hero/>
     <Works/>
     <Needs/>
-    <CTA/>
     <Models/>
+    <CTA/>
   </div>
   )
 }

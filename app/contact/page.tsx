@@ -18,12 +18,12 @@ export default function ContactPage() {
           transition={{ duration: 0.6 }}
           className="flex flex-col justify-center text-white md:pr-8"
         >
-          <h1 className="text-44 md:text-5xl font-bold leading-tight">
+          <h1 className="text-44 md:text-5xl font-bold leading-tight font-serif">
             Ready to Start with Us?
           </h1>
           <p className="mt-4 text-lg text-green-100">
             Contact us for any queries, partnerships, or support.  
-            We’re here to help employers and employees unlock early wage access.
+            We&apos;re here to help employers and employees unlock early wage access.
           </p>
 
           <div className="mt-8 space-y-4">
@@ -33,7 +33,7 @@ export default function ContactPage() {
             </div>
             <div className="flex items-center space-x-3">
               <FiPhone className="text-green-200 text-xl" />
-              <span>+254 700 123 456</span>
+              <span>+254 723 154900</span>
             </div>
             <div className="flex items-center space-x-3">
               <BiLocationPlus className="text-green-200 text-2xl" />
@@ -49,7 +49,7 @@ export default function ContactPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="bg-white rounded-2xl shadow-lg p-8"
         >
-          <h2 className="text-2xl font-bold text-gray-900">Contact Form</h2>
+          <h2 className="text-2xl font-bold text-gray-900">DM Us😁</h2>
           <form className="mt-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Name</label>
