@@ -144,7 +144,7 @@ export default function Footer() {
                         <ul className='space-y-2'>
                             {[
                                 {icon: FiMail, href: 'mailto:hello@kaziadvance.co.ke', text: 'hello@kaziadvance.co.ke'},
-                                {icon: FiPhone, href: '+254 7xx xxx xxx', text: '+254 7xx xxx xxx'},
+                                {icon: FiPhone, href: '+254 7xx xxx xxx', text: '+254 723 154900'},
                                 {icon: BiLocationPlus, href: 'https://google.com/maps?q=Westlands,+Nairobi',text: 'Westlands,Nairobi'},
                             ].map((contact,index)=>(
                                 <li

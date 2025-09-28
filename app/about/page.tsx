@@ -2,8 +2,21 @@
 import { motion } from "framer-motion"
 import { ShieldCheck, Cpu, Users, Eye } from "lucide-react"
 import Image from "next/image"
-
+import gsap from "gsap"
+import * as React from "react"
 export default function AboutPage() {
+    const storyRef = React.useRef<HTMLDivElement>(null);
+    const valuesRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        gsap.fromTo(storyRef.current, 
+        {opacity: 0, y: -50}, 
+        {opacity: 1, y: 0, duration: 1.2, ease: "power2.out"});
+
+        gsap.fromTo(valuesRef.current, 
+        {opacity: 0, y: 50}, 
+        {opacity: 1, y: 0, duration: 1.2, ease: "power2.out", delay: 0.3});
+    }, []);
     return(
         <div className="min-h-screen bg-white text-gray-300">
             <section className="relative bg-gray-50 text-center py-24 px-6">
@@ -20,27 +33,35 @@ export default function AboutPage() {
                 </p>
             </section>
 
-            <section className="max-w-5xl mx-auto py-20 px-6 grid md:grid-cols-2 gap-12"
+            <section className="goals-section max-w-5xl mx-auto py-20 px-6 grid md:grid-cols-2 gap-12"
             >
-                <div>
+                <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1 }}
+                >
                     <h2 className="text-2xl ont-semibold mb-4 text-green-700">Our Mission</h2>
                     <p className="text-gray-600 leading-relaxed">
                         To empower employees and employers with a safe and seamless platform that
                         provides early access to earned wages, eliminating financial stress while
                         improving workplace productivity.
                     </p>
-                </div>
-                <div>
+                </motion.div>
+                <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1 }}
+                >
                     <h2 className="text-2xl ont-semibold mb-4 text-green-700">Our Vision</h2>
                     <p className="text-gray-600 leading-relaxed">
                         To be Africa&apos;s leading workplace finance partner, enabling financial wellness
                         through innovation, transparency, and secure technology.
                     </p>
-                </div>
+                </motion.div>
             </section>
 
             <section className="bg-gray-50 py-20 px-6">
-                <div className="max-w-4xl mx-auto text-center">
+                <div ref={storyRef} className="max-w-4xl mx-auto text-center">
                     <h2 className="text-2xl font-semibold text-green-700 mb-6">Our Story</h2>
                     <p className="text-gray-600 leading-relaxed mb-4">
                         KaziAdvance was born out of a simple but urgent reality: most Kenyan workers
@@ -57,7 +78,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            <section className="max-w-6xl mx-auto py-20 px-6 text-center">
+            <section ref={valuesRef} className="max-w-6xl mx-auto py-20 px-6 text-center">
                 <h2 className="text-2xl font-semibold mb-12 text-green-700">Our Core Values</h2>
                 <div className="grid md:grid-cols-4 gap-10">
                     <div className="flex flex-col items-center bg-white shadow-sm rounded-lg p-6 hover:shadow-md transition">
