@@ -5,7 +5,7 @@ import Link from "next/link"
 export default function CTA() {
     return(
         <section
-        className="py-20 bg-gradient-to-r from-green-500 via-green-400 to-green-600"
+        className="py-20 bg-gradient-to-r from-green-500 via-green-400 to-green-600 relative"
         >
             <div className="max-w-4xl mx-auto text-center text-white px-6">
                 <motion.h2

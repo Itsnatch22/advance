@@ -58,7 +58,7 @@ export default function Footer() {
     return(
         <footer
         ref={footerRef}
-        className='overflow-hidden text-gray border-t border-gray-800 bg-black'
+        className='overflow-hidden text-gray border-t border-gray-800 h-full bg-black relative'
         >
             <div
             className='container mx-auto px-6 md:py-16 py-12'

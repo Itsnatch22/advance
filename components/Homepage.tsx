@@ -5,6 +5,9 @@ import gsap from "gsap"
 import { motion } from 'framer-motion'
 import Image from "next/image"
 import Link from "next/link"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
     const textRef = useRef(null)
@@ -13,11 +16,26 @@ export default function Hero() {
         gsap.fromTo(
             textRef.current,
             { y: 50, opacity: 0},
-            { y: 0, opacity: 1, duration: 1.2, ease: 'power3.out'}
+            { y: 0, opacity: 1, duration: 3, ease: 'power3.out'}
         );
+
+        const heroTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".hero-container",
+                start: "top 1%",
+                end: "bottom top",
+                scrub: true,
+            }
+        }) ;
+        
+        heroTl.to(".hero-container", {
+            rotate: 7,
+            scale: 0.9,
+            ease: "power1.inOut",
+        });
     }, []);
     return(
-        <section className="min-h-screen flex items-center bg-gradient-to-r from-green-400 via-green-300 to-white px-6 lg:px-20 dark:bg-gray-900 dark:text-white">
+        <section className="hero-container min-h-screen flex items-center bg-gradient-to-r from-green-400 via-green-300 to-white px-6 lg:px-20 dark:bg-gray-900 dark:text-white">
             <div
             className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto">
                 <div
