@@ -13,7 +13,7 @@ export default function RegulationsPage() {
       >
         <h1 className="text-4xl font-bold text-gray-900 mb-6">Regulations & Compliance</h1>
         <p className="text-gray-600 mb-12">
-          At KaziAdvance, we prioritise compliance with financial, data, and employment regulations 
+          At EaziWage, we prioritise compliance with financial, data, and employment regulations 
           to ensure our platform is safe, secure, and transparent for both employers and employees.
         </p>
 
@@ -72,7 +72,7 @@ export default function RegulationsPage() {
         <p className="text-gray-600">
           For regulatory or compliance-related questions, reach us at{' '}
           <a href="mailto:compliance@kaziadvance.com" className="text-green-600 underline">
-            compliance@kaziadvance.com
+            compliance@eaziwage.com
           </a>.
         </p>
       </motion.div>

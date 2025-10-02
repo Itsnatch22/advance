@@ -65,7 +65,7 @@ export default function HowItWorksPage() {
       {/* Hero */}
       <section className="bg-gray-50 py-24 px-6 text-center">
         <h1 className="text-4xl md:text-6xl font-bold text-green-700 font-serif">
-          How KaziAdvance Works
+          How EaziWage Works
         </h1>
         <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-gray-600">
           Seamless, secure, and transparent salary advances in a few simple steps.
@@ -103,7 +103,7 @@ export default function HowItWorksPage() {
       <section className="bg-green-700 text-white py-16 text-center">
         <h2 className="text-2xl font-semibold mb-4 font-serif">Ready to Streamline Workplace Finance?</h2>
         <p className="mb-8 text-lg max-w-2xl mx-auto">
-          Join KaziAdvance and empower your employees with safe, seamless salary advances.
+          Join EaziWage and empower your employees with safe, seamless salary advances.
         </p>
         <a
           href="/contact"

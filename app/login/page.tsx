@@ -16,7 +16,7 @@ export default function LoginPage() {
           className="flex flex-col justify-center text-white md:pr-8"
         >
           <h1 className="text-4xl md:text-5xl font-bold leading-tight font-serif">
-            Welcome Back to KaziAdvance
+            Welcome Back to EaziWage
           </h1>
           <p className="mt-4 text-lg text-green-100">
             Log in to access your dashboard and manage earned wages instantly.

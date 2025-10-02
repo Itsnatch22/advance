@@ -25,7 +25,7 @@ export default function AboutPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6}}>
-                    About KaziAdvance
+                    About EaziWage
                 </motion.h1>
                 <p className="mt-6 text-lg md:text-xl mx-auto text-gray-600"
                 >
@@ -64,7 +64,7 @@ export default function AboutPage() {
                 <div ref={storyRef} className="max-w-4xl mx-auto text-center">
                     <h2 className="text-2xl font-semibold text-green-700 mb-6 font-mono">Our Story</h2>
                     <p className="text-gray-600 leading-relaxed mb-4">
-                        KaziAdvance was born out of a simple but urgent reality: most Kenyan workers
+                        EaziWage was born out of a simple but urgent reality: most Kenyan workers
                         struggle to stretch their income until payday, often turning to expensive mobile
                         loans or shylocks. This cycle of stress impacts not only the individual but also
                         the workplace — from absenteeism to reduced productivity.
@@ -137,7 +137,7 @@ export default function AboutPage() {
             <section className="bg-green-700 text-white py-16 text-center">
                 <h2 className="text-2xl font-semibold mb-4 font-serif">Ready to Partner With Us?</h2>
                 <p className="mb-8 text-lg max-w-2xl mx-auto">
-                    Discover how KaziAdvance can transform your workplace finance and support
+                    Discover how EaziWage can transform your workplace finance and support
                     employee wellbeing.
                 </p>
                 <a

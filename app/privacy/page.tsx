@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
         {/* Section 1 */}
         <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-4">1. Introduction</h2>
         <p className="text-gray-600 mb-6">
-          KaziAdvance (“we,” “our,” or “us”) values your privacy. This Privacy Policy explains how
+          EaziWage (“we,” “our,” or “us”) values your privacy. This Privacy Policy explains how
           we collect, use, and safeguard your information when you use our website and services.
         </p>
 
@@ -73,7 +73,7 @@ export default function PrivacyPolicyPage() {
         <p className="text-gray-600">
           If you have any questions about this Privacy Policy, please contact us at{' '}
           <a href="mailto:privacy@kaziadvance.com" className="text-green-600 underline">
-            privacy@kaziadvance.com
+            privacy@eaziwage.com
           </a>.
         </p>
       </motion.div>

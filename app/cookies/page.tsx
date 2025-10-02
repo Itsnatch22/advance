@@ -76,7 +76,7 @@ export default function CookiePolicyPage() {
         <p className="text-gray-600">
           For questions about our use of cookies, contact us at{' '}
           <a href="mailto:privacy@kaziadvance.com" className="text-green-600 underline">
-            privacy@kaziadvance.com
+            privacy@eaziwage.com
           </a>.
         </p>
       </motion.div>

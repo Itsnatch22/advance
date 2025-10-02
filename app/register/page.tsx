@@ -14,7 +14,7 @@ export default function RegisterPage() {
                     transition={{ duration: 0.5 }}
                     className='flex flex-col justify-center text-white md:pr-8'
                 >
-                    <h1 className='text-4xl md:text-5xl font-bold leading-tight font-serif'>Join KaziAdvance Today</h1>
+                    <h1 className='text-4xl md:text-5xl font-bold leading-tight font-serif'>Join EaziWage Today</h1>
                     <p className="mt-4 text-lg text-green-100">Empower your employees with instant wage access. Sign up to unlock the future of payroll.</p>
                 </motion.div>
 
