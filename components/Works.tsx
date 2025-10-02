@@ -58,7 +58,7 @@ export default function Works() {
                 transition={{ duration: 0.9, delay: 0.2}}
                 viewport={{ once: true }}
                 className="mt-4 text-gray-600 max-w-2xl mx-auto">
-                    KaziAdvance makes accessing your earnings simple, transparent, and stress-free. Here&apos;s how you can take control of your pay in just a few steps.
+                    EaziWage makes accessing your earnings simple, transparent, and stress-free. Here&apos;s how you can take control of your pay in just a few steps.
                 </motion.p>
 
                 <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
