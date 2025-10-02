@@ -68,11 +68,11 @@ export default function Footer() {
                         <Link href='/' className='flex items-center'>
                             <BiWallet className='text-green-400 w-5 h-5'/>
                             <span className='text-xl font-bold text-white'>
-                                KaziAdvance
+                                EaziWage
                             </span>
                         </Link>
                         <p className='text-gray-300 text-sm'>
-                            Empowering Kenyan workers with instant access to their earned wages, reducing financial stress and improving workplace productivity
+                            Empowering Kenyan workers with instant access to their earned wages, reducing financial stress and improving workplace productivity.
                         </p>
                         <div className='flex space-x-4'>
                             {[
@@ -143,7 +143,7 @@ export default function Footer() {
                         <h3 className='text-white font-semibold mb-4'>Contact</h3>
                         <ul className='space-y-2'>
                             {[
-                                {icon: FiMail, href: 'mailto:hello@kaziadvance.co.ke', text: 'hello@kaziadvance.co.ke'},
+                                {icon: FiMail, href: 'mailto:hello@eaziwage.co.ke', text: 'hello@eaziwage.co.ke'},
                                 {icon: FiPhone, href: '+254 7xx xxx xxx', text: '+254 723 154900'},
                                 {icon: BiLocationPlus, href: 'https://google.com/maps?q=Westlands,+Nairobi',text: 'Westlands,Nairobi'},
                             ].map((contact,index)=>(
@@ -172,7 +172,7 @@ export default function Footer() {
                         <Link href='/regulations' className='text-xs text-gray-500'>Regulatory</Link>
                     </div>
                     <p className='text-xs text-gray-500 mb-4 md:mb-0'>
-                        &copy; {currentYear} KaziAdvance. All Rights Reserved
+                        &copy; {currentYear} EaziWage. All Rights Reserved
                     </p>
                 </div>
 
@@ -180,13 +180,13 @@ export default function Footer() {
                     <h1
                     className="text-[80px] md:text-[160px] hidden lg:flex font-black leading-none bg-gradient-to-r from-green-500 to-gray-50 bg-clip-text text-transparent tracking-tight"
                     >
-                    KaziAdvance
+                    EaziWage
                     </h1>
                 </div>
             </div>
             <div className='bg-gray-700'>
                 <p className='text-xs text-white ml-20 p-2 items-center justify-center hidden lg:flex'>
-                    KaziAdvance is regulated by the Central Bank of Kenya. All funds are provided by licensed banking partners.
+                    EaziWage is regulated by the Central Bank of Kenya. All funds are provided by licensed banking partners.
                     This service does not constitute lending under the Banking Act.
                 </p>
             </div>

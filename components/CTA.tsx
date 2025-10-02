@@ -23,7 +23,7 @@ export default function CTA() {
                 transition={{ duration: 0.9, delay: 0.2}}
                 viewport={{ once: true }}
                 className="mt-4 text-lg md:text-xl">
-                    Join leading Kenyan companies already using KaziAdvance to improve employee satisfaction and reduce turnover.
+                    Join leading Kenyan companies already using EaziWage to improve employee satisfaction and reduce turnover.
                 </motion.p>
 
                 <motion.div

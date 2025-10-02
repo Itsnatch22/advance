@@ -18,24 +18,9 @@ export default function Hero() {
             { y: 50, opacity: 0},
             { y: 0, opacity: 1, duration: 3, ease: 'power3.out'}
         );
-
-        const heroTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: ".hero-container",
-                start: "top 1%",
-                end: "bottom top",
-                scrub: true,
-            }
-        }) ;
-        
-        heroTl.to(".hero-container", {
-            rotate: 7,
-            scale: 0.9,
-            ease: "power1.inOut",
-        });
     }, []);
     return(
-        <section className="hero-container min-h-screen flex items-center bg-gradient-to-r from-green-400 via-green-300 to-white px-6 lg:px-20 dark:bg-gray-900 dark:text-white">
+        <section className="min-h-screen flex items-center bg-gradient-to-r from-green-400 via-green-300 to-white px-6 lg:px-20 dark:bg-gray-900 dark:text-white">
             <div
             className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto">
                 <div
@@ -53,7 +38,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 30}}
                     animate={{ opacity: 1, y: 0}}
                     transition={{ duration: 1, delay: 0.3 }}>
-                        KaziAdvance helps Kenyan employees access part of their salary they&apos;ve already earned, reducing financial stress and improving productivity. Not a loan - just early access to your wages.
+                        EaziWage helps Kenyan employees access part of their salary they&apos;ve already earned, reducing financial stress and improving productivity. Not a loan - just early access to your wages.
                     </motion.p>
 
                     <motion.div

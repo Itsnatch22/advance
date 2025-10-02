@@ -50,7 +50,7 @@ export default function Works() {
                 transition={{ duration: 0.7}}
                 viewport={{ once: true }}
                 className="text-4xl font-bold text-gray-900 font-serif">
-                    How KaziAdvance Works
+                    How EaziWage Works
                 </motion.h2>
                 <motion.p
                 initial={{ opacity: 0, y: 30 }}

@@ -21,7 +21,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-green-700">
           <BiWallet className="text-black" />
-          KaziAdvance
+          EaziWage
         </Link>
         <div className="hidden lg:flex items-center gap-8">
           {links.map((link, i) => (
