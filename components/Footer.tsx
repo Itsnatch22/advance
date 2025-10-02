@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from 'react';
-import { FiLinkedin, FiFacebook, FiTwitter, FiMail, FiPhone } from 'react-icons/fi';
+import { FiLinkedin, FiFacebook, FiTwitter, FiMail } from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
 import Link from 'next/link'
 import gsap from 'gsap';
 import { BiWallet, BiLocationPlus } from 'react-icons/bi';
@@ -144,7 +145,7 @@ export default function Footer() {
                         <ul className='space-y-2'>
                             {[
                                 {icon: FiMail, href: 'mailto:hello@eaziwage.co.ke', text: 'hello@eaziwage.co.ke'},
-                                {icon: FiPhone, href: '+254 723 154900', text: '+254 723 154900'},
+                                {icon: FaWhatsapp, href: 'https://wa.me/+254723154900', text: '+254 723 154900'},
                                 {icon: BiLocationPlus, href: 'https://google.com/maps?q=Westlands,+Nairobi',text: 'Westlands,Nairobi'},
                             ].map((contact,index)=>(
                                 <li
