@@ -8,7 +8,10 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 relative">
       {/* Polygon green background */}
-      <div className="absolute inset-0 bg-green-600 [clip-path:polygon(0_0,70%_0,100%_100%,0%_100%)]"></div>
+      <div className="fixed inset-0 w-screen h-screen bg-green-600 
+  sm:[clip-path:polygon(0_0,70%_0,100%_100%,0%_100%)] 
+  [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]"></div>
+
 
       <div className="relative z-10 w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-12 p-8 mt-12">
         {/* Left text / contact info */}

@@ -20,7 +20,7 @@ export default function Hero() {
         );
     }, []);
     return(
-        <section className="min-h-screen flex items-center bg-gradient-to-r from-green-400 via-green-300 to-white px-6 lg:px-20 dark:bg-gray-900 dark:text-white">
+        <section className="min-h-screen flex items-center bg-gradient-to-r from-green-400 via-green-300 to-white px-6 lg:px-20 dark:bg-gray-900 dark:text-white ">
             <div
             className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto">
                 <div
