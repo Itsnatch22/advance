@@ -52,7 +52,7 @@ export default function ContactPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="bg-white rounded-2xl shadow-lg p-8"
         >
-          <h2 className="text-2xl font-bold text-gray-900">DM Us😁</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Contact Us</h2>
           <form className="mt-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Name</label>

@@ -72,7 +72,6 @@ export default function HowItWorksPage() {
         </p>
       </section>
 
-      {/* Steps */}
       <section className="max-w-6xl mx-auto py-20 px-6 grid gap-16">
         {steps.map((step, i) => (
           <div
@@ -99,7 +98,6 @@ export default function HowItWorksPage() {
         ))}
       </section>
 
-      {/* CTA */}
       <section className="bg-green-700 text-white py-16 text-center">
         <h2 className="text-2xl font-semibold mb-4 font-serif">Ready to Streamline Workplace Finance?</h2>
         <p className="mb-8 text-lg max-w-2xl mx-auto">

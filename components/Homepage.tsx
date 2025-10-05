@@ -3,7 +3,6 @@ import { BiChevronRight } from "react-icons/bi"
 import { useEffect,useRef } from "react"
 import gsap from "gsap"
 import { motion } from 'framer-motion'
-import Image from "next/image"
 import Link from "next/link"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
@@ -29,8 +28,9 @@ export default function Hero() {
                 className="space-y-6 relative">
                     <motion.h1
                     initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0}}
-                    transition={{ duration: 0.8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.2 }} 
                     className="text-4xl lg:text-6xl font-bold text-black leading-tight font-serif">
                         Access Your <span className="text-white">Earned Wages</span> Before PayDay
                     </motion.h1>
@@ -39,9 +39,9 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 30}}
                     animate={{ opacity: 1, y: 0}}
                     transition={{ duration: 1, delay: 0.3 }}>
-                        EaziWage helps Kenyan employees access part of their salary they&apos;ve already earned, reducing financial stress and improving productivity. Not a loan - just early access to your wages.
+                        EaziWage helps access a portion of their salary they&apos;ve already earned anytime! Reduce financial stress, improve
+                        productivity and retain top talent - just EaziWage it.
                     </motion.p>
-
                     <motion.div
                     className="flex gap-4"
                     initial={{ opacity: 0 }}
@@ -55,9 +55,10 @@ export default function Hero() {
                             <BiChevronRight className="w-5 h-5 "/>
                         </Link>
                         <Link href="/employers"
-                        className="bg-transparent border-green-500 border px-6 py-3 rounded-xl text-lg font-medium hover:bg-green-50 transition text-white hover:text-green-700"
+                        className="bg-transparent gap-2 flex items-center border-green-500 border px-6 py-3 rounded-xl text-lg font-medium hover:bg-green-50 transition text-white hover:text-green-700 ease-in-out transition-colors"
                         >
                             For Employers
+                            <BiChevronRight className="w-5 h-5"/>
                         </Link>
                     </motion.div>
                 </div>
