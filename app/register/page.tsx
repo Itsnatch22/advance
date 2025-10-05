@@ -6,7 +6,9 @@ import { FaGoogle, FaLinkedin } from 'react-icons/fa';
 export default function RegisterPage() {
     return (
         <div className='min-h-screen flex items-center justify-center bg-gray-50 relative'>
-            <div className='absolute inset-0 bg-green-600 [clip-path:polygon(0_0,70%_0,100%_100%,0%_100%)]'></div>
+            <div className="fixed inset-0 w-screen h-screen bg-green-600 
+  sm:[clip-path:polygon(0_0,70%_0,100%_100%,0%_100%)] 
+  [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]"></div>
             <div className='relative z-10 w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-12 p-8'>
                 <motion.div
                     initial={{ opacity: 0, x: -50 }}
