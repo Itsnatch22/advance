@@ -5,11 +5,13 @@ import gsap from "gsap"
 import { motion } from 'framer-motion'
 import Link from "next/link"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import Typed from "typed.js"
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
-    const textRef = useRef(null)
+    const textRef = useRef(null);
+    const typedRef = useRef(null);
 
     useEffect(() => {
         gsap.fromTo(
@@ -17,6 +19,22 @@ export default function Hero() {
             { y: 50, opacity: 0},
             { y: 0, opacity: 1, duration: 3, ease: 'power3.out'}
         );
+
+        const typed = new Typed(typedRef.current, {
+        strings: [
+            "Earned Wages",
+            "Salary Advances",
+            "Money You've Worked For",
+        ],
+        typeSpeed: 10,
+        backSpeed: 10,
+        loop: true,
+        smartBackspace: true,
+        cursorChar: '|',
+        backDelay: 2000,
+    });
+
+    return () => typed.destroy();
     }, []);
     return(
         <section className="relative h-screen flex items-center justify-center text-white bg-[url('/homepage/background.jpg')] bg-cover bg-center">
@@ -32,7 +50,7 @@ export default function Hero() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.2 }} 
                     className="text-4xl lg:text-6xl font-bold text-black leading-tight font-serif">
-                        Access Your <span className="text-white">Earned Wages</span> Before PayDay
+                        Access Your <span ref={typedRef} className="text-white underline"/> {""} Before PayDay
                     </motion.h1>
                     <motion.p
                     className="max-w-lg text-lg"
