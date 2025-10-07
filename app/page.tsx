@@ -15,7 +15,7 @@ export default function App() {
   useLayoutEffect(() => {
     const sections = gsap.utils.toArray<HTMLElement>(".panel");
 
-    sections.forEach((panel, i) => {
+    sections.forEach((panel) => {
       ScrollTrigger.create({
         trigger: panel,
         start: "top top",
