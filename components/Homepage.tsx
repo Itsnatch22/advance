@@ -26,8 +26,8 @@ export default function Hero() {
             "Salary Advances",
             "Money You've Worked For",
         ],
-        typeSpeed: 10,
-        backSpeed: 10,
+        typeSpeed: 100,
+        backSpeed: 80,
         loop: true,
         smartBackspace: true,
         cursorChar: '|',
@@ -79,6 +79,15 @@ export default function Hero() {
                             <BiChevronRight className="w-5 h-5"/>
                         </Link>
                     </motion.div>
+                </div>
+
+                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+                    <div className="animate-bounce flex flex-col items-center">
+                    <span className="text-sm text-white mb-2">Scroll Down</span>
+                    <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
+                        <div className="w-1 h-2 bg-white rounded-full mt-2" />
+                    </div>
+                    </div>
                 </div>
             </div>
         </section>
