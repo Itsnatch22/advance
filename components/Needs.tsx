@@ -13,7 +13,7 @@ const steps = [
     {
         icon: <BiShield className="w-10 h-10 text-green-600"/>,
         title: "Bank-Grade Security",
-        description: "Militar-grade encryption ensure your financial data and transactions are completely secure.",
+        description: "Military-grade encryption ensure your financial data and transactions are completely secure.",
     },
     {
         icon: <BiUser className="w-10 h-10 text-green-600"/>,
