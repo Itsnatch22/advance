@@ -73,7 +73,7 @@ export default function Hero() {
                             <BiChevronRight className="w-5 h-5 "/>
                         </Link>
                         <Link href="/employers"
-                        className="bg-transparent gap-2 flex items-center border-green-500 border px-6 py-3 rounded-xl text-lg font-medium hover:bg-green-50 transition text-white hover:text-green-700 ease-in-out transition-colors"
+                        className="bg-transparent gap-2 flex items-center border-green-500 border px-6 py-3 rounded-xl text-lg font-medium hover:bg-green-50 text-white hover:text-green-700 ease-in-out transition-colors"
                         >
                             For Employers
                             <BiChevronRight className="w-5 h-5"/>
