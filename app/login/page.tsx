@@ -17,7 +17,7 @@ export default function LoginPage() {
           transition={{ duration: 0.6 }}
           className="flex flex-col justify-center text-white md:pr-8"
         >
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight font-serif">
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight font-serif mt-12">
             Welcome Back to EaziWage
           </h1>
           <p className="mt-4 text-lg text-green-100">
@@ -28,7 +28,7 @@ export default function LoginPage() {
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-white rounded-2xl shadow-lg p-8 mt-10"
+          className="bg-white rounded-2xl shadow-lg p-8 mt-5"
         >
           <h2 className="text-2xl font-bold text-gray-900">Log In</h2>
           <form className="mt-6 space-y-4">

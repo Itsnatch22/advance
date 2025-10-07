@@ -16,7 +16,7 @@ export default function RegisterPage() {
                     transition={{ duration: 0.5 }}
                     className='flex flex-col justify-center text-white md:pr-8'
                 >
-                    <h1 className='text-4xl md:text-5xl font-bold leading-tight font-serif'>Join EaziWage Today</h1>
+                    <h1 className='text-4xl md:text-5xl font-bold leading-tight font-serif mt-12'>Join EaziWage Today</h1>
                     <p className="mt-4 text-lg text-green-100">Empower your employees with instant wage access. Sign up to unlock the future of payroll.</p>
                 </motion.div>
 
@@ -24,7 +24,7 @@ export default function RegisterPage() {
                 initial={{ opacity:0, x:30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay:0.2 }}
-                className='bg-white rounded-2xl shadow-lg p-8 mt-15'
+                className='bg-white rounded-2xl shadow-lg p-8 mt-5'
                 >
                     <h2 className='text-2xl font-semibold mb-6 text-gray-800'>Create Your Account</h2>
                     <form action="" className='mt-6 space-y-4'>
