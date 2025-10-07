@@ -15,7 +15,7 @@ const models = [
             'Unlimited access for employees',
             'No cost to employees',
             'Payroll integration',
-            'Employee Dashboard',
+            'Employer Dashboard',
             'Analytics Dashboard',
             '24/7 support',
         ],
