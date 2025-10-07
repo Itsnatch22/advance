@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -17,7 +18,15 @@ interface NewsResponse {
   articles: Article[];
 }
 
-export default function NewsPage() {
+export default function NewsPageWrapper() {
+  return (
+    <Suspense>
+      <NewsPage />
+    </Suspense>
+  );
+}
+
+function NewsPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "kenya";
   const [articles, setArticles] = useState<Article[]>([]);
