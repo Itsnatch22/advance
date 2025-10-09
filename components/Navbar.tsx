@@ -9,6 +9,7 @@ const links = [
   { name: "How it works", href: "/how-it-works", dropdown: ["Overview", "Benefits", "Testimonials"] },
   { name: "For Employers", href: "/employers", dropdown: ["Features", "Case Studies", "Support"] },
   { name: "For Employees", href: "/employees", dropdown: ["Access Wages", "Financial Wellness", "Help Centre"] },
+  { name: "Calculator", href: "/calculator", dropdown: [] },
 ];
 
 export default function Navbar() {
