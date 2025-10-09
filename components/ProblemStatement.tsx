@@ -10,6 +10,7 @@ export default function ProblemStatement() {
                 initial={{opacity: 0, x: -50}}
                 animate={{opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
+                whileHover={{ scale: 1.02 }}
                 className="flex item-center">
                     <Image
                     src="/problem/problem.jpg"
@@ -18,6 +19,28 @@ export default function ProblemStatement() {
                     height={400}
                     className="rounded-xl shadow-lg object-cover"
                     />
+                </motion.div>
+
+                <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="space-y-6"
+                >
+                    <h2 className="font-serif text-4xl font-bold text-gray-600">The Problem We&apos;re Solving</h2>
+                    <p className="leading-relaxed text-lg text-gray-700">
+                        <span className="text-green-500">EaziWage</span> was born out of a simple but urgent reality: most employees struggle
+                        to stretch their income until payday, often turning to expensive mobile loans or shylocks.
+                    </p>
+                    <p className="leading-relaxed text-gray-600">
+                        This cycle of stress impacts not only the employee but also the workplace - from absenteeism to reduced
+                        productivity.
+                    </p>
+                    <p className="leading-relaxed text-gray-600">
+                        Introducing <span className="text-green-500">EaziWage</span>; your simple, secure and transparent, solution that empowers employees with early access to
+                        wages the&apos;ve already earned, backed by trusted banks and mobile money infrastructure.
+                    </p>
                 </motion.div>
             </div>
         </section>

@@ -5,6 +5,7 @@ import Works from "@/components/Works";
 import Needs from "@/components/Needs";
 import CTA from "@/components/CTA";
 import gsap from "gsap";
+import ProblemStatement from "@/components/ProblemStatement";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLayoutEffect } from "react";
 
@@ -31,6 +32,9 @@ export default function App() {
   className="overflow-y-hidden"
   >
     <Hero/>
+    <section className="panel">
+      <ProblemStatement/>
+    </section>
     <section className="panel">
       <Works/>
     </section>
