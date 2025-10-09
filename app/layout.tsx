@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Toploader from "nextjs-toploader"
+import Noah from "@/components/Noah";
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
@@ -37,6 +38,7 @@ export default function RootLayout({
         />
         <Navbar/>
         {children}
+        <Noah/>
         <Footer/>
       </body>
     </html>

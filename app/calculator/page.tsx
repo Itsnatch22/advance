@@ -4,7 +4,17 @@ import Image from "next/image"
 
 export default function Calculator() {
     return(
-        <section className="bg-gray-50 py-20 w-full px-6 lg:px-20">
+        <section className="bg-gray-50 py-20 w-full px-6 ">
+            <div className="gap-10 bg-gray-400 min-h-screen justify-center p-10 rounded-2xl mb-15">
+                <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto max-w-6xl mb-8">
+                    <>
+                    <h2 className="font-semibold text-2xl mb-6">EaziWage Advance Calculator</h2>
+                    <p className="mb-2">Let&apos;s help you calculate your monthly advances with no pressure</p>
+                    </>
+                    <h2 className="font-semibold text-2xl mb-6">EaziWage Advance Calculator</h2>
+                    <p className="mb-2">Let&apos;s help you calculate your monthly advances with no pressure</p>
+                </div>
+            </div>
             <div className="mx-auto max-w-6xl px-6 grid lg:grid-cols-2 grid-cols-1">
                 <motion.div
                 initial={{ opacity: 0, x: -50 }}
