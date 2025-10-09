@@ -17,8 +17,8 @@ export default function Calculator() {
                     </h2>
                     <p className="text-gray-600 leading-relaxed text-lg">
                         Eliminate the spreadsheets and manual calculations. Our intelligent PAYE Calculator delivers instant, 
-                        KRA-compliant computations for PAYE, NSSF, NHIF, and levies. We ensure absolute accuracy and compliance, 
-                        giving your HR and finance teams the freedom to focus on strategic goals—your people and your profits.
+                        KRA-compliant computations for PAYE, NSSF, SHIF, and levies. We ensure absolute accuracy and compliance, 
+                        giving your HR and finance teams the freedom to focus on strategic goals, your people and your profits.
                         Experience seamless integration, real-time analytics, and corporate-grade security in one powerful platform. 
                     </p>
                     <p className="text-gray-600 leading-relaxed text-lg mt-4">
