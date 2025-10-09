@@ -33,12 +33,12 @@ export default function ProblemStatement() {
                         <span className="text-green-500">EaziWage</span> was born out of a simple but urgent reality: most employees struggle
                         to stretch their income until payday, often turning to expensive mobile loans or shylocks.
                     </p>
-                    <p className="leading-relaxed text-gray-600">
+                    <p className="leading-relaxed text-gray-600 text-lg">
                         This cycle of stress impacts not only the employee but also the workplace - from absenteeism to reduced
                         productivity.
                     </p>
-                    <p className="leading-relaxed text-gray-600">
-                        Introducing <span className="text-green-500">EaziWage</span>; your simple, secure and transparent, solution that empowers employees with early access to
+                    <p className="leading-relaxed text-gray-600 text-lg">
+                        Introducing <span className="text-green-500">EaziWage</span> your simple, secure and transparent, solution that empowers employees with early access to
                         wages the&apos;ve already earned, backed by trusted banks and mobile money infrastructure.
                     </p>
                 </motion.div>
