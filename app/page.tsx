@@ -14,6 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function App() {
 
   useLayoutEffect(() => {
+    if(window.innerWidth < 768) return; // Disable on small screens
     const sections = gsap.utils.toArray<HTMLElement>(".panel");
 
     sections.forEach((panel) => {
