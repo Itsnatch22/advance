@@ -30,7 +30,7 @@ export default function ProblemStatement() {
                 >
                     <h2 className="font-serif text-4xl font-bold text-gray-600">The Problem We&apos;re Solving</h2>
                     <p className="leading-relaxed text-lg text-gray-700">
-                        <span className="text-green-500">EaziWage</span> was born out of a simple but urgent reality: most employees struggle
+                        <span className="text-green-700">EaziWage</span> was born out of a simple but urgent reality: most employees struggle
                         to stretch their income until payday, often turning to expensive mobile loans or shylocks.
                     </p>
                     <p className="leading-relaxed text-gray-600 text-lg">
@@ -38,7 +38,7 @@ export default function ProblemStatement() {
                         productivity.
                     </p>
                     <p className="leading-relaxed text-gray-600 text-lg">
-                        Introducing <span className="text-green-500">EaziWage</span> your simple, secure and transparent, solution that empowers employees with early access to
+                        Introducing <span className="text-green-700">EaziWage</span> your simple, secure and transparent, solution that empowers employees with early access to
                         wages the&apos;ve already earned, backed by trusted banks and mobile money infrastructure.
                     </p>
                 </motion.div>
