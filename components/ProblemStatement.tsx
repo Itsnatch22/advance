@@ -38,7 +38,7 @@ export default function ProblemStatement() {
                         productivity.
                     </p>
                     <p className="leading-relaxed text-gray-600 text-lg">
-                        Introducing <span className="text-green-700">EaziWage</span> your simple, secure and transparent, solution that empowers employees with early access to
+                        Introducing <span className="text-green-700">EaziWage</span>; your simple, secure and transparent solution that empowers employees with early access to
                         wages the&apos;ve already earned, backed by trusted banks and mobile money infrastructure.
                     </p>
                 </motion.div>
