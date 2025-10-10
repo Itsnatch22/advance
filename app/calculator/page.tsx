@@ -21,13 +21,24 @@ export default function Calculator() {
                         Precision Payroll. Effortless Compliance.
                     </h2>
                     <p className="text-gray-600 leading-relaxed text-lg">
-                        Eliminate the spreadsheets and manual calculations. Our intelligent PAYE Calculator delivers instant, 
-                        KRA-compliant computations for PAYE, NSSF, SHIF, and levies. We ensure absolute accuracy and compliance, 
-                        giving your HR and finance teams the freedom to focus on strategic goals, your people and your profits.
-                        Experience seamless integration, real-time analytics, and corporate-grade security in one powerful platform. 
+                        The Early Wage Access Calculator is designed to help employees understand their potential eligibility and accessible portion of earned wages before payday.
+                        It provides quick insight into what you may be able to claim based on your work period, 
+                        pay rate, and company payout policies giving you more financial clarity and flexibility when you 
+                        need it most.</p>
+                    <p className="text-gray-600 leading-relaxed text-lg mt-4">
+                        Disclaimer:
                     </p>
                     <p className="text-gray-600 leading-relaxed text-lg mt-4">
-                        Precision builds trust. Trust drives growth.
+                        The calculated figure is a tentative estimate provided for informational purposes only. 
+                        It does not represent a confirmed or guaranteed amount. Actual eligibility and disbursed values 
+                        may vary depending on: Verified payroll data, Deductions and statutory contributions, Company 
+                        specific early wage access policies.</p>
+                    <p className="text-gray-600 leading-relaxed text-lg mt-4">
+                        All final wage amounts are determined after internal validation and approval by your 
+                        employer or payroll provider.
+                    </p>
+                    <p className="text-gray-600 leading-relaxed text-lg mt-4">
+                        Precision builds trust. Trust drives growth.
                     </p>
                 </motion.div>
                 <motion.div
