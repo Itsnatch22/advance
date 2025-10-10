@@ -21,7 +21,7 @@ export default function Calculator() {
                         Precision Payroll. Effortless Compliance.
                     </h2>
                     <p className="text-gray-600 leading-relaxed text-lg">
-                        The Early Wage Access Calculator is designed to help employees understand their potential eligibility and accessible portion of earned wages before payday.
+                        The EaziWage Access Calculator is designed to help employees understand their potential eligibility and accessible portion of earned wages before payday.
                         It provides quick insight into what you may be able to claim based on your work period, 
                         pay rate, and company payout policies giving you more financial clarity and flexibility when you 
                         need it most.</p>
