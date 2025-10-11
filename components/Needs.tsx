@@ -56,7 +56,7 @@ export default function Needs() {
                 transition={{ duration: 0.7}}
                 viewport={{ once: true }}
                 className="text-4xl font-bold text-gray-900 font-serif">
-                    Built for the Kenyan Market
+                    Built for the <span className="text-green-600">Kenyan Market</span>
                 </motion.h2>
                 <motion.p
                 initial={{ opacity: 0, y: 30 }}

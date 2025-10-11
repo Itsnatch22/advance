@@ -37,7 +37,7 @@ export default function Hero() {
     return () => typed.destroy();
     }, []);
     return(
-        <section className="relative h-screen flex items-center justify-center text-white bg-[url('/homepage/background.jpg')] bg-cover bg-center">
+        <section className="relative h-screen flex items-center justify-center text-white bg-[url('/homepage/background.jpg')] bg-cover bg-center rounded-b-3xl">
             <div className="absolute inset-0 bg-gradient-to-r from-green-700/90 to-transparent"></div>
             <div
             className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto">
