@@ -16,7 +16,7 @@ export default function Calculator() {
                 viewport={{ once: true, amount: 0.2 }}
                 >
                     <h2 className="leading-tight text-gray-800 text-4xl md:text-5xl font-bold mb-6 font-serif">
-                        Precision Payroll. Effortless Compliance.
+                        Precision Wage. Effortless Compliance.
                     </h2>
                     <p className="text-gray-600 leading-relaxed text-lg">
                         The EaziWage Access Calculator is designed to help employees understand their potential eligibility and accessible portion of earned wages before payday.
