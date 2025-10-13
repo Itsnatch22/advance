@@ -63,7 +63,7 @@ export default function Needs() {
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.9, delay: 0.2}}
                 viewport={{ once: true }}
-                className="mt-4 text-gray-600 max-w-2xl mx-auto">
+                className="mt-4 text-gray-600 max-w-2xl mx-auto text-lg">
                    Enterprise-grade features designed specifically for the Kenyan market, ensuring compliance, security, and seamless integration with local systems.
                 </motion.p>
 
