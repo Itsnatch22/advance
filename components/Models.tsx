@@ -44,7 +44,7 @@ export default function Models() {
             <div className="max-w-5xl mx-auto px-6">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold font-serif"> <span className="text-green-600">Flexible</span> Pricing Models</h2>
-                    <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
+                    <p className="text-gray-600 mt-3 max-w-2xl mx-auto text-lg">
                         Choose the pricing model that works best for your organisation and employees.
                     </p>
                 </div>
