@@ -6,14 +6,14 @@ import AutoType from "./AutoType"
 export default function ProblemStatement() {
     return(
         <section className="bg-gray-50 py-20">
-            <div className="max-w-6xl grid lg:grid-cols-2 grid-cols-1 gap-10 items-center px-6 mx-auto">
+            <div className="max-w-6xl grid lg:grid-cols-2 grid-cols-1 gap-20 items-center px-6 mx-auto">
                 
                 <motion.div
                 initial={{opacity: 0, x: -50}}
                 animate={{opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
                 whileHover={{ scale: 1.02 }}
-                className="flex-start item-center">
+                className="flex item-center">
                     <Image
                     src="/problem/problem.jpg"
                     alt="Problem Statement Illustration"
