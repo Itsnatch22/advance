@@ -37,7 +37,7 @@ export default function Hero() {
     return () => typed.destroy();
     }, []);
     return(
-        <section className="relative h-screen flex items-center justify-center text-white bg-[url('/homepage/background.jpg')] bg-cover bg-center rounded-b-3xl">
+        <section className="relative h-screen flex items-center justify-center text-white bg-[url('/homepage/background.jpg')] bg-cover bg-center">
             <div className="absolute inset-0 bg-gradient-to-r from-green-700/90 to-transparent"></div>
             <div
             className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto">
@@ -47,8 +47,8 @@ export default function Hero() {
                     <motion.h1
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.2 }} 
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    viewport={{ once: true, amount: 0.2 }} 
                     className="text-4xl lg:text-6xl font-bold text-black leading-tight font-serif">
                         Access Your <span ref={typedRef} className="text-white underline"/> {""} Before PayDay
                     </motion.h1>
@@ -57,7 +57,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 30}}
                     animate={{ opacity: 1, y: 0}}
                     transition={{ duration: 1, delay: 0.3 }}>
-                        EaziWage helps access a portion of their salary they&apos;ve already earned anytime! Reduce financial stress, improve
+                        EaziWage helps employees access a portion of their salary they&apos;ve already earned anytime! Reduce financial stress, improve
                         productivity and retain top talent - just EaziWage it.
                     </motion.p>
                     <motion.div

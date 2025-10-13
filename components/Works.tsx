@@ -9,7 +9,7 @@ const steps = [
         icon: <FiCalendar className="w-10 h-10 text-green-600"/>,
         step: 1,
         title: "Work Your Days",
-        description: "Continue working as normal. Our system tracks the days you've worked and calculates your earned wages based on your salary earning.",
+        description: "Continue working as normal. Our system tracks the days you've worked and calculates your earned wages based on your earnings potential.",
     },
     {
         icon: <FiClipboard className="w-10 h-10 text-green-600"/>,
@@ -57,7 +57,7 @@ export default function Works() {
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.9, delay: 0.2}}
                 viewport={{ once: true }}
-                className="mt-4 text-gray-600 max-w-2xl mx-auto">
+                className="mt-4 text-gray-600 max-w-2xl mx-auto text-lg">
                     EaziWage makes accessing your earnings simple, transparent, and stress-free. Here&apos;s how you can take control of your pay in just a few steps.
                 </motion.p>
 
