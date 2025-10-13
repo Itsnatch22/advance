@@ -1,0 +1,26 @@
+[
+    {
+        "id": "who_are_we",
+        "title": "Who are we?",
+        "text": "EaziWage is a platform that enables employees to access a portion of their salary they've already earned before their official payday. This service is designed to help employees manage their finances more effectively by providing them with greater flexibility and control over their earnings.",
+        "source": "https://www.eaziwage.vercel.app" 
+    }, 
+    {
+        "id": "problem_we_solve",
+        "title": "Problem we solve",
+        "text": "The plroblem we are solving is to decrease employee dependency on high-interest loans and payday lenders (shylocks) by providing a more affordable and accessible alternative for accessing earned wages. This helps employees avoid the financial stress and burden associated with traditional lending options.",
+        "source": "https://www.eaziwage.vercel.app"
+    },
+    {
+        "id": "how_it_works",
+        "title": "How it works",
+        "text": [
+            "Employees get to work as normal.",
+            "The system tracks the days they've worked and calculates the earned wages based of salary earnings.",
+            "Employees can then request a portion of their earned wages through the EaziWage platform.",
+            "Once the request is approved, the funds are transferred to the employee's bank account, usually within a few minutes to a few hours.",
+            "On the employee's regular payday, the advanced amount is automatically deducted from their salary."
+        ],
+        "source": "https://www.eaziwage.vercel.app/calculator"
+    }
+]
