@@ -15,7 +15,7 @@ const steps = [
         icon: <FiClipboard className="w-10 h-10 text-green-600"/>,
         step: 2,
         title: "Calculate Available Amount",
-        description: "Access upto 60% of your *net earnings.*Our platform automatically calculates what you're eligible for.",
+        description: "Access upto 60% of your net earnings. Our platform automatically calculates what you're eligible for.",
     },
     {
         icon: <FiPhone className="w-10 h-10 text-green-600"/>,
