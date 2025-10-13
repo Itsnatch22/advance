@@ -57,7 +57,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 30}}
                     animate={{ opacity: 1, y: 0}}
                     transition={{ duration: 1, delay: 0.3 }}>
-                        EaziWage helps employees access a portion of their salary they&apos;ve already earned anytime! Reduce financial stress, improve
+                        EaziWage helps employees access a portion of their salary they&apos;ve already earned, anytime! Reduce financial stress, improve
                         productivity and retain top talent - just EaziWage it.
                     </motion.p>
                     <motion.div
