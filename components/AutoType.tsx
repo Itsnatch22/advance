@@ -7,7 +7,6 @@ export default function AutoType({ text, className }: { text: string; className?
   const el = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
-    if (window.innerWidth < 1024) return; 
 
     const typed = new Typed(el.current, {
       strings: [text],

@@ -8,6 +8,7 @@ import gsap from "gsap";
 import ProblemStatement from "@/components/ProblemStatement";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLayoutEffect } from "react";
+import StatsCounter from "@/components/StatsCounter";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,6 +39,9 @@ export default function App() {
     </section>
     <section className="panel">
       <Works/>
+    </section>
+    <section className="panel">
+      <StatsCounter/>
     </section>
     <section className="panel">
       <Needs/>

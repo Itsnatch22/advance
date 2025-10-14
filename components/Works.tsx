@@ -1,30 +1,30 @@
 'use client'
 import { motion } from "framer-motion"
-import { FiCalendar, FiClipboard, FiPhone, FiCheckCircle } from "react-icons/fi"
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 const steps = [
     {
-        icon: <FiCalendar className="w-10 h-10 text-green-600"/>,
+        icon: "/work/work.png",
         step: 1,
         title: "Work Your Days",
         description: "Continue working as normal. Our system tracks the days you've worked and calculates your earned wages based on your earnings potential.",
     },
     {
-        icon: <FiClipboard className="w-10 h-10 text-green-600"/>,
+        icon: "/work/calculate.png",
         step: 2,
         title: "Calculate Available Amount",
         description: "Access upto 60% of your net earnings. Our platform automatically calculates what you're eligible for.",
     },
     {
-        icon: <FiPhone className="w-10 h-10 text-green-600"/>,
+        icon: "/work/request.png",
         step: 3,
         title: "Request Your Advance",
         description: "Submit your request through our platform. Funds are disbursed instantly to your M-PESA or bank account.",
     },
     {
-        icon: <FiCheckCircle className="w-10 h-10 text-green-600"/>,
+        icon: "/work/repayment.png",
         step: 4,
         title: "Automatic Repayments",
         description: "Amount is automatically deducted when your salary is processed. No manual repayments required.",
@@ -73,7 +73,13 @@ export default function Works() {
                         className="bg-white p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2"
                         >
                             <div className="flex flex-col items-center gap-4">
-                                {item.icon}
+                                <Image
+                                src={item.icon}
+                                alt={item.title}
+                                width={80}
+                                height={80}
+                                className="mb-4 object-contain"
+                                />
                                 <span className="text-sm font-medium text-green-600">{item.step}</span>
                                 <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
                                 <p className="text-gray-600 text-sm text-center">{item.description}</p>

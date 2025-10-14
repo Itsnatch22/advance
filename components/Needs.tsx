@@ -2,36 +2,37 @@
 import { motion } from "framer-motion"
 import { BiTimer,BiShield,BiUser } from "react-icons/bi";
 import { Lock, ChartBar, Phone } from "lucide-react";
+import Image from "next/image"
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
 const steps = [
     {
-        icon: <BiTimer className="w-10 h-10 text-green-600"/>,
+        icon: "/work/disbursement.png",
         title: "Instant Disbursment",
         description: "Funds available within minutes through M-PESA or bank transfer. No waiting periods or complex approval processes.",
     },
     {
-        icon: <BiShield className="w-10 h-10 text-green-600"/>,
+        icon: "/work/protect.png",
         title: "Bank-Grade Security",
         description: "Military-grade encryption ensure your financial data and transactions are completely secure.",
     },
     {
-        icon: <BiUser className="w-10 h-10 text-green-600"/>,
+        icon: "/work/hr.png",
         title: "HR Integration",
         description: "Seamless integration with existing payroll systems. Automatic deductions and comprehensive employee management.",
     },
     {
-        icon: <Lock className="w-10 h-10 text-green-600"/>,
+        icon: "/work/regulatory.png",
         title: "Regulatory Compliance",
         description: "Fully compliant with Kenyan financial regulations. Regular audits and updates to ensure adherence to local laws.",
     },
     {
-        icon: <ChartBar className="w-10 h-10 text-green-600"/>,
+        icon: "/work/analysis.png",
         title: "Real-Time Analytics",
         description: "Detailed insights into loan performance, employee usage patterns, and financial health through an intuitive dashboard.",
     },
     {
-        icon: <Phone className="w-10 h-10 text-green-600"/>,
+        icon: "/work/access.png",
         title: "Mobile Accessibility",
         description: "Access and manage loans directly from your mobile device. User-friendly app designed for on-the-go financial management.",
     }
@@ -79,7 +80,13 @@ export default function Needs() {
                         className="bg-white p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2"
                         >
                             <div className="flex flex-col items-center gap-4">
-                                {item.icon}
+                                <Image
+                                src={item.icon}
+                                alt={item.title}
+                                width={80}
+                                height={80}
+                                className="mb-4 object-contain"
+                                />
                                 <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
                                 <p className="text-gray-600 text-sm text-center">{item.description}</p>
                             </div>
