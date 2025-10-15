@@ -14,7 +14,7 @@ const steps = [
     {
         icon: "/work/calculate.png",
         step: 2,
-        title: "Calculate Available Amount",
+        title: "Calculate Amount",
         description: "Access upto 60% of your net earnings. Our platform automatically calculates what you're eligible for.",
     },
     {
@@ -80,7 +80,7 @@ export default function Works() {
                                 height={80}
                                 className="mb-4 object-contain"
                                 />
-                                <span className="text-sm font-medium text-green-600">{item.step}</span>
+                                <span className="font-bold text-green-600 text-lg">{item.step}</span>
                                 <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
                                 <p className="text-gray-600 text-lg text-center">{item.description}</p>
                             </div>

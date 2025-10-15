@@ -77,7 +77,7 @@ export default function Needs() {
                         whileInView={{opacity: 1,y: 0}}
                         transition={{duration: 0.6, delay: i * 0.2}}
                         viewport={{once:true}}
-                        className="bg-white p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2"
+                        className="bg-white p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2 text-lg font-bold"
                         >
                             <div className="flex flex-col items-center gap-4">
                                 <Image
