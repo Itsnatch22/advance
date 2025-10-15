@@ -3,7 +3,6 @@ import { motion } from "framer-motion"
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 const steps = [
     {
         icon: "/work/work.png",
