@@ -1,7 +1,5 @@
 'use client'
 import { motion } from "framer-motion"
-import { BiTimer,BiShield,BiUser } from "react-icons/bi";
-import { Lock, ChartBar, Phone } from "lucide-react";
 import Image from "next/image"
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
