@@ -64,7 +64,7 @@ const Calc = () => {
   ]);
 
   const advanceEligible =
-    earnedAdvance >= netPay * 0.6 && earnedAdvance <= netPay ? earnedAdvance : 0;
+    earnedAdvance >= netPay * 0.4 && earnedAdvance <= netPay ? earnedAdvance : 0;
 
   return (
     <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 bg-green-50 min-h-screen rounded-2xl p-4 lg:p-8">
