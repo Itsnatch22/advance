@@ -67,8 +67,8 @@ const Calc = () => {
     earnedAdvance >= netPay * 0.6 && earnedAdvance <= netPay ? earnedAdvance : 0;
 
   return (
-    <div className="gap-6 bg-green-50 min-h-screen grid grid-cols-12 rounded-2xl">
-      <div className="col-span-8 p-8">
+    <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 bg-green-50 min-h-screen rounded-2xl p-4 lg:p-8">
+      <div className="lg:col-span-8 p-4 lg:p-8">
         <h2 className="text-4xl font-bold font-serif">Wage Calculator</h2>
         <p className="text-sm mt-8 text-black">
           Our calculator helps employees estimate their wages depending on the
@@ -200,7 +200,7 @@ const Calc = () => {
         </div>
       </div>
 
-      <div className="col-span-4">
+      <div className="lg:col-span-4">
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="font-semibold text-lg mb-4">Total calculations</h3>
           <div className="text-sm text-gray-500 mb-2">Employee Costs</div>
