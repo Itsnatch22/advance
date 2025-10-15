@@ -23,7 +23,6 @@ const Calc = () => {
     nssf,
     housingLevy,
     shif,
-    totalDeductions,
     netPay,
     earnedAdvance,
   } = useMemo(() => {
@@ -73,7 +72,7 @@ const Calc = () => {
         <h2 className="text-4xl font-bold font-serif">Wage Calculator</h2>
         <p className="text-sm mt-8 text-black">
           Our calculator helps employees estimate their wages depending on the
-          months they've worked for.
+          months they&apos;ve worked for.
         </p>
 
         <div className="space-y-4 mt-8">
