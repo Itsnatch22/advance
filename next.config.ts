@@ -24,10 +24,7 @@ const nextConfig: NextConfig = {
         hostname: "nairobileo.co.ke",
       },
     ]
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  }
 };
 
 export default nextConfig;
