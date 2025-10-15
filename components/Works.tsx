@@ -72,7 +72,7 @@ export default function Works() {
                         viewport={{once:true}}
                         className="bg-white p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2"
                         >
-                            <div className="flex flex-col items-center gap-4">
+                            <div className="flex flex-col items-center gap-4 mt-10">
                                 <Image
                                 src={item.icon}
                                 alt={item.title}
@@ -82,18 +82,11 @@ export default function Works() {
                                 />
                                 <span className="text-sm font-medium text-green-600">{item.step}</span>
                                 <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
-                                <p className="text-gray-600 text-sm text-center">{item.description}</p>
+                                <p className="text-gray-600 text-lg text-center">{item.description}</p>
                             </div>
                         </motion.div>
                     ))}
                 </div>
-
-                <Link
-                href="/how-it-works"
-                className="mt-10 inline-block text-green-600 hover:underline text-lg font-bold"
-                >
-                    View how our system works in details 
-                </Link>
             </div>
         </section>
     )

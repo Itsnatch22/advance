@@ -6,7 +6,7 @@ import AutoType from "./AutoType"
 export default function ProblemStatement() {
     return(
         <section className="bg-gray-50 py-20">
-            <div className="max-w-6xl grid lg:grid-cols-2 grid-cols-1 gap-20 items-center px-6 mx-auto">
+            <div className="max-w-6xl grid lg:grid-cols-2 grid-cols-1 gap-40 items-center px-6 mx-auto">
                 
                 <motion.div
                 initial={{opacity: 0, x: -50}}
@@ -17,8 +17,8 @@ export default function ProblemStatement() {
                     <Image
                     src="/problem/problem.jpg"
                     alt="Problem Statement Illustration"
-                    width={550}
-                    height={400}
+                    width={800}
+                    height={600}
                     className="rounded-xl shadow-lg object-cover"
                     />
                 </motion.div>

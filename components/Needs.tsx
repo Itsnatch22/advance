@@ -12,7 +12,7 @@ const steps = [
         description: "Funds available within minutes through M-PESA or bank transfer. No waiting periods or complex approval processes.",
     },
     {
-        icon: "/work/protect.png",
+        icon: "/work/security.png",
         title: "Bank-Grade Security",
         description: "Military-grade encryption ensure your financial data and transactions are completely secure.",
     },
