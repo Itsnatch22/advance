@@ -15,7 +15,7 @@ export default function ProblemStatement() {
                 whileHover={{ scale: 1.02 }}
                 className="flex item-center">
                     <Image
-                    src="/problem/problem.jpg"
+                    src="/problem/problem.png"
                     alt="Problem Statement Illustration"
                     width={550}
                     height={400}
