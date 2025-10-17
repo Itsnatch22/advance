@@ -165,7 +165,7 @@ export default function Footer() {
                 <div
                 className='bottom-bar border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center'>
                     <div className="flex space-x-6">
-                        <Link href='/privacy' className='text-xs text-gray-400 hover:text-green-500'>Privacy Policy</Link>
+                        <Link href='/privacy-policy.pdf' target="_blank" rel="noopener noreferrer" className='text-xs text-gray-400 hover:text-green-500'>Privacy Policy</Link>
                         <Link href='/terms' className='text-xs text-gray-400 hover:text-green-500'>Terms of Service</Link>
                         <Link href='/cookies' className='text-xs text-gray-400 hover:text-green-500'>Cookie Policy</Link>
                         <Link href='/regulations' className='text-xs text-gray-400 hover:text-green-500'>Regulatory</Link>
