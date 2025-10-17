@@ -61,13 +61,13 @@ export default function HowItWorksPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className="min-h-screen bg-white dark:bg-black text-gray-800">
       {/* Hero */}
-      <section className="bg-gray-50 py-24 px-6 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold text-green-700 font-serif">
+      <section className="bg-gray-50 dark:bg-green-400 py-24 px-6 text-center">
+        <h1 className="text-4xl md:text-6xl dark:text-black font-bold text-green-700 font-serif">
           How EaziWage Works
         </h1>
-        <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-gray-600">
+        <p className="mt-6 text-lg dark:text-black md:text-xl max-w-2xl mx-auto text-gray-600">
           Seamless, secure, and transparent salary advances in a few simple steps.
         </p>
       </section>
@@ -89,7 +89,7 @@ export default function HowItWorksPage() {
             <div className="max-w-xl">
               <h2 className="text-2xl font-semibold mb-4 text-green-700 font-mono">{step.title}</h2>
               {step.description.map((line, idx) => (
-                <p key={idx} className="text-gray-600 leading-relaxed mb-2">
+                <p key={idx} className="text-gray-600 dark:text-white leading-relaxed mb-2">
                   {line}
                 </p>
               ))}
@@ -98,14 +98,14 @@ export default function HowItWorksPage() {
         ))}
       </section>
 
-      <section className="bg-green-700 text-white py-16 text-center">
+      <section className="bg-green-700 text-white dark:text-black py-16 text-center">
         <h2 className="text-2xl font-semibold mb-4 font-serif">Ready to Streamline Workplace Finance?</h2>
         <p className="mb-8 text-lg max-w-2xl mx-auto">
           Join EaziWage and empower your employees with safe, seamless salary advances.
         </p>
         <a
           href="/contact"
-          className="bg-white text-green-700 font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition"
+          className="bg-white dark:text-black text-green-700 font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition"
         >
           Get Started
         </a>

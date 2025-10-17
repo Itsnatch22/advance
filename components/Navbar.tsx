@@ -17,10 +17,10 @@ export default function Navbar() {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <nav className="w-full bg-white shadow fixed top-0 left-0 z-50">
+    <nav className="w-full dark:bg-black dark:text-white bg-white shadow fixed top-0 left-0 z-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-green-700">
-          <BiWallet className="text-black" />
+          <BiWallet className="text-black dark:text-white" />
           EaziWage
         </Link>
         <div className="hidden lg:flex items-center gap-8">
@@ -31,7 +31,7 @@ export default function Navbar() {
               onMouseEnter={() => setHovered(i)}
               onMouseLeave={() => setHovered(null)}
             >
-              <Link href={link.href} className="flex items-center gap-1 font-medium text-gray-700 hover:text-green-600 transition">
+              <Link href={link.href} className="flex items-center gap-1 font-medium text-gray-700 dark:text-white hover:text-green-600 transition">
                 {link.name}
                 {link.dropdown.length > 0 && <BiChevronDown className="w-4 h-4" />}
               </Link>
@@ -43,13 +43,13 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute top-10 left-0 bg-white rounded-lg shadow-lg py-3 px-4 w-48"
+                  className="absolute top-10 left-0 bg-white dark:bg-black rounded-lg shadow-lg py-3 px-4 w-48"
                 >
                   {link.dropdown.map((item, j) => (
                     <Link
                       key={j}
                       href="#"
-                      className="block py-2 text-gray-600 hover:text-green-600 transition"
+                      className="block py-2 text-gray-600 dark:text-white hover:text-green-600 transition"
                     >
                       {item}
                     </Link>
@@ -60,15 +60,15 @@ export default function Navbar() {
           ))}
         </div>
         <div className="hidden lg:flex items-center gap-4">
-          <Link href="/login" className="px-4 py-2 text-gray-700 font-medium hover:text-green-600 transition">
+          <Link href="/login" className="px-4 py-2 text-gray-700 dark:text-white font-medium hover:text-green-600 transition">
             Login
           </Link>
-          <Link href="/register" className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">
+          <Link href="/register" className="px-4 py-2 bg-green-600 text-white  rounded-lg font-medium hover:bg-green-700 transition">
             Get Started
           </Link>
         </div>
         <button
-          className="lg:hidden text-gray-700"
+          className="lg:hidden text-gray-700 dark:text-white"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <BiX className="w-6 h-6" /> : <BiMenu className="w-6 h-6" />}
@@ -81,17 +81,17 @@ export default function Navbar() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.3 }}
-            className="fixed top-16 right-0 w-64 h-screen bg-white shadow-lg p-6 flex flex-col gap-6 lg:hidden"
+            className="fixed top-16 right-0 w-64 h-screen bg-white dark:bg-black shadow-lg p-6 flex flex-col gap-6 lg:hidden"
           >
             {links.map((link, i) => (
               <div key={i} className="flex flex-col gap-2">
-                <Link href={link.href} className="font-medium text-gray-700 hover:text-green-600">
+                <Link href={link.href} className="font-medium text-gray-700 dark:text-white hover:text-green-600">
                   {link.name}
                 </Link>
                 {link.dropdown.length > 0 && (
                   <div className="ml-4 flex flex-col gap-1">
                     {link.dropdown.map((item, j) => (
-                      <Link key={j} href="#" className="text-gray-500 hover:text-green-600 text-sm">
+                      <Link key={j} href="#" className="text-gray-500 dark:text-white hover:text-green-600 text-sm">
                         {item}
                       </Link>
                     ))}
@@ -101,7 +101,7 @@ export default function Navbar() {
             ))}
 
             <hr />
-            <button className="w-full px-4 py-2 text-gray-700 font-medium hover:text-green-600 transition">
+            <button className="w-full px-4 py-2 text-gray-700 dark:text-white font-medium hover:text-green-600 transition">
               Login
             </button>
             <button className="w-full px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">

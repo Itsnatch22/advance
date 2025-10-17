@@ -5,7 +5,7 @@ import { FaGoogle, FaLinkedin } from 'react-icons/fa';
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 relative">
+    <div className="min-h-screen flex items-center justify-center dark:bg-black bg-gray-50 relative">
       <div className="fixed inset-0 w-screen h-screen bg-green-600 
   sm:[clip-path:polygon(0_0,70%_0,100%_100%,0%_100%)] 
   [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]"></div>
@@ -15,12 +15,12 @@ export default function LoginPage() {
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col justify-center text-white md:pr-8"
+          className="flex flex-col justify-center text-white dark:text-black md:pr-8"
         >
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight font-serif mt-12">
+          <h1 className="text-4xl md:text-5xl font-bold dark:text-black leading-tight font-serif mt-12">
             Welcome Back to EaziWage
           </h1>
-          <p className="mt-4 text-lg text-green-100">
+          <p className="mt-4 text-lg dark:text-black text-green-100">
             Log in to access your dashboard and manage earned wages instantly.
           </p>
         </motion.div>
@@ -36,7 +36,7 @@ export default function LoginPage() {
               <label className="block text-sm font-medium text-gray-700">Email</label>
               <input
                 type="email"
-                className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+                className="mt-1 w-full px-4 py-2 border border-green-400 dark:text-black rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
                 placeholder="you@example.com"
               />
             </div>
@@ -44,13 +44,13 @@ export default function LoginPage() {
               <label className="block text-sm font-medium text-gray-700">Password</label>
               <input
                 type="password"
-                className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+                className="mt-1 w-full px-4 py-2 border border-green-400 dark:text-black rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
                 placeholder="••••••••"
               />
             </div>
             <button
               type="submit"
-              className="w-full mt-6 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
+              className="w-full mt-6 px-4 py-2 bg-green-600 dark:text-black text-white font-semibold rounded-lg hover:bg-green-700 transition"
             >
               Log In
             </button>

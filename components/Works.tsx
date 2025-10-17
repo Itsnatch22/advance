@@ -26,7 +26,7 @@ const steps = [
         icon: "/work/repayment.png",
         step: 4,
         title: "Automatic Repayments",
-        description: "Amount is automatically deducted when your salary is processed. No manual repayments required.",
+        description: "The amount is automatically deducted when your salary is processed. No manual repayments required.",
     },
 ];
 
@@ -41,14 +41,14 @@ export default function Works() {
         )
     })
     return(
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-gray-50 dark:bg-black">
             <div ref={cardRef} className="max-w-6xl mx-auto px-6 text-center">
                 <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.7}}
                 viewport={{ once: true }}
-                className="text-4xl font-bold text-gray-900 font-serif">
+                className="text-4xl font-bold text-gray-900 font-serif dark:text-white">
                     How EaziWage <span className="text-green-600">Works</span>
                 </motion.h2>
                 <motion.p
@@ -56,7 +56,7 @@ export default function Works() {
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.9, delay: 0.2}}
                 viewport={{ once: true }}
-                className="mt-4 text-gray-600 max-w-2xl mx-auto text-lg">
+                className="mt-4 text-gray-600 max-w-2xl mx-auto text-lg dark:text-white">
                     EaziWage makes accessing your earnings simple, transparent, and stress-free. Here&apos;s how you can take control of your pay in just a few steps.
                 </motion.p>
 
@@ -69,7 +69,7 @@ export default function Works() {
                         whileInView={{opacity: 1,y: 0}}
                         transition={{duration: 0.6, delay: i * 0.2}}
                         viewport={{once:true}}
-                        className="bg-white p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2"
+                        className="bg-white dark:bg-gray-500 p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2"
                         >
                             <div className="flex flex-col items-center gap-4 mt-10">
                                 <Image
@@ -79,9 +79,9 @@ export default function Works() {
                                 height={80}
                                 className="mb-4 object-contain"
                                 />
-                                <span className="font-bold text-green-600 text-lg">{item.step}</span>
+                                <span className="font-bold text-green-600 text-lg dark:text-white">{item.step}</span>
                                 <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
-                                <p className="text-gray-600 text-lg text-center">{item.description}</p>
+                                <p className="text-gray-600 text-lg text-center dark:text-white">{item.description}</p>
                             </div>
                         </motion.div>
                     ))}

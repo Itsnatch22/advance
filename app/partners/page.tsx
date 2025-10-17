@@ -6,28 +6,28 @@ import { bankingPartners, techPartners, corporatePartners } from "@/constants"
 
 export default function PartnersPage() {
     return (
-        <div className="min-h-screen bg-gray-50 py-16">
+        <div className="min-h-screen bg-gray-50 dark:bg-black py-16">
             <section
             className="relative py-20 px-6 text-center">
                 <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="text-4xl text-black font-bold md:text-6xl font-serif">
+                className="text-4xl text-black dark:text-white font-bold md:text-6xl font-serif">
                     Our Partners
                 </motion.h1>
                 <motion.p
                 initial={{ opacity:0 ,y:20 }}
                 animate={{ opacity:1 , y:0 }}
-                className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto"
+                className="mt-4 text-lg dark:text-white text-gray-600 max-w-2xl mx-auto"
                 >
                     Our system is integrated with leading banking, corporate and technology partners to ensure seamless operations and expectations for every customer.
                 </motion.p>
             </section>
 
             <section className="max-w-6xl mb-24 mx-auto py-6">
-                <h2 className="text-3xl font-bold text-gray-800 text-center font-mono">Our Banking Backbone</h2>
-                <p className="mt-4 text-gray-600 text-center">
+                <h2 className="text-3xl font-bold text-gray-800 text-center dark:text-white font-mono">Our Banking Backbone</h2>
+                <p className="mt-4 text-gray-600 text-center dark:text-white">
                     We collaborate with leading financial institutions to guarantee fast, secure and reliable salary advances for employees.
                 </p>
 
@@ -44,7 +44,7 @@ export default function PartnersPage() {
                                 alt={partner.name}
                                 width={160}
                                 height={80}
-                                className="rounded-full w-28 h-28 object-contain transition"
+                                className="rounded-full w-28 h-28 object-contain bg-white transition"
                                 />
                             </div>
                         ))}
@@ -57,18 +57,18 @@ export default function PartnersPage() {
                         key={i}
                         className="bg-white shadow rounded-2xl p-6 hover:shadow-lg transition"
                         >
-                        <h3 className="text-lg font-semibold text-gray-800">
+                        <h3 className="text-lg font-semibold text-gray-800 ">
                             {partner.name}
                         </h3>
-                        <p className="mt-2 text-gray-600">{partner.blurb}</p>
+                        <p className="mt-2 text-gray-600 e">{partner.blurb}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
             <section className="max-w-6xl mb-24 mx-auto py-6">
-                <h2 className="text-3xl font-bold text-gray-800 text-center font-mono">Empowering Workforces</h2>
-                <p className="mt-4 text-gray-600 text-center">
+                <h2 className="text-3xl font-bold text-gray-800 text-center dark:text-white font-mono">Empowering Workforces</h2>
+                <p className="mt-4 text-gray-600 text-center dark:text-white">
                     From retail chains to multinational firms, our partners ensure employees access what they earn, when they need it.
                 </p>
 
@@ -85,7 +85,7 @@ export default function PartnersPage() {
                                 alt={partner.name}
                                 width={160}
                                 height={80}
-                                className="rounded-full w-28 h-28 object-contain transition"
+                                className="rounded-full w-28 h-28 bg-white object-contain transition"
                                 />
                             </div>
                         ))}
@@ -125,7 +125,7 @@ export default function PartnersPage() {
                                 alt={partner.name}
                                 width={160}
                                 height={80}
-                                className="object-contain transition rounded-full w-28 h-28"
+                                className="object-contain bg-white transition rounded-full w-28 h-28"
                                 />
                             </div>
                         ))}

@@ -67,22 +67,22 @@ const Calc = () => {
     earnedAdvance >= netPay * 0.4 && earnedAdvance <= netPay ? earnedAdvance : 0;
 
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 bg-green-50 min-h-screen rounded-2xl p-4 lg:p-8">
+    <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 dark:bg-green-500 bg-green-50 min-h-screen rounded-2xl p-4 lg:p-8">
       <div className="lg:col-span-8 p-4 lg:p-8">
-        <h2 className="text-4xl font-bold font-serif">Wage Calculator</h2>
-        <p className="text-sm mt-8 text-black">
+        <h2 className="text-4xl font-bold font-seri dark:text-black">Wage Calculator</h2>
+        <p className=" mt-8 text-black text-lg">
           Our calculator helps employees estimate their wages depending on the
           months they&apos;ve worked for.
         </p>
 
         <div className="space-y-4 mt-8">
           <label className="block">
-            <span className="text-sm text-black">Salary</span>
+            <span className="text-black text-lg">Salary</span>
             <input
               type="number"
               value={salary || ""}
               onChange={(e) => setSalary(Number(e.target.value))}
-              className="mt-1 block w-full rounded border-gray-200 shadow-sm p-2"
+              className="mt-1 block w-full rounded border-gray-200 shadow-sm p-2 text-black"
               placeholder="Enter gross salary"
             />
           </label>
@@ -92,25 +92,25 @@ const Calc = () => {
               type="number"
               value={daysWorked || ""}
               onChange={(e) => setDaysWorked(Number(e.target.value))}
-              className="border p-2 rounded"
+              className="border p-2 rounded text-black text-lg"
               placeholder="Days Worked"
             />
             <input
               type="number"
               value={daysInMonth || ""}
               onChange={(e) => setDaysInMonth(Number(e.target.value))}
-              className="border p-2 rounded"
+              className="border p-2 rounded text-black text-lg"
               placeholder="Days in Month"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4 mt-4">
             <label className="block">
-              <span className="text-sm text-gray-700">Remunerations</span>
+              <span className="text-black text-lg ">Remunerations</span>
               <select
                 value={remunerations ? "yes" : "no"}
                 onChange={(e) => setRemunerations(e.target.value === "yes")}
-                className="mt-1 block w-full rounded border-gray-200 p-2"
+                className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
               >
                 <option value="no">None</option>
                 <option value="yes">Bonuses / Travel</option>
@@ -118,11 +118,11 @@ const Calc = () => {
             </label>
 
             <label className="block">
-              <span className="text-sm text-gray-700">Allowances</span>
+              <span className="text-lg text-black">Allowances</span>
               <select
                 value={allowances ? "yes" : "no"}
                 onChange={(e) => setAllowance(e.target.value === "yes")}
-                className="mt-1 block w-full rounded border-gray-200 p-2"
+                className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
               >
                 <option value="no">None</option>
                 <option value="yes">Meals / Nights Out</option>
@@ -132,11 +132,11 @@ const Calc = () => {
 
           <div className="grid grid-cols-2 gap-4 mt-4">
             <label className="block">
-              <span className="text-sm text-gray-700">Cover</span>
+              <span className="text-lg text-black">Cover</span>
               <select
                 value={isCovered ? "yes" : "no"}
                 onChange={(e) => setIsCovered(e.target.value === "yes")}
-                className="mt-1 block w-full rounded border-gray-200 p-2"
+                className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
               >
                 <option value="no">None</option>
                 <option value="yes">Pension / Medical</option>
@@ -144,11 +144,11 @@ const Calc = () => {
             </label>
 
             <label className="block">
-              <span className="text-sm text-gray-700">Insurance</span>
+              <span className="text-lg text-black">Insurance</span>
               <select
                 value={isInsured ? "yes" : "no"}
                 onChange={(e) => setIsInsured(e.target.value === "yes")}
-                className="mt-1 block w-full rounded border-gray-200 p-2"
+                className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
               >
                 <option value="no">None</option>
                 <option value="yes">Life & Health / Car</option>
@@ -157,11 +157,11 @@ const Calc = () => {
           </div>
 
           <label className="block mt-4">
-            <span className="text-sm text-gray-700">Contributions</span>
+            <span className="text-lg text-black">Contributions</span>
             <select
               value={isContributed ? "yes" : "no"}
               onChange={(e) => setIsContributed(e.target.value === "yes")}
-              className="mt-1 block w-full rounded border-gray-200 p-2"
+              className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
             >
               <option value="no">None</option>
               <option value="yes">Mortgage / Provident Fund</option>
@@ -176,7 +176,7 @@ const Calc = () => {
                 checked={deductNSSF}
                 onChange={() => setDeductNSSF(!deductNSSF)}
               />
-              <span className="text-sm">Deduct NSSF</span>
+              <span className="text-sm dark:text-black">Deduct NSSF</span>
             </label>
 
             <label className="flex items-center gap-3">
@@ -185,7 +185,7 @@ const Calc = () => {
                 checked={deductHousingLevy}
                 onChange={() => setDeductHousingLevy(!deductHousingLevy)}
               />
-              <span className="text-sm">Deduct Housing Levy</span>
+              <span className="text-sm dark:text-black">Deduct Housing Levy</span>
             </label>
 
             <label className="flex items-center gap-3">
@@ -194,36 +194,36 @@ const Calc = () => {
                 checked={deductSHIF}
                 onChange={() => setDeductSHIF(!deductSHIF)}
               />
-              <span className="text-sm">Deduct SHIF</span>
+              <span className="text-sm dark:text-black">Deduct SHIF</span>
             </label>
           </div>
         </div>
       </div>
 
       <div className="lg:col-span-4">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-semibold text-lg mb-4">Total calculations</h3>
-          <div className="text-sm text-gray-500 mb-2">Employee Costs</div>
+        <div className="bg-gray-100 rounded-lg shadow p-6">
+          <h3 className="font-bold text-lg mb-4 dark:text-black">Total calculations</h3>
+          <div className="text-sm dark:text-black text-gray-500 mb-2">Employee Costs</div>
 
           <div className="flex justify-between py-2 border-b">
-            <div className="text-sm">Gross Pay</div>
-            <div className="font-mono">{gross.toFixed(2)}</div>
+            <div className="text-sm dark:text-black">Gross Pay</div>
+            <div className="font-mono dark:text-black">{gross.toFixed(2)}</div>
           </div>
 
-          <div className="flex justify-between py-2 border-b">
+          <div className="flex justify-between py-2 border-b dark:text-black">
             <div className="text-sm">Net Salary</div>
             <div className="font-mono">{netPay.toFixed(2)}</div>
           </div>
 
-          <div className="flex justify-between py-2 border-b">
+          <div className="flex justify-between py-2 border-b dark:text-black">
             <div className="text-sm">Earned Advance</div>
             <div className="font-mono text-green-600">
               {advanceEligible ? `${advanceEligible.toFixed(2)} KES` : "Not Eligible"}
             </div>
           </div>
 
-          <div className="mt-4 text-xs text-gray-400">Breakdown:</div>
-          <ul className="text-sm mt-2 space-y-1">
+          <div className="mt-4 text-xs text-gray-400 dark:text-black">Breakdown:</div>
+          <ul className="text-sm mt-2 space-y-1 dark:text-black">
             <li>NSSF: {nssf.toFixed(2)}</li>
             <li>House Levy: {housingLevy.toFixed(2)}</li>
             <li>SHIF: {shif.toFixed(2)}</li>

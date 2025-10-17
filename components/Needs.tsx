@@ -12,7 +12,7 @@ const steps = [
     {
         icon: "/work/security.png",
         title: "Bank-Grade Security",
-        description: "Military-grade encryption ensure your financial data and transactions are completely secure.",
+        description: "Military-grade encryption to ensure your financial data and transactions are completely secure.",
     },
     {
         icon: "/work/hr.png",
@@ -22,17 +22,17 @@ const steps = [
     {
         icon: "/work/regulatory.png",
         title: "Regulatory Compliance",
-        description: "Fully compliant with Kenyan financial regulations. Regular audits and updates to ensure adherence to local laws.",
+        description: "Fully compliant with local financial and data regulations. Regular audits and updates to ensure adherence to local laws.",
     },
     {
         icon: "/work/analysis.png",
         title: "Real-Time Analytics",
-        description: "Detailed insights into loan performance, employee usage patterns, and financial health through an intuitive dashboard.",
+        description: "Detailed insights into employee earned wage usage patterns and financial health through an intuitive dashboard.",
     },
     {
         icon: "/work/access.png",
         title: "Mobile Accessibility",
-        description: "Access and manage loans directly from your mobile device. User-friendly app designed for on-the-go financial management.",
+        description: "Access and manage earned wages directly from your mobile device. User-friendly app designed for on-the-go financial management.",
     }
 ];
 
@@ -47,14 +47,14 @@ export default function Needs() {
         )
     })
     return(
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-gray-50 dark:bg-black">
             <div ref={cardRef} className="max-w-6xl mx-auto px-6 text-center">
                 <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.7}}
                 viewport={{ once: true }}
-                className="text-4xl font-bold text-gray-900 font-serif">
+                className="text-4xl font-bold text-gray-900 dark:text-white font-serif">
                     Built for the <span className="text-green-600">Kenyan Market</span>
                 </motion.h2>
                 <motion.p
@@ -62,8 +62,8 @@ export default function Needs() {
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.9, delay: 0.2}}
                 viewport={{ once: true }}
-                className="mt-4 text-gray-600 max-w-2xl mx-auto text-lg">
-                   Enterprise-grade features designed specifically for the Kenyan market, ensuring compliance, security, and seamless integration with local systems.
+                className="mt-4 text-gray-600 dark:text-white max-w-2xl mx-auto text-lg">
+                   Enterprise-grade features designed specifically for the Kenyan market, ensuring compliance, security, and seamless integration with local infrastructure.
                 </motion.p>
 
                 <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -75,7 +75,7 @@ export default function Needs() {
                         whileInView={{opacity: 1,y: 0}}
                         transition={{duration: 0.6, delay: i * 0.2}}
                         viewport={{once:true}}
-                        className="bg-white p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2 text-lg font-bold"
+                        className="bg-white dark:bg-gray-500 p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2 text-lg font-bold"
                         >
                             <div className="flex flex-col items-center gap-4">
                                 <Image
@@ -86,7 +86,7 @@ export default function Needs() {
                                 className="mb-4 object-contain"
                                 />
                                 <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
-                                <p className="text-gray-600 text-sm text-center">{item.description}</p>
+                                <p className="text-gray-600 dark:text-white text-sm text-center">{item.description}</p>
                             </div>
                         </motion.div>
                     ))}

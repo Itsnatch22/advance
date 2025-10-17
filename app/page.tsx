@@ -1,5 +1,4 @@
 import Hero from "@/components/Homepage";
-import Models from "@/components/Models";
 import Works from "@/components/Works";
 import Needs from "@/components/Needs";
 import CTA from "@/components/CTA";
@@ -9,13 +8,12 @@ import StatsCounter from "@/components/StatsCounter";
 export default function App() {
 
   return(
-  <div className="overflow-y-hidden">
+  <div className="overflow-hidden">
       <Hero/>
       <ProblemStatement/>
       <Works/>
       <StatsCounter/>
       <Needs/>
-      <Models/>
       <CTA/>
   </div>
   )

@@ -86,7 +86,7 @@ export default function Footer() {
                                 key={index}
                                 target='_blank'
                                 rel='noopener noreferrer'
-                                className='text-gray-400 hover:text-white transition-colors'
+                                className='text-gray-400 hover:text-green-500 transition-colors'
                                 >
                                     <social.icon className='w-5 h-5' />
                                 </Link>
@@ -108,7 +108,7 @@ export default function Footer() {
                                 key={index}>
                                     <Link
                                     href={link.href}
-                                    className='text-sm text-gray-400 hover:text-white hover:underline'>
+                                    className='text-sm text-gray-400 hover:text-green-500 hover:underline'>
                                         {link.name}
                                     </Link>
                                 </li>
@@ -123,7 +123,6 @@ export default function Footer() {
                             {[
                                 {name: 'About Us', href: 'about'},
                                 {name: 'Careers', href: 'careers'},
-                                {name: 'Press', href: 'press'},
                                 {name: 'Partners', href: 'partners'},
                                 {name: 'Contact', href: 'contact'},
                             ].map((link,index)=>(
@@ -131,7 +130,7 @@ export default function Footer() {
                                 key={index}>
                                     <Link
                                     href={link.href}
-                                    className='text-sm text-gray-400 hover:text-white'>
+                                    className='text-sm text-gray-400 hover:text-green-500'>
                                         {link.name}
                                     </Link>
                                 </li>
@@ -152,7 +151,7 @@ export default function Footer() {
                                     <a href={contact.href}
                                     target={contact.href.startsWith("http") ? "_blank" : undefined}
                                     rel={contact.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                                    className='flex items-center gap-2 text-sm text-gray-400 hover:text-white transition'>
+                                    className='flex items-center gap-2 text-sm text-gray-400 hover:text-green-500 transition'>
                                         <contact.icon className='w-5 h-5' />
                                         {contact.text}
                                     </a>
@@ -166,19 +165,19 @@ export default function Footer() {
                 <div
                 className='bottom-bar border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center'>
                     <div className="flex space-x-6">
-                        <Link href='/privacy' className='text-xs text-gray-500'>Privacy Policy</Link>
-                        <Link href='/terms' className='text-xs text-gray-500'>Terms of Service</Link>
-                        <Link href='/cookies' className='text-xs text-gray-500'>Cookie Policy</Link>
-                        <Link href='/regulations' className='text-xs text-gray-500'>Regulatory</Link>
+                        <Link href='/privacy' className='text-xs text-gray-400 hover:text-green-500'>Privacy Policy</Link>
+                        <Link href='/terms' className='text-xs text-gray-400 hover:text-green-500'>Terms of Service</Link>
+                        <Link href='/cookies' className='text-xs text-gray-400 hover:text-green-500'>Cookie Policy</Link>
+                        <Link href='/regulations' className='text-xs text-gray-400 hover:text-green-500'>Regulatory</Link>
                     </div>
-                    <p className='text-xs text-gray-500 mb-4 md:mb-0'>
+                    <p className='text-xs text-gray-400 hover:text-green-500 mb-4 md:mb-0'>
                         &copy; {currentYear} EaziWage. All Rights Reserved
                     </p>
                 </div>
 
                 <div className="w-full flex justify-center mt-16 md:mt-20">
                     <h1
-                    className="text-[80px] md:text-[160px] hidden lg:flex font-black leading-none bg-gradient-to-r from-green-500 to-gray-50 bg-clip-text text-transparent tracking-tight"
+                    className="text-[80px] md:text-[160px] hidden lg:flex font-black leading-none bg-green-600 bg-clip-text text-transparent tracking-tight"
                     >
                     EaziWage
                     </h1>
