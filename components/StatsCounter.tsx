@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
-import WorldMap from "./ui/world-map";
 
 export default function StatsCounter() {
   const stats = {
@@ -13,108 +12,45 @@ export default function StatsCounter() {
 
   return (
     <motion.section
-      whileInView={{ opacity: 1, y: 0 }}
-      initial={{ opacity: 0, y: 40 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      viewport={{ once: true }}
-      className="w-full py-20 bg-gray-50 dark:bg-black dark:text-white text-black text-center"
-    >
-      <h2 className="text-3xl md:text-4xl font-bold mb-10">Our Growth Targets</h2>
+  whileInView={{ opacity: 1, y: 0 }}
+  initial={{ opacity: 0, y: 40 }}
+  transition={{ duration: 0.8, ease: "easeOut" }}
+  viewport={{ once: true }}
+  className="relative w-full py-24 bg-gray-50 dark:bg-neutral-950 text-black dark:text-white text-center overflow-hidden"
+>
+  {/* Subtle gradient background for aura */}
+  <div className="absolute inset-0 bg-gradient-to-b from-green-600/5 via-transparent to-emerald-500/5 dark:from-emerald-400/10 dark:via-transparent dark:to-green-500/5 blur-2xl"></div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 150 }}
-        >
-          <h3 className="text-5xl font-bold">
-            <CountUp end={stats.targeted_customers} duration={3.5} />+
-          </h3>
-          <p className="text-gray-300 mt-2">Targeted Customers</p>
-        </motion.div>
+  {/* === Section Title === */}
+  <motion.h2
+    className="text-4xl md:text-5xl font-bold font-serif mb-8 relative z-10"
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6 }}
+  >
+    Our Growth <span className="text-green-600 dark:text-emerald-400">Targets</span>
+  </motion.h2>
 
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 150 }}
-        >
-          <h3 className="text-5xl font-bold">
-            <CountUp end={stats.targeted_companies} duration={3.5} />+
-          </h3>
-          <p className="text-gray-300 mt-2">Targeted Companies</p>
-        </motion.div>
-
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 150 }}
-        >
-          <h3 className="text-5xl font-bold">
-            <CountUp end={stats.annual_advances / 1000000} duration={3.5} />M+
-          </h3>
-          <p className="text-gray-300 mt-2">Annual Advances (KSH)</p>
-        </motion.div>
-      </div>
-
-      <div>
-        <p className="font-bold text-xl md:text-4xl dark:text-white text-black mt-15">
-          Connecting{" "}
-          <span className="text-neutral-400">
-            {"Africa".split("").map((word, idx) => (
-              <motion.span
-                key={idx}
-                className="inline-block"
-                initial={{ x: -10, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.5, delay: idx * 0.04 }}
-              >
-                {word}
-              </motion.span>
-            ))}
-          </span>
-        </p>
-      </div>
-      <WorldMap
-        dots={[
-          {
-  // Nairobi → Dar es Salaam (Tanzania)
-  start: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-  end: { lat: -6.7924, lng: 39.2083 },   // Dar es Salaam
-},
-{
-  // Nairobi → Kampala (Uganda)
-  start: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-  end: { lat: 0.3476, lng: 32.5825 },    // Kampala
-},
-{
-  // Nairobi → Addis Ababa (Ethiopia)
-  start: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-  end: { lat: 9.03, lng: 38.74 },        // Addis Ababa
-},
-{
-  // Nairobi → Kigali (Rwanda)
-  start: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-  end: { lat: -1.9499, lng: 30.0588 },   // Kigali
-},
-{
-  // Nairobi → Bujumbura (Burundi)
-  start: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-  end: { lat: -3.3822, lng: 29.3644 },   // Bujumbura
-},
-{
-  // Nairobi → Juba (South Sudan)
-  start: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-  end: { lat: 4.8594, lng: 31.5713 },    // Juba
-},
-{
-  // Nairobi → Khartoum (Sudan)
-  start: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-  end: { lat: 15.5007, lng: 32.5599 },   // Khartoum
-},
-{
-  // Nairobi → Johannesburg (South Africa)
-  start: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-  end: { lat: -26.2041, lng: 28.0473 },  // Johannesburg
-},
-        ]}
-      />
-    </motion.section>
+  {/* === Stats Grid === */}
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 max-w-5xl mx-auto relative z-10">
+    {[
+      { label: "Targeted Customers", value: stats.targeted_customers, suffix: "+", color: "text-green-600" },
+      { label: "Targeted Companies", value: stats.targeted_companies, suffix: "+", color: "text-green-600" },
+      { label: "Annual Advances (KSH)", value: stats.annual_advances / 1000000, suffix: "M+", color: "text-green-600" },
+    ].map((item, i) => (
+      <motion.div
+        key={i}
+        whileHover={{ scale: 1.08 }}
+        transition={{ type: "spring", stiffness: 150 }}
+        className="bg-white dark:bg-neutral-900 rounded-2xl py-10 shadow-sm border border-gray-100 dark:border-neutral-800"
+      >
+        <h3 className={`text-5xl font-bold ${item.color}`}>
+          <CountUp end={item.value} duration={3.5} />{item.suffix}
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 mt-3 text-lg font-medium">{item.label}</p>
+      </motion.div>
+    ))}
+  </div>
+</motion.section>
   );
 }

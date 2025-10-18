@@ -41,52 +41,71 @@ export default function Works() {
         )
     })
     return(
-        <section className="py-20 bg-gray-50 dark:bg-black">
-            <div ref={cardRef} className="max-w-6xl mx-auto px-6 text-center">
-                <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0}}
-                transition={{ duration: 0.7}}
-                viewport={{ once: true }}
-                className="text-4xl font-bold text-gray-900 font-serif dark:text-white">
-                    How EaziWage <span className="text-green-600">Works</span>
-                </motion.h2>
-                <motion.p
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0}}
-                transition={{ duration: 0.9, delay: 0.2}}
-                viewport={{ once: true }}
-                className="mt-4 text-gray-600 max-w-2xl mx-auto text-lg dark:text-white">
-                    EaziWage makes accessing your earnings simple, transparent, and stress-free. Here&apos;s how you can take control of your pay in just a few steps.
-                </motion.p>
+        <section className="py-24 bg-gray-50 dark:bg-neutral-950 transition-colors duration-500">
+  <div ref={cardRef} className="max-w-6xl mx-auto px-6 text-center">
+    {/* === Title === */}
+    <motion.h2
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7 }}
+      viewport={{ once: true }}
+      className="text-4xl md:text-5xl font-bold font-serif text-gray-900 dark:text-white"
+    >
+      How EaziWage <span className="text-green-700 dark:text-emerald-400">Works</span>
+    </motion.h2>
 
-                <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
-                >
-                    {steps.map((item,i) => (
-                        <motion.div
-                        key={i}
-                        initial={{opacity:0,y:40}}
-                        whileInView={{opacity: 1,y: 0}}
-                        transition={{duration: 0.6, delay: i * 0.2}}
-                        viewport={{once:true}}
-                        className="bg-white dark:bg-gray-500 p-6 rounded-2xl shadow hover:shadow-green-400/40 transition transform hover:-translate-y-2"
-                        >
-                            <div className="flex flex-col items-center gap-4 mt-10">
-                                <Image
-                                src={item.icon}
-                                alt={item.title}
-                                width={80}
-                                height={80}
-                                className="mb-4 object-contain"
-                                />
-                                <span className="font-bold text-green-600 text-lg dark:text-white">{item.step}</span>
-                                <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
-                                <p className="text-gray-600 text-lg text-center dark:text-white">{item.description}</p>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+    <motion.p
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, delay: 0.2 }}
+      viewport={{ once: true }}
+      className="mt-5 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed"
+    >
+      Access your earnings effortlessly - transparent, secure, and built for your financial freedom.
+    </motion.p>
+
+    {/* === Steps Grid === */}
+    <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      {steps.map((item, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: i * 0.2 }}
+          viewport={{ once: true }}
+          className="relative bg-white dark:bg-neutral-900 p-8 rounded-2xl shadow-md hover:shadow-lg border border-gray-100 dark:border-neutral-800 transition-transform duration-300 hover:-translate-y-2"
+        >
+          <div className="flex flex-col items-center gap-5">
+            {/* Icon */}
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-600/20 to-emerald-500/20 blur-xl"></div>
+              <Image
+                src={item.icon}
+                alt={item.title}
+                width={80}
+                height={80}
+                className="relative z-10 object-contain"
+              />
             </div>
-        </section>
+
+            {/* Step Label */}
+            <span className="font-bold text-green-600 dark:text-emerald-400 text-sm tracking-wide uppercase">
+              {item.step}
+            </span>
+
+            {/* Title + Description */}
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white font-serif">
+              {item.title}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 text-base text-center leading-relaxed">
+              {item.description}
+            </p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
+
     )
 }
