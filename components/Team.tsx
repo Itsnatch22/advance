@@ -37,13 +37,13 @@ const testimonials = [
     quote:
       "We are building more than just a payment platform we are creating a bridge of trust. One that supports growth, accelerates timelines, reduces cancellations, and brings professionalism to every transaction.",
     name: "Joel O✌",
-    title: "Backend Dev",
+    title: "Co-Founder & Backend Dev",
   },
   {
     quote:
       "At EaziWage, we're not just streamlining payments—we're empowering connections, fostering trust, and driving success by making every transaction seamless, engaging, and impactful.",
     name: "Henry K😁.",
-    title: "Marketing Director",
+    title: "Co-Founder & CMO",
   },
   {
     quote:

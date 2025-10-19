@@ -1,8 +1,29 @@
 'use client'
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { useEffect, useRef } from "react"
+import Typed from "typed.js"
 
 export default function CTA() {
+    const typedRef = useRef(null);
+
+    useEffect(() => {
+        const typed = new Typed(typedRef.current, {
+            strings: [
+                "Transform Your Workplace",
+                "Boost Retention & Reduce Turnover",
+                "Increase Payroll Efficiency & Compliance",
+                "Encourage Punctuality & Attendance",
+            ],
+            typeSpeed: 100,
+            backSpeed: 80,
+            loop: true,
+            smartBackspace: true,
+            cursorChar: '|',
+            backDelay: 2000,
+        });
+        return () => typed.destroy();
+    }, []);
     return(
         <section
         className="py-20 bg-gradient-to-r from-green-500 via-green-400 to-green-600 relative"
@@ -15,7 +36,7 @@ export default function CTA() {
                 viewport={{ once: true }}
                 className="text-3xl dark:text-black lg:text-5xl font-bold font-serif"
                 >
-                    Ready To Transform Your Workplace?
+                    Ready To {" "} <span ref={typedRef}/> {" "}?
                 </motion.h2>
                 <motion.p
                 initial={{ opacity: 0, y: 30 }}
@@ -35,9 +56,6 @@ export default function CTA() {
                 >
                     <Link href="/schedule" className="px-6 py-3 bg-white text-green-700 font-medium rounded-xl hover:bg-green-50 transition">
                         Schedule a Demo
-                    </Link>
-                    <Link href="/case-studies"className="px-6 py-3 bg-green-700 text-white font-medium rounded-xl hover:bg-green-800 transition">
-                        View Case Studies
                     </Link>
                 </motion.div>
             </div>
