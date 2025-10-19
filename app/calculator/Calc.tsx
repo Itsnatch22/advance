@@ -1,16 +1,17 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 const Calc = () => {
   const [salary, setSalary] = useState<number>(0);
   const [daysWorked, setDaysWorked] = useState<number>(0);
   const [daysInMonth, setDaysInMonth] = useState<number>(30);
 
-  const [remunerations, setRemunerations] = useState(false);
-  const [allowances, setAllowance] = useState(false);
-  const [isCovered, setIsCovered] = useState(false);
-  const [isInsured, setIsInsured] = useState(false);
-  const [isContributed, setIsContributed] = useState(false);
+  // 🔹 Allow user to input actual allowance figures
+  const [mealAllowance, setMealAllowance] = useState<number>(0);
+  const [nightOutAllowance, setNightOutAllowance] = useState<number>(0);
+  const [pensionCover, setPensionCover] = useState<number>(0);
+  const [medicalCover, setMedicalCover] = useState<number>(0);
+  const [lifeInsurance, setLifeInsurance] = useState<number>(0);
 
   const [deductNSSF, setDeductNSSF] = useState(true);
   const [deductHousingLevy, setDeductHousingLevy] = useState(false);
@@ -18,22 +19,25 @@ const Calc = () => {
 
   const relief = 2400;
 
-  const {
-    gross,
-    nssf,
-    housingLevy,
-    shif,
-    netPay,
-    earnedAdvance,
-  } = useMemo(() => {
+  // 🔹 Auto-detect days in month
+  useEffect(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // JS is 0-based months
+    const days = new Date(year, month, 0).getDate();
+    setDaysInMonth(days);
+  }, []);
+
+  const { gross, nssf, housingLevy, shif, netPay, earnedAdvance } = useMemo(() => {
     let gross = salary;
 
-    // Optional Remunerations and Add-ons
-    if (remunerations) gross += 3000; // bonus/travel
-    if (allowances) gross += 2500; // meals/night
-    if (isCovered) gross += 1500; // pension/medical
-    if (isInsured) gross += 2000; // insurance
-    if (isContributed) gross += 1000; // contributions
+    // Sum all custom allowance inputs
+    gross +=
+      mealAllowance +
+      nightOutAllowance +
+      pensionCover +
+      medicalCover +
+      lifeInsurance;
 
     // Deductions
     let nssf = 0,
@@ -46,6 +50,8 @@ const Calc = () => {
 
     const totalDeductions = nssf + housingLevy + shif;
     const netPay = Math.max(0, gross - totalDeductions - relief);
+
+    // Earned advance = portion of netPay based on worked days
     const earnedAdvance = netPay * (daysWorked / daysInMonth);
 
     return { gross, nssf, housingLevy, shif, totalDeductions, netPay, earnedAdvance };
@@ -53,31 +59,28 @@ const Calc = () => {
     salary,
     daysWorked,
     daysInMonth,
-    remunerations,
-    allowances,
-    isCovered,
-    isInsured,
-    isContributed,
+    mealAllowance,
+    nightOutAllowance,
+    pensionCover,
+    medicalCover,
+    lifeInsurance,
     deductNSSF,
     deductHousingLevy,
     deductSHIF,
   ]);
 
-  const advanceEligible =
-    earnedAdvance >= netPay * 0.4 && earnedAdvance <= netPay ? earnedAdvance : 0;
-
   return (
     <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 dark:bg-green-500 bg-green-50 min-h-screen rounded-2xl p-4 lg:p-8">
       <div className="lg:col-span-8 p-4 lg:p-8">
         <h2 className="text-4xl font-bold font-seri dark:text-black">Wage Calculator</h2>
-        <p className=" mt-8 text-black text-lg">
-          Our calculator helps employees estimate their wages depending on the
-          months they&apos;ve worked for.
+        <p className="mt-8 text-black text-lg">
+          Estimate your wages and earned pay advances based on your inputs.
         </p>
 
+        {/* Salary and Days */}
         <div className="space-y-4 mt-8">
           <label className="block">
-            <span className="text-black text-lg">Salary</span>
+            <span className="text-black text-lg">Basic Salary</span>
             <input
               type="number"
               value={salary || ""}
@@ -98,78 +101,53 @@ const Calc = () => {
             <input
               type="number"
               value={daysInMonth || ""}
-              onChange={(e) => setDaysInMonth(Number(e.target.value))}
-              className="border p-2 rounded text-black text-lg"
-              placeholder="Days in Month"
+              readOnly
+              className="border p-2 rounded text-black text-lg bg-gray-100"
+              placeholder="Days in Month (auto)"
             />
           </div>
 
+          {/* Allowance inputs */}
           <div className="grid grid-cols-2 gap-4 mt-4">
-            <label className="block">
-              <span className="text-black text-lg ">Remunerations</span>
-              <select
-                value={remunerations ? "yes" : "no"}
-                onChange={(e) => setRemunerations(e.target.value === "yes")}
-                className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
-              >
-                <option value="no">None</option>
-                <option value="yes">Bonuses / Travel</option>
-              </select>
-            </label>
-
-            <label className="block">
-              <span className="text-lg text-black">Allowances</span>
-              <select
-                value={allowances ? "yes" : "no"}
-                onChange={(e) => setAllowance(e.target.value === "yes")}
-                className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
-              >
-                <option value="no">None</option>
-                <option value="yes">Meals / Nights Out</option>
-              </select>
-            </label>
+            <input
+              type="number"
+              value={mealAllowance || ""}
+              onChange={(e) => setMealAllowance(Number(e.target.value))}
+              className="border p-2 rounded text-black"
+              placeholder="Meal Allowance"
+            />
+            <input
+              type="number"
+              value={nightOutAllowance || ""}
+              onChange={(e) => setNightOutAllowance(Number(e.target.value))}
+              className="border p-2 rounded text-black"
+              placeholder="Night Out Allowance"
+            />
+            <input
+              type="number"
+              value={pensionCover || ""}
+              onChange={(e) => setPensionCover(Number(e.target.value))}
+              className="border p-2 rounded text-black"
+              placeholder="Pension Cover"
+            />
+            <input
+              type="number"
+              value={medicalCover || ""}
+              onChange={(e) => setMedicalCover(Number(e.target.value))}
+              className="border p-2 rounded text-black"
+              placeholder="Medical Cover"
+            />
+            <input
+              type="number"
+              value={lifeInsurance || ""}
+              onChange={(e) => setLifeInsurance(Number(e.target.value))}
+              className="border p-2 rounded text-black"
+              placeholder="Life Insurance"
+            />
           </div>
-
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <label className="block">
-              <span className="text-lg text-black">Cover</span>
-              <select
-                value={isCovered ? "yes" : "no"}
-                onChange={(e) => setIsCovered(e.target.value === "yes")}
-                className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
-              >
-                <option value="no">None</option>
-                <option value="yes">Pension / Medical</option>
-              </select>
-            </label>
-
-            <label className="block">
-              <span className="text-lg text-black">Insurance</span>
-              <select
-                value={isInsured ? "yes" : "no"}
-                onChange={(e) => setIsInsured(e.target.value === "yes")}
-                className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
-              >
-                <option value="no">None</option>
-                <option value="yes">Life & Health / Car</option>
-              </select>
-            </label>
-          </div>
-
-          <label className="block mt-4">
-            <span className="text-lg text-black">Contributions</span>
-            <select
-              value={isContributed ? "yes" : "no"}
-              onChange={(e) => setIsContributed(e.target.value === "yes")}
-              className="mt-1 block w-full rounded border-gray-200 p-2 text-black"
-            >
-              <option value="no">None</option>
-              <option value="yes">Mortgage / Provident Fund</option>
-            </select>
-          </label>
 
           {/* Deductions */}
-          <div className="flex flex-col gap-3 mt-4">
+          <div className="flex flex-col gap-3 mt-6">
             <label className="flex items-center gap-3">
               <input
                 type="checkbox"
@@ -178,7 +156,6 @@ const Calc = () => {
               />
               <span className="text-sm dark:text-black">Deduct NSSF</span>
             </label>
-
             <label className="flex items-center gap-3">
               <input
                 type="checkbox"
@@ -187,7 +164,6 @@ const Calc = () => {
               />
               <span className="text-sm dark:text-black">Deduct Housing Levy</span>
             </label>
-
             <label className="flex items-center gap-3">
               <input
                 type="checkbox"
@@ -200,25 +176,22 @@ const Calc = () => {
         </div>
       </div>
 
+      {/* Results */}
       <div className="lg:col-span-4">
         <div className="bg-gray-100 rounded-lg shadow p-6">
           <h3 className="font-bold text-lg mb-4 dark:text-black">Total calculations</h3>
-          <div className="text-sm dark:text-black text-gray-500 mb-2">Employee Costs</div>
-
           <div className="flex justify-between py-2 border-b">
             <div className="text-sm dark:text-black">Gross Pay</div>
             <div className="font-mono dark:text-black">{gross.toFixed(2)}</div>
           </div>
-
           <div className="flex justify-between py-2 border-b dark:text-black">
             <div className="text-sm">Net Salary</div>
             <div className="font-mono">{netPay.toFixed(2)}</div>
           </div>
-
           <div className="flex justify-between py-2 border-b dark:text-black">
             <div className="text-sm">Earned Advance</div>
             <div className="font-mono text-green-600">
-              {advanceEligible ? `${advanceEligible.toFixed(2)} KES` : "Not Eligible"}
+              {earnedAdvance.toFixed(2)} KES
             </div>
           </div>
 
