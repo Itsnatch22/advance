@@ -34,9 +34,9 @@ export default function CTA() {
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.7}}
                 viewport={{ once: true }}
-                className="text-3xl dark:text-black lg:text-5xl font-bold font-serif"
+                className="text-3xl text-white dark:text-black lg:text-5xl font-bold font-serif"
                 >
-                    Ready To {" "} <span ref={typedRef}/> {" "}?
+                    Ready To {" "} <span ref={typedRef} className="dark:text-white text-black"/> {" "}?
                 </motion.h2>
                 <motion.p
                 initial={{ opacity: 0, y: 30 }}
