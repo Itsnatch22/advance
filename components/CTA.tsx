@@ -3,6 +3,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { useEffect, useRef } from "react"
 import Typed from "typed.js"
+import { Highlighter } from "./ui/highlighter"
 
 export default function CTA() {
     const typedRef = useRef(null);
@@ -36,7 +37,11 @@ export default function CTA() {
                 viewport={{ once: true }}
                 className="text-3xl text-white dark:text-black lg:text-5xl font-bold font-serif"
                 >
-                    Ready To {" "} <span ref={typedRef} className="dark:text-white text-black"/> {" "}?
+                    Ready To {" "} 
+                    <Highlighter action="underline" color="#008000">
+                    <span ref={typedRef} className="dark:text-white text-black"/> 
+                    </Highlighter>
+                    {" "}?
                 </motion.h2>
                 <motion.p
                 initial={{ opacity: 0, y: 30 }}
