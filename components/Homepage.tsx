@@ -67,7 +67,7 @@ export default function Hero() {
                     transition={{ duration: 1, delay: 0.6 }}
                     >
                         <Link href="/register"
-                        className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-green-700 transition"
+                        className="flex items-center gap-2 dark:bg-black bg-green-600 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-green-700 transition"
                         >
                             Get Started Now
                             <BiChevronRight className="w-5 h-5 "/>

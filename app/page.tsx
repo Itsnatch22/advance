@@ -4,6 +4,7 @@ import Needs from "@/components/Needs";
 import CTA from "@/components/CTA";
 import ProblemStatement from "@/components/ProblemStatement";
 import StatsCounter from "@/components/StatsCounter";
+import {Team} from "@/components/Team";
 
 export default function App() {
 
@@ -14,6 +15,7 @@ export default function App() {
       <Works/>
       <StatsCounter/>
       <Needs/>
+      <Team/>
       <CTA/>
   </div>
   )

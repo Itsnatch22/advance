@@ -195,7 +195,7 @@ export default function Footer() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
-        className="text-[80px] md:text-[160px] lg:flex font-black leading-none bg-gradient-to-r from-green-500 via-emerald-400 to-green-700 bg-clip-text text-transparent tracking-tight"
+        className="text-[80px] md:text-[160px] hidden lg:flex font-black leading-none bg-gradient-to-r from-green-500 via-emerald-400 to-green-700 bg-clip-text text-transparent tracking-tight"
       >
         EaziWage
       </motion.h1>

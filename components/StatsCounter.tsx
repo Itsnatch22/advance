@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import CountUp from "react-countup";
 
 export default function StatsCounter() {
@@ -9,6 +10,8 @@ export default function StatsCounter() {
     targeted_companies: 5,
     annual_advances: 558000000,
   };
+
+  const [inView,setInView] = useState(false);
 
   return (
     <motion.section
@@ -42,10 +45,17 @@ export default function StatsCounter() {
         key={i}
         whileHover={{ scale: 1.08 }}
         transition={{ type: "spring", stiffness: 150 }}
+        viewport={{ once: false, amount: 0.5 }}
+        onViewportEnter={() => setInView(true)}
+        onViewportLeave={() => setInView(false)}
         className="bg-white dark:bg-neutral-900 rounded-2xl py-10 shadow-sm border border-gray-100 dark:border-neutral-800"
       >
         <h3 className={`text-5xl font-bold ${item.color}`}>
-          <CountUp end={item.value} duration={3.5} />{item.suffix}
+          {inView ? (
+          <CountUp end={item.value} duration={3.5} />
+          ) : (
+            <span>0</span>
+          )}{item.suffix}
         </h3>
         <p className="text-gray-600 dark:text-gray-400 mt-3 text-lg font-medium">{item.label}</p>
       </motion.div>
