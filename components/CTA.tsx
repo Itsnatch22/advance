@@ -27,9 +27,10 @@ export default function CTA() {
     }, []);
     return(
         <section
-        className="py-20 bg-gradient-to-r from-green-500 via-green-400 to-green-600 relative"
+        className="py-20 bg-[url('/cta.jpg')] bg-cover bg-center relative"
         >
-            <div className="max-w-4xl mx-auto text-center text-white px-6">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-700/90 to-transparent"></div>
+            <div className="max-w-4xl mx-auto text-center text-white px-6 relative">
                 <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0}}
