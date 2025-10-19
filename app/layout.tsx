@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Toploader from "nextjs-toploader"
 import Noah from "@/components/Noah";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import TargetCursor from "@/components/TargetCursor";
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   weight: ["400", "500", "600", "700"],
@@ -39,6 +40,7 @@ export default function RootLayout({
         <ThemeProvider>
         <Navbar/>
         {children}
+        <TargetCursor spinDuration={2} hideDefaultCursor={true}/>
         <Noah/>
         <Footer/>
         </ThemeProvider>

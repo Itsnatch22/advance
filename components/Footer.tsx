@@ -8,6 +8,7 @@ import gsap from 'gsap';
 import { BiWallet, BiLocationPlus } from 'react-icons/bi';
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "framer-motion"
+import Locator from './Locator';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -199,7 +200,10 @@ export default function Footer() {
       >
         EaziWage
       </motion.h1>
+
+      
     </div>
+    <Locator/>
   </div>
 
   {/* Regulatory Strip */}
