@@ -1,7 +1,6 @@
 "use client"
 import { motion } from "framer-motion"
 import { ShieldCheck, Cpu, Users, Eye } from "lucide-react"
-import Image from "next/image"
 import gsap from "gsap"
 import * as React from "react"
 export default function AboutPage() {
