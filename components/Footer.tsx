@@ -175,7 +175,7 @@ export default function Footer() {
         <Link href="/privacy-policy.pdf" target="_blank" className="text-xs text-gray-400 hover:text-green-400">
           Privacy Policy
         </Link>
-        <Link href="/terms" className="text-xs text-gray-400 hover:text-green-400">
+        <Link href="/terms.pdf" target='_blank' className="text-xs text-gray-400 hover:text-green-400">
           Terms of Service
         </Link>
         <Link href="/cookies" className="text-xs text-gray-400 hover:text-green-400">
