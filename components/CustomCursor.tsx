@@ -54,8 +54,8 @@ export default function CursorWithClickEffect() {
     <>
       {/* Main cursor */}
       <div
-        className={`fixed top-0 left-0 w-4 h-4 bg-blue-500 rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 mix-blend-difference z-50 transition-all duration-75 ${
-          isPointer ? 'scale-150 bg-green-500' : 'scale-100'
+        className={`fixed top-0 left-0 w-4 h-4 bg-green-500 rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 mix-blend-difference z-50 transition-all duration-75 ${
+          isPointer ? 'scale-150 bg-green-600' : 'scale-100'
         }`}
         style={{
           left: `${position.x}px`,
@@ -65,7 +65,7 @@ export default function CursorWithClickEffect() {
       
       {/* Cursor trail */}
       <div
-        className="fixed top-0 left-0 w-6 h-6 border-2 border-blue-300 rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-150"
+        className="fixed top-0 left-0 w-6 h-6 border-2 border-green-300 rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-150"
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
