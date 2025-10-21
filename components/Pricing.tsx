@@ -25,7 +25,7 @@ const pricing = [
     },
     {
         icon: CogIcon,
-        title: "Admin Fee",
+        title: "3.5% Admin Fee",
         desc:  "Processing / administration fee",
     },
 ]
@@ -41,7 +41,7 @@ export default function Pricing () {
                     Fast. Fair. Fully Transparent.
                 </motion.h2>
 
-                <p className="mt-4 text-gray-600 dark:text-gray-300 text-lg">Access your wages anytime - the EaziWage way</p>
+                <p className="mt-4 text-gray-600 dark:text-gray-300 text-lg">It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan, and dream without waiting for payday.</p>
             
 
             <div className="mt-12 grid grid-cols-3 gap-6 place-items-center">
