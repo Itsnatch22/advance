@@ -27,7 +27,7 @@ export default function CursorWithClickEffect() {
     const handleClick = (e: MouseEvent) => {
       const clickEffect = document.createElement('div');
       clickEffect.className = `fixed w-8 h-8 border-4 ${
-        isPointer ? 'border-green-300' : 'border-blue-300'
+        isPointer ? 'border-green-300' : 'border-green-400'
       } rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 z-30 animate-ping`;
       clickEffect.style.left = `${e.clientX}px`;
       clickEffect.style.top = `${e.clientY}px`;

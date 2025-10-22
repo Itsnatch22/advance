@@ -13,7 +13,7 @@ const steps = [
     {
         icon: "/work/calculate.png",
         step: 2,
-        title: "Calculate Amount",
+        title: "Calculate Advance",
         description: "Access upto 60% of your net earnings. Our platform automatically calculates what you're eligible for.",
     },
     {

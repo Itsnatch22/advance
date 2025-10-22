@@ -25,7 +25,7 @@ const pricing = [
     },
     {
         icon: CogIcon,
-        title: "3.5% Admin Fee",
+        title: "5% Admin Fee",
         desc:  "Processing / administration fee",
     },
 ]
