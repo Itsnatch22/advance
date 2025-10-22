@@ -3,6 +3,7 @@ import { motion } from "framer-motion"
 import { ShieldCheck, Cpu, Users, Eye } from "lucide-react"
 import gsap from "gsap"
 import * as React from "react"
+import { Team } from "@/components/Team"
 export default function AboutPage() {
     const storyRef = React.useRef<HTMLDivElement>(null);
     const valuesRef = React.useRef<HTMLDivElement>(null);
@@ -59,7 +60,7 @@ export default function AboutPage() {
     >
       <h2 className="text-3xl font-bold text-green-700 dark:text-emerald-400 mb-4 font-serif">Our Vision</h2>
       <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
-        To be Africa’s most trusted workplace finance partner — fostering financial wellness through innovation,
+        To be Africa&apos;s most trusted workplace finance partner — fostering financial wellness through innovation,
         transparency, and secure technology.
       </p>
     </motion.div>
@@ -107,6 +108,9 @@ export default function AboutPage() {
       ))}
     </div>
   </section>
+
+  
+      <Team/>
 
   {/* ===== CTA ===== */}
   <section className="relative overflow-hidden bg-gradient-to-br from-green-700 to-emerald-500 dark:from-emerald-500 dark:to-green-700 text-white py-20 text-center">

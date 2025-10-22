@@ -98,10 +98,19 @@ const Calculator = () => {
   }, [workedDays, cycleDays]);
 
   return (
+<<<<<<< HEAD
     <div className="bg-white rounded-2xl shadow-2xl p-6 border border-green-100 max-w-lg mx-auto mt-6">
       <h2 className="text-2xl font-extrabold mb-4 text-gray-900">
         Wage Access Calculator 🇰🇪
       </h2>
+=======
+    <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 dark:bg-green-500 bg-green-200 min-h-screen rounded-2xl p-4 lg:p-8">
+      <div className="lg:col-span-8 p-4 lg:p-8">
+        <h2 className="text-4xl font-bold font-seri dark:text-black">Wage Calculator</h2>
+        <p className="mt-8 text-black text-lg">
+          Estimate your wages and earned pay advances based on your inputs.
+        </p>
+>>>>>>> cdcbdc86c9a92e9a9899fec6597cc3ba4479d12b
 
       {/* INPUTS */}
       <div className="grid gap-3">

@@ -31,7 +31,7 @@ export default function StatsCounter() {
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.6 }}
   >
-    Our Growth <span className="text-green-600 dark:text-emerald-400">Targets</span>
+    Connecting Africa <span className="text-green-600 dark:text-emerald-400">To Fair & Timely Pay</span>
   </motion.h2>
 
   {/* === Stats Grid === */}

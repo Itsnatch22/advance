@@ -175,7 +175,7 @@ export default function Footer() {
         <Link href="/privacy-policy.pdf" target="_blank" className="text-xs text-gray-400 hover:text-green-400">
           Privacy Policy
         </Link>
-        <Link href="/terms" className="text-xs text-gray-400 hover:text-green-400">
+        <Link href="/terms.pdf" target='_blank' className="text-xs text-gray-400 hover:text-green-400">
           Terms of Service
         </Link>
         <Link href="/cookies" className="text-xs text-gray-400 hover:text-green-400">
@@ -187,21 +187,6 @@ export default function Footer() {
       </div>
 
       <p className="text-xs text-gray-500 mt-4 md:mt-0">&copy; {currentYear} EaziWage. All Rights Reserved</p>
-    </div>
-
-    {/* Brand Display */}
-    <div className="w-full flex justify-center mt-16 md:mt-20">
-      <motion.h1
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="text-[80px] md:text-[160px] hidden lg:flex font-black leading-none bg-gradient-to-r from-green-500 via-emerald-400 to-green-700 bg-clip-text text-transparent tracking-tight"
-      >
-        EaziWage
-      </motion.h1>
-
-      
     </div>
     <Locator/>
   </div>

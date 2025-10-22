@@ -27,7 +27,7 @@ export default function CursorWithClickEffect() {
     const handleClick = (e: MouseEvent) => {
       const clickEffect = document.createElement('div');
       clickEffect.className = `fixed w-8 h-8 border-4 ${
-        isPointer ? 'border-green-300' : 'border-blue-300'
+        isPointer ? 'border-green-300' : 'border-green-400'
       } rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 z-30 animate-ping`;
       clickEffect.style.left = `${e.clientX}px`;
       clickEffect.style.top = `${e.clientY}px`;
@@ -54,8 +54,8 @@ export default function CursorWithClickEffect() {
     <>
       {/* Main cursor */}
       <div
-        className={`fixed top-0 left-0 w-4 h-4 bg-blue-500 rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 mix-blend-difference z-50 transition-all duration-75 ${
-          isPointer ? 'scale-150 bg-green-500' : 'scale-100'
+        className={`fixed top-0 left-0 w-4 h-4 bg-green-500 rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 mix-blend-difference z-50 transition-all duration-75 ${
+          isPointer ? 'scale-150 bg-green-600' : 'scale-100'
         }`}
         style={{
           left: `${position.x}px`,
@@ -65,7 +65,7 @@ export default function CursorWithClickEffect() {
       
       {/* Cursor trail */}
       <div
-        className="fixed top-0 left-0 w-6 h-6 border-2 border-blue-300 rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-150"
+        className="fixed top-0 left-0 w-6 h-6 border-2 border-green-300 rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-150"
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
