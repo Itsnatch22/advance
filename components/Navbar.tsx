@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { BiWallet, BiChevronDown, BiMenu, BiX } from "react-icons/bi";
@@ -9,6 +9,32 @@ import { Calculator } from "lucide-react";
 const Navbar = () => {
   const [openDrawer, setOpenDrawer] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // 🔥 Scroll detector
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // 🔥 Click outside to close drawer (desktop)
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".nav-link-with-drawer")) {
+        setOpenDrawer(null);
+      }
+    };
+    if (openDrawer !== null) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [openDrawer]);
 
   const links = [
     { name: "Home", href: "/" },
@@ -58,10 +84,19 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="w-full fixed top-0 left-0 z-50 bg-white dark:bg-black shadow">
+    <nav
+      className={`w-full fixed top-0 left-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/90 dark:bg-black/90 backdrop-blur-lg shadow"
+          : "bg-transparent"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-green-700">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-2xl font-bold text-green-700"
+        >
           <BiWallet className="text-black dark:text-white" />
           EaziWage
         </Link>
@@ -69,18 +104,18 @@ const Navbar = () => {
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-8">
           {links.map((link, i) => (
-            <div key={i} className="relative">
-              {/* Clickable main link */}
-              <Link
-                href={link.href}
-                onClick={() => setOpenDrawer(openDrawer === i ? null : i)}
+            <div key={i} className="relative nav-link-with-drawer">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent window click from closing immediately
+                  setOpenDrawer(openDrawer === i ? null : i);
+                }}
                 className="flex items-center gap-1 font-medium text-gray-700 dark:text-white hover:text-green-600 transition"
               >
                 {link.name}
                 {link.drawer && <BiChevronDown className="w-4 h-4" />}
-              </Link>
+              </button>
 
-              {/* Fancy Dropdown Drawer */}
               <AnimatePresence>
                 {openDrawer === i && link.drawer && (
                   <motion.div
@@ -100,8 +135,12 @@ const Navbar = () => {
                         >
                           <div className="mt-1">{item.icon}</div>
                           <div>
-                            <h4 className="font-semibold text-gray-800 dark:text-white">{item.title}</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{item.desc}</p>
+                            <h4 className="font-semibold text-gray-800 dark:text-white">
+                              {item.title}
+                            </h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {item.desc}
+                            </p>
                           </div>
                         </Link>
                       ))}
@@ -151,12 +190,21 @@ const Navbar = () => {
             {links.map((link, i) => (
               <div key={i} className="flex flex-col gap-2">
                 <button
-                  onClick={() => setOpenDrawer(openDrawer === i ? null : i)}
+                  onClick={() =>
+                    setOpenDrawer(openDrawer === i ? null : i)
+                  }
                   className="font-medium text-gray-700 dark:text-white flex items-center justify-between"
                 >
                   {link.name}
-                  {link.drawer && <BiChevronDown className={`transition ${openDrawer === i ? "rotate-180" : ""}`} />}
+                  {link.drawer && (
+                    <BiChevronDown
+                      className={`transition ${
+                        openDrawer === i ? "rotate-180" : ""
+                      }`}
+                    />
+                  )}
                 </button>
+
                 <AnimatePresence>
                   {openDrawer === i && link.drawer && (
                     <motion.div
