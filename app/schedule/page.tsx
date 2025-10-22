@@ -153,11 +153,11 @@ export default function SchedulePage() {
                     onClick={() => setSelectedMeeting(m)}
                     className={`w-full text-left p-3 rounded-lg border transition-all flex items-center justify-between hover:shadow ${
                       selectedMeeting?.id === m.id
-                        ? "bg-green-50 border-green-500/60"
+                        ? "bg-transparent border-green-500/60"
                         : "bg-white dark:bg-neutral-900"
                     }`}
                   >
-                    <div>
+                    <div className="text-black dark:text-white">
                       <div className="font-medium">{m.title}</div>
                       <div className="text-xs opacity-70">
                         {m.durationMinutes} mins • {m.description}
@@ -203,7 +203,7 @@ export default function SchedulePage() {
                       className={`p-2 rounded-md border text-sm text-left transition-all ${
                         selectedSlot === s.iso
                           ? "bg-green-600 text-white"
-                          : "bg-white hover:bg-green-50"
+                          : "bg-transparent hover:bg-transparent hover:border-green-500"
                       }`}
                     >
                       <div className="font-medium">{s.label}</div>
