@@ -1,163 +1,186 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-
-/**
- * page.tsx
- * A Next.js (app router) client page component that helps users pick a meeting type,
- * select a date + time slot, and open the corresponding Calendly scheduling page.
- *
- * How to use:
- * 1. Replace the `CALENDLY_LINK` fields in `MEETING_TYPES` with your Calendly event types.
- *    e.g. https://calendly.com/your-org/30min-consult
- * 2. Drop this file into /app/schedule/page.tsx
- * 3. Tailwind CSS required (this uses Tailwind utility classes)
- *
- * Notes:
- * - This intentionally keeps interactions simple and reliable: we open the Calendly page in a new tab
- *   and prefill `name` & `email` query params (Calendly supports these prefill keys on scheduling pages).
- * - If you want Calendly's inline popup widget instead, swap the `openCalendly` method with Calendly's
- *   popup widget JS (Calendly.initPopupWidget). Keep in mind that using that requires loading Calendly's script.
- */
+import { motion } from "framer-motion";
+import { CalendarDays } from "lucide-react";
 
 type MeetingType = {
   id: string;
   title: string;
   description?: string;
   durationMinutes: number;
-  calendlyUrl: string; // full Calendly scheduling page url for this meeting type
+  calendlyUrlUser: string; // when user books EaziWage
+  calendlyUrlAdmin: string; // when EaziWage books user
 };
 
 const MEETING_TYPES: MeetingType[] = [
   {
     id: "quick-15",
-    title: "Quick 15 — Intro call",
-    description: "Fast intro, quick questions, rapid decisions.",
+    title: "Quick 15 — Intro Call",
+    description: "A short sync for introductions or quick updates.",
     durationMinutes: 15,
-    calendlyUrl: "https://calendly.com/your-org/15min", // << REPLACE THIS
+    calendlyUrlUser: "https://calendly.com/your-org/15min",
+    calendlyUrlAdmin: "https://calendly.com/your-team/15min",
   },
   {
     id: "deep-30",
-    title: "Deep 30 — Problem solving",
-    description: "30 minutes for a technical deep-dive or planning.",
+    title: "Deep 30 — Problem Solving",
+    description: "30 minutes for technical or product deep dives.",
     durationMinutes: 30,
-    calendlyUrl: "https://calendly.com/your-org/30min", // << REPLACE THIS
+    calendlyUrlUser: "https://calendly.com/your-org/30min",
+    calendlyUrlAdmin: "https://calendly.com/your-team/30min",
   },
   {
     id: "strategy-60",
-    title: "Strategy 60 — Roadmap & follow-ups",
-    description: "Longer planning session, deliverables and next steps.",
+    title: "Strategy 60 — Roadmap & Planning",
+    description: "An hour for roadmap reviews, strategy, and follow-ups.",
     durationMinutes: 60,
-    calendlyUrl: "https://calendly.com/your-org/60min", // << REPLACE THIS
+    calendlyUrlUser: "https://calendly.com/your-org/60min",
+    calendlyUrlAdmin: "https://calendly.com/your-team/60min",
   },
 ];
 
-const BUSINESS_START = 9; // local hour (9am)
-const BUSINESS_END = 17; // local hour (5pm)
-const SLOT_STEP_MINUTES = 30; // generate half-hour slots
+const BUSINESS_START = 9;
+const BUSINESS_END = 17;
+const SLOT_STEP_MINUTES = 30;
 
 export default function SchedulePage() {
-  const timezone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC", []);
+  const timezone = useMemo(
+    () => Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+    []
+  );
 
-  const [selectedMeeting, setSelectedMeeting] = useState<MeetingType | null>(MEETING_TYPES[0]);
+  const [mode, setMode] = useState<"user-books" | "admin-books">("user-books");
+  const [selectedMeeting, setSelectedMeeting] = useState<MeetingType | null>(
+    MEETING_TYPES[0]
+  );
   const [selectedDate, setSelectedDate] = useState<string>(getISODate(new Date()));
   const [selectedSlot, setSelectedSlot] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 
   const slots = useMemo(() => {
-    // generate slots for selectedDate in local timezone
     const day = selectedDate ? new Date(selectedDate + "T00:00:00") : new Date();
     return generateSlotsForDay(day, BUSINESS_START, BUSINESS_END, SLOT_STEP_MINUTES);
   }, [selectedDate]);
 
-  function handlePickSlot(slotIso: string) {
-    setSelectedSlot(slotIso);
-  }
+  const handlePickSlot = (slotIso: string) => setSelectedSlot(slotIso);
 
   function openCalendly() {
     if (!selectedMeeting) return;
 
-    // Build calendly URL with some prefill query params (name, email). Calendly supports these keys on scheduling pages.
-    // NOTE: Calendly's query param support is stable for `name` and `email`. If you need to preselect a date/time
-    // using Calendly API, consider using their widget API or passing `date` params where supported.
-    const url = new URL(selectedMeeting.calendlyUrl);
+    const url = new URL(
+      mode === "user-books"
+        ? selectedMeeting.calendlyUrlUser
+        : selectedMeeting.calendlyUrlAdmin
+    );
     if (name) url.searchParams.set("name", name);
     if (email) url.searchParams.set("email", email);
-
-    // If user selected a slot, also attach a `source` param that you can use in Calendly to identify the slot (optional)
     if (selectedSlot) url.searchParams.set("source_slot", selectedSlot);
 
-    // Open in new tab
-    window.open(url.toString(), "_blank", "noopener,noreferrer");
-  }
-
-  function quickOpen(meeting: MeetingType) {
-    setSelectedMeeting(meeting);
-    // open immediately without picking slot
-    const url = new URL(meeting.calendlyUrl);
-    if (name) url.searchParams.set("name", name);
-    if (email) url.searchParams.set("email", email);
     window.open(url.toString(), "_blank", "noopener,noreferrer");
   }
 
   return (
-    <main className="p-6 max-w-4xl mx-auto">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold">Schedule a meeting</h1>
-        <p className="text-sm opacity-80 mt-1">Timezone detected: <strong>{timezone}</strong></p>
+    <main className="p-6 max-w-5xl mx-auto relative">
+      <header className="mb-6 text-center">
+        <motion.h1
+          className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          Schedule a Meeting
+        </motion.h1>
+        <p className="text-sm opacity-80 mt-1">
+          Detected timezone: <strong>{timezone}</strong>
+        </p>
+
+        <div className="flex justify-center mt-4">
+          <div className="flex items-center gap-3 rounded-full border border-green-600/40 px-3 py-2 bg-white/5 backdrop-blur-md">
+            <button
+              onClick={() => setMode("user-books")}
+              className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                mode === "user-books"
+                  ? "bg-green-600 text-white"
+                  : "text-gray-500 hover:text-green-500"
+              }`}
+            >
+              User → EaziWage
+            </button>
+            <button
+              onClick={() => setMode("admin-books")}
+              className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                mode === "admin-books"
+                  ? "bg-green-600 text-white"
+                  : "text-gray-500 hover:text-green-500"
+              }`}
+            >
+              EaziWage → User
+            </button>
+          </div>
+        </div>
       </header>
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Sidebar */}
         <aside className="md:col-span-1">
           <div className="space-y-4">
-            <div className="p-4 rounded-2xl shadow-sm border">
-              <h2 className="font-semibold">Your details</h2>
-              <p className="text-xs opacity-70 mb-2">Prefill your name & email to speed up Calendly.</p>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="w-full p-2 rounded-md border mt-2" />
-              <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@work.com" className="w-full p-2 rounded-md border mt-2" />
+            <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20 shadow-[0_0_15px_rgba(22,163,74,0.15)]">
+              <h2 className="font-semibold flex items-center gap-2">
+                <CalendarDays className="w-4 h-4 text-green-600" /> Your Details
+              </h2>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                className="w-full p-2 rounded-md border border-gray-200 mt-3"
+              />
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@work.com"
+                className="w-full p-2 rounded-md border border-gray-200 mt-2"
+              />
             </div>
 
-            <div className="p-4 rounded-2xl shadow-sm border">
-              <h2 className="font-semibold">Meeting types</h2>
+            <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20">
+              <h2 className="font-semibold">Meeting Types</h2>
               <div className="mt-3 space-y-3">
                 {MEETING_TYPES.map((m) => (
                   <button
                     key={m.id}
                     onClick={() => setSelectedMeeting(m)}
-                    className={`w-full text-left p-3 rounded-lg border flex items-center justify-between hover:shadow ${selectedMeeting?.id === m.id ? "bg-slate-50 border-slate-300" : "bg-white"}`}
+                    className={`w-full text-left p-3 rounded-lg border transition-all flex items-center justify-between hover:shadow ${
+                      selectedMeeting?.id === m.id
+                        ? "bg-green-50 border-green-500/60"
+                        : "bg-white dark:bg-neutral-900"
+                    }`}
                   >
                     <div>
                       <div className="font-medium">{m.title}</div>
-                      <div className="text-xs opacity-70">{m.durationMinutes} mins • {m.description}</div>
+                      <div className="text-xs opacity-70">
+                        {m.durationMinutes} mins • {m.description}
+                      </div>
                     </div>
-                    <div className="text-xs opacity-60">Book</div>
+                    <div className="text-xs opacity-60">Select</div>
                   </button>
                 ))}
               </div>
-
-              <div className="mt-4 flex gap-2">
-                <button onClick={() => quickOpen(MEETING_TYPES[0])} className="px-3 py-2 rounded bg-indigo-600 text-white text-sm">Quick book (15m)</button>
-                <button onClick={() => quickOpen(MEETING_TYPES[1])} className="px-3 py-2 rounded border text-sm">Open Calendly</button>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl shadow-sm border text-xs opacity-80">
-              Pro tip: If you want an inline Calendly popup instead of opening a new tab, add Calendly's widget script
-              and swap the open function to use Calendly.initPopupWidget.
             </div>
           </div>
         </aside>
 
+        {/* Right Panel */}
         <div className="md:col-span-2">
-          <div className="p-4 rounded-2xl border shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold">{selectedMeeting?.title}</h3>
-                <p className="text-sm opacity-70">{selectedMeeting?.description}</p>
-              </div>
-              <div className="text-sm opacity-70">Duration: {selectedMeeting?.durationMinutes} mins</div>
-            </div>
+          <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20 shadow-sm">
+            <h3 className="text-lg font-semibold">
+              {selectedMeeting?.title}
+            </h3>
+            <p className="text-sm opacity-70">{selectedMeeting?.description}</p>
+            <p className="text-xs opacity-60 mt-1">
+              Duration: {selectedMeeting?.durationMinutes} mins
+            </p>
 
             <div className="mt-4">
               <label className="block text-xs opacity-80">Pick a date</label>
@@ -169,14 +192,19 @@ export default function SchedulePage() {
               />
 
               <div className="mt-4">
-                <label className="block text-xs opacity-80">Available slots</label>
+                <label className="block text-xs opacity-80">
+                  Available Slots
+                </label>
                 <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {slots.length === 0 && <div className="text-sm opacity-70">No slots for this date.</div>}
                   {slots.map((s) => (
                     <button
                       key={s.iso}
                       onClick={() => handlePickSlot(s.iso)}
-                      className={`p-2 rounded-md border text-sm text-left ${selectedSlot === s.iso ? "bg-indigo-600 text-white" : "bg-white"}`}
+                      className={`p-2 rounded-md border text-sm text-left transition-all ${
+                        selectedSlot === s.iso
+                          ? "bg-green-600 text-white"
+                          : "bg-white hover:bg-green-50"
+                      }`}
                     >
                       <div className="font-medium">{s.label}</div>
                       <div className="text-xs opacity-60">{s.localLabel}</div>
@@ -186,23 +214,39 @@ export default function SchedulePage() {
               </div>
 
               <div className="mt-6 flex gap-3 items-center">
-                <button onClick={openCalendly} className="px-4 py-2 rounded bg-green-600 text-white font-medium">Schedule on Calendly</button>
-                <button onClick={() => { setSelectedSlot(""); setName(""); setEmail(""); }} className="px-3 py-2 rounded border text-sm">Reset</button>
-                <div className="text-xs opacity-70">We will open Calendly in a new tab with your details prefilled.</div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={openCalendly}
+                  className="px-4 py-2 rounded-xl bg-green-600 text-white font-medium shadow-[0_0_15px_rgba(22,163,74,0.4)] hover:shadow-[0_0_25px_rgba(22,163,74,0.6)] transition-all"
+                >
+                  Schedule via Calendly
+                </motion.button>
+
+                <button
+                  onClick={() => {
+                    setSelectedSlot("");
+                    setName("");
+                    setEmail("");
+                  }}
+                  className="px-3 py-2 rounded-lg border text-sm hover:bg-neutral-100"
+                >
+                  Reset
+                </button>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-      <footer className="mt-6 text-xs opacity-70 text-center">Made with ❤️ — swap the Calendly URLs with your event types and you're good to go.</footer>
+      <footer className="mt-8 text-xs opacity-60 text-center">
+        Made with 💚 by EaziWage — integrate your own Calendly URLs to go live.
+      </footer>
     </main>
   );
 }
 
-/** Helpers **/
-
+/* ---------------- Helpers ---------------- */
 function getISODate(d: Date) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
