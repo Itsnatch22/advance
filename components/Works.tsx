@@ -26,7 +26,7 @@ const steps = [
         icon: "/work/repayment.png",
         step: 4,
         title: "Automatic Repayments",
-        description: "The amount is automatically deducted when your salary is processed. No manual repayments required.",
+        description: "The advance is automatically deducted when your salary is processed. No manual repayments required.",
     },
 ];
 

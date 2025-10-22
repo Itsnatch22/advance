@@ -83,7 +83,7 @@ export default function SchedulePage() {
 
   return (
     <main className="p-6 max-w-5xl mx-auto relative">
-      <header className="mb-6 text-center">
+      <header className="mb-6 mt-15 text-center">
         <motion.h1
           className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent"
           initial={{ opacity: 0, y: 15 }}

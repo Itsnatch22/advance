@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { BiWallet, BiChevronDown, BiMenu, BiX } from "react-icons/bi";
@@ -9,32 +9,19 @@ import { Calculator } from "lucide-react";
 const Navbar = () => {
   const [openDrawer, setOpenDrawer] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const navRef = useRef<HTMLDivElement>(null);
 
-  // 🔥 Scroll detector
+  // ✅ Close dropdown when clicking outside
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // 🔥 Click outside to close drawer (desktop)
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest(".nav-link-with-drawer")) {
+    function handleClickOutside(e: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
         setOpenDrawer(null);
       }
-    };
-    if (openDrawer !== null) {
-      document.addEventListener("click", handleClickOutside);
-    } else {
-      document.removeEventListener("click", handleClickOutside);
     }
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [openDrawer]);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const links = [
     { name: "Home", href: "/" },
@@ -76,7 +63,7 @@ const Navbar = () => {
         {
           title: "Calculator",
           icon: <Calculator className="text-green-600 w-5 h-5" />,
-          desc: "Get to see how you can access an advance using our calculator",
+          desc: "See how you can access an advance using our calculator.",
           href: "/calculator",
         },
       ],
@@ -85,11 +72,8 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`w-full fixed top-0 left-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/90 dark:bg-black/90 backdrop-blur-lg shadow"
-          : "bg-transparent"
-      }`}
+      ref={navRef}
+      className="w-full fixed top-0 left-0 z-50 bg-white dark:bg-black shadow"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16">
         {/* Logo */}
@@ -104,18 +88,20 @@ const Navbar = () => {
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-8">
           {links.map((link, i) => (
-            <div key={i} className="relative nav-link-with-drawer">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // prevent window click from closing immediately
-                  setOpenDrawer(openDrawer === i ? null : i);
-                }}
+            <div key={i} className="relative">
+              {/* Clickable main link */}
+              <Link
+              href={link.href}
+                onClick={() =>
+                  setOpenDrawer(openDrawer === i ? null : i)
+                }
                 className="flex items-center gap-1 font-medium text-gray-700 dark:text-white hover:text-green-600 transition"
               >
                 {link.name}
                 {link.drawer && <BiChevronDown className="w-4 h-4" />}
-              </button>
+              </Link>
 
+              {/* Fancy Dropdown Drawer */}
               <AnimatePresence>
                 {openDrawer === i && link.drawer && (
                   <motion.div
@@ -173,11 +159,15 @@ const Navbar = () => {
           className="lg:hidden text-gray-700 dark:text-white"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
-          {mobileOpen ? <BiX className="w-6 h-6" /> : <BiMenu className="w-6 h-6" />}
+          {mobileOpen ? (
+            <BiX className="w-6 h-6" />
+          ) : (
+            <BiMenu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (unchanged) */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -204,7 +194,6 @@ const Navbar = () => {
                     />
                   )}
                 </button>
-
                 <AnimatePresence>
                   {openDrawer === i && link.drawer && (
                     <motion.div
