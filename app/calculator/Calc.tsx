@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 
+//@typescript-eslint
 const fmt = (n: number) =>
   new Intl.NumberFormat("en-KE", { maximumFractionDigits: 0 }).format(
     Math.round(n)
@@ -18,7 +19,21 @@ export default function Calculator(){
   const [advanced, setAdvanced] = useState<number | "">(0);
   const [flatFee, setFlatFee] = useState<number | "">(0);
   const [feePercent, setFeePercent] = useState<number | "">(2);
-  const [result, setResult] = useState<any>(null);
+  type Result = {
+    accruedGross: number;
+    netMonthly: number;
+    accessCap: number;
+    platformFee: number;
+    accessibleNow: number;
+    deductions: {
+      NSSF: number;
+      NHIF: number;
+      Housing: number;
+      Total: number;
+    };
+  } | null;
+
+  const [result, setResult] = useState<Result>(null);
 
   // Auto-calc worked days
   useEffect(() => {
@@ -35,7 +50,8 @@ export default function Calculator(){
   }, [startDate, asOfDate, cycleDays]);
 
   // Deductions
-  const calculateDeductions = (gross: number) => {
+  type Deductions = { NSSF: number; NHIF: number; Housing: number; Total: number };
+  const calculateDeductions = (gross: number): Deductions => {
     const NSSF = Math.min(gross * 0.06, 2160);
     let NHIF = 0;
     if (gross <= 5999) NHIF = 150;
