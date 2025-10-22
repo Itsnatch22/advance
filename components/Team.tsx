@@ -30,25 +30,25 @@ const testimonials = [
    {
     quote:
       "Building this one was a process, but am glad we finally got to establish it. Eaziwage is here to change our perspectives on how payroll systems work. Trust is the new currency and advance payment is how it's earned.",
-    name: "Mark M😎.",
+    name: "Mark M.",
     title: "Co-Founder & Lead Dev",
   },
   {
     quote:
       "We are building more than just a payment platform we are creating a bridge of trust. One that supports growth, accelerates timelines, reduces cancellations, and brings professionalism to every transaction.",
-    name: "Joel O✌",
+    name: "Joel O",
     title: "Co-Founder & Backend Dev",
   },
   {
     quote:
-      "At EaziWage, we're not just streamlining payments—we're empowering connections, fostering trust, and driving success by making every transaction seamless, engaging, and impactful.",
-    name: "Henry K😁.",
+      "At EaziWage, we're not just streamlining payments we're empowering connections, fostering trust, and driving success by making every transaction seamless, engaging, and impactful.",
+    name: "Henry K.",
     title: "Co-Founder & CMO",
   },
   {
     quote:
-      "As a business owner, I witnessed the stress financial delays can bring to good people. We built EaziWage to create a bridge between effort and reward — so that paydays reflect the rhythm of real life, not the limits of outdated systems.",
-    name: "Jason C😮‍💨.",
+      "As a business owner, I witnessed the stress financial delays can bring to good people. We built EaziWage to create a bridge between effort and reward so that paydays reflect the rhythm of real life, not the limits of outdated systems.",
+    name: "Jason C.",
     title: "Co-Founder & CEO",
   },
 ];

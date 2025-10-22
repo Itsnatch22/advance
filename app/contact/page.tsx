@@ -88,7 +88,7 @@ export default function ContactPage() {
         </motion.div>
       </div>
 
-       
+      
     </div>
   );
 }
