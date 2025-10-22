@@ -1,73 +1,66 @@
-"use client"
-import { motion } from "framer-motion"
-import Image from "next/image"
-import Calc from "./Calc"
+"use client";
+import React from "react";
+import Image from "next/image";
+import Calculator from "./Calc";
 
-export default function Calculator() {
-    return(
-        <section className="bg-gray-50 dark:bg-black py-20 w-full px-6 ">
-            <Calc />
-            
-            <div className="relative mx-auto max-w-6xl px-6 grid lg:grid-cols-2 grid-cols-1 gap-12 mt-10">
-  {/* Left Side Text */}
-  <motion.div
-    initial={{ opacity: 0, x: -50 }}
-    whileInView={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.8, ease: "easeOut" }}
-    viewport={{ once: true, amount: 0.2 }}
-  >
-    <p className="uppercase tracking-widest text-green-600 font-semibold mb-3">
-      Smart Salary Insights
-    </p>
+export default function CalculatorPage() {
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 flex flex-col items-center py-10 sm:py-14 px-6 transition-colors duration-300">
+      <div className="max-w-7xl w-full flex flex-col-reverse lg:flex-row justify-between items-center gap-12 sm:gap-16 lg:gap-10">
+        
+        {/* Left Side — Text + Image (now below calculator on mobile) */}
+        <div className="flex flex-col lg:flex-row items-center lg:items-start w-full lg:w-2/3 gap-8 lg:gap-12">
+          
+          {/* Image — slightly smaller for mobile + aligned for balance */}
+          <div className="relative flex-shrink-0 w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 lg:w-[260px] lg:h-[260px] flex justify-center lg:justify-start">
+            <Image
+              src="/calc.png"
+              alt="EaziWage Calculator Illustration"
+              fill
+              className="object-contain rounded-2xl drop-shadow-md lg:drop-shadow-lg"
+              priority
+            />
+          </div>
 
-    <h2 className="leading-tight text-gray-800 dark:text-white text-4xl md:text-5xl font-bold mb-6 font-serif">
-      <span className="bg-gradient-to-r from-green-700 to-gray-700 bg-clip-text text-transparent">
-        Precision Wage.
-      </span>{" "}
-      Effortless Compliance.
-    </h2>
+          {/* Text Content — tighter spacing on mobile */}
+          <div className="space-y-4 sm:space-y-5 flex-1 text-center lg:text-left">
+            <p className="text-green-600 dark:text-green-400 font-semibold uppercase tracking-widest text-xs sm:text-sm">
+              Smart Salary Insights
+            </p>
 
-    <p className="text-gray-600 leading-relaxed text-lg dark:text-gray-300">
-      The <span className="text-green-600 font-medium">EaziWage Access Calculator</span> helps employees
-      understand their potential eligibility and accessible portion of earned wages before payday.
-      It provides clarity, flexibility, and transparency—giving you the confidence to plan ahead.
-    </p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-gray-100 leading-snug">
+              Precision Wage. <br className="hidden sm:block" />
+              <span className="text-green-700 dark:text-green-500">
+                Effortless Compliance.
+              </span>
+            </h1>
 
-    <div className="mt-6 border-l-4 border-green-500 pl-4 bg-green-50/40 dark:bg-green-900/20 rounded-md">
-      <p className="text-gray-700 dark:text-white text-sm leading-relaxed italic">
-        *The calculated figure is an estimate provided for informational purposes only. Final wage amounts depend on payroll verification, deductions, and company policies.*
-      </p>
-    </div>
+            <p className="text-gray-700 dark:text-gray-300 max-w-lg mx-auto lg:mx-0 leading-relaxed text-base sm:text-lg">
+              The{" "}
+              <span className="text-green-600 dark:text-green-400 font-semibold">
+                EaziWage Access Calculator
+              </span>{" "}
+              helps employees estimate their accessible portion of earned wages
+              before payday. It’s clarity and confidence — simplified.
+            </p>
 
-    <p className="text-gray-600 leading-relaxed text-lg mt-6 dark:text-gray-400 italic">
-      Precision builds trust. Trust drives growth.
-    </p>
-  </motion.div>
+            <div className="border-l-4 border-green-500 dark:border-green-600 pl-3 text-gray-600 dark:text-gray-400 italic text-sm max-w-md mx-auto lg:mx-0 bg-green-50/50 dark:bg-green-900/20 rounded-md py-2">
+              *The calculated figure is an estimate for informational purposes only. Actual amounts depend on payroll verification.
+            </div>
 
-  {/* Right Side Image */}
-  <motion.div
-    initial={{ opacity: 0, x: 50 }}
-    whileInView={{ opacity: 1, x: 0 }}
-    viewport={{ once: true, amount: 0.2 }}
-    className="relative flex justify-center"
-    animate={{ y: [0, -8, 0] }}
-    transition={{
-      opacity: { duration: 0.8, ease: "easeOut" },
-      x: { duration: 0.8, ease: "easeOut" },
-      y: { repeat: Infinity, duration: 4, ease: "easeInOut" }
-    }}
-  >
-    <div className="absolute w-[400px] h-[400px] bg-green-500/10 rounded-full blur-3xl top-12"></div>
-    <Image
-      src="/calc.png"
-      alt="Calculator Illustration"
-      width={500}
-      height={400}
-      className="object-contain drop-shadow-xl relative z-10"
-    />
-  </motion.div>
-</div>
+            <p className="text-gray-700 dark:text-gray-300 font-medium mt-2 text-sm sm:text-base">
+              Precision builds trust. Trust drives growth.
+            </p>
+          </div>
+        </div>
 
-        </section>
-    )
+        {/* Right Side — Calculator (shows on top for mobile) */}
+        <div className="flex justify-center w-full lg:w-1/3 order-first lg:order-none">
+          <div className="bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl border border-green-100 dark:border-green-800 shadow-2xl shadow-green-200/50 dark:shadow-green-900/30 rounded-3xl p-6 md:p-8 w-full max-w-sm hover:scale-[1.01] transition-transform duration-300">
+            <Calculator />
+          </div>
+        </div>
+      </div>
+    </main>
+  );
 }
