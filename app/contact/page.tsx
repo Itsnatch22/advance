@@ -32,7 +32,7 @@ export default function ContactPage() {
           <div className="mt-8 space-y-4">
             <div className="flex items-center space-x-3">
               <FiMail className="text-green-200 dark:text-black text-xl" />
-              <span>support@eaziwage.com</span>
+              <span>kaziadvance8@gmail.com</span>
             </div>
             <div className="flex items-center space-x-3">
               <FiPhone className="text-green-200 dark:text-black text-xl" />

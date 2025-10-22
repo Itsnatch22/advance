@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 
-//@typescript-eslint
+// Format numbers (KES style)
 const fmt = (n: number) =>
   new Intl.NumberFormat("en-KE", { maximumFractionDigits: 0 }).format(
     Math.round(n)
   );
 
-export default function Calculator(){
+export default function Calculator() {
   const [salary, setSalary] = useState<number | "">("");
   const [cycleDays, setCycleDays] = useState<number | "">(30);
   const [startDate, setStartDate] = useState<string>("");
@@ -19,6 +19,7 @@ export default function Calculator(){
   const [advanced, setAdvanced] = useState<number | "">(0);
   const [flatFee, setFlatFee] = useState<number | "">(0);
   const [feePercent, setFeePercent] = useState<number | "">(2);
+
   type Result = {
     accruedGross: number;
     netMonthly: number;
@@ -27,7 +28,7 @@ export default function Calculator(){
     accessibleNow: number;
     deductions: {
       NSSF: number;
-      NHIF: number;
+      SHIF: number;
       Housing: number;
       Total: number;
     };
@@ -49,31 +50,14 @@ export default function Calculator(){
     setWorkedDays(rawDays > cap ? cap : rawDays);
   }, [startDate, asOfDate, cycleDays]);
 
-  // Deductions
-  type Deductions = { NSSF: number; NHIF: number; Housing: number; Total: number };
+  // Deductions - NSSF capped at 2160, SHIF 2.75%, Housing 1.5%
+  type Deductions = { NSSF: number; SHIF: number; Housing: number; Total: number };
   const calculateDeductions = (gross: number): Deductions => {
     const NSSF = Math.min(gross * 0.06, 2160);
-    let NHIF = 0;
-    if (gross <= 5999) NHIF = 150;
-    else if (gross <= 7999) NHIF = 300;
-    else if (gross <= 11999) NHIF = 400;
-    else if (gross <= 14999) NHIF = 500;
-    else if (gross <= 19999) NHIF = 600;
-    else if (gross <= 24999) NHIF = 750;
-    else if (gross <= 29999) NHIF = 850;
-    else if (gross <= 34999) NHIF = 900;
-    else if (gross <= 39999) NHIF = 950;
-    else if (gross <= 44999) NHIF = 1000;
-    else if (gross <= 49999) NHIF = 1100;
-    else if (gross <= 59999) NHIF = 1200;
-    else if (gross <= 69999) NHIF = 1300;
-    else if (gross <= 79999) NHIF = 1400;
-    else if (gross <= 89999) NHIF = 1500;
-    else if (gross <= 99999) NHIF = 1600;
-    else NHIF = 1700;
+    const SHIF = gross * 0.0275;
     const Housing = gross * 0.015;
-    const Total = NSSF + NHIF + Housing;
-    return { NSSF, NHIF, Housing, Total };
+    const Total = NSSF + SHIF + Housing;
+    return { NSSF, SHIF, Housing, Total };
   };
 
   const handleCalculate = () => {
@@ -108,23 +92,26 @@ export default function Calculator(){
     });
   };
 
+  // Auto recalc if salary changes — fully dynamic 🧠
+  useEffect(() => {
+    if (salary && startDate && asOfDate) handleCalculate();
+  }, [salary, startDate, asOfDate, accessPercent, advanced, flatFee, feePercent, workedDays]);
+
   const percentOfCycle = useMemo(() => {
     const cycle = Number(cycleDays) || 30;
     return Math.min(100, Math.round((Number(workedDays || 0) / cycle) * 100));
   }, [workedDays, cycleDays]);
 
-return (
-  <div className="bg-white rounded-2xl shadow-2xl p-6 border border-green-100 max-w-lg mx-auto mt-6">
-    <h2 className="text-2xl font-extrabold mb-4 text-gray-900">
-      Wage Access Calculator 🇰🇪
-    </h2>
+  return (
+    <div className="bg-white rounded-2xl shadow-2xl p-6 border border-green-100 max-w-lg mx-auto mt-6">
+      <h2 className="text-2xl font-extrabold mb-4 text-gray-900">
+        Wage Access Calculator 🇰🇪
+      </h2>
 
-    {/* INPUTS */}
+      {/* INPUTS */}
       <div className="grid gap-3">
         <div>
-          <label className="text-sm text-gray-600">
-            Gross Monthly Salary (KES)
-          </label>
+          <label className="text-sm text-gray-600">Gross Monthly Salary (KES)</label>
           <input
             type="number"
             placeholder="e.g. 60000"
@@ -194,23 +181,17 @@ return (
               style={{ width: `${percentOfCycle}%` }}
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
-            {percentOfCycle}% of cycle
-          </p>
+          <p className="text-xs text-gray-500 mt-1">{percentOfCycle}% of cycle</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-sm text-gray-600">
-              Already Advanced (KES)
-            </label>
+            <label className="text-sm text-gray-600">Already Advanced (KES)</label>
             <input
               type="number"
               className="mt-1 w-full border rounded-lg p-2"
               value={advanced}
-              onChange={(e) =>
-                setAdvanced(e.target.value ? +e.target.value : "")
-              }
+              onChange={(e) => setAdvanced(e.target.value ? +e.target.value : "")}
             />
           </div>
           <div>
@@ -219,9 +200,7 @@ return (
               type="number"
               className="mt-1 w-full border rounded-lg p-2"
               value={flatFee}
-              onChange={(e) =>
-                setFlatFee(e.target.value ? +e.target.value : "")
-              }
+              onChange={(e) => setFlatFee(e.target.value ? +e.target.value : "")}
             />
           </div>
         </div>
@@ -284,9 +263,7 @@ return (
             </div>
 
             <div className="pt-3 flex justify-between items-center bg-white/80 rounded-xl shadow-inner px-3 py-2 border border-emerald-100">
-              <p className="font-bold text-gray-800 text-base">
-                You Can Access Now
-              </p>
+              <p className="font-bold text-gray-800 text-base">You Can Access Now</p>
               <p className="text-right font-extrabold text-green-700 text-xl">
                 Ksh {fmt(result.accessibleNow)}
               </p>
@@ -296,8 +273,8 @@ return (
           <div className="mt-4 bg-white/70 border border-green-200 rounded-lg p-2 text-xs text-gray-600 text-center shadow-sm">
             <p>
               <span className="font-semibold">Deductions →</span> NSSF: Ksh{" "}
-              {fmt(result.deductions.NSSF)} | NHIF: Ksh{" "}
-              {fmt(result.deductions.NHIF)} | Housing Levy: Ksh{" "}
+              {fmt(result.deductions.NSSF)} | SHIF: Ksh{" "}
+              {fmt(result.deductions.SHIF)} | Housing Levy: Ksh{" "}
               {fmt(result.deductions.Housing)}
             </p>
           </div>
