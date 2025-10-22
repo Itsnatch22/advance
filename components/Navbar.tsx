@@ -29,12 +29,6 @@ const Navbar = () => {
           desc: "Access part of your salary anytime before payday.",
           href: "/employees",
         },
-        {
-          title: "Calculator",
-          icon: <Calculator className="text-green-600 w-5 h-5" />,
-          desc: "Get to see how you can access an advance using our calculator",
-          href: "/calculator",
-        },
       ],
     },
     {
@@ -52,6 +46,12 @@ const Navbar = () => {
           icon: <FiShield className="text-green-600 w-5 h-5" />,
           desc: "Explore our global network of trusted partners.",
           href: "/partners",
+        },
+        {
+          title: "Calculator",
+          icon: <Calculator className="text-green-600 w-5 h-5" />,
+          desc: "Get to see how you can access an advance using our calculator",
+          href: "/calculator",
         },
       ],
     },
