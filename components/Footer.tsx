@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FiLinkedin, FiFacebook, FiTwitter, FiMail } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import Link from 'next/link'
@@ -13,10 +13,15 @@ import Locator from './Locator';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Footer() {
-    const currentYear = new Date().getFullYear();
+    const [currentYear, setCurrentYear] = useState<number | null>(null);
     const footerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        // Avoid using Date at render time in a Client Component
+        if (currentYear === null) {
+            setCurrentYear(new Date().getFullYear());
+        }
+
         const footer = footerRef.current;
 
         const footerCols = footer?.querySelectorAll(".footer-col");
@@ -186,7 +191,7 @@ export default function Footer() {
         </Link>
       </div>
 
-      <p className="text-xs text-gray-500 mt-4 md:mt-0">&copy; {currentYear} EaziWage. All Rights Reserved</p>
+      <p className="text-xs text-gray-500 mt-4 md:mt-0">&copy; {currentYear ?? ''} EaziWage. All Rights Reserved</p>
     </div>
     <Locator/>
   </div>
