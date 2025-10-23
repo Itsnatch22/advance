@@ -1,6 +1,34 @@
 // "use client";
 import React, { useEffect, useMemo, useState } from "react";
 
+// Types for allowances and result payloads
+type AllowanceKey =
+  | "otherRemuneration"
+  | "mealAllowance"
+  | "nightAllowance"
+  | "pensionCover"
+  | "medicalCover";
+
+type AllowancesChecked = Record<AllowanceKey, boolean>;
+
+type AllowancesAmount = Record<AllowanceKey, number>;
+
+type CalcResult = {
+  success: boolean;
+  accruedGross: number;
+  netMonthly: number;
+  accessCapPercent: number;
+  accessCap: number;
+  platformFee: number;
+  accessibleNow: number;
+  deductions: {
+    NSSF: number;
+    SHIF: number;
+    Housing: number;
+  };
+  error?: string;
+};
+
 const fmt = (n: number) =>
   new Intl.NumberFormat("en-KE", { maximumFractionDigits: 0 }).format(Math.round(n));
 
@@ -16,14 +44,14 @@ export default function Calculator() {
   const [feePercent, setFeePercent] = useState<number | "">(2);
 
   // allowances: checkboxes + amount (if checkbox unchecked, amount is 0)
-  const [allowancesChecked, setAllowancesChecked] = useState({
+  const [allowancesChecked, setAllowancesChecked] = useState<AllowancesChecked>({
     otherRemuneration: false,
     mealAllowance: false,
     nightAllowance: false,
     pensionCover: false,
     medicalCover: false,
   });
-  const [allowancesAmount, setAllowancesAmount] = useState({
+  const [allowancesAmount, setAllowancesAmount] = useState<AllowancesAmount>({
     otherRemuneration: 0,
     mealAllowance: 0,
     nightAllowance: 0,
@@ -31,7 +59,7 @@ export default function Calculator() {
     medicalCover: 0,
   });
 
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<CalcResult | null>(null);
 
   // widen the card — changed max-w to bigger width
   const containerClass = "bg-white rounded-2xl shadow-2xl p-6 border border-green-100 max-w-3xl mx-auto mt-6";
@@ -72,9 +100,10 @@ export default function Calculator() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || "calc failed");
-      setResult(data);
+      const data: unknown = await res.json();
+      const ok = (data as { success?: unknown }).success === true;
+      if (!ok) throw new Error((data as { error?: string }).error || "calc failed");
+      setResult(data as CalcResult);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       console.error("Server calc failed — check console.", message);
@@ -192,18 +221,23 @@ export default function Calculator() {
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={(allowancesChecked as any)[a.key]}
-                  onChange={(e) => setAllowancesChecked((s) => ({ ...s, [a.key]: e.target.checked }))}
+                  checked={allowancesChecked[a.key as AllowanceKey]}
+                  onChange={(e) =>
+                    setAllowancesChecked((s) => ({ ...s, [a.key as AllowanceKey]: e.target.checked }))
+                  }
                 />
                 <span className="text-sm">{a.label}</span>
               </label>
               <input
                 type="number"
                 className="ml-auto w-40 border rounded-lg p-2"
-                value={(allowancesAmount as any)[a.key]}
-                disabled={!(allowancesChecked as any)[a.key]}
+                value={allowancesAmount[a.key as AllowanceKey]}
+                disabled={!allowancesChecked[a.key as AllowanceKey]}
                 onChange={(e) =>
-                  setAllowancesAmount((s) => ({ ...s, [a.key]: e.target.value ? +e.target.value : 0 }))
+                  setAllowancesAmount((s) => ({
+                    ...s,
+                    [a.key as AllowanceKey]: e.target.value ? +e.target.value : 0,
+                  }))
                 }
               />
             </div>
