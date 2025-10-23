@@ -7,7 +7,6 @@ import Toploader from "nextjs-toploader"
 import Noah from "@/components/Noah";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import CursorWithClickEffect from "@/components/CustomCursor";
-import ScrollToTop from "@/components/ScrollToTop";
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   weight: ["400", "500", "600", "700"],
@@ -42,7 +41,6 @@ export default function RootLayout({
         <Navbar/>
         {children}
         <CursorWithClickEffect/>
-        <ScrollToTop/>
         <Noah/>
         <Footer/>
         </ThemeProvider>

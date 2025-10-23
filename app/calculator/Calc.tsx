@@ -1,4 +1,3 @@
-// app/components/Calculator.tsx  (or pages/calc.tsx)
 // "use client";
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -63,7 +62,7 @@ export default function Calculator() {
   const callBackendCalc = async () => {
     // minimal validation
     if (!salary || !cycleDays) {
-      alert("fill salary & cycle days fam ⚠️");
+      alert("fill salary & cycle days ⚠️");
       return;
     }
     const payload = buildPayload();
@@ -76,9 +75,9 @@ export default function Calculator() {
       const data = await res.json();
       if (!data.success) throw new Error(data.error || "calc failed");
       setResult(data);
-    } catch (err: any) {
-      console.error(err);
-      alert("Server calc failed — check console.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("Server calc failed — check console.", message);
     }
   };
 
