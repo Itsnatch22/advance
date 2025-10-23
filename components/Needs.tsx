@@ -7,7 +7,7 @@ const steps = [
     {
         icon: "/work/disbursement.png",
         title: "Instant Disbursment",
-        description: "Funds available within minutes through M-PESA or bank transfer. No waiting periods or complex approval processes.",
+        description: "Funds available within minutes through mobile money or bank transfer. No waiting periods or complex approval processes.",
     },
     {
         icon: "/work/security.png",
@@ -56,7 +56,7 @@ export default function Needs() {
       viewport={{ once: true }}
       className="text-4xl font-bold text-gray-900 dark:text-white font-serif"
     >
-      Built for the <span className="text-green-600">Kenyan Workforce</span>
+      Built for the <span className="text-green-600">African Workforce</span>
     </motion.h2>
     <motion.p
       initial={{ opacity: 0, y: 30 }}
@@ -69,7 +69,7 @@ export default function Needs() {
       and mobile money systems.
     </motion.p>
     <p className="text-sm mt-2 text-gray-400 dark:text-gray-500 italic">
-      Integrated with M-PESA, Safaricom Business & leading Kenyan banks.
+      Integrated with mobile money applications, payroll providers & leading banks.
     </p>
 
     <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

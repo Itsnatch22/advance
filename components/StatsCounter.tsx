@@ -39,7 +39,7 @@ export default function StatsCounter() {
     {[
       { label: "Targeted Customers", value: stats.targeted_customers, suffix: "+", color: "text-green-600" },
       { label: "Targeted Companies", value: stats.targeted_companies, suffix: "+", color: "text-green-600" },
-      { label: "Annual Advances (KSH)", value: stats.annual_advances / 1000000, suffix: "M+", color: "text-green-600" },
+      { label: "Annual Advances (USD)", value: stats.annual_advances / 129000000, suffix: "M+", color: "text-green-600" },
     ].map((item, i) => (
       <motion.div
         key={i}
