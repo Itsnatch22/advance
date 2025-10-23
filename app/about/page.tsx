@@ -4,6 +4,7 @@ import { ShieldCheck, Cpu, Users, Eye } from "lucide-react"
 import gsap from "gsap"
 import * as React from "react"
 import { Team } from "@/components/Team"
+import Image from "next/image"
 export default function AboutPage() {
     const storyRef = React.useRef<HTMLDivElement>(null);
     const valuesRef = React.useRef<HTMLDivElement>(null);
@@ -20,22 +21,44 @@ export default function AboutPage() {
     return(
         <div className="min-h-screen bg-white dark:bg-neutral-950 text-gray-800 dark:text-gray-200 transition-colors duration-500">
   {/* ===== Hero ===== */}
-  <section className="relative overflow-hidden text-center py-28 px-6">
-    <div className="absolute inset-0 bg-gradient-to-br from-green-600/10 via-emerald-500/10 to-transparent dark:from-green-700/30 dark:via-emerald-500/20 blur-3xl"></div>
-    
-    <motion.h1
-      className="text-5xl md:text-7xl font-bold font-serif leading-tight relative z-10 bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-    >
-      The Heartbeat of<br /> Financial Freedom
-    </motion.h1>
+  <section className="relative overflow-hidden py-28 px-6">
+  <div className="absolute inset-0 bg-gradient-to-br from-green-600/10 via-emerald-500/10 to-transparent dark:from-green-700/30 dark:via-emerald-500/20 blur-3xl"></div>
 
-    <p className="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto relative z-10">
-      Empowering Africa’s workforce to access what they’ve earned — fairly, instantly, and securely.
-    </p>
-  </section>
+  <div className="relative z-10 mx-auto max-w-7xl grid md:grid-cols-2 items-center gap-12">
+    {/* Left: Text */}
+    <div className="text-left">
+      <motion.h1
+        className="text-5xl md:text-6xl font-bold font-serif leading-tight bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        The Heartbeat of<br /> Financial Freedom
+      </motion.h1>
+
+      <p className="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-md">
+        Empowering Africa&apos;s workforce to access what they&apos;ve earned — fairly, instantly, and securely.
+      </p>
+    </div>
+
+    {/* Right: Image */}
+    <motion.div
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 1 }}
+      className="flex justify-center md:justify-end"
+    >
+      <Image
+      width={550}
+      height={400}
+        src="/about/about.png"
+        alt="Financial freedom illustration"
+        className="w-full max-w-md rounded-2xl shadow-lg"
+      />
+    </motion.div>
+  </div>
+</section>
+
 
   {/* ===== Mission & Vision ===== */}
   <section className="max-w-6xl mx-auto py-24 px-6 grid md:grid-cols-2 gap-16">

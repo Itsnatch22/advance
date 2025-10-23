@@ -20,7 +20,7 @@ const steps = [
         icon: "/work/request.png",
         step: 3,
         title: "Request Your Advance",
-        description: "Submit your request through our platform. Funds are disbursed instantly to your M-PESA or bank account.",
+        description: "Submit your request through our platform. Funds are disbursed instantly to your mobile or bank account.",
     },
     {
         icon: "/work/repayment.png",

@@ -179,7 +179,8 @@ const Navbar = () => {
           >
             {links.map((link, i) => (
               <div key={i} className="flex flex-col gap-2">
-                <button
+                <Link
+                href={link.href}
                   onClick={() =>
                     setOpenDrawer(openDrawer === i ? null : i)
                   }
@@ -193,7 +194,7 @@ const Navbar = () => {
                       }`}
                     />
                   )}
-                </button>
+                </Link>
                 <AnimatePresence>
                   {openDrawer === i && link.drawer && (
                     <motion.div

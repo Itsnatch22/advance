@@ -1,49 +1,24 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
 
+/* ------------------ Types ------------------ */
 type MeetingType = {
   id: string;
   title: string;
   description?: string;
-  durationMinutes: number;
-  calendlyUrlUser: string; // when user books EaziWage
-  calendlyUrlAdmin: string; // when EaziWage books user
+  duration: number;
+  scheduling_url: string;
 };
 
-const MEETING_TYPES: MeetingType[] = [
-  {
-    id: "quick-15",
-    title: "Quick 15 — Intro Call",
-    description: "A short sync for introductions or quick updates.",
-    durationMinutes: 15,
-    calendlyUrlUser: "https://calendly.com/your-org/15min",
-    calendlyUrlAdmin: "https://calendly.com/your-team/15min",
-  },
-  {
-    id: "deep-30",
-    title: "Deep 30 — Problem Solving",
-    description: "30 minutes for technical or product deep dives.",
-    durationMinutes: 30,
-    calendlyUrlUser: "https://calendly.com/your-org/30min",
-    calendlyUrlAdmin: "https://calendly.com/your-team/30min",
-  },
-  {
-    id: "strategy-60",
-    title: "Strategy 60 — Roadmap & Planning",
-    description: "An hour for roadmap reviews, strategy, and follow-ups.",
-    durationMinutes: 60,
-    calendlyUrlUser: "https://calendly.com/your-org/60min",
-    calendlyUrlAdmin: "https://calendly.com/your-team/60min",
-  },
-];
-
+/* ------------------ Config ------------------ */
 const BUSINESS_START = 9;
 const BUSINESS_END = 17;
 const SLOT_STEP_MINUTES = 30;
 
+/* ------------------ Component ------------------ */
 export default function SchedulePage() {
   const timezone = useMemo(
     () => Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
@@ -51,39 +26,81 @@ export default function SchedulePage() {
   );
 
   const [mode, setMode] = useState<"user-books" | "admin-books">("user-books");
+  const [meetings, setMeetings] = useState<MeetingType[]>([]);
   const [selectedMeeting, setSelectedMeeting] = useState<MeetingType | null>(
-    MEETING_TYPES[0]
+    null
   );
-  const [selectedDate, setSelectedDate] = useState<string>(getISODate(new Date()));
-  const [selectedSlot, setSelectedSlot] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(getISODate(new Date()));
+  const [selectedSlot, setSelectedSlot] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
   const slots = useMemo(() => {
     const day = selectedDate ? new Date(selectedDate + "T00:00:00") : new Date();
     return generateSlotsForDay(day, BUSINESS_START, BUSINESS_END, SLOT_STEP_MINUTES);
   }, [selectedDate]);
 
-  const handlePickSlot = (slotIso: string) => setSelectedSlot(slotIso);
+  /* ------------------ Fetch Calendly ------------------ */
+  useEffect(() => {
+    async function fetchCalendlyEvents() {
+      try {
+        const res = await fetch("/api/calendly-events");
+        const data = await res.json();
+
+        if (data && Array.isArray((data as { collection?: unknown }).collection)) {
+          type CalendlyEvent = {
+            uri: string;
+            name: string;
+            description?: string | null;
+            duration: number;
+            scheduling_url: string;
+          };
+
+          const collection = (data as { collection: CalendlyEvent[] }).collection;
+          const formatted: MeetingType[] = collection.map((e) => ({
+            id: e.uri,
+            title: e.name,
+            description: e.description ?? "",
+            duration: e.duration,
+            scheduling_url: e.scheduling_url,
+          }));
+          setMeetings(formatted);
+          setSelectedMeeting(formatted[0] ?? null);
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error("Calendly fetch failed", message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCalendlyEvents();
+  }, []);
+
+  /* ------------------ Handlers ------------------ */
+  function handlePickSlot(slotIso: string) {
+    setSelectedSlot(slotIso);
+  }
 
   function openCalendly() {
     if (!selectedMeeting) return;
 
-    const url = new URL(
-      mode === "user-books"
-        ? selectedMeeting.calendlyUrlUser
-        : selectedMeeting.calendlyUrlAdmin
-    );
+    const url = new URL(selectedMeeting.scheduling_url);
     if (name) url.searchParams.set("name", name);
     if (email) url.searchParams.set("email", email);
     if (selectedSlot) url.searchParams.set("source_slot", selectedSlot);
 
+    // Optional param to track who booked who
+    url.searchParams.set("mode", mode);
+
     window.open(url.toString(), "_blank", "noopener,noreferrer");
   }
 
+  /* ------------------ UI ------------------ */
   return (
     <main className="p-6 max-w-5xl mx-auto relative">
-      <header className="mb-6 mt-15 text-center">
+      <header className="mb-6 text-center">
         <motion.h1
           className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent"
           initial={{ opacity: 0, y: 15 }}
@@ -122,131 +139,138 @@ export default function SchedulePage() {
         </div>
       </header>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Sidebar */}
-        <aside className="md:col-span-1">
-          <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20 shadow-[0_0_15px_rgba(22,163,74,0.15)]">
-              <h2 className="font-semibold flex items-center gap-2">
-                <CalendarDays className="w-4 h-4 text-green-600" /> Your Details
-              </h2>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                className="w-full p-2 rounded-md border border-gray-200 mt-3"
-              />
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@work.com"
-                className="w-full p-2 rounded-md border border-gray-200 mt-2"
-              />
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20">
-              <h2 className="font-semibold">Meeting Types</h2>
-              <div className="mt-3 space-y-3">
-                {MEETING_TYPES.map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setSelectedMeeting(m)}
-                    className={`w-full text-left p-3 rounded-lg border transition-all flex items-center justify-between hover:shadow ${
-                      selectedMeeting?.id === m.id
-                        ? "bg-transparent border-green-500/60"
-                        : "bg-white dark:bg-neutral-900"
-                    }`}
-                  >
-                    <div className="text-black dark:text-white">
-                      <div className="font-medium">{m.title}</div>
-                      <div className="text-xs opacity-70">
-                        {m.durationMinutes} mins • {m.description}
-                      </div>
-                    </div>
-                    <div className="text-xs opacity-60">Select</div>
-                  </button>
-                ))}
+      {loading ? (
+        <p className="text-center text-gray-500">Loading meeting types...</p>
+      ) : (
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Sidebar */}
+          <aside className="md:col-span-1">
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20 shadow-[0_0_15px_rgba(22,163,74,0.15)]">
+                <h2 className="font-semibold flex items-center gap-2">
+                  <CalendarDays className="w-4 h-4 text-green-600" /> Your
+                  Details
+                </h2>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  className="w-full p-2 rounded-md border border-gray-200 mt-3"
+                />
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@work.com"
+                  className="w-full p-2 rounded-md border border-gray-200 mt-2"
+                />
               </div>
-            </div>
-          </div>
-        </aside>
 
-        {/* Right Panel */}
-        <div className="md:col-span-2">
-          <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20 shadow-sm">
-            <h3 className="text-lg font-semibold">
-              {selectedMeeting?.title}
-            </h3>
-            <p className="text-sm opacity-70">{selectedMeeting?.description}</p>
-            <p className="text-xs opacity-60 mt-1">
-              Duration: {selectedMeeting?.durationMinutes} mins
-            </p>
-
-            <div className="mt-4">
-              <label className="block text-xs opacity-80">Pick a date</label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="mt-2 p-2 rounded-md border"
-              />
-
-              <div className="mt-4">
-                <label className="block text-xs opacity-80">
-                  Available Slots
-                </label>
-                <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {slots.map((s) => (
+              <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20">
+                <h2 className="font-semibold">Meeting Types</h2>
+                <div className="mt-3 space-y-3">
+                  {meetings.map((m) => (
                     <button
-                      key={s.iso}
-                      onClick={() => handlePickSlot(s.iso)}
-                      className={`p-2 rounded-md border text-sm text-left transition-all ${
-                        selectedSlot === s.iso
-                          ? "bg-green-600 text-white"
-                          : "bg-transparent hover:bg-transparent hover:border-green-500"
+                      key={m.id}
+                      onClick={() => setSelectedMeeting(m)}
+                      className={`w-full text-left p-3 rounded-lg border transition-all flex items-center justify-between hover:shadow ${
+                        selectedMeeting?.id === m.id
+                          ? "bg-transparent border-green-500/60"
+                          : "bg-white dark:bg-neutral-900"
                       }`}
                     >
-                      <div className="font-medium">{s.label}</div>
-                      <div className="text-xs opacity-60">{s.localLabel}</div>
+                      <div className="text-black dark:text-white">
+                        <div className="font-medium">{m.title}</div>
+                        <div className="text-xs opacity-70">
+                          {m.duration} mins • {m.description || "Calendly event"}
+                        </div>
+                      </div>
+                      <div className="text-xs opacity-60">Select</div>
                     </button>
                   ))}
                 </div>
               </div>
+            </div>
+          </aside>
 
-              <div className="mt-6 flex gap-3 items-center">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={openCalendly}
-                  className="px-4 py-2 rounded-xl bg-green-600 text-white font-medium shadow-[0_0_15px_rgba(22,163,74,0.4)] hover:shadow-[0_0_25px_rgba(22,163,74,0.6)] transition-all"
-                >
-                  Schedule via Calendly
-                </motion.button>
+          {/* Right Panel */}
+          <div className="md:col-span-2">
+            <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20 shadow-sm">
+              <h3 className="text-lg font-semibold">
+                {selectedMeeting?.title || "No meeting selected"}
+              </h3>
+              <p className="text-sm opacity-70">
+                {selectedMeeting?.description || "Select a meeting to continue."}
+              </p>
+              <p className="text-xs opacity-60 mt-1">
+                Duration: {selectedMeeting?.duration || "—"} mins
+              </p>
 
-                <button
-                  onClick={() => {
-                    setSelectedSlot("");
-                    setName("");
-                    setEmail("");
-                  }}
-                  className="px-3 py-2 rounded-lg border text-sm hover:bg-neutral-100"
-                >
-                  Reset
-                </button>
+              <div className="mt-4">
+                <label className="block text-xs opacity-80">Pick a date</label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="mt-2 p-2 rounded-md border"
+                />
+
+                <div className="mt-4">
+                  <label className="block text-xs opacity-80">
+                    Available Slots
+                  </label>
+                  <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {slots.map((s) => (
+                      <button
+                        key={s.iso}
+                        onClick={() => handlePickSlot(s.iso)}
+                        className={`p-2 rounded-md border text-sm text-left transition-all ${
+                          selectedSlot === s.iso
+                            ? "bg-green-600 text-white"
+                            : "bg-transparent hover:border-green-500"
+                        }`}
+                      >
+                        <div className="font-medium">{s.label}</div>
+                        <div className="text-xs opacity-60">{s.localLabel}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-6 flex gap-3 items-center">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={openCalendly}
+                    className="px-4 py-2 rounded-xl bg-green-600 text-white font-medium shadow-[0_0_15px_rgba(22,163,74,0.4)] hover:shadow-[0_0_25px_rgba(22,163,74,0.6)] transition-all"
+                  >
+                    Schedule via Calendly
+                  </motion.button>
+
+                  <button
+                    onClick={() => {
+                      setSelectedSlot("");
+                      setName("");
+                      setEmail("");
+                    }}
+                    className="px-3 py-2 rounded-lg border text-sm hover:bg-neutral-100"
+                  >
+                    Reset
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <footer className="mt-8 text-xs opacity-60 text-center">
-        Made with 💚 by EaziWage — integrate your own Calendly URLs to go live.
+        Made with 💚 by EaziWage — your meetings auto-sync from Calendly.
       </footer>
     </main>
   );
 }
 
-/* ---------------- Helpers ---------------- */
+/* ------------------ Helpers ------------------ */
 function getISODate(d: Date) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -258,16 +282,38 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
-function generateSlotsForDay(day: Date, startHour: number, endHour: number, stepMinutes: number) {
+function generateSlotsForDay(
+  day: Date,
+  startHour: number,
+  endHour: number,
+  stepMinutes: number
+) {
   const slots: { iso: string; label: string; localLabel: string }[] = [];
-  const base = new Date(day.getFullYear(), day.getMonth(), day.getDate(), startHour, 0, 0);
-  const end = new Date(day.getFullYear(), day.getMonth(), day.getDate(), endHour, 0, 0);
+  const base = new Date(
+    day.getFullYear(),
+    day.getMonth(),
+    day.getDate(),
+    startHour,
+    0,
+    0
+  );
+  const end = new Date(
+    day.getFullYear(),
+    day.getMonth(),
+    day.getDate(),
+    endHour,
+    0,
+    0
+  );
 
   for (let t = base.getTime(); t < end.getTime(); t += stepMinutes * 60000) {
     const slotDate = new Date(t);
     const iso = slotDate.toISOString();
     const label = `${pad(slotDate.getHours())}:${pad(slotDate.getMinutes())}`;
-    const localLabel = slotDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const localLabel = slotDate.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     slots.push({ iso, label, localLabel });
   }
 
