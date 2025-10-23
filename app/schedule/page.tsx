@@ -48,19 +48,29 @@ export default function SchedulePage() {
         const res = await fetch("/api/calendly-events");
         const data = await res.json();
 
-        if (data && data.collection) {
-          const formatted = data.collection.map((e: any) => ({
+        if (data && Array.isArray((data as { collection?: unknown }).collection)) {
+          type CalendlyEvent = {
+            uri: string;
+            name: string;
+            description?: string | null;
+            duration: number;
+            scheduling_url: string;
+          };
+
+          const collection = (data as { collection: CalendlyEvent[] }).collection;
+          const formatted: MeetingType[] = collection.map((e) => ({
             id: e.uri,
             title: e.name,
-            description: e.description || "",
+            description: e.description ?? "",
             duration: e.duration,
             scheduling_url: e.scheduling_url,
           }));
           setMeetings(formatted);
-          setSelectedMeeting(formatted[0]);
+          setSelectedMeeting(formatted[0] ?? null);
         }
       } catch (err) {
-        console.error("Calendly fetch failed", err);
+        const message = err instanceof Error ? err.message : String(err);
+        console.error("Calendly fetch failed", message);
       } finally {
         setLoading(false);
       }

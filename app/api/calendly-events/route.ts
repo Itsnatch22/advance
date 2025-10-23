@@ -35,13 +35,14 @@ export async function GET() {
       throw new Error(`Calendly API error: ${errorText}`);
     }
 
-    const data = await res.json();
+    const data: unknown = await res.json();
 
     return NextResponse.json(data);
-  } catch (err: any) {
-    console.error("Calendly API Fetch Failed:", err.message);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("Calendly API Fetch Failed:", message);
     return NextResponse.json(
-      { error: "Failed to fetch Calendly events.", details: err.message },
+      { error: "Failed to fetch Calendly events.", details: message },
       { status: 500 }
     );
   }
