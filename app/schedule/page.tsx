@@ -31,14 +31,23 @@ export default function SchedulePage() {
     null
   );
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(getISODate(new Date()));
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedSlot, setSelectedSlot] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
   const slots = useMemo(() => {
-    const day = selectedDate ? new Date(selectedDate + "T00:00:00") : new Date();
+    if (!selectedDate) return [] as { iso: string; label: string; localLabel: string }[];
+    const day = new Date(selectedDate + "T00:00:00");
     return generateSlotsForDay(day, BUSINESS_START, BUSINESS_END, SLOT_STEP_MINUTES);
+  }, [selectedDate]);
+
+  /* ------------------ Initialize date ------------------ */
+  useEffect(() => {
+    // Initialize client-side to avoid using Date at render time
+    if (!selectedDate) {
+      setSelectedDate(getISODate(new Date()));
+    }
   }, [selectedDate]);
 
   /* ------------------ Fetch Calendly ------------------ */
