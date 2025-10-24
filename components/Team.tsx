@@ -56,7 +56,7 @@ export function Team() {
                   className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+              <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white">
                 {member.name}
               </h3>
             </motion.div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { FiLinkedin, FiFacebook, FiTwitter, FiMail } from 'react-icons/fi';
+import { FiLinkedin, FiTwitter, FiMail, FiInstagram } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import Link from 'next/link'
 import gsap from 'gsap';
@@ -73,7 +73,7 @@ export default function Footer() {
   <div className="absolute bottom-0 right-0 w-72 h-72 bg-emerald-400/10 blur-3xl rounded-full"></div>
 
   <div className="relative container mx-auto px-6 md:py-16 py-12">
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
       {/* Brand */}
       <div className="footer-col space-y-4">
         <Link href="/" className="flex items-center gap-2">
@@ -87,7 +87,7 @@ export default function Footer() {
 
         <div className="flex space-x-4 pt-2">
           {[
-            { icon: FiFacebook, url: "https://facebook.com" },
+            { icon: FiInstagram, url: "https://instagram.com" },
             { icon: FiTwitter, url: "https://twitter.com" },
             { icon: FiLinkedin, url: "https://linkedin.com" },
           ].map((social, index) => (
@@ -149,6 +149,33 @@ export default function Footer() {
         </ul>
       </div>
 
+      {/* Legal */}
+      <div className='footer-col'>
+        <h3 className='text-white font-semibold mb-4'>Legal</h3>
+        <ul className='space-y-2'>
+          {[
+            { name: "Privacy Policy", href: "/privacy-policy.pdf"},
+            { name: "Data Policy", href: "/data.pdf"},
+            { name: "Corruption Policy", href: "/corruption.pdf"},
+            { name: "Ethics Policy", href: "/ethics.pdf"},
+            { name: "Gifts Policy", href: "/gifts.pdf"},
+            { name: "Money Policy", href: "/money.pdf"},
+            { name: "Whistleblow Policy", href: "/whistleblow.pdf"},
+            { name: "Terms of Service", href: "/terms.pdf"},
+          ].map((link, index) => (
+            <li key={index}>
+              <Link
+                href={link.href}
+                target='_blank'
+                className="text-sm text-gray-400 hover:text-green-400 hover:translate-x-1 transition-all"
+              >
+                {link.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       {/* Contact */}
       <div className="footer-col">
         <h3 className="text-white font-semibold mb-4">Contact</h3>
@@ -176,22 +203,7 @@ export default function Footer() {
 
     {/* Bottom Bar */}
     <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-      <div className="flex flex-wrap gap-6">
-        <Link href="/privacy-policy.pdf" target="_blank" className="text-xs text-gray-400 hover:text-green-400">
-          Privacy Policy
-        </Link>
-        <Link href="/terms.pdf" target='_blank' className="text-xs text-gray-400 hover:text-green-400">
-          Terms of Service
-        </Link>
-        <Link href="/cookies" className="text-xs text-gray-400 hover:text-green-400">
-          Cookie Policy
-        </Link>
-        <Link href="/regulations" className="text-xs text-gray-400 hover:text-green-400">
-          Regulatory
-        </Link>
-      </div>
-
-      <p className="text-xs text-gray-500 mt-4 md:mt-0">&copy; {currentYear ?? ''} EaziWage. All Rights Reserved</p>
+       <p className="text-xs text-gray-500 mt-4 md:mt-0">&copy; {currentYear ?? ''} EaziWage. All Rights Reserved</p>
     </div>
     <Locator/>
   </div>
