@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { FiLinkedin, FiTwitter, FiMail, FiInstagram } from 'react-icons/fi';
+import { FiLinkedin, FiMail, FiInstagram } from 'react-icons/fi';
+import { FaXTwitter } from "react-icons/fa6";
 import { FaWhatsapp } from 'react-icons/fa';
 import Link from 'next/link'
 import gsap from 'gsap';
@@ -88,7 +89,7 @@ export default function Footer() {
         <div className="flex space-x-4 pt-2">
           {[
             { icon: FiInstagram, url: "https://instagram.com" },
-            { icon: FiTwitter, url: "https://twitter.com" },
+            { icon: FaXTwitter, url: "https://twitter.com" },
             { icon: FiLinkedin, url: "https://linkedin.com" },
           ].map((social, index) => (
             <motion.a

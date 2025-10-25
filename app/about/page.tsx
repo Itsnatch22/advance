@@ -124,9 +124,9 @@ export default function AboutPage() {
           transition={{ type: "spring", stiffness: 200 }}
           className="flex flex-col items-center bg-white dark:bg-neutral-800 shadow-md hover:shadow-lg rounded-xl p-8 border border-gray-100 dark:border-neutral-700"
         >
-          <Icon className="w-10 h-10 text-green-600 dark:text-emerald-400 mb-4" />
-          <h3 className="font-semibold mb-2 text-lg text-gray-900 dark:text-white">{title}</h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">{text}</p>
+          <Icon className="w-10 h-10 text-black dark:text-white mb-4" />
+          <h3 className="font-semibold mb-2 text-lg text-black dark:text-white">{title}</h3>
+          <p className="text-black dark:text-white text-sm">{text}</p>
         </motion.div>
       ))}
     </div>
