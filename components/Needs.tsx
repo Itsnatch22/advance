@@ -1,36 +1,36 @@
 'use client'
 import { motion } from "framer-motion"
-import Image from "next/image"
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
+import { ZapIcon, ShieldCheck, Workflow, ScrollText, LineChart, Smartphone } from "lucide-react";
 const steps = [
     {
-        icon: "/work/disbursement.png",
+        icon: ZapIcon,
         title: "Instant Disbursment",
         description: "Funds available within minutes through mobile money or bank transfer. No waiting periods or complex approval processes.",
     },
     {
-        icon: "/work/security.png",
+        icon: ShieldCheck,
         title: "Bank-Grade Security",
         description: "Military-grade encryption to ensure your financial data and transactions are completely secure.",
     },
     {
-        icon: "/work/hr.png",
+        icon: Workflow,
         title: "HR Integration",
         description: "Seamless integration with existing payroll systems. Automatic deductions and comprehensive employee management.",
     },
     {
-        icon: "/work/regulatory.png",
+        icon: ScrollText,
         title: "Regulatory Compliance",
         description: "Fully compliant with local financial and data regulations. Regular audits and updates to ensure adherence to local laws.",
     },
     {
-        icon: "/work/analysis.png",
+        icon: LineChart,
         title: "Real-Time Analytics",
         description: "Detailed insights into employee earned wage usage patterns and financial health through an intuitive dashboard.",
     },
     {
-        icon: "/work/access.png",
+        icon: Smartphone,
         title: "Mobile Accessibility",
         description: "Access and manage earned wages directly from your mobile device. User-friendly app designed for on-the-go financial management.",
     }
@@ -84,12 +84,7 @@ export default function Needs() {
         >
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
-              <Image
-                src={item.icon}
-                alt={item.title}
-                width={80}
-                height={80}
-                className="mb-4 object-contain"
+              <item.icon className="w-12 h-12 text-black dark:text-white relative z-10"
               />
               <div className="absolute inset-0 rounded-full blur-md opacity-0 group-hover:opacity-30 bg-green-400 transition"></div>
             </div>

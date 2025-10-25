@@ -2,28 +2,28 @@
 import { motion } from "framer-motion"
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
-import Image from "next/image";
+import { Calculator, PhoneCall, RefreshCcw, BriefcaseBusiness } from "lucide-react";
 const steps = [
     {
-        icon: "/work/work.png",
+        icon: BriefcaseBusiness,
         step: 1,
         title: "Work Your Days",
         description: "Continue working as normal. Our system tracks the days you've worked and calculates your earned wages based on your earnings potential.",
     },
     {
-        icon: "/work/calculate.png",
+        icon: Calculator,
         step: 2,
         title: "Calculate Advance",
         description: "Access upto 60% of your net earnings. Our platform automatically calculates what you're eligible for.",
     },
     {
-        icon: "/work/request.png",
+        icon: PhoneCall,
         step: 3,
         title: "Request Your Advance",
         description: "Submit your request through our platform. Funds are disbursed instantly to your mobile or bank account.",
     },
     {
-        icon: "/work/repayment.png",
+        icon: RefreshCcw,
         step: 4,
         title: "Automatic Repayments",
         description: "The advance is automatically deducted when your salary is processed. No manual repayments required.",
@@ -73,18 +73,13 @@ export default function Works() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: i * 0.2 }}
           viewport={{ once: true }}
-          className="relative bg-white dark:bg-neutral-900 p-8 rounded-2xl shadow-md hover:shadow-lg border border-gray-100 dark:border-neutral-800 transition-transform duration-300 hover:-translate-y-2"
+          className="bg-white dark:bg-gray-800 border border-green-100 dark:border-green-900/30 p-6 rounded-2xl shadow hover:shadow-green-500/30 hover:border-green-400 transition transform hover:-translate-y-2"
         >
           <div className="flex flex-col items-center gap-5">
             {/* Icon */}
             <div className="relative">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-600/20 to-emerald-500/20 blur-xl"></div>
-              <Image
-                src={item.icon}
-                alt={item.title}
-                width={80}
-                height={80}
-                className="relative z-10 object-contain"
+              <item.icon className="w-12 h-12 text-black dark:text-white relative z-10"
               />
             </div>
 

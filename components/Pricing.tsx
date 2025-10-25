@@ -1,33 +1,38 @@
 'use client'
 
 import { motion } from "framer-motion"
-import { Shield, Eye, Timer, CogIcon, CircleDollarSign }  from "lucide-react"
+import { Percent, RefreshCw, ReceiptIcon, Database, ShieldCheck, Scale }  from "lucide-react"
 
 const pricing = [
-    { 
-      icon: Shield,
-      title: "0% Interest Charge",
-      desc: "Only a nominal transaction fee applies",
+    {
+        icon: Percent,
+        title: "0% Interest Charges",
+        desc: "Enjoy the freedom of borrowing without the burden of interest. Our transparent fee structure ensures you only pay what you borrow."
     },
     {
-        icon: Eye,
-        title: "KES 0 Hidden Fee",
-        desc:  "Transparent pricing - what you see is what you pay",
+        icon: RefreshCw,
+        title: "No Subscription Fees",
+        desc: "Access our services without any recurring subscription fees. Pay only for what you use, when you use it."
     },
     {
-        icon: Timer,
-        title: "1-Minute Withdrawal",
-        desc: "Money in your employee's account within seconds.",
+        icon: ReceiptIcon,
+        title: "Transaction Fees",
+        desc: "A small fee applies per transaction to cover processing costs, ensuring you get your funds quickly and securely."
     },
     {
-        icon: CircleDollarSign,
-        title: "Transaction Fee",
-        desc: "KES 25 – flat fee per withdrawal.",
+        icon: Database,
+        title: "No Data Retrieval Fees",
+        desc: "We believe in transparency. There are no hidden fees for accessing or retrieving your data from our platform."
     },
     {
-        icon: CogIcon,
-        title: "Upto 5% Admin Fee",
-        desc:  "Processing / administration fee",
+        icon: ShieldCheck,
+        title: "No Hidden Fees",
+        desc: "We pride ourselves on our transparent pricing model. What you see is what you get, no surprises, no hidden costs."
+    },
+    {
+        icon: Scale,
+        title: "Up to 5% Application Fees",
+        desc: "A nominal application fee of up to 5% may apply, depending on your eligibility and the amount you wish to access."
     },
 ]
 
@@ -53,7 +58,7 @@ export default function Pricing () {
                     transition={{ type: "spring", stiffness: 200}}
                     className="w-full max-w-sm bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border border-gray-100 dark:border-neutral-800 p-6"
                     >
-                        <item.icon className="w-10 h-10 mx-auto text-green-600 dark:text-green-400 mb-4" />
+                        <item.icon className="w-10 h-10 mx-auto text-black dark:text-white mb-4" />
                         <h3 className="font-semibold text-xl text-gray-900 dark:text-white">
                             {item.title}
                         </h3>

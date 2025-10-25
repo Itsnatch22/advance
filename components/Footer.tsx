@@ -154,12 +154,11 @@ export default function Footer() {
         <ul className='space-y-2'>
           {[
             { name: "Privacy Policy", href: "/privacy-policy.pdf"},
-            { name: "Data Policy", href: "/data.pdf"},
-            { name: "Corruption Policy", href: "/corruption.pdf"},
-            { name: "Ethics Policy", href: "/ethics.pdf"},
+            { name: "ABC Policy", href: "/corruption.pdf"},
+            { name: "Code of Ethics", href: "/ethics.pdf"},
             { name: "Gifts Policy", href: "/gifts.pdf"},
-            { name: "Money Policy", href: "/money.pdf"},
-            { name: "Whistleblow Policy", href: "/whistleblow.pdf"},
+            { name: "AML & CFT Policy", href: "/money.pdf"},
+            { name: "Whistleblowing Policy", href: "/whistleblow.pdf"},
             { name: "Terms of Service", href: "/terms.pdf"},
           ].map((link, index) => (
             <li key={index}>
