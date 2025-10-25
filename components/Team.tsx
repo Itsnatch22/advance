@@ -77,7 +77,7 @@ const testimonials = [
    {
     quote:
       "Building this one was a process, but am glad we finally got to establish it. Eaziwage is here to change our perspectives on how payroll systems work. Trust is the new currency and advance payment is how it's earned.",
-    name: "Mark M.",
+    name: "Mark K.",
     title: "Co-Founder & Lead Dev",
   },
   {
