@@ -50,7 +50,7 @@ export default function CTA() {
                 transition={{ duration: 0.9, delay: 0.2}}
                 viewport={{ once: true }}
                 className="mt-4 text-base sm:text-lg md:text-xl dark:text-black px-4">
-                    Join leading Kenyan companies already using EaziWage to improve employee satisfaction and reduce turnover.
+                    Join leading companies already using EaziWage to improve employee satisfaction and reduce turnover.
                 </motion.p>
 
                 <motion.div

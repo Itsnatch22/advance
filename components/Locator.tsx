@@ -19,7 +19,7 @@ export default function Locator() {
     }, []);
 
     return(
-        <div className="text-xs text-gray-500 dark:text-gray-400 justify-center items-center py-3">
+        <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center py-3 justify-end">
             {coords ? (
                 <span>
                     🌍Lat: {coords.lat.toFixed(4)} | Long: {coords.long.toFixed(4)}

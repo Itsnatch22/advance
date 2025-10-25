@@ -89,7 +89,7 @@ export default function Footer() {
         <div className="flex space-x-4 pt-2">
           {[
             { icon: FiInstagram, url: "https://instagram.com" },
-            { icon: FaXTwitter, url: "https://twitter.com" },
+            { icon: FaXTwitter, url: "https://x.com" },
             { icon: FiLinkedin, url: "https://linkedin.com" },
           ].map((social, index) => (
             <motion.a
@@ -154,7 +154,7 @@ export default function Footer() {
         <h3 className='text-white font-semibold mb-4'>Legal</h3>
         <ul className='space-y-2'>
           {[
-            { name: "Privacy Policy", href: "/privacy-policy.pdf"},
+            { name: "Privacy Policy", href: "/data.pdf"},
             { name: "ABC Policy", href: "/corruption.pdf"},
             { name: "Code of Ethics", href: "/ethics.pdf"},
             { name: "Gifts Policy", href: "/gifts.pdf"},
@@ -203,8 +203,8 @@ export default function Footer() {
     {/* Bottom Bar */}
     <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
        <p className="text-xs text-gray-500 text-center md:text-left">&copy; {currentYear ?? ''} EaziWage. All Rights Reserved</p>
+       <Locator/>
     </div>
-    <Locator/>
   </div>
 
   {/* Regulatory Strip */}
