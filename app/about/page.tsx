@@ -131,33 +131,7 @@ export default function AboutPage() {
       ))}
     </div>
   </section>
-
-  
       <Team/>
-
-  {/* ===== CTA ===== */}
-  <section className="relative overflow-hidden bg-gradient-to-br from-green-700 to-emerald-500 dark:from-emerald-500 dark:to-green-700 text-white py-20 text-center">
-    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,white,transparent)]"></div>
-
-    <motion.h2
-      className="text-3xl md:text-4xl font-bold font-serif mb-6"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      Ready to Partner With Us?
-    </motion.h2>
-    <p className="mb-10 text-lg max-w-2xl mx-auto dark:text-gray-200">
-      Discover how EaziWage is transforming workplace finance — empowering employees and
-      strengthening businesses across Africa.
-    </p>
-    <a
-      href="/contact"
-      className="bg-white text-green-700 dark:bg-black dark:text-white font-semibold px-8 py-4 rounded-lg shadow-md hover:scale-105 transition"
-    >
-      Contact Us
-    </a>
-  </section>
 </div>
 
     )

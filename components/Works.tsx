@@ -41,15 +41,15 @@ export default function Works() {
         )
     })
     return(
-        <section className="py-24 bg-gray-50 dark:bg-neutral-950 transition-colors duration-500">
-  <div ref={cardRef} className="max-w-6xl mx-auto px-6 text-center">
+        <section className="py-16 sm:py-20 lg:py-24 bg-gray-50 dark:bg-neutral-950 transition-colors duration-500">
+  <div ref={cardRef} className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
     {/* === Title === */}
     <motion.h2
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7 }}
       viewport={{ once: true }}
-      className="text-4xl md:text-5xl font-bold font-serif text-gray-900 dark:text-white"
+      className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif text-gray-900 dark:text-white"
     >
       How EaziWage <span className="text-green-700 dark:text-emerald-400">Works</span>
     </motion.h2>
@@ -59,13 +59,13 @@ export default function Works() {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, delay: 0.2 }}
       viewport={{ once: true }}
-      className="mt-5 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed"
+      className="mt-4 sm:mt-5 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed px-4"
     >
       Access your earnings effortlessly - transparent, secure, and built for your financial freedom.
     </motion.p>
 
     {/* === Steps Grid === */}
-    <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+    <div className="mt-12 sm:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
       {steps.map((item, i) => (
         <motion.div
           key={i}

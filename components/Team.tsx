@@ -27,9 +27,9 @@ const team = [
  
 export function Team() {
   return (
-    <div className="h-[40rem] rounded-md flex flex-col antialiased bg-white dark:bg-black dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
+    <div className="min-h-[32rem] md:min-h-[40rem] w-full rounded-md flex flex-col antialiased bg-white dark:bg-black dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden px-4 sm:px-6">
 
-        <h2 className="text-5xl font-bold font-serif mb-10">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif mb-6 sm:mb-10 text-center">
           What The {" "}
           <span className="text-green-600 dark:text-400">
             Team{" "}
@@ -38,7 +38,7 @@ export function Team() {
             Had To Say
             </Highlighter>
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-10 w-full max-w-6xl">
           {team.map((member, i) => (
             <motion.div
               key={i}
@@ -48,7 +48,7 @@ export function Team() {
               viewport={{ once: true }}
               className="group"
             >
-              <div className="relative w-30 h-30 rounded-full overflow-hidden shadow-md">
+              <div className="relative mx-auto w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden shadow-md">
                 <Image
                   src={member.image}
                   alt={member.name}
@@ -56,17 +56,19 @@ export function Team() {
                   className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white">
+              <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-semibold text-gray-900 dark:text-white text-center">
                 {member.name}
               </h3>
             </motion.div>
           ))}
         </div>
-      <InfiniteMovingCards
-        items={testimonials}
-        direction="right"
-        speed="slow"
-      />
+      <div className="mt-8 sm:mt-12 w-full max-w-6xl">
+        <InfiniteMovingCards
+          items={testimonials}
+          direction="right"
+          speed="slow"
+        />
+      </div>
     </div>
   );
 }

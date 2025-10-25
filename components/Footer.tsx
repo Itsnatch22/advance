@@ -72,15 +72,15 @@ export default function Footer() {
   <div className="absolute top-0 left-0 w-80 h-80 bg-green-600/10 blur-3xl rounded-full"></div>
   <div className="absolute bottom-0 right-0 w-72 h-72 bg-emerald-400/10 blur-3xl rounded-full"></div>
 
-  <div className="relative container mx-auto px-6 md:py-16 py-12">
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
+  <div className="relative container mx-auto px-4 sm:px-6 md:py-16 py-12">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 sm:gap-10 md:gap-12">
       {/* Brand */}
-      <div className="footer-col space-y-4">
+      <div className="footer-col space-y-4 sm:col-span-2 md:col-span-1">
         <Link href="/" className="flex items-center gap-2">
           <BiWallet className="text-green-400 w-6 h-6" />
           <span className="text-xl font-bold text-white">EaziWage</span>
         </Link>
-        <p className="text-gray-400 text-sm leading-relaxed">
+        <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
           Empowering Kenyan workers with instant access to earned wages — reducing
           financial stress and boosting workplace performance.
         </p>
@@ -200,15 +200,15 @@ export default function Footer() {
     </div>
 
     {/* Bottom Bar */}
-    <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-       <p className="text-xs text-gray-500 mt-4 md:mt-0">&copy; {currentYear ?? ''} EaziWage. All Rights Reserved</p>
+    <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+       <p className="text-xs text-gray-500 text-center md:text-left">&copy; {currentYear ?? ''} EaziWage. All Rights Reserved</p>
     </div>
     <Locator/>
   </div>
 
   {/* Regulatory Strip */}
   <div className="bg-gray-900/80 border-t border-gray-800">
-    <p className="text-xs text-gray-400 p-3 text-center max-w-4xl mx-auto">
+    <p className="text-xs text-gray-400 p-3 sm:p-4 text-center max-w-4xl mx-auto px-4">
       EaziWage is regulated by the Central Bank of Kenya. All funds are provided by licensed banking partners.
       This service does not constitute lending under the Banking Act.
     </p>

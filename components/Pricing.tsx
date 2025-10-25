@@ -38,28 +38,28 @@ const pricing = [
 
 export default function Pricing () {
     return(
-        <section className="relative py-20 bg-white dark:bg-neutral-950 text-center">
-            <div className="max-w-6xl px-6 mx-auto">
+        <section className="relative py-16 sm:py-20 bg-white dark:bg-neutral-950 text-center">
+            <div className="max-w-6xl px-4 sm:px-6 mx-auto">
                 <motion.h2
                 initial={{opacity:0 , y:20}}
                 whileInView={{opacity: 1, y: 0}}
-                className="text-4xl md:text-6xl text-green-700 dark:text-green-600 font-bold font-serif">
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-green-700 dark:text-green-600 font-bold font-serif">
                     Fast. Fair. Fully Transparent.
                 </motion.h2>
 
-                <p className="mt-4 text-gray-600 dark:text-gray-300 text-lg">It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan, and dream without waiting for payday.</p>
+                <p className="mt-4 text-gray-600 dark:text-gray-300 text-base sm:text-lg px-4">It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan, and dream without waiting for payday.</p>
             
 
-            <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3 md:grid-cols-2">
+            <div className="mt-10 sm:mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3 md:grid-cols-2 justify-items-center">
                 {pricing.map((item,i) => (
                     <motion.div
                     key={i}
                     whileHover={{scale: 1.03}}
                     transition={{ type: "spring", stiffness: 200}}
-                    className="w-full max-w-sm bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border border-gray-100 dark:border-neutral-800 p-6"
+                    className="w-full max-w-sm bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border border-gray-100 dark:border-neutral-800 p-5 sm:p-6"
                     >
-                        <item.icon className="w-10 h-10 mx-auto text-black dark:text-white mb-4" />
-                        <h3 className="font-semibold text-xl text-gray-900 dark:text-white">
+                        <item.icon className="w-9 h-9 sm:w-10 sm:h-10 mx-auto text-black dark:text-white mb-4" />
+                        <h3 className="font-semibold text-lg sm:text-xl text-gray-900 dark:text-white">
                             {item.title}
                         </h3>
                         <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">
@@ -70,11 +70,11 @@ export default function Pricing () {
             </div>
 
             
-            <motion.button
+                <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 200 }}
-                className="mt-10 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-medium shadow-md"
+                className="mt-8 sm:mt-10 bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-3 rounded-full font-medium shadow-md text-sm sm:text-base"
                 >
                     Get Started
                 </motion.button>

@@ -47,14 +47,14 @@ export default function Needs() {
         )
     })
     return(
-        <section className="relative py-20 bg-gradient-to-b from-gray-50 via-green-50/10 to-gray-50 dark:from-black dark:to-gray-900">
-  <div ref={cardRef} className="max-w-6xl mx-auto px-6 text-center">
+        <section className="relative py-16 sm:py-20 bg-gradient-to-b from-gray-50 via-green-50/10 to-gray-50 dark:from-black dark:to-gray-900">
+  <div ref={cardRef} className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
     <motion.h2
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7 }}
       viewport={{ once: true }}
-      className="text-4xl font-bold text-gray-900 dark:text-white font-serif"
+      className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white font-serif"
     >
       Built for the <span className="text-green-600">African Workforce</span>
     </motion.h2>
@@ -63,7 +63,7 @@ export default function Needs() {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, delay: 0.2 }}
       viewport={{ once: true }}
-      className="mt-4 text-gray-600 dark:text-white max-w-2xl mx-auto text-lg"
+      className="mt-4 text-gray-600 dark:text-white max-w-2xl mx-auto text-base sm:text-lg px-4"
     >
       Enterprise-grade fintech built for Africa - compliant, secure, and fully integrated with local banking
       and mobile money systems.
@@ -72,7 +72,7 @@ export default function Needs() {
       Integrated with mobile money applications, payroll providers & leading banks.
     </p>
 
-    <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
       {steps.map((item, i) => (
         <motion.div
           key={i}

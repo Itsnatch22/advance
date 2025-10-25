@@ -75,13 +75,13 @@ const Navbar = () => {
       ref={navRef}
       className="w-full fixed top-0 left-0 z-50 bg-white dark:bg-black shadow"
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between h-16">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-2xl font-bold text-green-700"
+          className="flex items-center gap-2 text-xl sm:text-2xl font-bold text-green-700"
         >
-          <BiWallet className="text-black dark:text-white" />
+          <BiWallet className="text-black dark:text-white w-6 h-6 sm:w-7 sm:h-7" />
           EaziWage
         </Link>
 
@@ -175,7 +175,7 @@ const Navbar = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.3 }}
-            className="fixed top-16 right-0 w-64 h-screen bg-white dark:bg-black shadow-lg p-6 flex flex-col gap-6 lg:hidden"
+            className="fixed top-16 right-0 w-72 sm:w-80 h-screen bg-white dark:bg-black shadow-lg p-6 flex flex-col gap-6 lg:hidden overflow-y-auto"
           >
             {links.map((link, i) => (
               <div key={i} className="flex flex-col gap-2">

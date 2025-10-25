@@ -5,11 +5,11 @@ import AutoType from "./AutoType"
 
 export default function ProblemStatement() {
     return(
-        <section className="relative bg-gray-50 dark:bg-neutral-950 py-24 overflow-hidden">
+        <section className="relative bg-gray-50 dark:bg-neutral-950 py-16 sm:py-20 lg:py-24 overflow-hidden">
   {/* === Soft Background Glow === */}
   <div className="absolute inset-0 bg-gradient-to-b from-green-600/5 via-transparent to-emerald-500/5 dark:from-emerald-600/10 dark:via-transparent dark:to-green-500/10 blur-2xl"></div>
 
-  <div className="max-w-6xl grid lg:grid-cols-2 grid-cols-1 gap-20 items-center px-6 mx-auto relative z-10">
+  <div className="max-w-6xl grid lg:grid-cols-2 grid-cols-1 gap-10 sm:gap-16 lg:gap-20 items-center px-4 sm:px-6 mx-auto relative z-10">
     {/* === Image Side === */}
     <motion.div
       initial={{ opacity: 0, x: -50 }}
@@ -38,25 +38,25 @@ export default function ProblemStatement() {
       viewport={{ once: true }}
       className="space-y-6"
     >
-      <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+      <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
         Financial Peace Fuels{" "}
         <span className="text-green-700 dark:text-emerald-400">
           Great Performance
         </span>
       </h2>
 
-      <p className="leading-relaxed text-lg text-gray-700 dark:text-gray-300">
+      <p className="leading-relaxed text-base sm:text-lg text-gray-700 dark:text-gray-300">
         <span className="text-green-700 dark:text-emerald-400 font-semibold">
           EaziWage
         </span>{" "}
         <AutoType text="was born out of a simple but urgent reality: most employees struggle to stretch their income until payday — often turning to expensive mobile loans or shylocks." />
       </p>
 
-      <p className="leading-relaxed text-lg text-gray-700 dark:text-gray-300">
-        <AutoType text="This cycle of financial stress doesn’t just harm the employee - it quietly drains productivity, increases absenteeism, and lowers morale across workplaces." />
+      <p className="leading-relaxed text-base sm:text-lg text-gray-700 dark:text-gray-300">
+        <AutoType text="This cycle of financial stress doesn't just harm the employee - it quietly drains productivity, increases absenteeism, and lowers morale across workplaces." />
       </p>
 
-      <p className="leading-relaxed text-lg text-gray-700 dark:text-gray-300">
+      <p className="leading-relaxed text-base sm:text-lg text-gray-700 dark:text-gray-300">
         Introducing{" "}
         <span className="text-green-700 dark:text-emerald-400 font-semibold">
           EaziWage
