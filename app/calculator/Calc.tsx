@@ -112,8 +112,8 @@ export default function Calculator() {
   }, [salary, daysWorked, allowancesChecked, allowancesAmount]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-2xl p-8 border border-green-100 max-w-5xl mx-auto mt-10">
-      <h2 className="text-3xl font-extrabold mb-6 text-gray-900 text-center">
+    <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 max-w-5xl mx-auto mt-6 sm:mt-8 md:mt-10">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6 text-gray-900 text-center">
         Wage Access Calculator 💼
       </h2>
 
@@ -121,19 +121,25 @@ export default function Calculator() {
         {/* BASIC INPUTS (Cycle Days removed, Salary expanded) */}
         <div className="grid grid-cols-1 gap-4">
           <div>
-            <label className="text-sm text-gray-600">Gross Monthly Salary (KES)</label>
+            <label htmlFor="salary" className="text-sm text-gray-600">Gross Monthly Salary (KES)</label>
             <input
+              id="salary"
+              inputMode="numeric"
+              min={0}
               type="number"
               placeholder="e.g. 60000"
-              className="mt-1 w-full border rounded-lg p-2"
+              className="mt-1 w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
               value={salary}
               onChange={(e) => setSalary(e.target.value ? +e.target.value : "")}
             />
+            {!salary && (
+              <p className="mt-1 text-xs text-amber-600">Enter your gross salary to begin.</p>
+            )}
           </div>
         </div>
 
         {/* ALLOWANCES SECTION */}
-        <div className="grid gap-2 mt-4">
+        <div className="grid gap-2 mt-2 sm:mt-4">
           <p className="text-sm font-semibold">Allowances (toggle + enter amount)</p>
           {([
             { key: "otherRemuneration", label: "Other Remuneration (bonuses, travel, car etc)" },
@@ -142,7 +148,7 @@ export default function Calculator() {
             { key: "pensionCover", label: "Pension Cover" },
             { key: "medicalCover", label: "Medical Cover" },
           ] as const).map((a) => (
-            <div key={a.key} className="flex items-center gap-3">
+            <div key={a.key} className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -158,7 +164,9 @@ export default function Calculator() {
               </label>
               <input
                 type="number"
-                className="ml-auto w-48 border rounded-lg p-2"
+                inputMode="numeric"
+                min={0}
+                className="ml-auto w-32 sm:w-40 md:w-48 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 disabled:bg-gray-100"
                 value={allowancesAmount[a.key as AllowanceKey]}
                 disabled={!allowancesChecked[a.key as AllowanceKey]}
                 onChange={(e) =>
@@ -174,14 +182,18 @@ export default function Calculator() {
 
         {/* DAYS WORKED SLIDER */}
         <div>
-          <label className="text-sm text-gray-600">Days worked (drag)</label>
+          <label htmlFor="days" className="text-sm text-gray-600">Days worked (drag)</label>
           <input
+            id="days"
+            aria-valuemin={0}
+            aria-valuemax={cycleDays}
+            aria-valuenow={daysWorked}
             type="range"
             min={0}
             max={cycleDays}
             value={daysWorked}
             onChange={(e) => setDaysWorked(Number(e.target.value))}
-            className="w-full mt-2"
+            className="w-full mt-2 accent-emerald-600"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
             <span>{daysWorked} days</span>
@@ -191,7 +203,9 @@ export default function Calculator() {
 
         <button
           onClick={callBackendCalc}
-          className="mt-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-semibold py-2 px-4 rounded-xl shadow hover:scale-[1.02] transition-transform w-full"
+          className="mt-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow hover:scale-[1.02] active:scale-[0.99] transition-transform w-full disabled:opacity-60"
+          disabled={!salary}
+          aria-disabled={!salary}
         >
           Calculate
         </button>
@@ -199,34 +213,34 @@ export default function Calculator() {
 
       {/* RESULTS */}
       {result && result.success && (
-        <div className="mt-10 bg-gradient-to-br from-emerald-50 via-green-50 to-white border border-emerald-200 rounded-2xl p-8 shadow-lg">
-          <h3 className="font-extrabold text-green-800 text-xl mb-4">Wage Summary</h3>
-          <div className="space-y-3 text-sm">
-            <div className="flex justify-between border-b border-green-100 pb-1">
+        <div className="mt-8 sm:mt-10 bg-gradient-to-br from-emerald-50 via-green-50 to-white border border-emerald-200 rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg">
+          <h3 className="font-extrabold text-green-800 text-lg sm:text-xl mb-3 sm:mb-4">Wage Summary</h3>
+          <div className="space-y-2 sm:space-y-3 text-sm">
+            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Accrued Earnings</p>
               <p className="font-semibold text-emerald-700">Ksh {fmt(result.accruedGross)}</p>
             </div>
-            <div className="flex justify-between border-b border-green-100 pb-1">
+            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Net Salary (After Deductions + Allowances)</p>
               <p className="font-semibold text-emerald-700">Ksh {fmt(result.netMonthly)}</p>
             </div>
-            <div className="flex justify-between border-b border-green-100 pb-1">
+            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Access Cap ({result.accessCapPercent}%)</p>
               <p className="font-semibold text-emerald-700">Ksh {fmt(result.accessCap)}</p>
             </div>
-            <div className="flex justify-between border-b border-green-100 pb-1">
+            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Platform Fee (5%)</p>
               <p className="font-semibold text-red-500">- Ksh {fmt(result.platformFee)}</p>
             </div>
-            <div className="pt-3 flex justify-between items-center bg-white/80 rounded-xl shadow-inner px-3 py-2 border border-emerald-100">
-              <p className="font-bold text-gray-800 text-base">You Can Access Now</p>
-              <p className="text-right font-extrabold text-green-700 text-xl">
+            <div className="pt-3 flex flex-wrap justify-between items-center gap-3 bg-white/80 rounded-xl shadow-inner px-3 py-2 border border-emerald-100">
+              <p className="font-bold text-gray-800 text-sm sm:text-base">You Can Access Now</p>
+              <p className="text-right font-extrabold text-green-700 text-lg sm:text-xl">
                 Ksh {fmt(result.accessibleNow)}
               </p>
             </div>
           </div>
 
-          <div className="mt-4 bg-white/70 border border-green-200 rounded-lg p-2 text-xs text-gray-600 text-center shadow-sm">
+          <div className="mt-3 sm:mt-4 bg-white/70 border border-green-200 rounded-lg p-2 text-[11px] sm:text-xs text-gray-600 text-center shadow-sm">
             <p>
               <span className="font-semibold">Deductions →</span> NSSF: Ksh {fmt(result.deductions.NSSF)} |
               SHIF: Ksh {fmt(result.deductions.SHIF)} | Housing Lev: Ksh {fmt(result.deductions.Housing)}
