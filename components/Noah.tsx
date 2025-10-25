@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+// @ts-ignore - allow JSON import if TS config permits, otherwise runtime fallback remains
+import kbData from "@/data/noah_knowledge.json";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, Send, X } from "lucide-react";
 
@@ -13,7 +15,7 @@ export default function Noah() {
     {from: "noah", text: "Hey👋, Noah here! Need a hand?"},
   ]);
   const [ input, setInput ] = useState("");
-  const [ kb, setKb ] = useState<{ id: string; title: string; text: string | string[]; source?: string }[] | null>(null);
+  const [ kb, setKb ] = useState<{ id: string; title: string; text: string | string[]; source?: string }[] | null>(Array.isArray((kbData as any)) ? (kbData as any) : null);
 
   // Lightweight internal context and knowledge
   const knowledge = [
@@ -26,15 +28,14 @@ export default function Noah() {
 
   // Load external JSON knowledge once when chat opens
   useEffect(() => {
+    // If kb wasn't statically imported (e.g., JSON import disabled), try client fetch from public path
     if (!open || kb) return;
     fetch("/data/noah_knowledge.json")
-      .then((r) => r.json())
+      .then((r) => r.ok ? r.json() : null)
       .then((data) => {
         if (Array.isArray(data)) setKb(data);
       })
-      .catch(() => {
-        // fail silently; Noah will still work with built-in knowledge
-      });
+      .catch(() => {});
   }, [open, kb]);
 
   const normalizedKb = useMemo(() => {
@@ -71,7 +72,7 @@ export default function Noah() {
     }
 
     // 3) Contextual heuristics using short history window
-    const recent = history.slice(-4).map(h => h.text.toLowerCase()).join(" \n ");
+    // (history context reserved for future use)
     if (/(eligib|qualif)/i.test(cleaned)) {
       return "Eligibility is based on your gross salary, allowances, and accrued days in the 30‑day cycle. Use the calculator to estimate your accessible amount.";
     }
@@ -86,7 +87,10 @@ export default function Noah() {
   const handleSend = () => {
     const msg = input.trim();
     if(!msg) return;
-    const updated = [...messages, {from: "user", text: msg}];
+    const updated : { from: "noah" | "user"; text: string }[] = [
+      ...messages,
+      { from: "user", text: msg },
+    ]
     setMessages(updated);
     setInput("");
 
