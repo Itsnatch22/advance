@@ -65,7 +65,7 @@ export default function Needs() {
       viewport={{ once: true }}
       className="mt-4 text-gray-600 dark:text-white max-w-2xl mx-auto text-lg"
     >
-      Enterprise-grade fintech built for Kenya - compliant, secure, and fully integrated with local banking
+      Enterprise-grade fintech built for Africa - compliant, secure, and fully integrated with local banking
       and mobile money systems.
     </motion.p>
     <p className="text-sm mt-2 text-gray-400 dark:text-gray-500 italic">

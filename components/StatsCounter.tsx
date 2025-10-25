@@ -8,7 +8,7 @@ export default function StatsCounter() {
   const stats = {
     targeted_customers: 4650,
     targeted_companies: 5,
-    annual_advances: 400000000,
+    annual_advances: 4000000000,
   };
 
   const [inView,setInView] = useState(false);

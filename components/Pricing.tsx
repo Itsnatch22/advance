@@ -50,7 +50,7 @@ export default function Pricing () {
                 <p className="mt-4 text-gray-600 dark:text-gray-300 text-lg">It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan, and dream without waiting for payday.</p>
             
 
-            <div className="mt-12 grid grid-cols-3 gap-6 place-items-center">
+            <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3 md:grid-cols-2">
                 {pricing.map((item,i) => (
                     <motion.div
                     key={i}
