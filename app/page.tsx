@@ -5,7 +5,6 @@ import CTA from "@/components/CTA";
 import ProblemStatement from "@/components/ProblemStatement";
 import StatsCounter from "@/components/StatsCounter";
 import Pricing from "@/components/Pricing";
-
 export default function App() {
 
   return(
