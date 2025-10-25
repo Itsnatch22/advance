@@ -12,7 +12,7 @@ export const corporatePartners = [
   { name: "Carrefour", logo: "/partners/carrefour.png", blurb: "Global retailer committed to workforce welfare.", href: "https://www.carrefour.com/en" },
   { name: "Mayfair Insurance", logo: "/partners/mayfair.png", blurb: "Comprehensive insurance solutions for employees.", href: "https://mayfairinsurance.co.ke/" },
   { name: "EABL", logo: "/partners/eabl.svg", blurb: "Pioneering beverage company supporting workforce welfare.", href: "https://eabl.com/" },
-  { name: "Jubilee Insurance", logo: "/partners/jubilee.png", blurb: "Trusted insurance partner for employee benefits.", href: "https://jubileeinsurance.com/" },
+  { name: "Jubilee Insurance", logo: "/partners/Jubilee.png", blurb: "Trusted insurance partner for employee benefits.", href: "https://jubileeinsurance.com/" },
   { name: "CIC Insurance", logo: "/partners/CIC.png", blurb: "Innovative insurance solutions for businesses.", href: "https://www.cic.co.ke/" },
 ]
 
