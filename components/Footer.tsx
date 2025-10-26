@@ -155,7 +155,7 @@ export default function Footer() {
         <h3 className='text-white font-semibold mb-4'>Legal</h3>
         <ul className='space-y-2'>
           {[
-            { name: "Privacy Policy", href: "/data.pdf"},
+            { name: "Data Policy", href: "/data.pdf"},
             { name: "ABC Policy", href: "/corruption.pdf"},
             { name: "Code of Ethics", href: "/ethics.pdf"},
             { name: "Gifts Policy", href: "/gifts.pdf"},
