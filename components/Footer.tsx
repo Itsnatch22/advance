@@ -135,7 +135,6 @@ export default function Footer() {
             { name: "About Us", href: "about" },
             { name: "Careers", href: "careers" },
             { name: "Partners", href: "partners" },
-            { name: "Careers", href: "careers" },
             { name: "Culture", href: "culture" },
             { name: "Contact", href: "contact" },
           ].map((link, index) => (
