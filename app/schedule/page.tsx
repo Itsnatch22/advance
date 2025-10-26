@@ -271,10 +271,6 @@ export default function SchedulePage() {
           </div>
         </section>
       )}
-
-      <footer className="mt-8 text-xs opacity-60 text-center">
-        Made with 💚 by EaziWage — your meetings auto-sync from Calendly.
-      </footer>
     </main>
   );
 }
