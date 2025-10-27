@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
+import Image from "next/image";
 
 type AllowanceKey =
   | "otherRemuneration"
@@ -9,7 +10,9 @@ type AllowanceKey =
   | "medicalCover";
 
 type AllowancesChecked = Record<AllowanceKey, boolean>;
-type AllowancesAmount = Record<AllowanceKey, number>;
+type AllowancesAmount = Record<AllowanceKey, number | "">;
+
+type Country = "KE" | "UG" | "TZ" | "ZA";
 
 type CalcResult = {
   success: boolean;
@@ -28,16 +31,19 @@ type CalcResult = {
 };
 
 const fmt = (n: number) =>
-  new Intl.NumberFormat("en-KE", { maximumFractionDigits: 0 }).format(Math.round(n));
+  new Intl.NumberFormat("en-KE", { maximumFractionDigits: 0 }).format(
+    Math.round(n)
+  );
 
 export default function Calculator() {
   const [salary, setSalary] = useState<number | "">("");
   const [daysWorked, setDaysWorked] = useState<number>(0);
+  const [result, setResult] = useState<CalcResult | null>(null);
+  const [country, setCountry] = useState<Country>("KE");
 
-  // Fixed values
-  const feePercent = 5; // 💰 Fixed 5%
-  const flatFee = 25; // 💵 Fixed 25 KES
-  const cycleDays = 30; // 🔒 Fixed cycle days
+  const feePercent = 5;
+  const flatFee = 25;
+  const cycleDays = 30;
 
   const [allowancesChecked, setAllowancesChecked] = useState<AllowancesChecked>({
     otherRemuneration: false,
@@ -47,15 +53,15 @@ export default function Calculator() {
     medicalCover: false,
   });
 
-  const [allowancesAmount, setAllowancesAmount] = useState<AllowancesAmount>({
-    otherRemuneration: 0,
-    mealAllowance: 0,
-    nightAllowance: 0,
-    pensionCover: 0,
-    medicalCover: 0,
+  const [allowancesAmount, setAllowancesAmount] = useState<
+    Record<AllowanceKey, number | "">
+  >({
+    otherRemuneration: "",
+    mealAllowance: "",
+    nightAllowance: "",
+    pensionCover: "",
+    medicalCover: "",
   });
-
-  const [result, setResult] = useState<CalcResult | null>(null);
 
   const percentOfCycle = useMemo(() => {
     return Math.min(100, Math.round((Number(daysWorked || 0) / cycleDays) * 100));
@@ -63,7 +69,8 @@ export default function Calculator() {
 
   const buildPayload = () => ({
     salary: Number(salary || 0),
-    cycleDays, // fixed 30
+    country,
+    cycleDays,
     daysWorked: Number(daysWorked || 0),
     advanced: 0,
     feePercent,
@@ -90,11 +97,13 @@ export default function Calculator() {
   const callBackendCalc = async () => {
     if (!salary) {
       alert("Fill in salary ⚠️");
+      setResult(null);
       return;
     }
+
     const payload = buildPayload();
     try {
-      const res = await fetch("/api/calc", {
+      const res = await fetch(`/api/calc?country=${country}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -107,47 +116,100 @@ export default function Calculator() {
     }
   };
 
-  useEffect(() => {
-    if (salary) callBackendCalc();
-  }, [salary, daysWorked, allowancesChecked, allowancesAmount]);
+  React.useEffect(() => {
+    if (!salary) setResult(null);
+  }, [salary]);
+
+  const currencySymbol =
+    country === "KE"
+      ? "KES"
+      : country === "UG"
+      ? "UGX"
+      : country === "TZ"
+      ? "TZS"
+      : "ZAR";
 
   return (
-    <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 max-w-5xl mx-auto mt-6 sm:mt-8 md:mt-10">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6 text-gray-900 text-center">
+    <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 max-w-6xl mx-auto mt-6 sm:mt-8 md:mt-10">
+      {/* Title */}
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 sm:mb-4 text-gray-900 text-center">
         Wage Access Calculator 💼
       </h2>
 
-      <div className="grid gap-5">
-        {/* BASIC INPUTS (Cycle Days removed, Salary expanded) */}
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label htmlFor="salary" className="text-sm text-gray-600">Gross Monthly Salary (KES)</label>
-            <input
-              id="salary"
-              inputMode="numeric"
-              min={0}
-              type="number"
-              placeholder="e.g. 60000"
-              className="mt-1 w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
-              value={salary}
-              onChange={(e) => setSalary(e.target.value ? +e.target.value : "")}
+      {/* FLAGS SECTION */}
+      <div className="flex justify-center items-center gap-4 mb-6">
+        {[
+          { code: "KE", flag: "/flag/KE.png" },
+          { code: "UG", flag: "/flag/UG.png" },
+          { code: "TZ", flag: "/flag/TZ.png" },
+          { code: "ZA", flag: "/flag/SA.png" },
+        ].map((f) => (
+          <button
+            key={f.code}
+            onClick={() => setCountry(f.code as Country)}
+            className={`w-11 h-11 rounded-full overflow-hidden border-2 transition-all duration-200 ${
+              country === f.code
+                ? "border-emerald-600 scale-110 shadow-md"
+                : "border-gray-300 opacity-70 hover:opacity-100"
+            }`}
+          >
+            <Image
+              src={f.flag}
+              alt={f.code}
+              width={44}
+              height={44}
+              className="object-cover"
             />
-            {!salary && (
-              <p className="mt-1 text-xs text-amber-600">Enter your gross salary to begin.</p>
-            )}
-          </div>
+          </button>
+        ))}
+      </div>
+
+      <p className="text-center text-sm font-medium text-gray-600 mb-4">
+        Selected Country:{" "}
+        <span className="font-bold text-emerald-700">{country}</span> (
+        {currencySymbol})
+      </p>
+
+      <div className="grid gap-5">
+        {/* SALARY INPUT */}
+        <div>
+          <label htmlFor="salary" className="text-sm text-gray-600">
+            Gross Monthly Salary ({currencySymbol})
+          </label>
+          <input
+            id="salary"
+            inputMode="numeric"
+            min={0}
+            type="number"
+            placeholder="e.g. 60000"
+            className="mt-1 w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+            value={salary}
+            onChange={(e) => setSalary(e.target.value ? +e.target.value : "")}
+          />
+          {!salary && (
+            <p className="mt-1 text-xs text-amber-600">
+              Enter your gross salary to begin.
+            </p>
+          )}
         </div>
 
         {/* ALLOWANCES SECTION */}
         <div className="grid gap-2 mt-2 sm:mt-4">
-          <p className="text-sm font-semibold">Allowances (toggle + enter amount)</p>
-          {([
-            { key: "otherRemuneration", label: "Other Remuneration (bonuses, travel, car etc)" },
-            { key: "mealAllowance", label: "Meal Allowance" },
-            { key: "nightAllowance", label: "Night Out Allowance" },
-            { key: "pensionCover", label: "Pension Cover" },
-            { key: "medicalCover", label: "Medical Cover" },
-          ] as const).map((a) => (
+          <p className="text-sm font-semibold">
+            Allowances (toggle + enter amount)
+          </p>
+          {(
+            [
+              {
+                key: "otherRemuneration",
+                label: "Other Remuneration (bonuses, travel, car etc)",
+              },
+              { key: "mealAllowance", label: "Meal Allowance" },
+              { key: "nightAllowance", label: "Night Out Allowance" },
+              { key: "pensionCover", label: "Pension Cover" },
+              { key: "medicalCover", label: "Medical Cover" },
+            ] as const
+          ).map((a) => (
             <div key={a.key} className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2">
                 <input
@@ -172,7 +234,9 @@ export default function Calculator() {
                 onChange={(e) =>
                   setAllowancesAmount((s) => ({
                     ...s,
-                    [a.key as AllowanceKey]: e.target.value ? +e.target.value : 0,
+                    [a.key as AllowanceKey]: e.target.value
+                      ? +e.target.value
+                      : "",
                   }))
                 }
               />
@@ -182,12 +246,11 @@ export default function Calculator() {
 
         {/* DAYS WORKED SLIDER */}
         <div>
-          <label htmlFor="days" className="text-sm text-gray-600">Days worked (drag)</label>
+          <label htmlFor="days" className="text-sm text-gray-600">
+            Days worked (drag)
+          </label>
           <input
             id="days"
-            aria-valuemin={0}
-            aria-valuemax={cycleDays}
-            aria-valuenow={daysWorked}
             type="range"
             min={0}
             max={cycleDays}
@@ -201,49 +264,64 @@ export default function Calculator() {
           </div>
         </div>
 
+        {/* CALCULATE BUTTON */}
         <button
           onClick={callBackendCalc}
           className="mt-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow hover:scale-[1.02] active:scale-[0.99] transition-transform w-full disabled:opacity-60"
           disabled={!salary}
-          aria-disabled={!salary}
         >
           Calculate
         </button>
       </div>
 
-      {/* RESULTS */}
+      {/* RESULTS SECTION */}
       {result && result.success && (
         <div className="mt-8 sm:mt-10 bg-gradient-to-br from-emerald-50 via-green-50 to-white border border-emerald-200 rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg">
-          <h3 className="font-extrabold text-green-800 text-lg sm:text-xl mb-3 sm:mb-4">Wage Summary</h3>
+          <h3 className="font-extrabold text-green-800 text-lg sm:text-xl mb-3 sm:mb-4">
+            Wage Summary
+          </h3>
+
           <div className="space-y-2 sm:space-y-3 text-sm">
             <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Accrued Earnings</p>
-              <p className="font-semibold text-emerald-700">Ksh {fmt(result.accruedGross)}</p>
+              <p className="font-semibold text-emerald-700">
+                {currencySymbol} {fmt(result.accruedGross)}
+              </p>
             </div>
             <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Net Salary (After Deductions + Allowances)</p>
-              <p className="font-semibold text-emerald-700">Ksh {fmt(result.netMonthly)}</p>
+              <p className="font-semibold text-emerald-700">
+                {currencySymbol} {fmt(result.netMonthly)}
+              </p>
             </div>
             <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Access Cap ({result.accessCapPercent}%)</p>
-              <p className="font-semibold text-emerald-700">Ksh {fmt(result.accessCap)}</p>
+              <p className="font-semibold text-emerald-700">
+                {currencySymbol} {fmt(result.accessCap)}
+              </p>
             </div>
             <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Platform Fee (5%)</p>
-              <p className="font-semibold text-red-500">- Ksh {fmt(result.platformFee)}</p>
+              <p className="font-semibold text-red-500">
+                - {currencySymbol} {fmt(result.platformFee)}
+              </p>
             </div>
             <div className="pt-3 flex flex-wrap justify-between items-center gap-3 bg-white/80 rounded-xl shadow-inner px-3 py-2 border border-emerald-100">
-              <p className="font-bold text-gray-800 text-sm sm:text-base">You Can Access Now</p>
+              <p className="font-bold text-gray-800 text-sm sm:text-base">
+                You Can Access Now
+              </p>
               <p className="text-right font-extrabold text-green-700 text-lg sm:text-xl">
-                Ksh {fmt(result.accessibleNow)}
+                {currencySymbol} {fmt(result.accessibleNow)}
               </p>
             </div>
           </div>
 
           <div className="mt-3 sm:mt-4 bg-white/70 border border-green-200 rounded-lg p-2 text-[11px] sm:text-xs text-gray-600 text-center shadow-sm">
             <p>
-              <span className="font-semibold">Deductions →</span> NSSF: Ksh {fmt(result.deductions.NSSF)} |
-              SHIF: Ksh {fmt(result.deductions.SHIF)} | Housing Lev: Ksh {fmt(result.deductions.Housing)}
+              <span className="font-semibold">Deductions →</span> NSSF:{" "}
+              {currencySymbol} {fmt(result.deductions.NSSF)} | SHIF:{" "}
+              {currencySymbol} {fmt(result.deductions.SHIF)} | Housing Lev:{" "}
+              {currencySymbol} {fmt(result.deductions.Housing)}
             </p>
           </div>
         </div>
