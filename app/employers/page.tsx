@@ -111,7 +111,7 @@ export default function Employers() {
                     transition={{ duration: 0.4, delay: i * 0.1 }}
                     className="w-full p-4 sm:p-5 lg:p-6 border border-gray-300 shadow-sm rounded-xl sm:rounded-2xl bg-white hover:shadow-md transition"
                     >
-                    <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 mb-3 sm:mb-4" />
+                    <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-black mb-3 sm:mb-4" />
                     <h3 className="text-base sm:text-lg lg:text-xl text-gray-900 font-medium">
                         {item.title}
                     </h3>
@@ -141,7 +141,7 @@ export default function Employers() {
                     transition={{ duration: 0.4, delay: j * 0.1 }}
                     className="w-full p-4 sm:p-5 lg:p-6 border border-gray-300 shadow-sm rounded-xl sm:rounded-2xl bg-white hover:shadow-md transition"
                     >
-                    <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 mb-3 sm:mb-4" />
+                    <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-black mb-3 sm:mb-4" />
                     <h3 className="text-base sm:text-lg lg:text-xl font-medium text-gray-900">
                         {item.title}
                     </h3>
