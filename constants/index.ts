@@ -26,3 +26,4 @@ export const techPartners = [
   { name: "Plaid", logo: "/partners/plaid.svg", blurb: "Connecting applications to users' bank accounts securely.", href: "https://plaid.com/"  },
   { name: "Twilio", logo: "/partners/twilio.svg", blurb: "Cloud communications platform for building SMS, Voice & Messaging applications.", href: "https://twilio.com/"  },
 ]
+
