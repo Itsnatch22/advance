@@ -56,7 +56,7 @@ export default function CalculatorPage() {
 
         {/* Right Side — Calculator (shows on top for mobile) */}
         <div className="flex justify-center w-full lg:w-1/3 order-first lg:order-none">
-          <div className="bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl border border-green-100 dark:border-green-800 shadow-2xl shadow-green-200/50 dark:shadow-green-900/30 rounded-3xl p-6 md:p-8 w-full max-w-sm hover:scale-[1.01] transition-transform duration-300">
+          <div className="bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl border w-[400px] border-green-100 dark:border-green-800 shadow-2xl shadow-green-200/50 dark:shadow-green-900/30 rounded-3xl p-6 md:p-8  hover:scale-[1.01] transition-transform duration-300">
             <Calculator />
           </div>
         </div>
