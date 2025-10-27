@@ -112,7 +112,7 @@ export default function Calculator() {
   }, [salary, daysWorked, allowancesChecked, allowancesAmount]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 max-w-5xl mx-auto mt-6 sm:mt-8 md:mt-10">
+    <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 w-[400px] max-w-5xl mx-auto mt-6 sm:mt-8 md:mt-10">
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6 text-gray-900 text-center">
         Wage Access Calculator 💼
       </h2>
