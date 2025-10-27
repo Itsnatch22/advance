@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
 import { User, Wallet, Cog, LineChart, Lock, BadgeCheck, Clipboard, CircuitBoard, BrainCircuit, ShieldCheck, ChevronRight, ChevronLeft } from "lucide-react";
+import { AppleCardsCarouselDemo } from "@/components/Carousel";
 
 const reasons = [
     {
@@ -61,11 +62,11 @@ const rolloutPlans = [
 ];
 
 const images = [
-    "/cta.jpg",
-    "/images/card2.webp",
-    "/images/card3.webp",
-    "/images/card4.webp",
-    "/images/card5.webp",
+    "/eaziwage/automotive.png",
+    "/eaziwage/banking.png",
+    "/eaziwage/retail.png",
+    "/eaziwage/support.png",
+    "/eaziwage/cons",
 ];
 export default function Employers() {
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -148,41 +149,7 @@ export default function Employers() {
             <div className="max-w-7xl px-6 mt-10">
                 <h2 className="font-serif mt-6 font-semibold sm:text-3xl text-2xl">Works across sectors & sizes</h2>
                 <p className="max-w-prose leading-tight mt-4 text-gray-600">Retail • Hospitality • Manufacturing • Logistics • Banks • Schools • Healthcare</p>
-                <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
-                    <button
-                    onClick={() => scroll("left")}
-                    className="p-2 rounded-full bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md hover:scale-105 transition">
-                       <ChevronLeft className="w-5 h-5" /> 
-                    </button>
-                </div>
-                <div
-                    ref={scrollRef}
-                    className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory px-10 scrollbar-hide"
-                >
-                    {images.map((src, i) => (
-                    <div
-                        key={i}
-                        className="snap-center flex-shrink-0 w-[300px] h-[300px] relative rounded-3xl overflow-hidden shadow-xl mt-10"
-                    >
-                        <Image
-                        src={src}
-                        alt={`Card ${i + 1}`}
-                        fill
-                        className="object-cover hover:scale-105 transition-transform duration-500"
-                        />
-                    </div>
-                    ))}
-                </div>
-
-                {/* right button */}
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
-                    <button
-                    onClick={() => scroll("right")}
-                    className="p-2 rounded-full bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md hover:scale-105 transition"
-                    >
-                    <ChevronRight className="w-5 h-5" />
-                    </button>
-                </div>
+                <AppleCardsCarouselDemo/>
             </div>
         </section>
     )
