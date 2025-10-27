@@ -56,12 +56,6 @@ export default function AboutPage() {
         className="w-full max-w-md rounded-2xl shadow-lg"
       />
     </motion.div>
-  </div>
-</section>
-
-
-  {/* ===== Mission & Vision ===== */}
-  <section className="max-w-6xl mx-auto py-24 px-6 grid md:grid-cols-2 gap-16">
     <motion.div
       initial={{ opacity: 0, x: -50 }}
       whileInView={{ opacity: 1, x: 0 }}
@@ -87,7 +81,8 @@ export default function AboutPage() {
         transparency, and secure technology.
       </p>
     </motion.div>
-  </section>
+  </div>
+</section>
 
   {/* ===== Our Story ===== */}
   <section className="bg-gray-50 dark:bg-neutral-900 py-24 px-6 text-center relative">
