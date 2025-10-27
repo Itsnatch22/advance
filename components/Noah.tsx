@@ -9,10 +9,10 @@ import { MessageCircle, Send, X } from "lucide-react";
 export default function Noah() {
   const [ open, setOpen ] = useState(false);
   const [ messages, setMessages ] = useState<{
-    from: "noah" | "user";
+    from: "Wiza" | "user";
     text: string;
   }[]>([
-    {from: "noah", text: "Hey👋, Noah here! Need a hand?"},
+    {from: "Wiza", text: "Hey👋, Wiza here! Need a hand?"},
   ]);
   const [ input, setInput ] = useState("");
   const [ kb, setKb ] = useState<{ id: string; title: string; text: string | string[]; source?: string }[] | null>(Array.isArray((kbData as any)) ? (kbData as any) : null);
@@ -87,7 +87,7 @@ export default function Noah() {
   const handleSend = () => {
     const msg = input.trim();
     if(!msg) return;
-    const updated : { from: "noah" | "user"; text: string }[] = [
+    const updated : { from: "Wiza" | "user"; text: string }[] = [
       ...messages,
       { from: "user", text: msg },
     ]
@@ -98,7 +98,7 @@ export default function Noah() {
     setTimeout(() => {
       const reply = think(updated, msg);
       if (!reply) return;
-      setMessages((prev) => ([...prev, { from: "noah", text: reply }]));
+      setMessages((prev) => ([...prev, { from: "Wiza", text: reply }]));
     }, 400);
   };
 
@@ -125,7 +125,7 @@ export default function Noah() {
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-green-700 to-green-600 text-white px-4 py-3 font-semibold flex justify-between items-center">
-              Noah 💬
+              Wiza💬
               <span className="text-xs opacity-90">EaziWage Assistant</span>
             </div>
 

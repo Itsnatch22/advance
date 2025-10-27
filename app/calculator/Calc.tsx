@@ -130,13 +130,13 @@ export default function Calculator() {
       : "ZAR";
 
   return (
-    <div className="bg-white w-[400px] rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 max-w-5xl mx-auto mt-6 sm:mt-8 md:mt-10">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6 text-gray-900 text-center">
+    <div className="bg-white w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 mx-auto mt-4 sm:mt-6 md:mt-8">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 sm:mb-5 text-gray-900 text-center">
         Wage Access Calculator 💼
       </h2>
 
       {/* FLAGS SECTION */}
-      <div className="flex justify-center items-center gap-4 mb-6">
+      <div className="flex justify-center items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
         {[
           { code: "KE", flag: "/flag/KE.png" },
           { code: "UG", flag: "/flag/UG.png" },
@@ -163,13 +163,13 @@ export default function Calculator() {
         ))}
       </div>
 
-      <p className="text-center text-sm font-medium text-gray-600 mb-4">
+      <p className="text-center text-xs sm:text-sm font-medium text-gray-600 mb-3 sm:mb-4">
         Selected Country:{" "}
         <span className="font-bold text-emerald-700">{country}</span> (
         {currencySymbol})
       </p>
 
-      <div className="grid gap-5">
+      <div className="grid gap-4 sm:gap-5">
         {/* SALARY INPUT */}
         <div>
           <label htmlFor="salary" className="text-sm text-gray-600">
@@ -181,7 +181,7 @@ export default function Calculator() {
             min={0}
             type="number"
             placeholder="e.g. 60000"
-            className="mt-1 w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+            className="mt-1 w-full border rounded-lg p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
             value={salary}
             onChange={(e) => setSalary(e.target.value ? +e.target.value : "")}
           />
@@ -227,7 +227,7 @@ export default function Calculator() {
                 type="number"
                 inputMode="numeric"
                 min={0}
-                className="ml-auto w-32 sm:w-40 md:w-48 border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 disabled:bg-gray-100"
+                className="ml-auto w-28 sm:w-36 md:w-44 border rounded-lg p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500/60 disabled:bg-gray-100"
                 value={allowancesAmount[a.key as AllowanceKey]}
                 disabled={!allowancesChecked[a.key as AllowanceKey]}
                 onChange={(e) =>
@@ -257,7 +257,7 @@ export default function Calculator() {
             onChange={(e) => setDaysWorked(Number(e.target.value))}
             className="w-full mt-2 accent-emerald-600"
           />
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-[11px] sm:text-xs text-gray-500 mt-1">
             <span>{daysWorked} days</span>
             <span>{percentOfCycle}% of cycle</span>
           </div>
@@ -275,12 +275,12 @@ export default function Calculator() {
 
       {/* RESULTS SECTION */}
       {result && result.success && (
-        <div className="mt-8 sm:mt-10 bg-gradient-to-br from-emerald-50 via-green-50 to-white border border-emerald-200 rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg">
-          <h3 className="font-extrabold text-green-800 text-lg sm:text-xl mb-3 sm:mb-4">
+        <div className="mt-6 sm:mt-8 bg-gradient-to-br from-emerald-50 via-green-50 to-white border border-emerald-200 rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg">
+          <h3 className="font-extrabold text-green-800 text-base sm:text-xl mb-2 sm:mb-4">
             Wage Summary
           </h3>
 
-          <div className="space-y-2 sm:space-y-3 text-sm">
+          <div className="space-y-2 sm:space-y-3 text-[13px] sm:text-sm">
             <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Accrued Earnings</p>
               <p className="font-semibold text-emerald-700">
@@ -315,7 +315,7 @@ export default function Calculator() {
             </div>
           </div>
 
-          <div className="mt-3 sm:mt-4 bg-white/70 border border-green-200 rounded-lg p-2 text-[11px] sm:text-xs text-gray-600 text-center shadow-sm">
+          <div className="mt-3 sm:mt-4 bg-white/70 border border-green-200 rounded-lg p-2 text-[10px] sm:text-xs text-gray-600 text-center shadow-sm">
             <p>
               <span className="font-semibold">Deductions →</span> NSSF:{" "}
               {currencySymbol} {fmt(result.deductions.NSSF)} | SHIF:{" "}
