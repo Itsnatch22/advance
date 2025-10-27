@@ -96,7 +96,7 @@ export default function Calculator() {
 
   const callBackendCalc = async () => {
     if (!salary) {
-      alert("Fill in salary ⚠️");
+      alert("Fill in salary ");
       setResult(null);
       return;
     }
@@ -132,7 +132,7 @@ export default function Calculator() {
   return (
     <div className="bg-white w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 mx-auto mt-4 sm:mt-6 md:mt-8">
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 sm:mb-5 text-gray-900 text-center">
-        Wage Access Calculator 💼
+        Wage Access Calculator 
       </h2>
 
       {/* FLAGS SECTION */}
@@ -195,7 +195,7 @@ export default function Calculator() {
         {/* ALLOWANCES SECTION */}
         <div className="grid gap-2 mt-2 sm:mt-4">
           <p className="text-sm font-semibold">
-            Allowances (toggle + enter amount)
+            Other Contributions (toggle + enter amount)
           </p>
           {(
             [
@@ -227,7 +227,7 @@ export default function Calculator() {
                 type="number"
                 inputMode="numeric"
                 min={0}
-                className="ml-auto w-28 sm:w-36 md:w-44 border rounded-lg p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500/60 disabled:bg-gray-100"
+                className="mt-1 w-full border rounded-lg p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
                 value={allowancesAmount[a.key as AllowanceKey]}
                 disabled={!allowancesChecked[a.key as AllowanceKey]}
                 onChange={(e) =>
