@@ -135,33 +135,37 @@ export default function Calculator() {
         Wage Access Calculator 
       </h2>
 
-      {/* FLAGS SECTION */}
-      <div className="flex justify-center items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
-        {[
-          { code: "KE", flag: "/flag/KE.png" },
-          { code: "UG", flag: "/flag/UG.png" },
-          { code: "TZ", flag: "/flag/TZ.png" },
-          { code: "ZA", flag: "/flag/SA.png" },
-        ].map((f) => (
-          <button
-            key={f.code}
-            onClick={() => setCountry(f.code as Country)}
-            className={`w-11 h-11 rounded-full overflow-hidden border-2 transition-all duration-200 ${
-              country === f.code
-                ? "border-emerald-600 scale-110 shadow-md"
-                : "border-gray-300 opacity-70 hover:opacity-100"
-            }`}
-          >
-            <Image
-              src={f.flag}
-              alt={f.code}
-              width={44}
-              height={44}
-              className="object-cover"
-            />
-          </button>
-        ))}
-      </div>
+     {/* FLAGS SECTION */}
+<div className="flex justify-center items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
+  {[
+    { code: "KE", flag: "/flag/KE.png" },
+    { code: "UG", flag: "/flag/UG.png", disabled: true },
+    { code: "TZ", flag: "/flag/TZ.png", disabled: true },
+    { code: "ZA", flag: "/flag/SA.png", disabled: true },
+  ].map((f) => (
+    <button
+      key={f.code}
+      onClick={() => !f.disabled && setCountry(f.code as Country)}
+      disabled={!!f.disabled}
+      className={`w-11 h-11 rounded-full overflow-hidden border-2 transition-all duration-200 ${
+        f.disabled
+          ? "opacity-40 cursor-not-allowed grayscale"
+          : country === f.code
+          ? "border-emerald-600 scale-110 shadow-md"
+          : "border-gray-300 opacity-70 hover:opacity-100"
+      }`}
+    >
+      <Image
+        src={f.flag}
+        alt={f.code}
+        width={44}
+        height={44}
+        className={`object-cover ${f.disabled ? "grayscale" : ""}`}
+      />
+    </button>
+  ))}
+</div>
+
 
       <p className="text-center text-xs sm:text-sm font-medium text-gray-600 mb-3 sm:mb-4">
         Selected Country:{" "}
