@@ -16,7 +16,7 @@ export default function CalculatorPage() {
           <div className="flex flex-col sm:flex-col lg:flex-row items-center lg:items-start gap-5 sm:gap-8">
             
             {/* IMAGE — moves above text on mobile */}
-            <div className="relative order-first lg:order-none flex-shrink-0 w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-[220px] lg:h-[220px] mb-3 sm:mb-4">
+            <div className="relative order-first lg:order-none flex-shrink-0 w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-[220px] lg:h-[220px] mb-3 sm:mb-4 mt-4 sm:mt-6 lg:mt-0">
               <Image
                 src="/calc.png"
                 alt="EaziWage Calculator Illustration"

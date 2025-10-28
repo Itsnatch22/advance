@@ -130,8 +130,9 @@ export default function Calculator() {
       : "ZAR";
 
   return (
-    <div className="bg-white w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 mx-auto mt-4 sm:mt-6 md:mt-8">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 sm:mb-5 text-gray-900 text-center">
+      <div className="bg-white dark:bg-gray-900 w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 dark:border-green-800 mx-auto mt-4 sm:mt-6 md:mt-8 transition-colors duration-300"> 
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 sm:mb-5 text-gray-900 dark:text-gray-100 text-center">
+
         Wage Access Calculator 
       </h2>
 
@@ -176,7 +177,8 @@ export default function Calculator() {
       <div className="grid gap-4 sm:gap-5">
         {/* SALARY INPUT */}
         <div>
-          <label htmlFor="salary" className="text-sm text-gray-600">
+          <label htmlFor="salary" className="text-sm text-gray-600 dark:text-gray-300">
+
             Gross Monthly Salary ({currencySymbol})
           </label>
           <input
@@ -185,7 +187,7 @@ export default function Calculator() {
             min={0}
             type="number"
             placeholder="e.g. 60000"
-            className="mt-1 w-full border rounded-lg p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+            className="mt-1 w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition-colors duration-300"
             value={salary}
             onChange={(e) => setSalary(e.target.value ? +e.target.value : "")}
           />
@@ -279,24 +281,27 @@ export default function Calculator() {
 
       {/* RESULTS SECTION */}
       {result && result.success && (
-        <div className="mt-6 sm:mt-8 bg-gradient-to-br from-emerald-50 via-green-50 to-white border border-emerald-200 rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg">
+        <div className="mt-6 sm:mt-8 bg-gradient-to-br from-emerald-50 via-green-50 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 border border-emerald-200 dark:border-green-700 rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg transition-colors duration-300">
+
           <h3 className="font-extrabold text-green-800 text-base sm:text-xl mb-2 sm:mb-4">
             Wage Summary
           </h3>
-
-          <div className="space-y-2 sm:space-y-3 text-[13px] sm:text-sm">
-            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
-              <p>Accrued Earnings</p>
-              <p className="font-semibold text-emerald-700">
-                {currencySymbol} {fmt(result.accruedGross)}
-              </p>
-            </div>
-            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
+          <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Net Salary (After Deductions + Allowances)</p>
               <p className="font-semibold text-emerald-700">
                 {currencySymbol} {fmt(result.netMonthly)}
               </p>
             </div>
+
+          <div className="space-y-2 sm:space-y-3 text-[13px] sm:text-sm">
+            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
+              <p>Accrued Earnings</p>
+              <p className="font-semibold text-emerald-700 dark:text-emerald-400">
+
+                {currencySymbol} {fmt(result.accruedGross)}
+              </p>
+            </div>
+            
             <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
               <p>Access Cap ({result.accessCapPercent}%)</p>
               <p className="font-semibold text-emerald-700">
@@ -309,8 +314,13 @@ export default function Calculator() {
                 - {currencySymbol} {fmt(result.platformFee)}
               </p>
             </div>
-            <div className="pt-3 flex flex-wrap justify-between items-center gap-3 bg-white/80 rounded-xl shadow-inner px-3 py-2 border border-emerald-100">
-              <p className="font-bold text-gray-800 text-sm sm:text-base">
+            <div className="mt-6 sm:mt-8 
+  bg-gradient-to-br from-emerald-50 via-green-50 to-white 
+  dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 
+  border border-emerald-200 dark:border-green-700 
+  rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg 
+  transition-colors duration-300">
+              <p className="text-emerald-700 dark:text-emerald-400 font-semibold text-xl sm:text-2xl md:text-3xl">
                 You Can Access Now
               </p>
               <p className="text-right font-extrabold text-green-700 text-lg sm:text-xl">
@@ -319,7 +329,8 @@ export default function Calculator() {
             </div>
           </div>
 
-          <div className="mt-3 sm:mt-4 bg-white/70 border border-green-200 rounded-lg p-2 text-[10px] sm:text-xs text-gray-600 text-center shadow-sm">
+          <div className="mt-3 sm:mt-4 bg-white/70 dark:bg-gray-800/70 border border-green-200 dark:border-green-700 rounded-lg p-2 text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 text-center shadow-sm transition-colors duration-300">
+
             <p>
               <span className="font-semibold">Deductions →</span> NSSF:{" "}
               {currencySymbol} {fmt(result.deductions.NSSF)} | SHIF:{" "}
