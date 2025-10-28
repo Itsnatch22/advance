@@ -287,7 +287,7 @@ export default function Calculator() {
             Wage Summary
           </h3>
           <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
-              <p>Net Salary (After Deductions + Allowances)</p>
+              <p><b>Net Earnings</b></p>
               <p className="font-semibold text-emerald-700">
                 {currencySymbol} {fmt(result.netMonthly)}
               </p>
@@ -309,7 +309,7 @@ export default function Calculator() {
               </p>
             </div>
             <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
-              <p>Platform Fee (5%)</p>
+              <p>Platform Fee </p>
               <p className="font-semibold text-red-500">
                 - {currencySymbol} {fmt(result.platformFee)}
               </p>
