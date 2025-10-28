@@ -320,10 +320,10 @@ export default function Calculator() {
   border border-emerald-200 dark:border-green-700 
   rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg 
   transition-colors duration-300">
-              <p className="text-emerald-700 dark:text-emerald-400 font-semibold text-xl sm:text-2xl md:text-3xl">
+              <p className="text-emerald-700 dark:text-emerald-400 font-medium text-sm sm:text-base md:text-lg tracking-wide">
                 You Can Access Now
               </p>
-              <p className="text-right font-extrabold text-green-700 text-lg sm:text-xl">
+              <p className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-emerald-700 dark:text-emerald-400 leading-tight mt-1">
                 {currencySymbol} {fmt(result.accessibleNow)}
               </p>
             </div>
