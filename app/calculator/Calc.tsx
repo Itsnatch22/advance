@@ -39,6 +39,21 @@ export default function Calculator() {
   const [salary, setSalary] = useState<number | "">("");
   const [daysWorked, setDaysWorked] = useState<number>(0);
   const [result, setResult] = useState<CalcResult | null>(null);
+  const [rates, setRates] = useState<Record<string, number> | null>(null);
+
+React.useEffect(() => {
+  const fetchRates = async () => {
+    try {
+      const res = await fetch("/api/rates");
+      const data = await res.json();
+      if (data.success) setRates(data.rates);
+    } catch (err) {
+      console.error("Failed to fetch rates:", err);
+    }
+  };
+  fetchRates();
+}, []);
+
   const [country, setCountry] = useState<Country>("KE");
 
   const feePercent = 5;
