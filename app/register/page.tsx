@@ -1,30 +1,30 @@
 'use client';
 
+import { signIn } from "next-auth/react";
 import { motion } from 'framer-motion';
-import { FaGoogle, FaLinkedin } from 'react-icons/fa';
-import { useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { FaGoogle } from 'react-icons/fa';
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form";
-import { useRouter } from 'next/navigation';
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 const baseSchema = z.object({
-    name: z.string().min(4, "Name must be at least 4 characters long"),
+    name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters long"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
     role: z.enum(["employer", "employee"]),
 });
 
 const employerSchema = baseSchema.extend({
-    company: z.string().min(5, "Company is required"),
-    designation: z.string().min(2, "Designation is required"),
-});
-
-const employeeSchema = baseSchema.extend({
-    company: z.string().min(5, "Company is required"),
-    profession: z.string().min(2, "Profession is required"),
+    company: z.string().min(2, "Company name must be at least 2 characters"),
+    designation: z.string().min(2, "Designation must be at least 2 characters"),
 })
 
+const employeeSchema = baseSchema.extend({
+    designation: z.string().min(2, "Designation must be at least 2 characters"),
+    profession: z.string().min(2, "Profession must be at least 2 characters"),
+})
 export default function RegisterPage() {
     const [ role, setRole ] = useState<"employer" | "employee" | "">("");
     const router = useRouter();
@@ -88,43 +88,7 @@ export default function RegisterPage() {
                 className='bg-white rounded-2xl shadow-lg p-8 mt-5'
                 >
                     <h2 className='text-2xl font-semibold mb-6 text-gray-800'>Create Your Account</h2>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className='mt-6 space-y-4'>
-                        <div>
-                            <label className='block text-sm font-medium text-gray-700'>Select Role:</label>
-                            <select
-                                value={role}
-                                onChange={(e) => {
-                                    const v = e.target.value as "employer" | "employee" | "";
-                                    setRole(v);
-                                    form.clearErrors("role" as any);
-                                    form.setValue("role", v, { shouldValidate: true, shouldDirty: true });
-                                }}
-                                className='mt-1 w-full px-4 py-2 border border-green-400 dark:text-black rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none'
-                            >
-                                <option value="">Select a role</option>
-                                {["employer", "employee"].map((r) => (
-                                    <option key={r} value={r}>
-                                        {r.charAt(0).toUpperCase() + r.slice(1)}
-                                    </option>
-                                ))}
-                            </select>
-                            {form.formState.errors?.role && (
-                                <p className="mt-1 text-sm text-red-600">{(form.formState.errors as any).role.message}</p>
-                            )}
-                        </div>
-                        <div>
-                            <input
-                                {...form.register("name")}
-                                placeholder='Your name'
-                                className='mt-1 w-full px-4 py-2 border border-green-400 dark:text-black rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none'
-                            />
-                            <input
-                                {...form.register("email")}
-                                placeholder='johndoe@gmail.com'
-                                className='mt-1 w-full px-4 py-2 border border-green-400 dark:text-black rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none'
-                            />
-                        </div>
-
+                    <form action="" className='mt-6 space-y-4'>
                         <div>
                             {role === "employer" && (
                                 <>
@@ -179,18 +143,12 @@ export default function RegisterPage() {
                         <div className="flex-grow h-px bg-gray-300"></div>
                     </div>
                     <button
+                    onClick={() => signIn("google")}
                         type="button"
                         className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition"
                     >
                         <FaGoogle className="w-5 h-5" />
                         <span className="text-sm font-medium text-gray-700">Sign in with Google</span>
-                    </button>
-                    <button
-                        type="button"
-                        className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition mt-3"
-                    >
-                        <FaLinkedin className="w-5 h-5" />
-                        <span className="text-sm font-medium text-gray-700">Sign in with LinkedIn</span>
                     </button>
 
                     <p className="text-sm text-gray-500 mt-6 text-center">

@@ -48,7 +48,7 @@ export function Team() {
               viewport={{ once: true }}
               className="group"
             >
-              <div className="relative mx-auto w-40 h-90 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden shadow-md">
+              <div className="relative mx-auto w-[800px] h-[800px] sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden shadow-md">
                 <Image
                   src={member.image}
                   alt={member.name}
