@@ -1,7 +1,8 @@
 'use client';
 
+import { signIn } from "next-auth/react";
 import { motion } from 'framer-motion';
-import { FaGoogle, FaLinkedin } from 'react-icons/fa';
+import { FaGoogle } from 'react-icons/fa';
 
 export default function RegisterPage() {
     return (
@@ -28,6 +29,13 @@ export default function RegisterPage() {
                 >
                     <h2 className='text-2xl font-semibold mb-6 text-gray-800'>Create Your Account</h2>
                     <form action="" className='mt-6 space-y-4'>
+                        <div>
+                            <label className='block text-sm font-medium text-gray-700'>Select role:</label>
+                            <select name="" id="">
+                                <option value="employer">Employer</option>
+                                <option value="employee">Employee</option>
+                            </select>
+                        </div>
                         <div>
                             <label className='block text-sm font-medium text-gray-700'>Email</label>
                             <input 
@@ -63,18 +71,12 @@ export default function RegisterPage() {
                         <div className="flex-grow h-px bg-gray-300"></div>
                     </div>
                     <button
+                    onClick={() => signIn("google")}
                         type="button"
                         className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition"
                     >
                         <FaGoogle className="w-5 h-5" />
                         <span className="text-sm font-medium text-gray-700">Sign in with Google</span>
-                    </button>
-                    <button
-                        type="button"
-                        className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition mt-3"
-                    >
-                        <FaLinkedin className="w-5 h-5" />
-                        <span className="text-sm font-medium text-gray-700">Sign in with LinkedIn</span>
                     </button>
 
                     <p className="text-sm text-gray-500 mt-6 text-center">

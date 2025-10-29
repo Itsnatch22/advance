@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FaGoogle, FaLinkedin } from 'react-icons/fa';
+import { FaGoogle } from 'react-icons/fa';
 
 export default function LoginPage() {
   return (
@@ -66,13 +66,6 @@ export default function LoginPage() {
           >
             <FaGoogle className="w-5 h-5" />
             <span className="text-sm font-medium text-gray-700">Sign in with Google</span>
-          </button>
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition mt-3"
-          >
-            <FaLinkedin className="w-5 h-5" />
-            <span className="text-sm font-medium text-gray-700">Sign in with LinkedIn</span>
           </button>
 
           <p className="text-sm text-gray-500 mt-6 text-center">

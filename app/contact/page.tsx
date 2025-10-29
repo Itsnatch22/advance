@@ -5,6 +5,8 @@ import { FiMail, FiPhone } from 'react-icons/fi';
 import { BiLocationPlus } from 'react-icons/bi';
 
 export default function ContactPage() {
+  
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-black relative">
       {/* Polygon green background */}
@@ -71,8 +73,16 @@ export default function ContactPage() {
               />
             </div>
             <div>
+              <label className="block text-sm font-medium text-gray-700">Subject</label>
+              <input 
+                type="subject"
+                placeholder="What's your subject"
+                className="mt-1 w-full px-4 border-green-400 dark:text-black py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+              />
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-700">Message</label>
-              <textarea
+              <textarea 
                 rows={4}
                 placeholder="Write your message..."
                 className="mt-1 w-full px-4 border-green-400 dark:text-black py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
