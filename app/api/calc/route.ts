@@ -100,29 +100,36 @@ function calculateFromPayload(
   // Accrued: pro-rata salary + full allowances (sheet Total_Income)
   const accruedGross = Math.round((baseGross / cycleDays) * days + allowancesValue);
 
-  // NSSF: 6% * min(gross, 72k) employee (simplified uniform rate, deductible)
-  const NSSF_rate = Number(ratesObj["NSSF_Employee_Rate"] ?? 0.06);
-  const NSSF_tier2 = Number(ratesObj["NSSF_Tier2_Ceiling"] ?? 72000);
-  const nssf = Math.round(Math.min(accruedGross, NSSF_tier2) * NSSF_rate); // Sheet 2,100 for 35k
+  // NSSF: split Tier I and Tier II as per sheet logic (deductible)
+  const nssfRate = Number(ratesObj["NSSF_Employee_Rate"] ?? 0.06);
+  const nssfTier1Ceil = Number(ratesObj["NSSF_Tier1_Ceiling"] ?? 7000);
+  const nssfTier2Ceil = Number(ratesObj["NSSF_Tier2_Ceiling"] ?? 72000);
+  const tier1Base = Math.min(accruedGross, nssfTier1Ceil);
+  const tier2Base = Math.min(Math.max(accruedGross - nssfTier1Ceil, 0), Math.max(nssfTier2Ceil - nssfTier1Ceil, 0));
+  const nssf1 = tier1Base * nssfRate;
+  const nssf2 = tier2Base * nssfRate;
+  const nssf = Math.round(nssf1 + nssf2);
 
-  // SHIF: 2.75% gross, min 300 (deductible)
+  // SHIF: 2.75% of gross with minimum 300 (deductible)
   const shifRate = Number(ratesObj["SHIF_Flat_Rate"] ?? 0.0275);
   const shif = Math.round(Math.max(300, accruedGross * shifRate));
 
-  // AHL/Housing: 1.5% gross (deductible)
+  // AHL/Housing levy: 1.5% of gross (deductible)
   const ahlRate = Number(ratesObj["AHL_Employee_Rate"] ?? ratesObj["Housing_Levy_Rate"] ?? 0.015);
   const housing = Math.round(accruedGross * ahlRate);
 
-  // Other deds (sheet caps)
-  const pensionDed = Math.min(Number(input.pensionDeduct ?? 0), Number(ratesObj["Pension_Deductible_Cap"] ?? 30000));
-  const insuranceRelief = Math.min(Number(input.insurancePremium ?? 0) * 0.15, Number(ratesObj["Life_And_Health_Insurance_Deductible_Limit"] ?? 5000));
+  // Other allowable deductions and reliefs (subject to caps)
+  const pensionDedCap = Number(ratesObj["Pension_Deductible_Cap"] ?? 30000);
+  const pensionDed = Math.min(Number(input.pensionDeduct ?? 0), pensionDedCap);
+  const insuranceCap = Number(ratesObj["Life_And_Health_Insurance_Deductible_Limit"] ?? 5000);
+  const insuranceRelief = Math.min(Number(input.insurancePremium ?? 0) * 0.15, insuranceCap);
 
-  // Taxable: gross - statutory - other allowable (Output row26)
+  // Taxable income
   const taxable = Math.max(0, accruedGross - nssf - shif - housing - pensionDed - insuranceRelief);
 
-  // PAYE: progressive on taxable
+  // PAYE: progressive tax
   function calcPAYE(income: number) {
-    if (bands.length === 0) return Math.round(income * 0.2); // Rough fallback
+    if (bands.length === 0) return Math.round(income * 0.2);
     let tax = 0;
     const sorted = bands.slice().sort((a, b) => a.lower - b.lower);
     for (const band of sorted) {
@@ -139,19 +146,19 @@ function calculateFromPayload(
   const personalRelief = Number(ratesObj["Personal_Relief"] ?? 2400);
   const paye = Math.max(0, payeBefore - personalRelief);
 
-  // Platform fee (input > default 5%)
+  // Platform fee: percent of accrued plus optional flat
   const feePercent = Number(input.feePercent ?? ratesObj["platform_fee_percent"] ?? 5) / 100;
   const flatFee = Number(input.flatFee ?? 0);
   const platformFee = Math.round(accruedGross * feePercent + flatFee);
 
-  // Net: gross - all - PAYE - platform (Output row31)
+  // Net pay after statutory, PAYE and platform fee
   const netMonthly = Math.max(0, Math.round(accruedGross - nssf - shif - housing - pensionDed - insuranceRelief - paye - platformFee));
 
-  // Cap: 60% net (Output row33; legal ≤67%)
+  // Cap: up to Earned_Wage_Cap of net (default 60%)
   const accessCapPercentRaw = Number(ratesObj["Earned_Wage_Cap"] ?? 0.6);
   const accessCap = Math.round(netMonthly * accessCapPercentRaw);
 
-  // Accessible: cap - platform - NSSF (prorate; PAYE monthly=0)
+  // Accessible now mirrors sheet: cap less platform fee and NSSF already due
   const accessibleNow = Math.max(0, Math.round(accessCap - platformFee - nssf));
 
   return {
