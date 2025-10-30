@@ -38,21 +38,23 @@ const fmt = (n: number) =>
 export default function Calculator() {
   const [salary, setSalary] = useState<number | "">("");
   const [daysWorked, setDaysWorked] = useState<number>(0);
-  const [result, setResult] = useState<CalcResult | null>(null);
-  const [rates, setRates] = useState<Record<string, number> | null>(null);
+  
+  // Avoid using new Date() during initial render to satisfy Next.js deterministic render
+  const [asOfDate, setAsOfDate] = useState<string>("");
+  React.useEffect(() => {
+    const today = new Date();
+    setAsOfDate(today.toISOString().split("T")[0]);
+  }, []);
 
-React.useEffect(() => {
-  const fetchRates = async () => {
-    try {
-      const res = await fetch("/api/rates");
-      const data = await res.json();
-      if (data.success) setRates(data.rates);
-    } catch (err) {
-      console.error("Failed to fetch rates:", err);
-    }
-  };
-  fetchRates();
-}, []);
+const maxDays = useMemo(() => {
+  if (!asOfDate) return 31;
+  const date = new Date(asOfDate);
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}, [asOfDate]);
+
+  const [result, setResult] = useState<CalcResult | null>(null);
+
+  
 
   const [country, setCountry] = useState<Country>("KE");
 
@@ -273,13 +275,13 @@ React.useEffect(() => {
             id="days"
             type="range"
             min={0}
-            max={cycleDays}
+            max={maxDays}
             value={daysWorked}
             onChange={(e) => setDaysWorked(Number(e.target.value))}
             className="w-full mt-2 accent-emerald-600"
           />
           <div className="flex justify-between text-[11px] sm:text-xs text-gray-500 mt-1">
-            <span>{daysWorked} days</span>
+            <span>{daysWorked} / {maxDays} days</span>
             <span>{percentOfCycle}% of cycle</span>
           </div>
         </div>
