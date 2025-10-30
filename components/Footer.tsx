@@ -181,7 +181,7 @@ export default function Footer() {
         <h3 className="text-white font-semibold mb-4">Contact</h3>
         <ul className="space-y-2">
           {[
-            { icon: FiMail, href: "mailto:support@eaziwage.com", text: "info@eaziwage.com" },
+            { icon: FiMail, href: "mailto:support@eaziwage.com", text: "support@eaziwage.com" },
             { icon: FaWhatsapp, href: "https://wa.me/+254723154900", text: "+254 723 154900" },
             { icon: BiLocationPlus, href: "https://google.com/maps?q=Westlands,+Nairobi", text: "Westlands, Nairobi" },
           ].map((contact, index) => (

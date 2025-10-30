@@ -55,7 +55,7 @@ export default function Noah() {
     // 1) Fast intents
     const lower = cleaned.toLowerCase();
     if (["hi","hello","hey","yo"].some(g => lower.startsWith(g))) {
-      return "Hi! I'm Noah. Ask about advances, fees, eligibility, or security.";
+      return "Hi! I'm Wiza. Ask about advances, fees, eligibility, or security.";
     }
 
     // 2) Knowledge lookup (built-in)
@@ -160,7 +160,7 @@ export default function Noah() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask Noah..."
+                placeholder="Ask Wiza..."
                 className="flex-1 text-sm px-3 py-2 outline-none bg-transparent dark:text-white"
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSend(); }}
                 aria-label="Chat input"

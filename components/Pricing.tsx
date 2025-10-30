@@ -1,13 +1,14 @@
 'use client'
 
 import { motion } from "framer-motion"
+import Link from "next/link";
 import { Percent, RefreshCw, ReceiptIcon, Database, ShieldCheck, Scale }  from "lucide-react"
 
 const pricing = [
     {
         icon: Percent,
         title: "0% Interest Charges",
-        desc: "Enjoy the freedom of borrowing without the burden of interest. Our transparent fee structure ensures you only pay what you borrow."
+        desc: "Enjoy the freedom of borrowing without the burden of interest. Our transparent fee structure ensures you don't have to pay interest."
     },
     {
         icon: RefreshCw,
@@ -70,14 +71,16 @@ export default function Pricing () {
             </div>
 
             
-                <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 200 }}
-                className="mt-8 sm:mt-10 bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-3 rounded-full font-medium shadow-md text-sm sm:text-base"
-                >
-                    Get Started
-                </motion.button>
+                <Link href="/register" className="inline-block">
+                    <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                    className="mt-8 sm:mt-10 bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-3 rounded-full font-medium shadow-md text-sm sm:text-base"
+                    >
+                        Get Started
+                    </motion.button>
+                </Link>
             </div>
             
         </section>
