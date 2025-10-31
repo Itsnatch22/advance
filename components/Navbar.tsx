@@ -49,12 +49,6 @@ const Navbar = () => {
       href: "#",
       drawer: [
         {
-          title: "How It Works",
-          icon: <FiTrendingUp className="text-green-600 w-5 h-5" />,
-          desc: "Understand our system & onboarding process.",
-          href: "/how-it-works",
-        },
-        {
           title: "Partners",
           icon: <FiShield className="text-green-600 w-5 h-5" />,
           desc: "Explore our global network of trusted partners.",

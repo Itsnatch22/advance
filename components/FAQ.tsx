@@ -16,6 +16,10 @@ const faqs = [
         question: "Is EaziWage safe to use?",
         answer: "Yes, EaziWage employs robust security measures to protect user data and financial information. We comply with industry standards and regulations to ensure a safe and secure experience for all users."
     },
+    {
+        question: "Are there any fees associated with using EaziWage?",
+        answer: "EaziWage offers a transparent pricing model with no hidden fees. While there may be nominal transaction fees for instant access, there are no interest charges or subscription fees."
+    }
 ];
 
 export default function FAQ() {
