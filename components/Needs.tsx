@@ -54,7 +54,7 @@ export default function Needs() {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7 }}
       viewport={{ once: true }}
-      className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white font-serif"
+      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white font-serif"
     >
       Built for the <span className="text-green-600">African Workforce</span>
     </motion.h2>
