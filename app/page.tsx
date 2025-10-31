@@ -5,6 +5,7 @@ import CTA from "@/components/CTA";
 import ProblemStatement from "@/components/ProblemStatement";
 import StatsCounter from "@/components/StatsCounter";
 import Pricing from "@/components/Pricing";
+import FAQ from "@/components/FAQ";
 export default function App() {
 
   return(
@@ -15,6 +16,7 @@ export default function App() {
       <StatsCounter/>
       <Needs/>
       <Pricing/>
+      <FAQ/>
       <CTA/>
   </div>
   )
