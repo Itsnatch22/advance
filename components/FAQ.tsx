@@ -35,7 +35,7 @@ export default function FAQ() {
             <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
                 {faqs.map((faqs,index) => (
                     <details key={index} className="group p-5">
-                        <summary className="flex cursor-pointer items-center justify-between text-base sm:text-lg font-medium">
+                        <summary className="flex dark:text-black cursor-pointer items-center justify-between text-base sm:text-lg font-medium">
                             {faqs.question}
                             <ArrowRight className="ml-2 h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-90" />
                         </summary>

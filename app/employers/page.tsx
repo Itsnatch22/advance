@@ -1,7 +1,5 @@
 "use client"
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { useRef } from "react";
 import { User, Wallet, Cog, LineChart, Lock, BadgeCheck, Clipboard, CircuitBoard, BrainCircuit, ShieldCheck, ChevronRight, ChevronLeft } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 
@@ -61,13 +59,25 @@ const rolloutPlans = [
     },
 ];
 
-const images = [
-    "/eaziwage/automotive.png",
-    "/eaziwage/banking.png",
-    "/eaziwage/retail.png",
-    "/eaziwage/support.png",
-    "/eaziwage/cons",
+const faqs = [
+    {
+        question: "How does Eaziwage integrate with our existing payroll system?",
+        answer: "Eaziwage seamlessly integrates with most major payroll systems through secure APIs. We also support CSV uploads for manual payroll systems. Our integration team will work closely with your HR and IT departments to ensure a smooth setup process."
+    },
+    {
+        question: "What are the costs associated with implementing Eaziwage for our employees?",
+        answer: "Eaziwage operates on a transparent pricing model with no hidden fees. Employers typically pay a nominal setup fee and a small transaction fee per withdrawal made by employees. There are no subscription fees or interest charges involved."
+    },
+    {
+        question: "How does Eaziwage ensure the security and privacy of employee data?",
+        answer: "Eaziwage prioritizes data security and privacy. We comply with all relevant data protection regulations, including ODPC guidelines. Employee data is encrypted both in transit and at rest, and we implement strict access controls to ensure that only authorized personnel can access sensitive information."
+    },
+    {
+        question: "Can we customize the Eaziwage platform to align with our company policies?",
+        answer: "Yes, Eaziwage offers a range of customization options to align with your company policies. You can set withdrawal limits, approval workflows, and define which employee groups have access to the service. Our platform is designed to be flexible to meet the unique needs of your organization."
+    },
 ];
+
 export default function Employers() {
     return(
         <section className="min-h-screen w-full mx-auto relative py-10 sm:py-14 lg:py-20 flex flex-col items-center">
@@ -164,6 +174,22 @@ export default function Employers() {
                 </p>
                 <div className="mt-10 sm:mt-12">
                 <AppleCardsCarouselDemo />
+                </div>
+            </div>
+             
+             {/* FAQs */}
+            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-14 sm:mt-16 lg:mt-20">
+                <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl text-gray-900 font-semibold">Employer Frequently Asked Questions</h2>
+                <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
+                {faqs.map((faqs,index) => (
+                    <details key={index} className="group p-5">
+                    <summary className="flex dark:text-black cursor-pointer items-center justify-between text-base sm:text-lg font-medium">
+                        {faqs.question}
+                        <ChevronRight className="ml-2 h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-90" />
+                    </summary>
+                    <p className="mt-4 leading-7 text-gray-600 text-base sm:text-lg">{faqs.answer}</p>
+                    </details>
+                ))}
                 </div>
             </div>
         </section>

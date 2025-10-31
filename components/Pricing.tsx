@@ -57,7 +57,7 @@ export default function Pricing () {
                     key={i}
                     whileHover={{scale: 1.03}}
                     transition={{ type: "spring", stiffness: 200}}
-                    className="w-full max-w-sm bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border border-gray-100 dark:border-neutral-800 p-5 sm:p-6"
+                    className="w-full max-w-sm bg-white dark:bg-gray-800 border border-green-100 dark:border-green-900/30 p-6 rounded-2xl shadow hover:shadow-green-500/30 hover:border-green-400 transition transform hover:-translate-y-2"
                     >
                         <item.icon className="w-9 h-9 sm:w-10 sm:h-10 mx-auto text-black dark:text-white mb-4" />
                         <h3 className="font-semibold text-lg sm:text-xl text-gray-900 dark:text-white">
