@@ -31,11 +31,14 @@ type CalcResult = {
 };
 
 const fmt = (n: number) =>
-  new Intl.NumberFormat("en-KE", { maximumFractionDigits: 0 }).format(
-    Math.round(n)
-  );
+  new Intl.NumberFormat("en-KE", { 
+    minimumFractionDigits: 2, 
+    maximumFractionDigits: 2 
+  }).format(Number(n));
+
 
 export default function Calculator() {
+  const [result, setResult] = useState<CalcResult | null>(null);
   const [salary, setSalary] = useState<number | "">("");
   const [daysWorked, setDaysWorked] = useState<number>(0);
   
@@ -51,8 +54,6 @@ const maxDays = useMemo(() => {
   const date = new Date(asOfDate);
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }, [asOfDate]);
-
-  const [result, setResult] = useState<CalcResult | null>(null);
 
   
 
@@ -112,26 +113,52 @@ const maxDays = useMemo(() => {
   });
 
   const callBackendCalc = async () => {
-    if (!salary) {
-      alert("Fill in salary ");
-      setResult(null);
+  if (!salary) {
+    alert("Fill in salary");
+    setResult(null);
+    return;
+  }
+
+  const payload = buildPayload();
+  try {
+    const res = await fetch(`/api/calc?country=${country}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    console.log("🔥 Raw backend response:", data);
+
+    if (!data.success) {
+      console.error("❌ Backend failed:", data.error || data.detail);
+      alert("Backend calculation failed!");
       return;
     }
 
-    const payload = buildPayload();
-    try {
-      const res = await fetch(`/api/calc?country=${country}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || "calc failed");
-      setResult(data);
-    } catch (err) {
-      console.error("Server calc failed — check console.", err);
-    }
-  };
+    const mappedResult = {
+      success: true,
+      accruedGross: data.gross || 0,
+      netMonthly: data.net || 0,
+      accessCapPercent: 40,
+      accessCap: (data.net || 0) * 0.4,
+      platformFee: (data.net || 0) * 0.02,
+      accessibleNow: (data.net || 0) * 0.4 - (data.net || 0) * 0.02,
+      deductions: {
+        NSSF: (data.nssf1 || 0) + (data.nssf2 || 0),
+        SHIF: data.shif || 0,
+        Housing: data.ahl || 0,
+      },
+    };
+
+    console.log("✅ Mapped result:", mappedResult);
+    setResult(mappedResult);
+  } catch (err) {
+    console.error("⚠️ Frontend fetch failed:", err);
+    alert("Failed to connect to backend");
+  }
+};
+
 
   React.useEffect(() => {
     if (!salary) setResult(null);
@@ -346,15 +373,16 @@ const maxDays = useMemo(() => {
             </div>
           </div>
 
-          <div className="mt-3 sm:mt-4 bg-white/70 dark:bg-gray-800/70 border border-green-200 dark:border-green-700 rounded-lg p-2 text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 text-center shadow-sm transition-colors duration-300">
-
-            <p>
-              <span className="font-semibold">Deductions →</span> NSSF:{" "}
-              {currencySymbol} {fmt(result.deductions.NSSF)} | SHIF:{" "}
-              {currencySymbol} {fmt(result.deductions.SHIF)} | Housing Lev:{" "}
-              {currencySymbol} {fmt(result.deductions.Housing)}
-            </p>
-          </div>
+          {result?.deductions && (
+  <div className="mt-3 sm:mt-4 bg-white/70 dark:bg-gray-800/70 border border-green-200 dark:border-green-700 rounded-lg p-2 text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 text-center shadow-sm transition-colors duration-300">
+    <p>
+      <span className="font-semibold">Deductions →</span> NSSF:{" "}
+      {currencySymbol} {fmt(result.deductions.NSSF)} | SHIF:{" "}
+      {currencySymbol} {fmt(result.deductions.SHIF)} | Housing Lev:{" "}
+      {currencySymbol} {fmt(result.deductions.Housing)}
+    </p>
+  </div>
+)}
         </div>
       )}
     </div>
