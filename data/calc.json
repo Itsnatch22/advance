@@ -1,481 +1,81 @@
 {
-"Notes":[
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "This matrix outlines the key Statutory Acts & Legal References for statutory PAYE tax limits, rates, levies and reliefts. \n\n"
- },
- null,
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Income Tax Act (Cap 470, Laws of Kenya)"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Description",
-  "Column2": "Reference",
-  "Column3": "Limit"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Personal Relief",
-  "Column2": "Section 30 and Third Schedule",
-  "Column3": "Ksh 2,400\/month"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Insurance Relief",
-  "Column2": "Section 31",
-  "Column3": "allows up to 15% of premiums paid for life, education, or health policies (subject to limit)."
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Mortgage Interest Deduction",
-  "Column2": "Section 15(3)(b)",
-  "Column3": "up to KSh 300,000 per year (≈ KSh 25,000\/month)"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Post-Retirement Medical Fund Deductions",
-  "Column2": "Section 22B",
-  "Column3": "Ksh 5,000\/month"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Provident & Pension Fund Deductions",
-  "Column2": "Section 22A",
-  "Column3": "KSh 30,000\/month"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Meal, Night-out, and Other Allowances",
-  "Column2": "Taxable per Section 5(2)(a); deductibility guided by allowable expense limits in Schedule 3.",
-  "Column3": "KSh 5,000 cap (Night-Out) \/ KSh 2,000 daily (Meal)"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Life and Health Insurance Relief",
-  "Column2": "Section 31",
-  "Column3": "Capped at 15% of annual premium, limited to KSh 5,000\/month"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "National Social Security Fund Act, 2013 (NSSF Act No. 45 of 2013)"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Description",
-  "Column2": "Reference",
-  "Column3": "Limit"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "NSSF Employee Contribution (Tier I & II)",
-  "Column2": "Section 18(1).  NSSFI Tier II updated through Legal Notice No. 17 of 2024). \n\nEmployer matches employee contribution 1:1.\n\nThe contributions are deductible under Section 22 of the Income Tax Act.",
-  "Column3": "Tier I: 6% of pensionable earnings up to KSh 7,000.\n\nTier II: 6% on next band up to KSh 72,000"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "National Health Insurance Fund Act, 1998 (Amended 2021) \/ Social Health Insurance Act, 2023"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Description",
-  "Column2": "Reference",
-  "Column3": "Limit"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "SHIF \/ NHIF Contributions",
-  "Column2": "Section 26: Employer and employee rates based on income bands.\n\nContributions are deductible under Section 15(3) of the Income Tax Act.",
-  "Column3": " 2.75% of gross pay contribution rate"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Affordable Housing Levy (AHL) – Finance Act, 2023"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Description",
-  "Column2": "Reference",
-  "Column3": "Limit"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "AHL",
-  "Column2": "Collected by employers under the Income Tax (Affordable Housing Levy) Regulations, 2023.\n\nFiled monthly via PAYE returns under the Income Tax Act (Cap 470).\n\nEffective from July 2023 (replacing the earlier Housing Fund contributions).",
-  "Column3": "1.5% of gross monthly pay (employee) + 1.5% (employer match)."
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Retirement Benefits Act, 1997"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Description",
-  "Column2": "Reference",
-  "Column3": "Limit"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Pension and provident fund contributions and benefit deductions",
-  "Column2": "Supports limits aligned to Section 22A of the Income Tax Act",
-  "Column3": "KSh 20,000 or 30% of salary per month, whichever lower"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Employment Act, 2007"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Description",
-  "Column2": "Reference",
-  "Column3": "Limit"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Earned wage access (EWA) or advance payments",
-  "Column2": "Section 19(1)(e) authorizes statutory deductions from wages.\n\nSince EWA represents earned income, not credit, it: Is not subject to the Banking Act or CBK lending regulations. However, if the provider adds interest or structured credit terms, the service risks reclassification as a credit product, subject to the Microfinance Act (2006) or CBK (Digital Credit Providers) Regulations, 2022.\n\nHowever, Section 19(3) of the Act sets an important restriction: \"The total amount of all deductions from wages in any one wage period shall not exceed two-thirds of such wages.”",
-  "Column3": "Earned Wage Access (EWA) is not a loan under Kenyan law if:\n\n1) The amount represents wages already earned;\n2) The employee consents to the advance; and\n3) The deduction is made under Section 19(1)(e) of the Employment Act, 2007 and the deduction on payday must appear on the payslip as “salary advance” or “earned wage access”.\n\nDeductions must not exceed ⅔ (67%) of wages in a pay period. "
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Feature",
-  "Column2": "Earned Wage Access (EWA)",
-  "Column3": "Traditional Loan"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Source of funds",
-  "Column2": "Employee’s already earned salary (portion of wages due)",
-  "Column3": "Third-party credit not yet earned"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Legal classification",
-  "Column2": "Advance on wages under the Employment Act",
-  "Column3": "Credit facility under the Banking\/Finance Acts"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Interest or finance charge",
-  "Column2": "Typically a small facilitation or service fee (not interest)",
-  "Column3": "Interest-bearing under the Credit or Microfinance Acts"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Repayment source",
-  "Column2": "Automatically deducted from future salary payment",
-  "Column3": "Paid over time from future income"
- },
- {
-  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Kenya)": "Regulatory body",
-  "Column2": "Ministry of Labour (Employment Act)",
-  "Column3": "Central Bank of Kenya (CBK Act, Banking Act, Microfinance Act)"
- }
-],
-"Rates":[
- {
-  "General ": "Personal_Relief",
-  "Amount\/Threshold": 2400,
-  "Description": "KES \/ month"
- },
- {
-  "General ": "Insurance_Relief",
-  "Amount\/Threshold": 0,
-  "Description": "KES \/ month (edit if applicable)"
- },
- {
-  "General ": "Housing_Levy_Rate",
-  "Amount\/Threshold": 0.015,
-  "Description": "AHL as fraction of Gross (default 1.5%)"
- },
- {
-  "General ": "SHIF_Flat_Rate",
-  "Amount\/Threshold": 0.0275,
-  "Description": "If Use_SHIF_Table=FALSE, SHIF = Gross*rate"
- },
- {
-  "General ": "Pension_Deductible_Cap",
-  "Amount\/Threshold": 30000,
-  "Description": "Monthly cap on deductible"
- },
- {
-  "General ": "Meals_Deductible_Cap",
-  "Amount\/Threshold": 5000,
-  "Description": "Monthly cap on deductible"
- },
- {
-  "General ": "Night-Out_Deductible_Cap",
-  "Amount\/Threshold": 2000,
-  "Description": "Daily cap on deductible"
- },
- {
-  "General ": "Post-Retirement_Medical_Fund_Deductible_Cap",
-  "Amount\/Threshold": 5000,
-  "Description": "Monthly cap on deductible"
- },
- {
-  "General ": "Mortgage_Interest_Deductible_Cap",
-  "Amount\/Threshold": 25000,
-  "Description": "Monthly cap on deductible"
- },
- {
-  "General ": "Provident_Fund_Deductible_Cap",
-  "Amount\/Threshold": 30000,
-  "Description": "Monthly cap on deductible"
- },
- {
-  "General ": "Life_And_Health_Insurance_Deductible_Limit",
-  "Amount\/Threshold": 5000,
-  "Description": "Monthly cap on deductible"
- },
- {
-  "General ": "NSSF_Tier1_Ceiling",
-  "Amount\/Threshold": 7000,
-  "Description": "Tier I ceiling"
- },
- {
-  "General ": "NSSF_Tier2_Ceiling",
-  "Amount\/Threshold": 72000,
-  "Description": "Tier II ceiling"
- },
- {
-  "General ": "NSSF_Employee_Rate",
-  "Amount\/Threshold": 0.06,
-  "Description": "Employee 6%"
- },
- {
-  "General ": "AHL_Employee_Rate",
-  "Amount\/Threshold": 0.015,
-  "Description": "Employee 1.5%"
- },
- {
-  "General ": "AHL_Employee_Rate",
-  "Amount\/Threshold": 0.015,
-  "Description": "Employer 1.5%"
- },
- {
-  "General ": "Life_And_Health_Insurance_Rate",
-  "Amount\/Threshold": 0.15,
-  "Description": "Life and Health Insurance 15%"
- },
- {
-  "General ": "Provident_Fund_Deductible_Rate",
-  "Amount\/Threshold": 0.3,
-  "Description": "Upto 30%"
- },
- {
-  "General ": "Earned_Wage_Days",
-  "Amount\/Threshold": 30,
-  "Description": "Earned Wage Days"
- },
- {
-  "General ": "Days in Month",
-  "Amount\/Threshold": 31,
-  "Description": "Number of Days in Month"
- },
- {
-  "General ": "Earned_Wage_Cap",
-  "Amount\/Threshold": 0.6,
-  "Description": "Monthly cap on net pay"
- },
- null,
- {
-  "General ": "PAYE_Tax_Bands"
- },
- {
-  "General ": "Lower",
-  "Amount\/Threshold": "Upper",
-  "Description": "Rate",
-  "Column4": "Tax"
- },
- {
-  "General ": 0,
-  "Amount\/Threshold": 24000,
-  "Description": 0.1,
-  "Column4": 2400
- },
- {
-  "General ": 24000,
-  "Amount\/Threshold": 32333,
-  "Description": 0.25,
-  "Column4": 2083.25
- },
- {
-  "General ": 32333,
-  "Amount\/Threshold": 500000,
-  "Description": 0.3,
-  "Column4": 140300.1
- },
- {
-  "General ": 500000,
-  "Amount\/Threshold": 800000,
-  "Description": 0.325,
-  "Column4": 97500
- },
- {
-  "General ": 800000,
-  "Description": 0.35
- }
-],
-"Inputs":[
- {
-  "Inputs": "Employee",
-  "Column2": "Sample Employee",
-  "Column3": "<-Input"
- },
- {
-  "Inputs": "Gross_Pay_Employer",
-  "Column2": 35000,
-  "Column3": "<-Input"
- },
- {
-  "Inputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance]",
-  "Column3": "<-Input"
- },
- {
-  "Inputs": "Meal_Allowance_Employer",
-  "Column3": "<-Input"
- },
- {
-  "Inputs": "NightOut_Allowance_Employer",
-  "Column3": "<-Input"
- },
- {
-  "Inputs": "Pension_Cover_Employer",
-  "Column3": "<-Input"
- },
- {
-  "Inputs": "Medical_Cover_Employer",
-  "Column3": "<-Input"
- },
- {
-  "Inputs": "Days_Worked",
-  "Column2": 30,
-  "Column3": "<-Input"
- },
- {
-  "Inputs": "Mortgage_Interest_Contribution_Employee",
-  "Column3": "<-Input Not Required [Mabye Consider for More Advanced Modelling]"
- },
- {
-  "Inputs": "Post-retirement_Medical Fund_Contribution_Employee",
-  "Column3": "<-Input Not Required [Mabye Consider for More Advanced Modelling]"
- },
- {
-  "Inputs": "Provident_Fund_Contribution_Employee",
-  "Column3": "<-Input Not Required [Mabye Consider for More Advanced Modelling]"
- },
- {
-  "Inputs": "Life_And_Health_Insurance_Contribution_Employee",
-  "Column3": "<-Input Not Required [Mabye Consider for More Advanced Modelling]"
- }
-],
-"Output":[
- {
-  "Outputs": "Employee",
-  "Column2": "Sample Employee"
- },
- {
-  "Outputs": "Gross_Pay_Employer",
-  "Column2": 35000
- },
- {
-  "Outputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance, Housing Allownace]",
-  "Column2": 0
- },
- {
-  "Outputs": "Meal_Allowance_Employer",
-  "Column2": 0
- },
- {
-  "Outputs": "NightOut_Allowance_Employer",
-  "Column2": 0
- },
- {
-  "Outputs": "Pension_Cover_Employer",
-  "Column2": 0
- },
- {
-  "Outputs": "Medical_Cover_Employer",
-  "Column2": 0
- },
- {
-  "Outputs": "Mortgage_Interest_Contribution_Employee",
-  "Column2": 0
- },
- {
-  "Outputs": "Post-retirement_Medical Fund_Contribution_Employee",
-  "Column2": 0
- },
- {
-  "Outputs": "Provident_Fund_Contribution_Employee",
-  "Column2": 0
- },
- {
-  "Outputs": "Life_And_Health_Insurance_Contribution_Employee",
-  "Column2": 0
- },
- {
-  "Outputs": "Total_Income",
-  "Column2": 35000
- },
- {
-  "Outputs": "Meal_Allowance_Deductible",
-  "Column2": 0
- },
- {
-  "Outputs": "NightOut_Allowance_Deductible",
-  "Column2": 0
- },
- {
-  "Outputs": "Pension_Cover_Deductible",
-  "Column2": 0
- },
- {
-  "Outputs": "Medical_Cover_Employer_Deductible",
-  "Column2": 0
- },
- {
-  "Outputs": "Post-retirement_Medical Fund_Cover_Deductible",
-  "Column2": 0
- },
- {
-  "Outputs": "Mortgage_Interest_Deductible",
-  "Column2": 0
- },
- {
-  "Outputs": "Provident_Fund_Deductible",
-  "Column2": 0
- },
- {
-  "Outputs": "Life_And_Health_Insurance_Contribution_Cover",
-  "Column2": 0
- },
- {
-  "Outputs": "NSSF_1_Employee",
-  "Column2": -420
- },
- {
-  "Outputs": "NSSF_2_Employee",
-  "Column2": -1680
- },
- {
-  "Outputs": "SHIF_Employee",
-  "Column2": -962.5
- },
- {
-  "Outputs": "Housing Levy_Employee",
-  "Column2": -525
- },
- {
-  "Outputs": "Taxable_Income",
-  "Column2": 31412.5
- },
- {
-  "Outputs": "PAYE_Before_Relief",
-  "Column2": 4253.125
- },
- {
-  "Outputs": "Personal_Relief",
-  "Column2": 2400
- },
- {
-  "Outputs": "Insurance_Relief",
-  "Column2": 0
- },
- {
-  "Outputs": "PAYE_After_Relief",
-  "Column2": 1853.125
- },
- {
-  "Outputs": "Net_Pay",
-  "Column2": 29559.375
- },
- {
-  "Outputs": "Earned_Wage",
-  "Column2": 28605.84677419355,
-  "Column3": "<-Earned Wage"
- },
- {
-  "Outputs": "Earned_Wage_Max_Cap",
-  "Column2": 17735.625,
-  "Column3": "<-Available Earned Wage Max"
- },
- {
-  "Outputs": "Earned_Wage_Available",
-  "Column2": 17735.625,
-  "Column3": "<-Available Earned Wage"
- }
-]
+  "Rates": [
+    { "General ": "Personal_Relief", "Amount/Threshold": 2400, "Description": "KES / month" },
+    { "General ": "Insurance_Relief", "Amount/Threshold": 0, "Description": "KES / month (edit if applicable)" },
+    { "General ": "Housing_Levy_Rate", "Amount/Threshold": 0.015, "Description": "AHL as fraction of Gross (default 1.5%)" },
+    { "General ": "SHIF_Flat_Rate", "Amount/Threshold": 0.0275, "Description": "If Use_SHIF_Table=FALSE, SHIF = Gross*rate" },
+    { "General ": "Pension_Deductible_Cap", "Amount/Threshold": 30000, "Description": "Monthly cap on deductible" },
+    { "General ": "Meals_Deductible_Cap", "Amount/Threshold": 5000, "Description": "Monthly cap on deductible" },
+    { "General ": "Night-Out_Deductible_Cap", "Amount/Threshold": 2000, "Description": "Daily cap on deductible" },
+    { "General ": "Post-Retirement_Medical_Fund_Deductible_Cap", "Amount/Threshold": 5000, "Description": "Monthly cap on deductible" },
+    { "General ": "Mortgage_Interest_Deductible_Cap", "Amount/Threshold": 25000, "Description": "Monthly cap on deductible" },
+    { "General ": "Provident_Fund_Deductible_Cap", "Amount/Threshold": 30000, "Description": "Monthly cap on deductible" },
+    { "General ": "Life_And_Health_Insurance_Deductible_Limit", "Amount/Threshold": 5000, "Description": "Monthly cap on deductible" },
+    { "General ": "NSSF_Tier1_Ceiling", "Amount/Threshold": 7000, "Description": "Tier I ceiling" },
+    { "General ": "NSSF_Tier2_Ceiling", "Amount/Threshold": 72000, "Description": "Tier II ceiling" },
+    { "General ": "NSSF_Employee_Rate", "Amount/Threshold": 0.06, "Description": "Employee 6%" },
+    { "General ": "AHL_Employee_Rate", "Amount/Threshold": 0.015, "Description": "Employee 1.5%" },
+    { "General ": "Life_And_Health_Insurance_Rate", "Amount/Threshold": 0.15, "Description": "Life and Health Insurance 15%" },
+    { "General ": "Provident_Fund_Deductible_Rate", "Amount/Threshold": 0.3, "Description": "Up to 30%" },
+    { "General ": "Earned_Wage_Days", "Amount/Threshold": 30, "Description": "Earned Wage Days" },
+    { "General ": "Days in Month", "Amount/Threshold": 31, "Description": "Number of Days in Month" },
+    { "General ": "Earned_Wage_Cap", "Amount/Threshold": 0.6, "Description": "Monthly cap on net pay" },
+    null,
+    { "General ": "PAYE_Tax_Bands" },
+    { "General ": "Lower", "Amount/Threshold": "Upper", "Description": "Rate", "Column4": "Tax" },
+    { "General ": 0, "Amount/Threshold": 24000, "Description": 0.1, "Column4": 2400 },
+    { "General ": 24000, "Amount/Threshold": 32333, "Description": 0.25, "Column4": 2083.25 },
+    { "General ": 32333, "Amount/Threshold": 500000, "Description": 0.3, "Column4": 140300.1 },
+    { "General ": 500000, "Amount/Threshold": 800000, "Description": 0.325, "Column4": 97500 },
+    { "General ": 800000, "Description": 0.35 }
+  ],
+  "Inputs": [
+    { "Inputs": "Employee", "Column2": "Sample Employee", "Column3": "<-Input" },
+    { "Inputs": "Gross_Pay_Employer", "Column2": 35000, "Column3": "<-Input" },
+    { "Inputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance]", "Column3": "<-Input" },
+    { "Inputs": "Meal_Allowance_Employer", "Column3": "<-Input" },
+    { "Inputs": "NightOut_Allowance_Employer", "Column3": "<-Input" },
+    { "Inputs": "Pension_Cover_Employer", "Column3": "<-Input" },
+    { "Inputs": "Medical_Cover_Employer", "Column3": "<-Input" },
+    { "Inputs": "Days_Worked", "Column2": 30, "Column3": "<-Input" },
+    { "Inputs": "Mortgage_Interest_Contribution_Employee", "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]" },
+    { "Inputs": "Post-retirement_Medical Fund_Contribution_Employee", "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]" },
+    { "Inputs": "Provident_Fund_Contribution_Employee", "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]" },
+    { "Inputs": "Life_And_Health_Insurance_Contribution_Employee", "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]" }
+  ],
+  "Output": [
+    { "Outputs": "Employee", "Column2": "Sample Employee" },
+    { "Outputs": "Gross_Pay_Employer", "Column2": 35000 },
+    { "Outputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance, Housing Allownace]", "Column2": 0 },
+    { "Outputs": "Meal_Allowance_Employer", "Column2": 0 },
+    { "Outputs": "NightOut_Allowance_Employer", "Column2": 0 },
+    { "Outputs": "Pension_Cover_Employer", "Column2": 0 },
+    { "Outputs": "Medical_Cover_Employer", "Column2": 0 },
+    { "Outputs": "Mortgage_Interest_Contribution_Employee", "Column2": 0 },
+    { "Outputs": "Post-retirement_Medical Fund_Contribution_Employee", "Column2": 0 },
+    { "Outputs": "Provident_Fund_Contribution_Employee", "Column2": 0 },
+    { "Outputs": "Life_And_Health_Insurance_Contribution_Employee", "Column2": 0 },
+    { "Outputs": "Total_Income", "Column2": 35000 },
+    { "Outputs": "Meal_Allowance_Deductible", "Column2": 0 },
+    { "Outputs": "NightOut_Allowance_Deductible", "Column2": 0 },
+    { "Outputs": "Pension_Cover_Deductible", "Column2": 0 },
+    { "Outputs": "Medical_Cover_Employer_Deductible", "Column2": 0 },
+    { "Outputs": "Post-retirement_Medical Fund_Cover_Deductible", "Column2": 0 },
+    { "Outputs": "Mortgage_Interest_Deductible", "Column2": 0 },
+    { "Outputs": "Provident_Fund_Deductible", "Column2": 0 },
+    { "Outputs": "Life_And_Health_Insurance_Contribution_Cover", "Column2": 0 },
+    { "Outputs": "NSSF_1_Employee", "Column2": -420 },
+    { "Outputs": "NSSF_2_Employee", "Column2": -1680 },
+    { "Outputs": "SHIF_Employee", "Column2": -962.5 },
+    { "Outputs": "Housing Levy_Employee", "Column2": -525 },
+    { "Outputs": "Taxable_Income", "Column2": 31412.5 },
+    { "Outputs": "PAYE_Before_Relief", "Column2": 4253.125 },
+    { "Outputs": "Personal_Relief", "Column2": 2400 },
+    { "Outputs": "Insurance_Relief", "Column2": 0 },
+    { "Outputs": "PAYE_After_Relief", "Column2": 1853.125 },
+    { "Outputs": "Net_Pay", "Column2": 29559.375 },
+    { "Outputs": "Earned_Wage", "Column2": 28605.84677419355, "Column3": "<-Earned Wage" },
+    { "Outputs": "Earned_Wage_Max_Cap", "Column2": 17735.625, "Column3": "<-Available Earned Wage Max" },
+    { "Outputs": "Earned_Wage_Available", "Column2": 17735.625, "Column3": "<-Available Earned Wage" }
+  ]
 }
