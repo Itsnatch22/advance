@@ -7,6 +7,7 @@ import Toploader from "nextjs-toploader"
 import Noah from "@/components/Noah";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from '@vercel/analytics/next';
+import { Suspense } from "react";
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   weight: ["400", "500", "600", "700"],
@@ -41,7 +42,9 @@ export default function RootLayout({
         <Navbar/>
         {children}
         <Analytics/>
-        <Noah/>
+        <Suspense fallback={<div className="fixed bottom-6 right-6 z-50 animate-pulse">Wiza loading... 💤</div>}>
+          <Noah />
+        </Suspense>
         <Footer/>
         </ThemeProvider>
       </body>

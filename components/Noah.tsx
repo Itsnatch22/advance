@@ -1,182 +1,63 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-// @ts-ignore - allow JSON import if TS config permits, otherwise runtime fallback remains
-import kbData from "@/data/noah_knowledge.json";
-import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Send, X } from "lucide-react";
+import { useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { MessageCircle, X } from 'lucide-react';
 
-export default function Noah() {
-  const [ open, setOpen ] = useState(false);
-  const [ messages, setMessages ] = useState<{
-    from: "Wiza" | "user";
-    text: string;
-  }[]>([
-    {from: "Wiza", text: "Hey👋, Wiza here! Need a hand?"},
-  ]);
-  const [ input, setInput ] = useState("");
-  const [ kb, setKb ] = useState<{ id: string; title: string; text: string | string[]; source?: string }[] | null>(Array.isArray((kbData as any)) ? (kbData as any) : null);
-
-  // Lightweight internal context and knowledge
-  const knowledge = [
-    { q: /pricing|cost|fee|charges?/i, a: "Our platform fee is 5% per access plus a small KES 25 flat fee. No hidden costs." },
-    { q: /advance|how.*work|works?/i, a: "Work days are tracked across a 30‑day cycle. You can access up to a capped percent of your net earnings based on accrued days and allowances." },
-    { q: /security|safe|safety|secure/i, a: "We use bank‑grade encryption and follow industry best practices. Data is processed securely and never shared without consent." },
-    { q: /partners?|integrations?|api/i, a: "We integrate with payroll and HR systems. For APIs or partnerships, reach out via the Contact page." },
-    { q: /support|help|contact/i, a: "You can reach us through the Contact page. Share your company and a brief context so we can route you quickly." },
-  ];
-
-  // Load external JSON knowledge once when chat opens
-  useEffect(() => {
-    // If kb wasn't statically imported (e.g., JSON import disabled), try client fetch from public path
-    if (!open || kb) return;
-    fetch("/data/noah_knowledge.json")
-      .then((r) => r.ok ? r.json() : null)
-      .then((data) => {
-        if (Array.isArray(data)) setKb(data);
-      })
-      .catch(() => {});
-  }, [open, kb]);
-
-  const normalizedKb = useMemo(() => {
-    if (!kb) return [] as { title: string; text: string; source?: string }[];
-    return kb.map((item) => ({
-      title: item.title,
-      text: Array.isArray(item.text) ? item.text.join(" \n ") : item.text,
-      source: item.source,
-    }));
-  }, [kb]);
-
-  // Simple reasoning pipeline
-  const think = (history: {from: string; text: string}[], user: string): string => {
-    const cleaned = user.trim();
-    if (!cleaned) return "";
-
-    // 1) Fast intents
-    const lower = cleaned.toLowerCase();
-    if (["hi","hello","hey","yo"].some(g => lower.startsWith(g))) {
-      return "Hi! I'm Wiza. Ask about advances, fees, eligibility, or security.";
-    }
-
-    // 2) Knowledge lookup (built-in)
-    for (const item of knowledge) {
-      if (item.q.test(cleaned)) return item.a;
-    }
-
-    // 2b) External KB lookup (fuzzy contains in title/text)
-    for (const item of normalizedKb) {
-      const hay = `${item.title}\n${item.text}`.toLowerCase();
-      if (hay.includes(lower)) {
-        return `${item.text}${item.source ? `\nSource: ${item.source}` : ""}`;
-      }
-    }
-
-    // 3) Contextual heuristics using short history window
-    // (history context reserved for future use)
-    if (/(eligib|qualif)/i.test(cleaned)) {
-      return "Eligibility is based on your gross salary, allowances, and accrued days in the 30‑day cycle. Use the calculator to estimate your accessible amount.";
-    }
-    if (/when.*pay|payout|disburse|receive/i.test(cleaned)) {
-      return "Once an advance is requested and approved, funds are disbursed instantly to your mobile or bank account.";
-    }
-
-    // 4) Fallback: reflective response with next‑step guidance
-    return "I’m not fully certain yet, but here’s a tip: you can estimate access using the Calculator and review fees in Pricing. Tell me if your question is about fees, eligibility, or security, and I’ll get more specific.";
-  };
-
-  const handleSend = () => {
-    const msg = input.trim();
-    if(!msg) return;
-    const updated : { from: "Wiza" | "user"; text: string }[] = [
-      ...messages,
-      { from: "user", text: msg },
-    ]
-    setMessages(updated);
-    setInput("");
-
-    // Simulate thinking delay
-    setTimeout(() => {
-      const reply = think(updated, msg);
-      if (!reply) return;
-      setMessages((prev) => ([...prev, { from: "Wiza", text: reply }]));
-    }, 400);
-  };
+export default function NoahChat() {
+  const [open, setOpen] = useState(false);
+  const chat = useChat({ api: '/api/noah' } as any);
+  const { messages } = chat;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 font-sans">
-      {/* Floating Button */}
-      <motion.button
+    <>
+      {/* Chat Toggle Button */}
+      <button
         onClick={() => setOpen(!open)}
-        whileTap={{ scale: 0.9 }}
-        className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white p-4 rounded-full shadow-lg focus:outline-none transition flex items-center justify-center"
+        className="fixed bottom-6 right-6 z-50 rounded-full bg-green-600 p-4 text-white shadow-lg hover:bg-green-700 transition-all"
       >
-        {open ? <X size={22} /> : <MessageCircle size={24} />}
-      </motion.button>
+        {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+      </button>
 
       {/* Chat Window */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            transition={{ duration: 0.3 }}
-            className="absolute bottom-16 right-0 w-80 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-green-700 to-green-600 text-white px-4 py-3 font-semibold flex justify-between items-center">
-              Wiza💬
-              <span className="text-xs opacity-90">EaziWage Assistant</span>
-            </div>
+      {open && (
+        <div className="fixed bottom-20 right-6 z-40 w-80 md:w-96 rounded-2xl border border-gray-200 bg-white dark:bg-neutral-900 shadow-2xl overflow-hidden flex flex-col">
+          <div className="p-3 border-b border-gray-200 dark:border-neutral-800 font-semibold text-gray-800 dark:text-gray-100">
+            💬 Wiza — EaziWage Assistant
+          </div>
 
-            {/* Chat Area */}
-            <div className="flex-1 p-3 space-y-3 overflow-y-auto max-h-80 scrollbar-thin" role="log" aria-live="polite">
-              {messages.map((msg, i) => (
-                <motion.div
+          <div className="flex-1 p-3 overflow-y-auto space-y-2 text-sm">
+            {messages.map((m, i) => {
+              const text = (m as any).content ?? (m as any).text ?? (m as any).message ?? JSON.stringify(m);
+              return (
+                <div
                   key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className={`flex ${
-                    msg.from === "user" ? "justify-end" : "justify-start"
+                  className={`p-2 rounded-lg max-w-[80%] ${
+                    m.role === 'user'
+                      ? 'ml-auto bg-green-600 text-white'
+                      : 'mr-auto bg-gray-100 dark:bg-neutral-800 text-gray-900 dark:text-gray-100'
                   }`}
                 >
-                  <div
-                    className={`px-3 py-2 rounded-2xl max-w-[75%] text-sm leading-snug ${
-                      msg.from === "user"
-                        ? "bg-green-600 text-white"
-                        : "bg-gray-100 dark:bg-gray-800 dark:text-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Input Area */}
-            <div className="flex items-center p-2 border-t dark:border-gray-800 bg-white/40 dark:bg-gray-900/40 backdrop-blur-md">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask Wiza..."
-                className="flex-1 text-sm px-3 py-2 outline-none bg-transparent dark:text-white"
-                onKeyDown={(e) => { if (e.key === 'Enter') handleSend(); }}
-                aria-label="Chat input"
-              />
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={handleSend}
-                className="p-2 text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition"
-                aria-label="Send message"
-              >
-                <Send size={18} />
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+                  {text}
+                </div>
+              );
+            })}
+          </div>
+          <form onSubmit={(chat as any).handleSubmit} className="p-3 border-t border-gray-200 dark:border-neutral-800 flex">
+            <input
+              name="input"
+              placeholder="Ask Wiza anything..."
+              className="flex-1 p-2 text-sm rounded-lg border border-gray-300 dark:border-neutral-700 bg-gray-50 dark:bg-neutral-800 focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="ml-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm"
+            >
+              Send
+            </button>
+          </form>
+        </div>
+      )}
+    </>
   );
 }

@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "framer-motion";
-import { User, Wallet, Cog, LineChart, Lock, BadgeCheck, Clipboard, CircuitBoard, BrainCircuit, ShieldCheck, ChevronRight, ChevronLeft } from "lucide-react";
+import { User, Wallet, Cog, LineChart, Lock, BadgeCheck, Clipboard, CircuitBoard, BrainCircuit, ShieldCheck, ChevronRight, ArrowRight } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 
 const reasons = [
@@ -58,6 +58,7 @@ const rolloutPlans = [
         desc: "Brief managers, share staff onboarding link, monitor adoption.",
     },
 ];
+
 
 const faqs = [
     {
@@ -172,20 +173,20 @@ export default function Employers() {
                 Retail • Hospitality • Manufacturing • Logistics • Banks • Schools •
                 Healthcare
                 </p>
-                <div className="mt-10 sm:mt-12">
+                <div className="mt-3 sm:mt-5">
                 <AppleCardsCarouselDemo />
                 </div>
             </div>
              
              {/* FAQs */}
-            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-14 sm:mt-16 lg:mt-20">
+            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-6 sm:mt-7 lg:mt-8">
                 <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl text-gray-900 font-semibold">Employer Frequently Asked Questions</h2>
                 <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
                 {faqs.map((faqs,index) => (
                     <details key={index} className="group p-5">
                     <summary className="flex dark:text-black cursor-pointer items-center justify-between text-base sm:text-lg font-medium">
                         {faqs.question}
-                        <ChevronRight className="ml-2 h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-90" />
+                        <ArrowRight className="ml-2 h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-90" />
                     </summary>
                     <p className="mt-4 leading-7 text-gray-600 text-base sm:text-lg">{faqs.answer}</p>
                     </details>
