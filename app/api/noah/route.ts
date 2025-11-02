@@ -1,12 +1,7 @@
 // app/api/noah/route.ts
 import { streamText } from 'ai';
 import { cohere as createCohere } from '@ai-sdk/cohere';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { supabase } from "@/lib/supabaseClient";
 
 const cohere = createCohere({
   apiKey: process.env.COHERE_API_KEY!,
