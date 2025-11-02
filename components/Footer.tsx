@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { FiLinkedin, FiMail, FiInstagram, FiShield } from 'react-icons/fi';
+import { FiLinkedin, FiMail, FiInstagram } from 'react-icons/fi';
 import { FaXTwitter } from "react-icons/fa6";
-import { FaWhatsapp } from 'react-icons/fa';
+import { FaWhatsapp, FaFacebook } from 'react-icons/fa';
 import Link from 'next/link'
 import gsap from 'gsap';
 import { BiWallet, BiLocationPlus } from 'react-icons/bi';
@@ -88,7 +88,8 @@ export default function Footer() {
 
         <div className="flex space-x-4 pt-2">
           {[
-            { icon: FiInstagram, url: "https://instagram.com" },
+            { icon: FaFacebook, url: "https://instagram.com" },
+            { icon: FiInstagram, url: "https://www.instagram.com/eaziwagelimited/" },
             { icon: FaXTwitter, url: "https://x.com" },
             { icon: FiLinkedin, url: "https://linkedin.com" },
           ].map((social, index) => (
