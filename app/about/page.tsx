@@ -55,8 +55,8 @@ export default function AboutPage() {
         alt="Financial freedom illustration"
         className="w-full max-w-md rounded-2xl shadow-lg"
       />
-    </motion.div>
-    <motion.div
+      </motion.div>
+      <motion.div
       initial={{ opacity: 0, x: -50 }}
       whileInView={{ opacity: 1, x: 0 }}
       transition={{ duration: 1 }}

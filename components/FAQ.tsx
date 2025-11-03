@@ -18,7 +18,7 @@ const faqs = [
     },
     {
         question: "Are there any fees associated with using EaziWage?",
-        answer: "EaziWage offers a transparent pricing model with no hidden fees. While there may be nominal transaction fees for instant access, there are no interest charges or subscription fees."
+        answer: "EaziWage offers a transparent pricing model with no hidden fees. While there may be nominal transaction fees and application fees for instant access, there are no interest charges or subscription fees."
     }
 ];
 
@@ -30,7 +30,7 @@ export default function FAQ() {
             whileInView={{opacity: 1, y: 0}}
             className="font-serif font-bold text-3xl text-center sm:text-4xl md:text-5xl lg:text-6xl"
             >
-                Our Frequently Asked Questions
+                Our <span className="text-green-600">Frequently</span> Asked Questions
             </motion.h2>
             <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
                 {faqs.map((faqs,index) => (

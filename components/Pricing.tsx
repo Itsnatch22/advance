@@ -45,7 +45,7 @@ export default function Pricing () {
                 initial={{opacity:0 , y:20}}
                 whileInView={{opacity: 1, y: 0}}
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-green-700 dark:text-green-600 font-bold font-serif">
-                    Fast. Fair. Fully Transparent.
+                    Fast. Fair. <span className="text-black">Fully</span> Transparent.
                 </motion.h2>
 
                 <p className="mt-4 text-gray-600 dark:text-gray-300 text-base sm:text-lg px-4">It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan, and dream without waiting for payday.</p>
