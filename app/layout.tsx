@@ -4,7 +4,6 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Toploader from "nextjs-toploader"
-import Noah from "@/components/Noah";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from '@vercel/analytics/next';
 import { Suspense } from "react";
@@ -42,9 +41,6 @@ export default function RootLayout({
         <Navbar/>
         {children}
         <Analytics/>
-        <Suspense fallback={<div className="fixed bottom-6 right-6 z-50 animate-pulse">Wiza loading... 💤</div>}>
-          <Noah />
-        </Suspense>
         <Footer/>
         </ThemeProvider>
       </body>
