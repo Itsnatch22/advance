@@ -30,7 +30,7 @@ export default function CareersPage() {
       <p className="mt-6 text-sm sm:text-base md:text-lg text-neutral-900 flex flex-wrap items-center justify-center gap-2">
         For inquiries, reach us at{" "}
         <Link
-          href="mailto:info@eaziwage.com"
+          href="mailto:support@eaziwage.com"
           className="underline underline-offset-2 hover:text-emerald-700 transition font-medium"
         >
           support@eaziwage.com

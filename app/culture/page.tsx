@@ -77,7 +77,7 @@ export default function CulturePage() {
         <p className="mt-6 text-base sm:text-lg md:text-xl text-neutral-900 flex flex-wrap items-center justify-center md:justify-start gap-2">
           For inquiries, reach us at{" "}
           <Link
-            href="mailto:info@eaziwage.com"
+            href="mailto:support@eaziwage.com"
             className="font-medium text-neutral-950 hover:underline underline-offset-2"
           >
             support@eaziwage.com
