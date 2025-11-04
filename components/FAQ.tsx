@@ -5,20 +5,28 @@ import { motion } from "framer-motion";
 
 const faqs = [
     {
-        question: "What is EaziWage?",
-        answer: "EaziWage is an innovative payroll solution that allows employees to access their earned wages instantly, providing financial flexibility and reducing the stress associated with traditional pay cycles."
+        question: "What is earned wage access and how does EaziWage work?",
+        answer: "Earned wage access allows employees to access part of their earned wages before payday. EaziWage integrates with payroll and mobile money to enable instant disbursements."
     },
     {
-        question: "How does instant wage access work?",
-        answer: "Instant wage access allows employees to withdraw a portion of their earned wages before the scheduled payday. This is typically done through a mobile app or online platform, where employees can request funds as needed."
+        question: "Who can use EaziWage?",
+        answer: "Our solution targets Kenyan employees across sectors; eligibility is determined by payroll data and work history."
     },
     {
-        question: "Is EaziWage safe to use?",
-        answer: "Yes, EaziWage employs robust security measures to protect user data and financial information. We comply with industry standards and regulations to ensure a safe and secure experience for all users."
+        question: "Fees and pricing",
+        answer: "Transparent pricing: no interest, nominal transaction fees, up to 5% application fee depending on eligibility."
+    },
+    {
+        question: "Security measures",
+        answer: "Industry-standard encryption, PCI-DSS-aligned practices, and regular audits."
     },
     {
         question: "Are there any fees associated with using EaziWage?",
         answer: "EaziWage offers a transparent pricing model with no hidden fees. While there may be nominal transaction fees and application fees for instant access, there are no interest charges or subscription fees."
+    },
+    {
+        question: "How to get started",
+        answer: "For employers: integrate with your payroll. For employees: download the app or use the web portal to request funds."
     }
 ];
 
