@@ -62,7 +62,7 @@ export default function CulturePage() {
                 </motion.div>
                 <p className="mt-4 text-xl">
                     For inquiries, reach us at {" "}
-                    <Link href="mailto:info@eaziwage.com" className="text-neutral-900">info@eaziwage.com</Link>
+                    <Link href="mailto:info@eaziwage.com" className="text-neutral-900">support@eaziwage.com</Link>
                     <ArrowUpRight size={12} className="ml-2 inline-block"/>
                 </p>
             </motion.div>

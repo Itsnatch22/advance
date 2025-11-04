@@ -28,7 +28,7 @@ export default function CareersPage() {
                 href="mailto:info@eaziwage.com"
                 className="underline"
                 >
-                    info@eaziwage.com <ArrowUpRight size={12} className="ml-2 inline-block"/>
+                    support@eaziwage.com <ArrowUpRight size={12} className="ml-2 inline-block"/>
                 </Link>
             </p>
         </section>
