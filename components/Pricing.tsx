@@ -39,7 +39,7 @@ const pricing = [
 
 export default function Pricing () {
     return(
-        <section className="relative py-16 sm:py-20 bg-white dark:bg-neutral-950 text-center">
+        <section id="pricing" className="relative py-16 sm:py-20 bg-white dark:bg-neutral-950 text-center">
             <div className="max-w-6xl px-4 sm:px-6 mx-auto">
                 <motion.h2
                 initial={{opacity:0 , y:20}}
