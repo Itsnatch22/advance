@@ -63,7 +63,7 @@ export default function Employers() {
             </div>
             {/* Compliance Strip */}
             <div className="w-full bg-gray-50 border border-gray-200 py-3 sm:py-4 px-3 sm:px-6 lg:px-10 mb-8 sm:mb-10">
-                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 text-center">
+                <div className="flex py-8 flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 text-center">
                 <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-green-500 shrink-0" />
                     <span>Regulated partners • CBK-aligned framework</span>
@@ -84,9 +84,9 @@ export default function Employers() {
             </div>
 
             {/* Employers Reasons */}
-            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-10 sm:mt-14">
+            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 lg:text-left text-center mt-10 sm:mt-14">
                 <h2 className="font-serif text-gray-800 font-semibold text-xl sm:text-2xl lg:text-3xl mb-2 sm:mb-3">
-                Why employers choose Eaziwage
+                Why employees choose Eaziwage
                 </h2>
                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-prose">
                 A practical well-being lever that pays for itself
@@ -114,12 +114,12 @@ export default function Employers() {
             </div>
 
             {/* Roll-Out Plans */}
-            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:mt-20">
+            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:text-left text-center lg:mt-20">
                 <h2 className="font-serif text-gray-900 font-semibold text-xl sm:text-2xl lg:text-3xl mb-2 sm:mb-3">
                 Your Financial Empowerment Journey
                 </h2>
-                <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-prose">
-                Awareness → Empowerment → Growth — a smarter way to handle money you’ve already earned.
+                <p className="text-gray-600 text-sm sm:text-base leading-relaxed ">
+                Awareness → Empowerment → Growth — a smarter way to handle money you&apos;ve already earned.
                 </p>
 
                 <div className="mt-8 sm:mt-10 lg:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
@@ -148,7 +148,7 @@ export default function Employers() {
                 <h2 className="font-serif font-semibold text-xl sm:text-2xl lg:text-3xl text-gray-900">
                 Versatility across jobs & sectors
                 </h2>
-                <p className="text-gray-600 text-sm sm:text-base mt-3 sm:mt-4 max-w-prose mx-auto lg:mx-0">
+                <p className="text-gray-600 text-sm sm:text-base mt-3 sm:mt-4 mx-auto lg:mx-0">
                 Real Kenyan contexts: retail, banking, hospitality, logistics, schools, factories and more.
                 </p>
                 <div className="mt-3 sm:mt-5">
@@ -157,7 +157,7 @@ export default function Employers() {
             </div>
              
              {/* FAQs */}
-            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-6 sm:mt-7 lg:mt-8">
+            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full text-center lg:px-10 ">
                 <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl text-gray-900 font-semibold">Employer Frequently Asked Questions</h2>
                 <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
                 {faqs.map((faqs,index) => (

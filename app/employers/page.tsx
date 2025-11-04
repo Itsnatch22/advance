@@ -88,7 +88,7 @@ export default function Employers() {
             </div>
             {/* Compliance Strip */}
             <div className="w-full bg-gray-50 border border-gray-200 py-3 sm:py-4 px-3 sm:px-6 lg:px-10 mb-8 sm:mb-10">
-                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 text-center">
+                <div className="flex py-8 flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 text-center">
                 <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-green-500 shrink-0" />
                     <span>Regulated partners • CBK-aligned</span>

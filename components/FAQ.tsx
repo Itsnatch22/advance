@@ -13,10 +13,6 @@ const faqs = [
         answer: "Our solution targets Kenyan employees across sectors; eligibility is determined by payroll data and work history."
     },
     {
-        question: "Fees and pricing",
-        answer: "Transparent pricing: no interest, nominal transaction fees, up to 5% application fee depending on eligibility."
-    },
-    {
         question: "Security measures",
         answer: "Industry-standard encryption, PCI-DSS-aligned practices, and regular audits."
     },
