@@ -27,7 +27,27 @@ const faqs = [
     {
         question: "How to get started",
         answer: "For employers: integrate with your payroll. For employees: download the app or use the web portal to request funds."
-    }
+    },
+    {
+        question: "Is EaziWage available for withdrawal 24/7 365 days a year?",
+        answer: "Yes. Users can be withdraw at any time, the earnings they have already worked for and accumulated."
+    },
+    {
+        question: "How long does it take for users to receive withdrawals?",
+        answer: "The withdrawal request will be processed for instant disbursement. However, withdrawals are dependent on mobile money and bank systems. Mobile wallet transfers are typically quicker"
+    },
+    {
+        question: "What is the minimum and maximum earned wage amount that can be withdrawn?",
+        answer: "There is no minimum withdrawal amount. The maximum withdrawal amount is  capped to a portion of your gross salary in alignment with law, payroll verification, your residency, your Employer’s policies and the EaziWage eligibility requirements."
+    },
+    {
+        question: "Who is eligible to use EaziWage?",
+        answer: "Employers whom have a valid Business Registration and whom have signed up to the EaziWage platform, in Kenya, Tanzania, Uganda and Rwanda. EaziWage is available for all employees who are currently employed and paid in the jurisdiction of the verified and registered Employer."
+    },
+    {
+        question: "How do I accumulate earned wages?",
+        answer: "EaziWage will retrieve your work information directly from your Employer to track your available earnings."
+    },
 ];
 
 export default function FAQ() {
