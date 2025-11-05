@@ -12,7 +12,7 @@ type AllowanceKey =
 type AllowancesChecked = Record<AllowanceKey, boolean>;
 type AllowancesAmount = Record<AllowanceKey, number | "">;
 
-type Country = "KE" | "UG" | "TZ" | "ZA";
+type Country = "KE" | "UG" | "TZ" | "ZA" | "RW";
 
 type CalcResult = {
   success: boolean;
@@ -31,9 +31,9 @@ type CalcResult = {
 };
 
 const fmt = (n: number) =>
-  new Intl.NumberFormat("en-KE", { 
-    minimumFractionDigits: 2, 
-    maximumFractionDigits: 2 
+  new Intl.NumberFormat("en-KE", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(Number(n));
 
 
@@ -128,7 +128,7 @@ const maxDays = useMemo(() => {
     });
 
     const data = await res.json();
-    console.log("🔥 Raw backend response:", data);
+    console.log(" Raw backend response:", data);
 
     if (!data.success) {
       console.error("❌ Backend failed:", data.error || data.detail);
@@ -140,10 +140,10 @@ const maxDays = useMemo(() => {
       success: true,
       accruedGross: data.gross || 0,
       netMonthly: data.net || 0,
-      accessCapPercent: 40,
-      accessCap: (data.net || 0) * 0.4,
-      platformFee: (data.net || 0) * 0.02,
-      accessibleNow: (data.net || 0) * 0.4 - (data.net || 0) * 0.02,
+      accessCapPercent: data.accessCapPercent ?? 60,
+      accessCap: data.earnedWage ?? (data.net || 0) * ((data.accessCapPercent ?? 60) / 100),
+      platformFee: 0, // fee not defined in workbook response; set here if needed
+      accessibleNow: data.earnedWage ?? (data.net || 0) * ((data.accessCapPercent ?? 60) / 100),
       deductions: {
         NSSF: (data.nssf1 || 0) + (data.nssf2 || 0),
         SHIF: data.shif || 0,
@@ -171,6 +171,8 @@ const maxDays = useMemo(() => {
       ? "UGX"
       : country === "TZ"
       ? "TZS"
+      : country === "RW"
+      ? "RWF"
       : "ZAR";
 
   return (
@@ -184,9 +186,9 @@ const maxDays = useMemo(() => {
 <div className="flex justify-center items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
   {[
     { code: "KE", flag: "/flag/KE.png" },
-    { code: "UG", flag: "/flag/UG.png", disabled: true },
-    { code: "TZ", flag: "/flag/TZ.png", disabled: true },
-    { code: "ZA", flag: "/flag/SA.png", disabled: true },
+    { code: "UG", flag: "/flag/UG.png", disabled: false },
+    { code: "TZ", flag: "/flag/TZ.png", disabled: false },
+    { code: "RW", flag: "/flag/RW.png", disabled: false },
   ].map((f) => (
     <button
       key={f.code}
@@ -376,7 +378,7 @@ const maxDays = useMemo(() => {
           {result?.deductions && (
   <div className="mt-3 sm:mt-4 bg-white/70 dark:bg-gray-800/70 border border-green-200 dark:border-green-700 rounded-lg p-2 text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 text-center shadow-sm transition-colors duration-300">
     <p>
-      <span className="font-semibold">Deductions →</span> NSSF:{" "}
+      <span className="font-semibold">Remittances →</span> NSSF:{" "}
       {currencySymbol} {fmt(result.deductions.NSSF)} | SHIF:{" "}
       {currencySymbol} {fmt(result.deductions.SHIF)} | Housing Lev:{" "}
       {currencySymbol} {fmt(result.deductions.Housing)}
