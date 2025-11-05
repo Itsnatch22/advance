@@ -20,7 +20,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "EaziWage - Earned Wage Access for Kenyan Employees",
+  title: "EaziWage - Earned Wage Access for Employees Across Africa",
   description: "A system designed to enable employees to get access to an advance before payday.",
 };
 
