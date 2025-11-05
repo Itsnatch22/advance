@@ -121,41 +121,43 @@ export default function Calculator() {
         return;
       }
 
-      const deductions: Deductions = (() => {
-        switch (country) {
-          case "UG":
-            return {
-              "LST Deductible": data.lst || 0,
-              "NSSF Employee": data.nssfEmployee || 0,
-              "NSSF Employer": data.nssfEmployer || 0,
-              Payee: data.payee || 0,
-            };
-          case "TZ":
-            return {
-              "SDL Employer": data.sdl || 0,
-              "WCF Employer": data.wcf || 0,
-              "UHI NHIF Employer": data.nhifEmployer || 0,
-              "UHI NHIF Employee": data.nhifEmployee || 0,
-              "NSSF Employer": data.nssfEmployer || 0,
-              "NSSF Employee": data.nssfEmployee || 0,
-              Payee: data.payee || 0,
-            };
-          case "RW":
-            return {
-              "RSSB Medical Insurance": data.rssbMedical || 0,
-              "RSSB Maternity": data.rssbMaternity || 0,
-              "RSSB Pension": data.rssbPension || 0,
-              Payee: data.payee || 0,
-            };
-          default: // Kenya
-            return {
-              NSSF: (data.nssf1 || 0) + (data.nssf2 || 0),
-              SHIF: data.shif || 0,
-              Housing: data.ahl || 0,
-              Payee: data.payee || 0,
-            };
-        }
-      })();
+      let deductions: Deductions;
+      switch (country) {
+        case "UG":
+          deductions = {
+            "LST Deductible": data.lst || 0,
+            "NSSF Employee": data.nssfEmployee || 0,
+            "NSSF Employer": data.nssfEmployer || 0,
+            Payee: data.payee || 0,
+          };
+          break;
+        case "TZ":
+          deductions = {
+            "SDL Employer": data.sdl || 0,
+            "WCF Employer": data.wcf || 0,
+            "UHI NHIF Employer": data.nhifEmployer || 0,
+            "UHI NHIF Employee": data.nhifEmployee || 0,
+            "NSSF Employer": data.nssfEmployer || 0,
+            "NSSF Employee": data.nssfEmployee || 0,
+            Payee: data.payee || 0,
+          };
+          break;
+        case "RW":
+          deductions = {
+            "RSSB Medical Insurance": data.rssbMedical || 0,
+            "RSSB Maternity": data.rssbMaternity || 0,
+            "RSSB Pension": data.rssbPension || 0,
+            Payee: data.payee || 0,
+          };
+          break;
+        default: // Kenya
+          deductions = {
+            NSSF: (data.nssf1 || 0) + (data.nssf2 || 0),
+            SHIF: data.shif || 0,
+            Housing: data.ahl || 0,
+            Payee: data.payee || 0,
+          };
+      }
 
       const accessCapPercent = country === "TZ" ? 30 : 60;
       const gross = data.gross || 0;
