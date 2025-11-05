@@ -45,7 +45,7 @@ export default function CalculatorPage() {
                   EaziWage Access Calculator
                 </span>{" "}
                 helps employees estimate their accessible portion of earned wages
-                before payday. It’s clarity and confidence — simplified.
+                before payday. It&apos;s clarity and confidence — simplified.
               </p>
 
               <div className="border-l-4 border-green-500 dark:border-green-600 pl-3 text-gray-600 dark:text-gray-400 italic text-xs sm:text-sm bg-green-50/50 dark:bg-green-900/20 rounded-md py-2">

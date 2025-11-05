@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "framer-motion";
-import { User, Wallet, Cog, LineChart, Lock, BadgeCheck, Clipboard, CircuitBoard, BrainCircuit, ShieldCheck, ChevronRight, ChevronLeft } from "lucide-react";
+import { User, Wallet, Cog, LineChart, Lock, BadgeCheck, Clipboard, CircuitBoard, BrainCircuit, ShieldCheck, ChevronRight, ArrowRight } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 
 const reasons = [
@@ -59,6 +59,7 @@ const rolloutPlans = [
     },
 ];
 
+
 const faqs = [
     {
         question: "How does Eaziwage integrate with our existing payroll system?",
@@ -81,9 +82,13 @@ const faqs = [
 export default function Employers() {
     return(
         <section className="min-h-screen w-full mx-auto relative py-10 sm:py-14 lg:py-20 flex flex-col items-center">
+            {/* Employer Dashboard */}
+            <div className="w-full min-h-screen mx-auto bg-gray-300 rounded-2xl px-10 py-10 mb-10 sm:mb-24 lg:mb-32 flex items-center justify-center">
+                <h1 className="font-medium font-serif text-4xl animate-pulse text-green-400">Dashboard to be displayed here</h1>
+            </div>
             {/* Compliance Strip */}
             <div className="w-full bg-gray-50 border border-gray-200 py-3 sm:py-4 px-3 sm:px-6 lg:px-10 mb-8 sm:mb-10">
-                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 text-center">
+                <div className="flex py-8 flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 text-center">
                 <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-green-500 shrink-0" />
                     <span>Regulated partners • CBK-aligned</span>
@@ -172,20 +177,20 @@ export default function Employers() {
                 Retail • Hospitality • Manufacturing • Logistics • Banks • Schools •
                 Healthcare
                 </p>
-                <div className="mt-10 sm:mt-12">
+                <div className="mt-3 sm:mt-5">
                 <AppleCardsCarouselDemo />
                 </div>
             </div>
              
              {/* FAQs */}
-            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-14 sm:mt-16 lg:mt-20">
+            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-6 sm:mt-7 lg:mt-8">
                 <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl text-gray-900 font-semibold">Employer Frequently Asked Questions</h2>
                 <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
                 {faqs.map((faqs,index) => (
                     <details key={index} className="group p-5">
                     <summary className="flex dark:text-black cursor-pointer items-center justify-between text-base sm:text-lg font-medium">
                         {faqs.question}
-                        <ChevronRight className="ml-2 h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-90" />
+                        <ArrowRight className="ml-2 h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-90" />
                     </summary>
                     <p className="mt-4 leading-7 text-gray-600 text-base sm:text-lg">{faqs.answer}</p>
                     </details>

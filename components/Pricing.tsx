@@ -28,7 +28,7 @@ const pricing = [
     {
         icon: ShieldCheck,
         title: "No Hidden Fees",
-        desc: "We pride ourselves on our transparent pricing model. What you see is what you get, no surprises, no hidden costs."
+        desc: "Earned Wage Access with transparent, no hidden fees; includes up to 5% application fees and no interest, with options for advance salary access."
     },
     {
         icon: Scale,
@@ -39,13 +39,13 @@ const pricing = [
 
 export default function Pricing () {
     return(
-        <section className="relative py-16 sm:py-20 bg-white dark:bg-neutral-950 text-center">
+        <section id="pricing" className="relative py-16 sm:py-20 bg-white dark:bg-neutral-950 text-center">
             <div className="max-w-6xl px-4 sm:px-6 mx-auto">
                 <motion.h2
                 initial={{opacity:0 , y:20}}
                 whileInView={{opacity: 1, y: 0}}
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-green-700 dark:text-green-600 font-bold font-serif">
-                    Fast. Fair. Fully Transparent.
+                    Fast. Fair. <span className="text-black">Fully</span> Transparent.
                 </motion.h2>
 
                 <p className="mt-4 text-gray-600 dark:text-gray-300 text-base sm:text-lg px-4">It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan, and dream without waiting for payday.</p>

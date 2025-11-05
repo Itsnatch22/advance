@@ -29,7 +29,7 @@ export default function CTA() {
         <section
         className="py-16 sm:py-20 min-h-screen bg-[url('/cta.jpg')] bg-cover bg-center relative flex items-center"
         >
-            <div className="absolute inset-0 bg-gradient-to-l from-green-700/90 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-green-700/90 to-transparent"></div>
             <div className="max-w-4xl mx-auto text-center text-white px-4 sm:px-6 relative">
                 <motion.h2
                 initial={{ opacity: 0, y: 20 }}
