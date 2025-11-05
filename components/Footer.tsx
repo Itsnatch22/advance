@@ -10,6 +10,7 @@ import { BiWallet, BiLocationPlus } from 'react-icons/bi';
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "framer-motion"
 import Locator from './Locator';
+import { Shield } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -90,7 +91,7 @@ export default function Footer() {
           {[
             { icon: FaFacebook, url: "https://www.facebook.com/share/1CwgkthTRT/" },
             { icon: FiInstagram, url: "https://www.instagram.com/eaziwagelimited/" },
-            { icon: FaXTwitter, url: "https://x.com" },
+            { icon: FaXTwitter, url: "https://x.com/eaziwagelimited?t=m-WyH8sFtbLOAiRjVKFVPw&s=08" },
             { icon: FiLinkedin, url: "https://www.linkedin.com/company/eaziwage/?viewAsMember=true" },
           ].map((social, index) => (
             <motion.a
@@ -206,6 +207,11 @@ export default function Footer() {
     <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
        <p className="text-xs text-gray-500 text-center md:text-left">&copy; {currentYear ?? ''} EaziWage. All Rights Reserved</p>
        <Locator/>
+       <Link 
+       href="https://eaziwage-status.com" 
+       className='flex items-center gap-1 text-xs text-gray-500 md:text-left animate-pulse'>
+       <Shield className='w-3 h-3 text-green-500 inline'/> Eaziwage Status
+      </Link>
     </div>
   </div>
 

@@ -1,6 +1,5 @@
 "use client";
  
-import React from "react";
 import { Highlighter } from "./ui/highlighter";
 import { InfiniteMovingCards } from "./ui/infinite-moving-cards";
 import Image from "next/image";
@@ -29,7 +28,7 @@ export function Team() {
   return (
     <div className="min-h-[32rem] md:min-h-[40rem] w-full rounded-md flex flex-col antialiased bg-white dark:bg-black dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden px-4 sm:px-6">
 
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif mb-6 sm:mb-10 text-center">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif mb-6 sm:mb-10 text-center">
           What The {" "}
           <span className="text-green-600 dark:text-400">
             Team{" "}

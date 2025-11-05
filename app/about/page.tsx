@@ -5,9 +5,11 @@ import gsap from "gsap"
 import * as React from "react"
 import { Team } from "@/components/Team"
 import Image from "next/image"
+import Typed from "typed.js"
 export default function AboutPage() {
     const storyRef = React.useRef<HTMLDivElement>(null);
     const valuesRef = React.useRef<HTMLDivElement>(null);
+    const typedRef = React.useRef<HTMLSpanElement>(null);
 
     React.useEffect(() => {
         gsap.fromTo(storyRef.current, 
@@ -17,12 +19,27 @@ export default function AboutPage() {
         gsap.fromTo(valuesRef.current, 
         {opacity: 0, y: 50}, 
         {opacity: 1, y: 0, duration: 1.2, ease: "power2.out", delay: 0.3});
+
+        const typed = new Typed(typedRef.current, {
+          strings: [
+            "Heartbeat",
+            "Pulse",
+            "Essence",
+          ],
+          smartBackspace: true,
+          cursorChar: "|",
+          backDelay: 2000,
+          typeSpeed: 100,
+          backSpeed: 80,
+          loop: true,
+        });
+        return () => typed.destroy();
     }, []);
     return(
         <div className="min-h-screen bg-white dark:bg-neutral-950 text-gray-800 dark:text-gray-200 transition-colors duration-500">
   {/* ===== Hero ===== */}
   <section className="relative overflow-hidden py-28 px-6">
-  <div className="absolute inset-0 bg-white dark:bg-black blur-3xl"></div>
+  <div className="absolute inset-0 bg-blue-100/100 dark:bg-black blur-3xl"></div>
 
   <div className="relative z-10 mx-auto max-w-7xl grid md:grid-cols-2 items-center gap-12">
     {/* Left: Text */}
@@ -33,7 +50,7 @@ export default function AboutPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        The Heartbeat of<br /> Financial Freedom
+        The <span ref={typedRef}/>of<br /> Financial Freedom
       </motion.h1>
 
       <p className="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-md">
@@ -86,10 +103,9 @@ export default function AboutPage() {
 
   {/* ===== Our Story ===== */}
   <section className="bg-gray-50 dark:bg-neutral-900 py-24 px-6 text-center relative">
-    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-500/5 to-transparent dark:via-green-400/10"></div>
 
     <div className="max-w-4xl mx-auto relative z-10">
-      <h2 className="text-3xl font-bold text-green-700 dark:text-emerald-400 mb-6 font-serif">Our Story</h2>
+      <h2 className="text-3xl lg:text-6xl md:text-5xl sm:text-4xl font-bold text-green-700 dark:text-emerald-400 mb-6 font-serif">Our Story</h2>
       <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-lg">
         EaziWage was born from a simple truth: thousands of workers across Kenya and Africa face a financial gap before payday.
         Many turn to costly mobile loans — a cycle that creates stress, debt, and lost productivity.
@@ -105,7 +121,7 @@ export default function AboutPage() {
 
   {/* ===== Core Values ===== */}
   <section className="max-w-7xl mx-auto py-24 px-6 text-center">
-    <h2 className="text-3xl font-bold text-green-700 dark:text-emerald-400 mb-16 font-serif">Our Core Values</h2>
+    <h2 className="text-3xl lg:text-6xl md:text-5xl sm:text-4xl font-bold text-green-700 dark:text-emerald-400 mb-16 font-serif">Our Core Values</h2>
     <div className="grid md:grid-cols-4 gap-10">
       {[
         { icon: ShieldCheck, title: "Integrity", text: "We uphold security and transparency in every transaction." },
@@ -117,7 +133,7 @@ export default function AboutPage() {
           key={title}
           whileHover={{ y: -5, scale: 1.02 }}
           transition={{ type: "spring", stiffness: 200 }}
-          className="flex flex-col items-center bg-white dark:bg-neutral-800 shadow-md hover:shadow-lg rounded-xl p-8 border border-gray-100 dark:border-neutral-700"
+          className="flex flex-col items-center bg-gradient-to-b from-transparent via-green-500/5 to-transparent dark:via-green-400/10 shadow-md hover:shadow-lg rounded-xl p-8 border border-gray-100 dark:border-neutral-700"
         >
           <Icon className="w-10 h-10 text-black dark:text-white mb-4" />
           <h3 className="font-semibold mb-2 text-lg text-black dark:text-white">{title}</h3>
