@@ -1,0 +1,540 @@
+{
+"Notes":[
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "This matrix outlines the key Statutory Acts & Legal References for statutory PAYE tax limits, rates, levies and reliefts. \n\n"
+ },
+ null,
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Income Tax Act  (Cap 340, Laws of Uganda)"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Description",
+  "Column2": "Reference",
+  "Column3": "Limit"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Personal Relief",
+  "Column2": "N\/A",
+  "Column3": "None. Uganda does not grant a universal personal relief\/credit. PAYE is computed using bands with a tax-free monthly threshold of UGX 235,000 (UGX 2,820,000 p.a.)"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Insurance Relief",
+  "Column2": "N\/A",
+  "Column3": "None. Uganda does not grant a universal personal relief\/credit. "
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Medical reimbursements (including employer-paid medical insurance)",
+  "Column2": "ITA s.19(2)(b); definition of “medical expenses” in s.19",
+  "Column3": "Excluded from employment income when the employer reimburses\/pays medical expenses. “Medical expenses” includes medical insurance premiums. No statutory shilling cap stated. "
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Business travel & accommodation reimbursement\/allowance (in course of duty)",
+  "Column2": "ITA s.19(2)(b)",
+  "Column3": "Excluded from employment income if incurred or likely to be incurred in performing employment duties. No fixed per-diem cap in the Act. "
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Employer contributions to a retirement fund (resident retirement fund)",
+  "Column2": "ITA s.19(2) (exempt items)",
+  "Column3": "Excluded from the employee’s employment income (i.e., not taxable to the employee). "
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Small de-minimis benefits",
+  "Column2": "Practice notes \/ summaries",
+  "Column3": "A benefit provided to an employee not exceeding UGX 10,000 in a month is treated as non-taxable (exclusion)."
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Meals\/refreshments provided on equal terms to all staff, on employer premises",
+  "Column2": "ITA s.19(2); also deductibility note",
+  "Column3": "Excluded from employment income for the employee; employer’s deduction allowed where the value is included in employment income or provided on equal terms to all workers. "
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Housing \/ company car \/ low-interest loans (valuation rules)",
+  "Column2": "Schedules & guidance under ITA s.19",
+  "Column3": "Taxable benefits with specific valuation rules (e.g., housing “lower of market rent less employee contribution or 15% of emoluments”; car benefit formula (20% × A × B\/C) – D; loan benefit = (statutory – actual rate) × principal\/12). "
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "National Social Security Fund (Amendment) Act, 2021 (NSSF NO. 222 of Act 2021) and National Social Security Fund (Amendment) Act, 1985 (NSSF NO. 230 of 1985)"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Description",
+  "Column2": "Reference",
+  "Column3": "Limit"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "NSSF contributions (Employer + Employee)",
+  "Column2": "NSSF Act (Cap 230)",
+  "Column3": "Employee: 5% of gross monthly wage; Employer: 10% of gross monthly wage → Total 15%.\nPractically interpreted as cash pay (salary\/wages and cash allowances). Non-cash benefits are not explicitly included or excluded in statute wording; treat reimbursements\/benefits-in-kind with care and document your position. "
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "None"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Description",
+  "Column2": "Reference",
+  "Column3": "Limit"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "National Health Insurance levy",
+  "Column2": "N\/A",
+  "Column3": "No national SHI\/NHIF payroll levy in force as of FY 2024\/25–2025\/26. Parliament passed an NHIS Bill in 2021, but Presidential assent has not occurred and the scheme remains stalled \/ being re-tabled; thus no statutory deductions yet."
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "None"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Description",
+  "Column2": "Reference",
+  "Column3": "Limit"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Housing levy",
+  "Column2": "N\/A",
+  "Column3": "Not applicable in Uganda. (Kenya-specific.)"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Uganda Retirement Benefits Regulatory Authority (URBRA) Act, 2011"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Description",
+  "Column2": "Reference",
+  "Column3": "Limit"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Employer contributions to resident retirement fund for employee",
+  "Column2": "ITA s.19(2)",
+  "Column3": "Excluded from employee’s employment income. \nGenerally exempt from income tax (unlike gratuity\/terminal benefits, which are taxable as employment income)."
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Employment Act, 2006"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Description",
+  "Column2": "Reference",
+  "Column3": "Limit"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Permitted deductions (taxes, NSSF, agreed items, court orders, etc.)",
+  "Column2": "Employment Act s.46",
+  "Column3": "Deductions must be authorised by law\/contract\/employee consent; certain deductions prohibited."
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Attachment\/overall cap",
+  "Column2": "Employment Act s.46(3)",
+  "Column3": "Any attachment of wages (by operation of law) shall not exceed two-thirds (⅔) of remuneration due for the pay period. (Useful ceiling when you design any payroll deductions, including salary advances\/EWA)."
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Earned Wage Access (EWA) \/ salary advances",
+  "Column2": "Employment Act framework on deductions & advances",
+  "Column3": "Treated as advance of wages already earned \/ due, not a loan, where the employee consents and payroll reflects the deduction; ensure total deductions respect the ⅔ cap and other permitted-deduction rules. (No central-bank licensing applies if it remains a wages advance, not credit.) "
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Feature",
+  "Column2": "Earned Wage Access (EWA)",
+  "Column3": "Traditional Loan"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Source of funds",
+  "Column2": "Employee’s already earned salary (portion of wages due)",
+  "Column3": "Third-party credit not yet earned"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Legal classification",
+  "Column2": "Advance on wages under the Employment Act",
+  "Column3": "Credit facility under the Uganda Microfinance Regulatory Authority (UMRA)"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Interest or finance charge",
+  "Column2": "Typically a small facilitation or service fee (not interest)",
+  "Column3": "Interest-bearing under the Uganda Microfinance Regulatory Authority (UMRA)"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Repayment source",
+  "Column2": "Automatically deducted from future salary payment",
+  "Column3": "Paid over time from future income"
+ },
+ {
+  "Comprehensive Statutroy Acts & Legal Frameworks Matrix (Uganda)": "Regulatory body",
+  "Column2": "Central Bank of Uganda (National Payment Systems Act, 2020 (NPSA) and the National Payment Systems Regulations, 2021)",
+  "Column3": "Uganda Microfinance Regulatory Authority (UMRA)"
+ }
+],
+"Rates":[
+ {
+  "General ": "Personal_Relief",
+  "Amount\/Threshold": 0,
+  "Description": "UGX \/ month"
+ },
+ {
+  "General ": "Insurance_Relief",
+  "Amount\/Threshold": 0,
+  "Description": "UGX \/ month"
+ },
+ {
+  "General ": "Pension_Deductible_Cap",
+  "Amount\/Threshold": 0,
+  "Description": "No Monthly cap on deductible"
+ },
+ {
+  "General ": "Meals_Deductible_Cap",
+  "Amount\/Threshold": 0,
+  "Description": "Monthly cap on deductible"
+ },
+ {
+  "General ": "Business Travel_Deductible_Cap",
+  "Amount\/Threshold": 0,
+  "Description": "No Monthly cap on deductible"
+ },
+ {
+  "General ": "Night-Out_Deductible_Cap",
+  "Amount\/Threshold": 0,
+  "Description": "Daily cap on deductible"
+ },
+ {
+  "General ": "Medical_Cover_Deductible_Cap",
+  "Amount\/Threshold": 0,
+  "Description": "No Monthly cap on deductible"
+ },
+ {
+  "General ": "Life_And_Health_Insurance_Deductible_Limit",
+  "Amount\/Threshold": 0,
+  "Description": "No Monthly cap on deductible"
+ },
+ {
+  "General ": "NSSF_Employer_Rate",
+  "Amount\/Threshold": 0.1,
+  "Description": "Employer 10%"
+ },
+ {
+  "General ": "NSSF_Employee_Rate",
+  "Amount\/Threshold": 0.05,
+  "Description": "Employee 6%"
+ },
+ {
+  "General ": "Earned_Wage_Days",
+  "Amount\/Threshold": 30,
+  "Description": "Earned Wage Days"
+ },
+ {
+  "General ": "Days in Month",
+  "Amount\/Threshold": 30,
+  "Description": "Number of Days in Month"
+ },
+ {
+  "General ": "Earned_Wage_Cap",
+  "Amount\/Threshold": 0.6,
+  "Description": "Monthly cap on net pay"
+ },
+ null,
+ {
+  "General ": "PAYE_Tax_Bands"
+ },
+ {
+  "General ": "Lower",
+  "Amount\/Threshold": "Upper",
+  "Description": "Rate",
+  "Column4": "Tax"
+ },
+ {
+  "General ": 0,
+  "Amount\/Threshold": 235000,
+  "Description": 0,
+  "Column4": 0
+ },
+ {
+  "General ": 235001,
+  "Amount\/Threshold": 335000,
+  "Description": 0.1,
+  "Column4": 10000
+ },
+ {
+  "General ": 335001,
+  "Amount\/Threshold": 410000,
+  "Description": 0.2,
+  "Column4": 15000
+ },
+ {
+  "General ": 410001,
+  "Amount\/Threshold": 10000000,
+  "Description": 0.3,
+  "Column4": 2877000
+ },
+ {
+  "General ": 1000000,
+  "Description": 0.4
+ },
+ null,
+ {
+  "General ": "LST_Bands"
+ },
+ {
+  "General ": "Lower",
+  "Amount\/Threshold": "Upper",
+  "Description": "Tax"
+ },
+ {
+  "General ": 0,
+  "Amount\/Threshold": 100000,
+  "Description": 0
+ },
+ {
+  "General ": 100001,
+  "Amount\/Threshold": 200000,
+  "Description": 5000
+ },
+ {
+  "General ": 200001,
+  "Amount\/Threshold": 300000,
+  "Description": 10000
+ },
+ {
+  "General ": 300001,
+  "Amount\/Threshold": 400000,
+  "Description": 20000
+ },
+ {
+  "General ": 400001,
+  "Amount\/Threshold": 500000,
+  "Description": 30000
+ },
+ {
+  "General ": 500001,
+  "Amount\/Threshold": 600000,
+  "Description": 40000
+ },
+ {
+  "General ": 600001,
+  "Amount\/Threshold": 700000,
+  "Description": 60000
+ },
+ {
+  "General ": 700001,
+  "Amount\/Threshold": 800000,
+  "Description": 70000
+ },
+ {
+  "General ": 800001,
+  "Amount\/Threshold": 900000,
+  "Description": 80000
+ },
+ {
+  "General ": 900001,
+  "Amount\/Threshold": 1000000,
+  "Description": 90000
+ },
+ {
+  "General ": 10000000,
+  "Description": 100000
+ }
+],
+"Inputs":[
+ {
+  "Inputs": "Employee",
+  "Column2": "Sample Employee",
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "Gross_Pay_Employer",
+  "Column2": 10000000,
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance]",
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "Business_Travel_Allowance_Employer",
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "Meal_Allowance_Employer",
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "NightOut_Allowance_Employer",
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "Pension_Cover_Employer",
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "Medical_Cover_Employer",
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "Life_Insurance_Cover_Employer",
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "Days_Worked",
+  "Column2": 30,
+  "Column3": "<-Input"
+ },
+ {
+  "Inputs": "Mortgage_Interest_Contribution_Employee",
+  "Column3": "<-Input Not Required [Mabye Consider for More Advanced Modelling]"
+ },
+ {
+  "Inputs": "Post-retirement_Medical Fund_Contribution_Employee",
+  "Column3": "<-Input Not Required [Mabye Consider for More Advanced Modelling]"
+ },
+ {
+  "Inputs": "Provident_Fund_Contribution_Employee",
+  "Column3": "<-Input Not Required [Mabye Consider for More Advanced Modelling]"
+ },
+ {
+  "Inputs": "Life_And_Health_Insurance_Contribution_Employee",
+  "Column3": "<-Input Not Required [Mabye Consider for More Advanced Modelling]"
+ }
+],
+"Workings":[
+ {
+  "Outputs": "Employee",
+  "Column2": "Sample Employee"
+ },
+ {
+  "Outputs": "Gross_Pay_Employer",
+  "Column2": 10000000
+ },
+ {
+  "Outputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance, Housing Allownace]",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Business_Travel_Allowance_Employer",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Meal_Allowance_Employer",
+  "Column2": 0
+ },
+ {
+  "Outputs": "NightOut_Allowance_Employer",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Pension_Cover_Employer",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Medical_Cover_Employer",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Life_Insurance_Cover_Employer",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Total_Income",
+  "Column2": 10000000
+ },
+ {
+  "Outputs": "Business_Travel_Allowance_Deductible",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Meal_Allowance_Deductible",
+  "Column2": 0
+ },
+ {
+  "Outputs": "NightOut_Allowance_Deductible",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Pension_Cover_Deductible",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Medical_Cover_Employer_Deductible",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Life_Insurance_Cover_Employer_Deductible",
+  "Column2": 0
+ },
+ {
+  "Outputs": "LST_Deductible",
+  "Column2": -100000
+ },
+ {
+  "Outputs": "Total_Income",
+  "Column2": 9900000
+ },
+ {
+  "Outputs": "NSSF_Employee",
+  "Column2": -500000
+ },
+ {
+  "Outputs": "NSSF_Employer",
+  "Column2": -1000000
+ },
+ {
+  "Outputs": "PAYE_Before_Relief",
+  "Column2": 2871999.6999999997
+ },
+ {
+  "Outputs": "Personal_Relief",
+  "Column2": 0
+ },
+ {
+  "Outputs": "Insurance_Relief",
+  "Column2": 0
+ },
+ {
+  "Outputs": "PAYE_After_Relief",
+  "Column2": 2871999.6999999997
+ },
+ {
+  "Outputs": "Net_Pay",
+  "Column2": 6528000.300000001
+ },
+ {
+  "Outputs": "Earned_Wage",
+  "Column2": 6528000,
+  "Column3": "<-Earned Wage"
+ },
+ {
+  "Outputs": "Earned_Wage_Max_Cap",
+  "Column2": 3916800,
+  "Column3": "<-Available Earned Wage Max"
+ },
+ {
+  "Outputs": "Earned_Wage_Available",
+  "Column2": 3916800,
+  "Column3": "<-Available Earned Wage"
+ }
+],
+"Output":[
+ {
+  "Output": "Earned_Wage",
+  "Column2": 6528000
+ },
+ {
+  "Output": "Earned_Wage_Max_Cap",
+  "Column2": 3916800
+ },
+ {
+  "Output": "Earned_Wage_Available",
+  "Column2": 3916800
+ },
+ {
+  "Output": "Remittances"
+ },
+ {
+  "Output": "LST",
+  "Column2": 100000
+ },
+ {
+  "Output": "NSSF_Employee",
+  "Column2": 500000
+ },
+ {
+  "Output": "NSSF_Employer",
+  "Column2": 1000000
+ },
+ {
+  "Output": "PAYE",
+  "Column2": 2871999.6999999997
+ }
+]
+}

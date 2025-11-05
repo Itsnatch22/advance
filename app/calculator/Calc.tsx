@@ -1,19 +1,39 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
-type AllowanceKey =
-  | "otherRemuneration"
-  | "mealAllowance"
-  | "nightAllowance"
-  | "pensionCover"
-  | "medicalCover";
+type Country = "KE" | "UG" | "TZ" | "RW";
 
-type AllowancesChecked = Record<AllowanceKey, boolean>;
-type AllowancesAmount = Record<AllowanceKey, number | "">;
+const countryAllowances: Record<Country, { key: string; label: string }[]> = {
+  KE: [
+    { key: "otherRemuneration", label: "Other Remuneration" },
+    { key: "mealAllowance", label: "Meal Allowance" },
+    { key: "nightAllowance", label: "Night Out Allowance" },
+    { key: "pensionCover", label: "Pension Cover" },
+    { key: "medicalCover", label: "Medical Cover" },
+  ],
+  UG: [
+    { key: "otherRemuneration", label: "Other Remuneration (Employer)" },
+    { key: "businessTravel", label: "Business Travel Allowance" },
+    { key: "pensionCover", label: "Pension Cover (Employer)" },
+    { key: "medicalCover", label: "Medical Cover (Employer)" },
+    { key: "lifeInsurance", label: "Life Insurance (Employer)" },
+  ],
+  TZ: [
+    { key: "otherRemuneration", label: "Other Remuneration (Employer)" },
+    { key: "businessTravel", label: "Business Travel Allowance" },
+    { key: "housingAllowance", label: "Housing Allowance (Employer)" },
+    { key: "medicalCover", label: "Medical Cover (Employer)" },
+  ],
+  RW: [
+    { key: "otherRemuneration", label: "Other Remuneration (Employer)" },
+    { key: "businessTravel", label: "Business Travel Allowance" },
+    { key: "medicalCover", label: "Medical Cover (Employer)" },
+  ],
+};
 
-type Country = "KE" | "UG" | "TZ" | "ZA";
-
+type Deductions = Record<string, number>;
 type CalcResult = {
   success: boolean;
   accruedGross: number;
@@ -22,147 +42,155 @@ type CalcResult = {
   accessCap: number;
   platformFee: number;
   accessibleNow: number;
-  deductions: {
-    NSSF: number;
-    SHIF: number;
-    Housing: number;
-  };
-  error?: string;
+  deductions: Deductions;
+  payee: number;
 };
 
 const fmt = (n: number) =>
-  new Intl.NumberFormat("en-KE", { 
-    minimumFractionDigits: 2, 
-    maximumFractionDigits: 2 
+  new Intl.NumberFormat("en-KE", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(Number(n));
 
-
 export default function Calculator() {
-  const [result, setResult] = useState<CalcResult | null>(null);
+  const [country, setCountry] = useState<Country>("KE");
   const [salary, setSalary] = useState<number | "">("");
   const [daysWorked, setDaysWorked] = useState<number>(0);
-  
-  // Avoid using new Date() during initial render to satisfy Next.js deterministic render
+  const [result, setResult] = useState<CalcResult | null>(null);
+
+  const [allowancesChecked, setAllowancesChecked] = useState<Record<string, boolean>>({});
+  const [allowancesAmount, setAllowancesAmount] = useState<Record<string, number | "">>({});
   const [asOfDate, setAsOfDate] = useState<string>("");
-  React.useEffect(() => {
+
+  useEffect(() => {
     const today = new Date();
     setAsOfDate(today.toISOString().split("T")[0]);
   }, []);
 
-const maxDays = useMemo(() => {
-  if (!asOfDate) return 31;
-  const date = new Date(asOfDate);
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-}, [asOfDate]);
+  const maxDays = useMemo(() => {
+    if (!asOfDate) return 31;
+    const date = new Date(asOfDate);
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  }, [asOfDate]);
 
-  
-
-  const [country, setCountry] = useState<Country>("KE");
-
-  const feePercent = 5;
-  const flatFee = 25;
   const cycleDays = 30;
+  const feePercent = 5; // constant
+  const percentOfCycle = useMemo(
+    () => Math.min(100, Math.round((Number(daysWorked || 0) / cycleDays) * 100)),
+    [daysWorked]
+  );
 
-  const [allowancesChecked, setAllowancesChecked] = useState<AllowancesChecked>({
-    otherRemuneration: false,
-    mealAllowance: false,
-    nightAllowance: false,
-    pensionCover: false,
-    medicalCover: false,
-  });
-
-  const [allowancesAmount, setAllowancesAmount] = useState<
-    Record<AllowanceKey, number | "">
-  >({
-    otherRemuneration: "",
-    mealAllowance: "",
-    nightAllowance: "",
-    pensionCover: "",
-    medicalCover: "",
-  });
-
-  const percentOfCycle = useMemo(() => {
-    return Math.min(100, Math.round((Number(daysWorked || 0) / cycleDays) * 100));
-  }, [daysWorked]);
-
-  const buildPayload = () => ({
-    salary: Number(salary || 0),
-    country,
-    cycleDays,
-    daysWorked: Number(daysWorked || 0),
-    advanced: 0,
-    feePercent,
-    flatFee,
-    allowances: {
-      otherRemuneration: allowancesChecked.otherRemuneration
-        ? Number(allowancesAmount.otherRemuneration || 0)
-        : 0,
-      mealAllowance: allowancesChecked.mealAllowance
-        ? Number(allowancesAmount.mealAllowance || 0)
-        : 0,
-      nightAllowance: allowancesChecked.nightAllowance
-        ? Number(allowancesAmount.nightAllowance || 0)
-        : 0,
-      pensionCover: allowancesChecked.pensionCover
-        ? Number(allowancesAmount.pensionCover || 0)
-        : 0,
-      medicalCover: allowancesChecked.medicalCover
-        ? Number(allowancesAmount.medicalCover || 0)
-        : 0,
-    },
-  });
+  const buildPayload = () => {
+    const allowances = countryAllowances[country].reduce((acc, item) => {
+      acc[item.key] = allowancesChecked[item.key]
+        ? Number(allowancesAmount[item.key] || 0)
+        : 0;
+      return acc;
+    }, {} as Record<string, number>);
+    return {
+      salary: Number(salary || 0),
+      country,
+      cycleDays,
+      daysWorked: Number(daysWorked || 0),
+      advanced: 0,
+      feePercent,
+      flatFee: 25,
+      allowances,
+    };
+  };
 
   const callBackendCalc = async () => {
-  if (!salary) {
-    alert("Fill in salary");
-    setResult(null);
-    return;
-  }
-
-  const payload = buildPayload();
-  try {
-    const res = await fetch(`/api/calc?country=${country}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    console.log("🔥 Raw backend response:", data);
-
-    if (!data.success) {
-      console.error("❌ Backend failed:", data.error || data.detail);
-      alert("Backend calculation failed!");
+    if (!salary) {
+      alert("Fill in salary");
+      setResult(null);
       return;
     }
 
-    const mappedResult = {
-      success: true,
-      accruedGross: data.gross || 0,
-      netMonthly: data.net || 0,
-      accessCapPercent: 40,
-      accessCap: (data.net || 0) * 0.4,
-      platformFee: (data.net || 0) * 0.02,
-      accessibleNow: (data.net || 0) * 0.4 - (data.net || 0) * 0.02,
-      deductions: {
-        NSSF: (data.nssf1 || 0) + (data.nssf2 || 0),
-        SHIF: data.shif || 0,
-        Housing: data.ahl || 0,
-      },
-    };
+    const payload = buildPayload();
+    try {
+      const res = await fetch(`/api/calc?country=${country}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
 
-    console.log("✅ Mapped result:", mappedResult);
-    setResult(mappedResult);
-  } catch (err) {
-    console.error("⚠️ Frontend fetch failed:", err);
-    alert("Failed to connect to backend");
-  }
-};
+      if (!data.success) {
+        console.error("❌ Backend failed:", data.error || data.detail);
+        alert("Backend calculation failed!");
+        return;
+      }
 
+      const deductions: Deductions = (() => {
+        switch (country) {
+          case "UG":
+            return {
+              "LST Deductible": data.lst || 0,
+              "NSSF Employee": data.nssfEmployee || 0,
+              "NSSF Employer": data.nssfEmployer || 0,
+              Payee: data.payee || 0,
+            };
+          case "TZ":
+            return {
+              "SDL Employer": data.sdl || 0,
+              "WCF Employer": data.wcf || 0,
+              "UHI NHIF Employer": data.nhifEmployer || 0,
+              "UHI NHIF Employee": data.nhifEmployee || 0,
+              "NSSF Employer": data.nssfEmployer || 0,
+              "NSSF Employee": data.nssfEmployee || 0,
+              Payee: data.payee || 0,
+            };
+          case "RW":
+            return {
+              "RSSB Medical Insurance": data.rssbMedical || 0,
+              "RSSB Maternity": data.rssbMaternity || 0,
+              "RSSB Pension": data.rssbPension || 0,
+              Payee: data.payee || 0,
+            };
+          default: // Kenya
+            return {
+              NSSF: (data.nssf1 || 0) + (data.nssf2 || 0),
+              SHIF: data.shif || 0,
+              Housing: data.ahl || 0,
+              Payee: data.payee || 0,
+            };
+        }
+      })();
 
-  React.useEffect(() => {
-    if (!salary) setResult(null);
-  }, [salary]);
+      const accessCapPercent = country === "TZ" ? 30 : 60;
+      const gross = data.gross || 0;
+      const net = data.net || 0;
+      const accessCap = (net * accessCapPercent) / 100;
+      const platformFee = (accessCap * 5) / 100;
+
+      const mappedResult: CalcResult = {
+        success: true,
+        accruedGross: gross,
+        netMonthly: net,
+        accessCapPercent,
+        accessCap,
+        platformFee,
+        accessibleNow: accessCap - platformFee,
+        deductions,
+        payee: data.payee || 0,
+      };
+
+      setResult(mappedResult);
+    } catch (err) {
+      console.error("⚠️ Frontend fetch failed:", err);
+      alert("Failed to connect to backend");
+    }
+  };
+
+  // 🔁 Reset everything when switching country
+  const handleCountryChange = (code: Country) => {
+    setCountry(code);
+    setAllowancesChecked({});
+    setAllowancesAmount({});
+    setResult(null);
+    setSalary("");
+    setDaysWorked(0);
+  };
 
   const currencySymbol =
     country === "KE"
@@ -171,220 +199,187 @@ const maxDays = useMemo(() => {
       ? "UGX"
       : country === "TZ"
       ? "TZS"
-      : "ZAR";
+      : "RWF";
 
   return (
-      <div className="bg-white dark:bg-gray-900 w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border border-green-100 dark:border-green-800 mx-auto mt-4 sm:mt-6 md:mt-8 transition-colors duration-300"> 
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 sm:mb-5 text-gray-900 dark:text-gray-100 text-center">
-
-        Wage Access Calculator 
+    <div className="bg-white dark:bg-gray-900 w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl shadow-2xl p-6 border border-green-100 dark:border-green-800 mx-auto mt-6">
+      <h2 className="text-3xl font-extrabold mb-5 text-center text-gray-900 dark:text-gray-100">
+        Wage Access Calculator
       </h2>
 
-     {/* FLAGS SECTION */}
-<div className="flex justify-center items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
-  {[
-    { code: "KE", flag: "/flag/KE.png" },
-    { code: "UG", flag: "/flag/UG.png", disabled: true },
-    { code: "TZ", flag: "/flag/TZ.png", disabled: true },
-    { code: "ZA", flag: "/flag/SA.png", disabled: true },
-  ].map((f) => (
-    <button
-      key={f.code}
-      onClick={() => !f.disabled && setCountry(f.code as Country)}
-      disabled={!!f.disabled}
-      className={`w-11 h-11 rounded-full overflow-hidden border-2 transition-all duration-200 ${
-        f.disabled
-          ? "opacity-40 cursor-not-allowed grayscale"
-          : country === f.code
-          ? "border-emerald-600 scale-110 shadow-md"
-          : "border-gray-300 opacity-70 hover:opacity-100"
-      }`}
-    >
-      <Image
-        src={f.flag}
-        alt={f.code}
-        width={44}
-        height={44}
-        className={`object-cover ${f.disabled ? "grayscale" : ""}`}
-      />
-    </button>
-  ))}
-</div>
+      {/* 🌍 Country Selector */}
+      <div className="flex justify-center items-center gap-4 mb-6">
+        {[
+          { code: "KE", flag: "/flag/KE.png" },
+          { code: "UG", flag: "/flag/UG.png" },
+          { code: "TZ", flag: "/flag/TZ.png" },
+          { code: "RW", flag: "/flag/RW.png" },
+        ].map((f) => (
+          <button
+            key={f.code}
+            onClick={() => handleCountryChange(f.code as Country)}
+            className={`w-11 h-11 rounded-full overflow-hidden border-2 transition-all duration-300 ${
+              country === f.code
+                ? "border-emerald-600 scale-110 shadow-md"
+                : "border-gray-300 opacity-70 hover:opacity-100"
+            }`}
+          >
+            <Image src={f.flag} alt={f.code} width={44} height={44} className="object-cover" />
+          </button>
+        ))}
+      </div>
 
-
-      <p className="text-center text-xs sm:text-sm font-medium text-gray-600 mb-3 sm:mb-4">
+      <p className="text-center text-sm font-medium text-gray-600 mb-4">
         Selected Country:{" "}
-        <span className="font-bold text-emerald-700">{country}</span> (
-        {currencySymbol})
+        <span className="font-bold text-emerald-700">{country}</span> ({currencySymbol})
       </p>
 
-      <div className="grid gap-4 sm:gap-5">
-        {/* SALARY INPUT */}
-        <div>
-          <label htmlFor="salary" className="text-sm text-gray-600 dark:text-gray-300">
+      {/* 💰 Salary Input */}
+      <label className="text-sm text-gray-600 dark:text-gray-300">
+        Gross Monthly Salary ({currencySymbol})
+      </label>
+      <input
+        type="number"
+        min={0}
+        placeholder="e.g. 60000"
+        className="mt-1 w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg p-2 text-sm sm:text-base focus:ring-emerald-500/60"
+        value={salary}
+        onChange={(e) => setSalary(e.target.value ? +e.target.value : "")}
+      />
 
-            Gross Monthly Salary ({currencySymbol})
-          </label>
-          <input
-            id="salary"
-            inputMode="numeric"
-            min={0}
-            type="number"
-            placeholder="e.g. 60000"
-            className="mt-1 w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition-colors duration-300"
-            value={salary}
-            onChange={(e) => setSalary(e.target.value ? +e.target.value : "")}
-          />
-          {!salary && (
-            <p className="mt-1 text-xs text-amber-600">
-              Enter your gross salary to begin.
-            </p>
-          )}
-        </div>
-
-        {/* ALLOWANCES SECTION */}
-        <div className="grid gap-2 mt-2 sm:mt-4">
-          <p className="text-sm font-semibold">
-            Other Contributions (toggle + enter amount)
-          </p>
-          {(
-            [
-              {
-                key: "otherRemuneration",
-                label: "Other Remuneration ",
-              },
-              { key: "mealAllowance", label: "Meal Allowance" },
-              { key: "nightAllowance", label: "Night Out Allowance" },
-              { key: "pensionCover", label: "Pension Cover" },
-              { key: "medicalCover", label: "Medical Cover" },
-            ] as const
-          ).map((a) => (
-            <div key={a.key} className="flex flex-wrap items-center gap-3">
+      {/* ⚡ Contributions */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={country}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mt-5"
+        >
+          <p className="text-sm font-semibold mb-2">Other Contributions</p>
+          {countryAllowances[country].map((a) => (
+            <div key={a.key} className="flex flex-wrap items-center gap-3 mb-1 transition-all duration-300">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={allowancesChecked[a.key as AllowanceKey]}
+                  checked={!!allowancesChecked[a.key]}
                   onChange={(e) =>
-                    setAllowancesChecked((s) => ({
-                      ...s,
-                      [a.key as AllowanceKey]: e.target.checked,
-                    }))
+                    setAllowancesChecked((s) => ({ ...s, [a.key]: e.target.checked }))
                   }
                 />
                 <span className="text-sm">{a.label}</span>
               </label>
               <input
                 type="number"
-                inputMode="numeric"
                 min={0}
-                className="mt-1 w-full border rounded-lg p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
-                value={allowancesAmount[a.key as AllowanceKey]}
-                disabled={!allowancesChecked[a.key as AllowanceKey]}
+                className="mt-1 w-full border rounded-lg p-2 text-sm sm:text-base focus:ring-emerald-500/60"
+                value={allowancesAmount[a.key] || ""}
+                disabled={!allowancesChecked[a.key]}
                 onChange={(e) =>
                   setAllowancesAmount((s) => ({
                     ...s,
-                    [a.key as AllowanceKey]: e.target.value
-                      ? +e.target.value
-                      : "",
+                    [a.key]: e.target.value ? +e.target.value : "",
                   }))
                 }
               />
             </div>
           ))}
-        </div>
+        </motion.div>
+      </AnimatePresence>
 
-        {/* DAYS WORKED SLIDER */}
-        <div>
-          <label htmlFor="days" className="text-sm text-gray-600">
-            Days worked (drag)
-          </label>
-          <input
-            id="days"
-            type="range"
-            min={0}
-            max={maxDays}
-            value={daysWorked}
-            onChange={(e) => setDaysWorked(Number(e.target.value))}
-            className="w-full mt-2 accent-emerald-600"
-          />
-          <div className="flex justify-between text-[11px] sm:text-xs text-gray-500 mt-1">
-            <span>{daysWorked} / {maxDays} days</span>
-            <span>{percentOfCycle}% of cycle</span>
-          </div>
+      {/* 🗓 Days Slider */}
+      <div className="mt-5">
+        <label className="text-sm text-gray-600">Days worked (drag)</label>
+        <input
+          type="range"
+          min={0}
+          max={maxDays}
+          value={daysWorked}
+          onChange={(e) => setDaysWorked(Number(e.target.value))}
+          className="w-full mt-2 accent-emerald-600"
+        />
+        <div className="flex justify-between text-[11px] sm:text-xs text-gray-500 mt-1">
+          <span>{daysWorked} / {maxDays} days</span>
+          <span>{percentOfCycle}% of cycle</span>
         </div>
-
-        {/* CALCULATE BUTTON */}
-        <button
-          onClick={callBackendCalc}
-          className="mt-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow hover:scale-[1.02] active:scale-[0.99] transition-transform w-full disabled:opacity-60"
-          disabled={!salary}
-        >
-          Calculate
-        </button>
       </div>
 
-      {/* RESULTS SECTION */}
-      {result && result.success && (
-        <div className="mt-6 sm:mt-8 bg-gradient-to-br from-emerald-50 via-green-50 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 border border-emerald-200 dark:border-green-700 rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg transition-colors duration-300">
+      {/* 🔢 Calculate */}
+      <button
+        onClick={callBackendCalc}
+        disabled={!salary}
+        className="mt-5 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow hover:scale-[1.02] active:scale-[0.99] transition-transform w-full disabled:opacity-60"
+      >
+        Calculate
+      </button>
 
-          <h3 className="font-extrabold text-green-800 text-base sm:text-xl mb-2 sm:mb-4">
-            Wage Summary
-          </h3>
-          <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
+      {/* 📊 Results */}
+      <AnimatePresence mode="wait">
+        {result && result.success && (
+          <motion.div
+            key={`${country}-result`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mt-6 bg-gradient-to-br from-emerald-50 via-green-50 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 border border-emerald-200 dark:border-green-700 rounded-2xl p-5 shadow-lg"
+          >
+            <h3 className="font-extrabold text-green-800 text-lg mb-3">Wage Summary</h3>
+
+            <div className="flex justify-between border-b pb-1">
               <p><b>Net Earnings</b></p>
               <p className="font-semibold text-emerald-700">
                 {currencySymbol} {fmt(result.netMonthly)}
               </p>
             </div>
 
-          <div className="space-y-2 sm:space-y-3 text-[13px] sm:text-sm">
-            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
+            <div className="flex justify-between border-b pb-1">
               <p>Accrued Earnings</p>
-              <p className="font-semibold text-emerald-700 dark:text-emerald-400">
-
+              <p className="font-semibold text-emerald-700">
                 {currencySymbol} {fmt(result.accruedGross)}
               </p>
             </div>
-            
-            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
+
+            <div className="flex justify-between border-b pb-1">
               <p>Access Cap ({result.accessCapPercent}%)</p>
               <p className="font-semibold text-emerald-700">
                 {currencySymbol} {fmt(result.accessCap)}
               </p>
             </div>
-            <div className="flex justify-between gap-3 border-b border-green-100 pb-1">
-              <p>Platform Fee </p>
+
+            <div className="flex justify-between border-b pb-1">
+              <p>Platform Fee (5%)</p>
               <p className="font-semibold text-red-500">
                 - {currencySymbol} {fmt(result.platformFee)}
               </p>
             </div>
-            <div className="mt-6 sm:mt-8 
-  bg-gradient-to-br from-emerald-50 via-green-50 to-white 
-  dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 
-  border border-emerald-200 dark:border-green-700 
-  rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg 
-  transition-colors duration-300">
-              <p className="text-emerald-700 dark:text-emerald-400 font-medium text-sm sm:text-base md:text-lg tracking-wide">
-                You Can Access Now
+
+            <div className="flex justify-between border-b pb-1">
+              <p><b>Payee</b></p>
+              <p className="font-semibold text-red-500">
+                - {currencySymbol} {fmt(result.payee)}
               </p>
-              <p className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-emerald-700 dark:text-emerald-400 leading-tight mt-1">
+            </div>
+
+            <div className="mt-4 bg-white/60 dark:bg-gray-800/70 border border-green-200 rounded-xl p-3 text-center">
+              <p className="text-sm text-emerald-800 font-semibold">You Can Access Now</p>
+              <p className="text-3xl font-extrabold text-emerald-700 mt-1">
                 {currencySymbol} {fmt(result.accessibleNow)}
               </p>
             </div>
-          </div>
 
-          {result?.deductions && (
-  <div className="mt-3 sm:mt-4 bg-white/70 dark:bg-gray-800/70 border border-green-200 dark:border-green-700 rounded-lg p-2 text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 text-center shadow-sm transition-colors duration-300">
-    <p>
-      <span className="font-semibold">Deductions →</span> NSSF:{" "}
-      {currencySymbol} {fmt(result.deductions.NSSF)} | SHIF:{" "}
-      {currencySymbol} {fmt(result.deductions.SHIF)} | Housing Lev:{" "}
-      {currencySymbol} {fmt(result.deductions.Housing)}
-    </p>
-  </div>
-)}
-        </div>
-      )}
+            <div className="mt-3 text-xs text-gray-600 text-center">
+              <p>
+                <span className="font-semibold">Remittances → </span>
+                {Object.entries(result.deductions)
+                  .map(([key, val]) => `${key}: ${currencySymbol} ${fmt(val)}`)
+                  .join(" | ")}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -49,7 +49,7 @@ export default function CalculatorPage() {
               </p>
 
               <div className="border-l-4 border-green-500 dark:border-green-600 pl-3 text-gray-600 dark:text-gray-400 italic text-xs sm:text-sm bg-green-50/50 dark:bg-green-900/20 rounded-md py-2">
-                *The calculated figure is an estimate for informational purposes only. Actual amounts depend on payroll verification and the EaziWage eligibility requirements.
+                *The calculated figure is an estimate for informational purposes only. Actual amounts depend on payroll verification, residency and the EaziWage eligibility requirements.
               </div>
 
               <p className="text-gray-700 dark:text-gray-300 font-medium mt-2 text-xs sm:text-base">
