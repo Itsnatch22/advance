@@ -1,0 +1,17 @@
+{
+  "title": "Code of Ethics",
+  "sections": [
+    {
+      "heading": "Integrity",
+      "content": "We uphold honesty and transparency in all financial interactions. Employees must disclose conflicts of interest and never manipulate data for personal benefit."
+    },
+    {
+      "heading": "Privacy",
+      "content": "User data is treated confidentially. We only access user financial data for service operations and with explicit consent."
+    },
+    {
+      "heading": "Compliance",
+      "content": "EaziWage follows applicable local regulations and international best practice when handling payroll and wage access services."
+    }
+  ]
+}
