@@ -13,7 +13,7 @@ const faqs = [
         answer: "Our solution targets Kenyan employees across sectors; eligibility is determined by payroll data and work history."
     },
     {
-        question: "Security measures",
+        question: "What security measures are considered?",
         answer: "Industry-standard encryption, PCI-DSS-aligned practices, and regular audits."
     },
     {
@@ -21,7 +21,7 @@ const faqs = [
         answer: "EaziWage offers a transparent pricing model with no hidden fees. While there may be nominal transaction fees and application fees for instant access, there are no interest charges or subscription fees."
     },
     {
-        question: "How to get started",
+        question: "How to get started?",
         answer: "For employers: integrate with your payroll. For employees: download the app or use the web portal to request funds."
     },
 ];
