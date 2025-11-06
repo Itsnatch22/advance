@@ -5,13 +5,18 @@ import { readCountryConfig } from "@/lib/calc";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const country = searchParams.get("country")?.toUpperCase() || "KE";
-    const data = readCountryConfig(country);
-    return NextResponse.json(data);
+    const country = (searchParams.get("country") || "KE").toUpperCase();
+    const cfg = readCountryConfig(country);
+
+    // return a compact meta package for frontend
+    return NextResponse.json({
+      success: true,
+      country,
+      meta: cfg.meta,
+      deductions: cfg.deductions || [],
+    });
   } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message || "Metadata load failed" },
-      { status: 500 }
-    );
+    console.error("meta route error:", err);
+    return NextResponse.json({ success: false, error: String(err?.message || err) }, { status: 500 });
   }
 }

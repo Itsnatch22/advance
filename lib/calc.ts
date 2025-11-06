@@ -1,3 +1,7 @@
+// /lib/calc.ts
+import fs from "fs";
+import path from "path";
+
 export interface Payload {
   salary: number;
   daysWorked: number;
@@ -31,10 +35,7 @@ export interface JsonConfig {
 }
 
 /**
- * 🔥 Core dynamic calculation engine
- * - Reads JSON-config-based deductions
- * - Scales correctly for all four countries
- * - Matches XLS figures 1:1
+ * Core dynamic calculation engine
  */
 export function calc(payload: Payload, cfg: JsonConfig) {
   const { salary, daysWorked, cycleDays } = payload;
@@ -42,7 +43,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
   // Gross pay (scaled by worked days)
   const gross = (salary / cycleDays) * daysWorked;
 
-  // NSSF (Kenya / Uganda)
+  // NSSF (Kenya / Uganda / TZ)
   let nssfEmployee = 0;
   let nssfEmployer = 0;
   let nssf1 = 0;
@@ -50,7 +51,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
 
   if (cfg.nssf?.employeeRate) {
     // % based (Uganda / Tanzania)
-    nssfEmployee = gross * cfg.nssf.employeeRate;
+    nssfEmployee = gross * (cfg.nssf.employeeRate ?? 0);
     nssfEmployer = gross * (cfg.nssf.employerRate ?? 0);
   } else if (cfg.nssf?.tier1 || cfg.nssf?.tier2Rate) {
     // Tier-based (Kenya)
@@ -61,9 +62,9 @@ export function calc(payload: Payload, cfg: JsonConfig) {
 
   const totalNSSF = nssfEmployee + nssfEmployer + nssf1 + nssf2;
 
-  // SHIF / NHIF
+  // SHIF / NHIF (flat or percent)
   const shif = cfg.shif
-    ? cfg.shif.flat ?? gross * (cfg.shif.rate ?? 0)
+    ? (cfg.shif.flat ?? gross * (cfg.shif.rate ?? 0))
     : 0;
 
   // Housing Levy
@@ -102,25 +103,20 @@ export function calc(payload: Payload, cfg: JsonConfig) {
 
   // Taxable income = gross - employee social security
   const employeeDeductions =
-    nssfEmployee +
-    rssb.pensionEmployee +
-    rssb.medicalEmployee +
-    rssb.maternityEmployee;
+    nssfEmployee + rssb.pensionEmployee + rssb.medicalEmployee + rssb.maternityEmployee;
 
   const taxableIncome = gross - employeeDeductions;
 
-  // PAYE calc
+  // PAYE
   const payeBeforeRelief = calcPAYE(taxableIncome, cfg.paye?.brackets ?? []);
   const personalRelief = cfg.personalRelief ?? 0;
   const payeAfterRelief = Math.max(payeBeforeRelief - personalRelief, 0);
 
-  // Local Service Tax (Uganda)
+  // Local Service Tax (Uganda LST)
   const lst = cfg.lst?.bands ? calcLST(gross, cfg.lst.bands) : 0;
 
   // Net Pay (employee)
-  const netPay =
-    gross -
-    (employeeDeductions + shif + housingLevy + payeAfterRelief + lst);
+  const netPay = gross - (employeeDeductions + shif + housingLevy + payeAfterRelief + lst);
 
   // Earned wage and access
   const earnedWage = (netPay / cycleDays) * daysWorked;
@@ -181,10 +177,59 @@ function calcPAYE(taxable: number, brackets: { upTo: number; rate: number }[]) {
   return Math.round(tax * 100) / 100;
 }
 
-// Local Service Tax helper (Uganda)
+// LST helper (Uganda)
 function calcLST(gross: number, bands: { upTo: number; tax: number }[]) {
   for (const b of bands) {
     if (gross <= b.upTo) return b.tax;
   }
   return bands[bands.length - 1].tax;
 }
+
+/**
+ * readCountryConfig: loads the JSON file from /data for a given country
+ * returns the parsed JSON plus a minimal meta snapshot for UI use
+ */
+export function readCountryConfig(countryCode: string) {
+  const fileMap: Record<string, string> = {
+    KE: "calcke.json",
+    UG: "calcug.json",
+    TZ: "calctz.json",
+    RW: "calcrw.json",
+  };
+
+  const code = (countryCode || "KE").toUpperCase();
+  const fileName = fileMap[code] || fileMap["KE"];
+  const filePath = path.join(process.cwd(), "data", fileName);
+
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Config file not found: ${filePath}`);
+  }
+
+  const raw = fs.readFileSync(filePath, "utf8");
+  const parsed = JSON.parse(raw);
+
+  const meta = {
+    code,
+    name: code === "KE" ? "Kenya" : code === "UG" ? "Uganda" : code === "TZ" ? "Tanzania" : "Rwanda",
+    flag: code === "KE" ? "🇰🇪" : code === "UG" ? "🇺🇬" : code === "TZ" ? "🇹🇿" : "🇷🇼",
+    currency: code === "KE" ? "KES" : code === "UG" ? "UGX" : code === "TZ" ? "TZS" : "RWF",
+    lastUpdated: parsed.meta?.lastUpdated || new Date().toISOString().split("T")[0],
+    description: parsed.meta?.description || "",
+  };
+
+  // Also expose deduction list for UI convenience
+  const deductions = [];
+  if (parsed.nssf) deductions.push("NSSF");
+  if (parsed.shif) deductions.push("SHIF/NHIF");
+  if (parsed.housing) deductions.push("Housing Levy");
+  if (parsed.rssb) deductions.push("RSSB");
+  if (parsed.paye) deductions.push("PAYE");
+  if (parsed.sdl) deductions.push("SDL");
+  if (parsed.wcf) deductions.push("WCF");
+  if (parsed.lst) deductions.push("LST");
+
+  return { ...parsed, meta, deductions };
+}
+
+// explicit exports
+
