@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "gen:json": "ts-node --transpile-only scripts/generate-json-from-xlsx.ts"
   },
   "dependencies": {
     "@ai-sdk/cohere": "^2.0.17",
@@ -33,6 +34,7 @@
     "@tabler/icons-react": "^3.35.0",
     "@tanstack/react-table": "^8.21.3",
     "@types/bcryptjs": "^2.4.6",
+    "@types/fs-extra": "^11.0.4",
     "@upstash/ratelimit": "^2.0.6",
     "@upstash/redis": "^1.35.6",
     "@vercel/analytics": "^1.5.0",
@@ -68,29 +70,48 @@
     "tremor": "^0.0.1",
     "typed.js": "^2.1.0",
     "vaul": "^1.1.2",
-    "xlsx": "^0.18.5",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/multer": "^2.0.0",
-    "@types/node": "^20",
+    "@types/node": "^20.19.24",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
     "framer-motion": "^12.23.24",
+    "fs-extra": "^11.3.2",
     "gsap": "^3.13.0",
     "lucide-react": "^0.544.0",
     "prisma": "^6.16.1",
     "react-icons": "^5.5.0",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
-    "typescript": "^5"
+    "typescript": "^5.9.3",
+    "xlsx": "^0.18.5"
   },
   "overrides": {
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2"
-  }
+  },
+  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Itsnatch22/advance.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Itsnatch22/advance/issues"
+  },
+  "homepage": "https://github.com/Itsnatch22/advance#readme"
 }

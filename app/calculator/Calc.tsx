@@ -46,16 +46,28 @@ type CalcResult = {
   payee: number;
 };
 
-const fmt = (n: number) =>
-  new Intl.NumberFormat("en-KE", {
+const currencyMap: Record<
+  Country,
+  { symbol: string; locale: string; accessCapPercent: number }
+> = {
+  KE: { symbol: "KES", locale: "en-KE", accessCapPercent: 60 },
+  UG: { symbol: "UGX", locale: "en-UG", accessCapPercent: 60 },
+  TZ: { symbol: "TZS", locale: "en-TZ", accessCapPercent: 30 },
+  RW: { symbol: "RWF", locale: "en-RW", accessCapPercent: 45 },
+};
+
+const fmt = (n: number, locale = "en-KE") =>
+  new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(Number(n));
+  }).format(Number(n || 0));
 
 export default function Calculator() {
   const [country, setCountry] = useState<Country>("KE");
   const [salary, setSalary] = useState<number | "">("");
-  const [daysWorked, setDaysWorked] = useState<number>(0);
+  const cycleDays = 30;
+  // default daysWorked to full cycle so dev testing is easier
+  const [daysWorked, setDaysWorked] = useState<number>(cycleDays);
   const [result, setResult] = useState<CalcResult | null>(null);
 
   const [allowancesChecked, setAllowancesChecked] = useState<Record<string, boolean>>({});
@@ -73,8 +85,7 @@ export default function Calculator() {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   }, [asOfDate]);
 
-  const cycleDays = 30;
-  const feePercent = 5; // constant
+  const feePercent = 5; // platform fee percent (UI label)
   const percentOfCycle = useMemo(
     () => Math.min(100, Math.round((Number(daysWorked || 0) / cycleDays) * 100)),
     [daysWorked]
@@ -101,7 +112,7 @@ export default function Calculator() {
 
   const callBackendCalc = async () => {
     if (!salary) {
-      alert("Fill in salary");
+      alert("Fill in salary fam");
       setResult(null);
       return;
     }
@@ -116,54 +127,75 @@ export default function Calculator() {
       const data = await res.json();
 
       if (!data.success) {
-        console.error("❌ Backend failed:", data.error || data.detail);
+        console.error("❌ Backend failed:", data.error || data.detail || data);
         alert("Backend calculation failed!");
         return;
       }
 
-      let deductions: Deductions;
+      // Normalize backend fields to the UI-friendly shape
+      // Backend returns: gross, netPay, payeAfterRelief, nssfEmployee, nssfEmployer, shif, housingLevy, lst, sdl, wcf, rssb (object)
+      let deductions: Deductions = {};
+
+      // PAYE amount: use payeAfterRelief if available, otherwise fallback to payeBeforeRelief or paye
+      const payeAmount: number =
+        data.payeAfterRelief ?? data.paye ?? data.payeBeforeRelief ?? 0;
+
       switch (country) {
         case "UG":
           deductions = {
-            "LST Deductible": data.lst || 0,
-            "NSSF Employee": data.nssfEmployee || 0,
-            "NSSF Employer": data.nssfEmployer || 0,
-            Payee: data.payee || 0,
+            "LST": data.lst ?? 0,
+            "NSSF (Employee)": data.nssfEmployee ?? 0,
+            "NSSF (Employer)": data.nssfEmployer ?? 0,
+            "PAYE": payeAmount,
           };
           break;
+
         case "TZ":
+          // TZ returns nssfEmployee/nssfEmployer, shif (used as NHIF), sdl, wcf. Some responses might name NHIF as 'shif' or 'nhif' - handle both.
+          const nhifEmployee = data.nhifEmployee ?? data.shif ?? 0; // sometimes shif used as NHIF
+          const nhifEmployer = data.nhifEmployer ?? 0;
           deductions = {
-            "SDL Employer": data.sdl || 0,
-            "WCF Employer": data.wcf || 0,
-            "UHI NHIF Employer": data.nhifEmployer || 0,
-            "UHI NHIF Employee": data.nhifEmployee || 0,
-            "NSSF Employer": data.nssfEmployer || 0,
-            "NSSF Employee": data.nssfEmployee || 0,
-            Payee: data.payee || 0,
+            "SDL (Employer)": data.sdl ?? 0,
+            "WCF (Employer)": data.wcf ?? 0,
+            "NHIF (Employer)": nhifEmployer,
+            "NHIF (Employee)": nhifEmployee,
+            "NSSF (Employer)": data.nssfEmployer ?? 0,
+            "NSSF (Employee)": data.nssfEmployee ?? 0,
+            "PAYE": payeAmount,
           };
           break;
+
         case "RW":
+          // RSSB object contains pensionEmployee, medicalEmployee, maternityEmployee
+          const rssbObj = data.rssb ?? {};
           deductions = {
-            "RSSB Medical Insurance": data.rssbMedical || 0,
-            "RSSB Maternity": data.rssbMaternity || 0,
-            "RSSB Pension": data.rssbPension || 0,
-            Payee: data.payee || 0,
+            "RSSB Pension (Employee)": rssbObj.pensionEmployee ?? 0,
+            "RSSB Medical (Employee)": rssbObj.medicalEmployee ?? 0,
+            "RSSB Maternity (Employee)": rssbObj.maternityEmployee ?? 0,
+            "PAYE": payeAmount,
           };
           break;
-        default: // Kenya
+
+        default: // KE
+          // Kenya: nssf1 + nssf2 returned as nssf1/nssf2; shif; housingLevy (or ahl)
           deductions = {
-            NSSF: (data.nssf1 || 0) + (data.nssf2 || 0),
-            SHIF: data.shif || 0,
-            Housing: data.ahl || 0,
-            Payee: data.payee || 0,
+            "NSSF (Tier1+Tier2)": (data.nssf1 ?? 0) + (data.nssf2 ?? 0),
+            "SHIF/NHIF": data.shif ?? data.nhif ?? 0,
+            "Housing Levy": data.housingLevy ?? data.ahl ?? 0,
+            "PAYE": payeAmount,
           };
       }
 
-      const accessCapPercent = country === "TZ" ? 30 : 60;
-      const gross = data.gross || 0;
-      const net = data.net || 0;
+      // Decide access cap percent from map (keeps it consistent)
+      const accessCapPercent = currencyMap[country].accessCapPercent;
+
+      // Backend uses netPay and gross keys — fallbacks in case names differ
+      const gross = Number(data.gross ?? data.totalIncome ?? 0);
+      const net = Number(data.netPay ?? data.net ?? 0);
+
       const accessCap = (net * accessCapPercent) / 100;
-      const platformFee = (accessCap * 5) / 100;
+      const platformFee = (accessCap * (currencyMap[country].symbol ? 5 : 5)) / 100; // 5%
+      const accessibleNow = accessCap - platformFee;
 
       const mappedResult: CalcResult = {
         success: true,
@@ -172,9 +204,9 @@ export default function Calculator() {
         accessCapPercent,
         accessCap,
         platformFee,
-        accessibleNow: accessCap - platformFee,
+        accessibleNow,
         deductions,
-        payee: data.payee || 0,
+        payee: payeAmount,
       };
 
       setResult(mappedResult);
@@ -190,18 +222,13 @@ export default function Calculator() {
     setAllowancesChecked({});
     setAllowancesAmount({});
     setResult(null);
-    setSalary("");
-    setDaysWorked(0);
+    setSalary(""); // let user re-enter salary for new country
+    setDaysWorked(cycleDays);
   };
 
-  const currencySymbol =
-    country === "KE"
-      ? "KES"
-      : country === "UG"
-      ? "UGX"
-      : country === "TZ"
-      ? "TZS"
-      : "RWF";
+  const currency = currencyMap[country];
+  const currencySymbol = currency.symbol;
+  const locale = currency.locale;
 
   return (
     <div className="bg-white dark:bg-gray-900 w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl shadow-2xl p-6 border border-green-100 dark:border-green-800 mx-auto mt-6">
@@ -332,42 +359,35 @@ export default function Calculator() {
             <div className="flex justify-between border-b pb-1">
               <p><b>Net Earnings</b></p>
               <p className="font-semibold text-emerald-700">
-                {currencySymbol} {fmt(result.netMonthly)}
+                {currencySymbol} {fmt(result.netMonthly, locale)}
               </p>
             </div>
 
             <div className="flex justify-between border-b pb-1">
               <p>Accrued Earnings</p>
               <p className="font-semibold text-emerald-700">
-                {currencySymbol} {fmt(result.accruedGross)}
+                {currencySymbol} {fmt(result.accruedGross, locale)}
               </p>
             </div>
 
             <div className="flex justify-between border-b pb-1">
               <p>Access Cap ({result.accessCapPercent}%)</p>
               <p className="font-semibold text-emerald-700">
-                {currencySymbol} {fmt(result.accessCap)}
+                {currencySymbol} {fmt(result.accessCap, locale)}
               </p>
             </div>
 
             <div className="flex justify-between border-b pb-1">
               <p>Platform Fee (5%)</p>
               <p className="font-semibold text-red-500">
-                - {currencySymbol} {fmt(result.platformFee)}
-              </p>
-            </div>
-
-            <div className="flex justify-between border-b pb-1">
-              <p><b>Payee</b></p>
-              <p className="font-semibold text-red-500">
-                - {currencySymbol} {fmt(result.payee)}
+                - {currencySymbol} {fmt(result.platformFee, locale)}
               </p>
             </div>
 
             <div className="mt-4 bg-white/60 dark:bg-gray-800/70 border border-green-200 rounded-xl p-3 text-center">
               <p className="text-sm text-emerald-800 font-semibold">You Can Access Now</p>
               <p className="text-3xl font-extrabold text-emerald-700 mt-1">
-                {currencySymbol} {fmt(result.accessibleNow)}
+                {currencySymbol} {fmt(result.accessibleNow, locale)}
               </p>
             </div>
 
@@ -375,7 +395,7 @@ export default function Calculator() {
               <p>
                 <span className="font-semibold">Remittances → </span>
                 {Object.entries(result.deductions)
-                  .map(([key, val]) => `${key}: ${currencySymbol} ${fmt(val)}`)
+                  .map(([key, val]) => `${key}: ${currencySymbol} ${fmt(val, locale)}`)
                   .join(" | ")}
               </p>
             </div>
