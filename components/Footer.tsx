@@ -208,7 +208,7 @@ export default function Footer() {
        <p className="text-xs text-gray-500 text-center md:text-left">&copy; {currentYear ?? ''} EaziWage. All Rights Reserved</p>
        <Locator/>
        <Link 
-       href="https://eaziwage-status.com" 
+       href="/status" 
        className='flex items-center gap-1 text-xs text-gray-500 md:text-left animate-pulse'>
        <Shield className='w-3 h-3 text-green-500 inline'/> Eaziwage Status
       </Link>
