@@ -40,4 +40,18 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# excel files
+*.xlsx
+*.xls
+
+# prisma
 /app/generated/prisma
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+
+# misc
+.qodo

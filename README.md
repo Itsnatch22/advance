@@ -1,36 +1,169 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EaziWage - Earned Wage Access Platform
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-16.0-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
+![License](https://img.shields.io/badge/license-ISC-green)
 
-First, run the development server:
+A comprehensive platform enabling employees across Africa to access their earned wages before payday, reducing financial stress and improving financial wellness.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Features
+
+- **Wage Advance Calculator** - Calculate available advance amounts for multiple African countries (Kenya, Uganda, Tanzania, Rwanda)
+- **Multi-tenant Support** - Separate portals for employees, employers, and partners
+- **AI-Powered Assistance** - Integrated Cohere AI for smart financial guidance
+- **Real-time Analytics** - Dashboard with insights and statistics
+- **Authentication** - Secure auth with NextAuth v5
+- **Rate Limiting** - Upstash Redis-based protection
+- **Responsive Design** - Mobile-first UI with dark mode support
+- **Email Integration** - Automated notifications via Resend
+
+## 📋 Prerequisites
+
+- Node.js 18.x or higher
+- npm/yarn/pnpm/bun
+- PostgreSQL database (or Supabase)
+- Redis instance (Upstash)
+
+## 🛠️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Itsnatch22/advance.git
+   cd advance
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Fill in your environment variables:
+   - Database credentials
+   - Authentication secrets
+   - API keys (Cohere, OpenAI, Resend)
+   - Upstash Redis credentials
+
+4. **Generate Prisma client** (if using Prisma)
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000)
+
+## 📁 Project Structure
+
+```
+advance/
+├── app/                    # Next.js app directory
+│   ├── (auth)/            # Authentication routes
+│   ├── api/               # API routes
+│   ├── calculator/        # Wage calculator
+│   ├── employers/         # Employer portal
+│   └── ...
+├── components/            # Reusable React components
+├── lib/                   # Utility functions
+├── hooks/                 # Custom React hooks
+├── constants/             # App constants
+├── data/                  # Static data files
+├── public/                # Static assets
+└── scripts/               # Build/utility scripts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔧 Available Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint errors
+- `npm run format` - Format code with Prettier
+- `npm run type-check` - Run TypeScript type checking
+- `npm run gen:json` - Generate JSON from Excel files
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌍 Supported Countries
 
-## Learn More
+- 🇰🇪 Kenya (KE)
+- 🇺🇬 Uganda (UG)
+- 🇹🇿 Tanzania (TZ)
+- 🇷🇼 Rwanda (RW)
 
-To learn more about Next.js, take a look at the following resources:
+## 🔐 Authentication
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Uses NextAuth v5 with support for:
+- Credentials provider
+- Email/password authentication
+- Role-based access control (Employee, Employer, Admin)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📊 Tech Stack
 
-## Deploy on Vercel
+### Frontend
+- **Framework**: Next.js 16 (App Router)
+- **UI Library**: React 19
+- **Styling**: Tailwind CSS v4
+- **Components**: Radix UI, shadcn/ui
+- **Animations**: Framer Motion, GSAP
+- **Charts**: Recharts
+- **Icons**: Tabler Icons, Lucide, React Icons
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Backend
+- **Database**: Supabase/PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: NextAuth v5
+- **Rate Limiting**: Upstash Redis
+- **Email**: Resend + React Email
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### AI & Analytics
+- **AI**: Cohere AI, OpenAI
+- **Analytics**: Vercel Analytics
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+```bash
+vercel deploy
+```
+
+### Environment Variables
+Ensure all required environment variables are set in your deployment platform:
+- `DATABASE_URL`
+- `NEXTAUTH_SECRET`
+- `COHERE_API_KEY`
+- And others from `.env.example`
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the ISC License.
+
+## 👥 Authors
+
+- GitHub: [@Itsnatch22](https://github.com/Itsnatch22)
+
+## 🙏 Acknowledgments
+
+- Built with [Next.js](https://nextjs.org)
+- UI components from [shadcn/ui](https://ui.shadcn.com)
+- Powered by [Vercel](https://vercel.com)
+
+---
+
+**Note**: Excel files (*.xlsx) in the root directory contain country-specific calculator data. Use `npm run gen:json` to convert them to JSON format.
+

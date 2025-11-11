@@ -25,5 +25,6 @@ export const techPartners = [
   { name: "Visa & Mastercard", logo: "/partners/visa.svg", blurb: "Global payment networks ensuring secure transactions.", href: "https://visa.com/"  },
   { name: "Plaid", logo: "/partners/plaid.svg", blurb: "Connecting applications to users' bank accounts securely.", href: "https://plaid.com/"  },
   { name: "Twilio", logo: "/partners/twilio.svg", blurb: "Cloud communications platform for building SMS, Voice & Messaging applications.", href: "https://twilio.com/"  },
+  { name: "Workpay", logo: "/partners/workpay.svg", blurb: "Simplified payroll solutions for businesses.", href: "https://myworkpay.com/"  },
 ]
 

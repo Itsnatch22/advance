@@ -115,7 +115,7 @@ export default function Footer() {
           {[
             { name: "How It Works", href: "how-it-works" },
             { name: "Pricing", href: "pricing" },
-            { name: "Integrations", href: "integrate" },
+            { name: "Resources", href: "resources" },
           ].map((link, index) => (
             <li key={index}>
               <Link

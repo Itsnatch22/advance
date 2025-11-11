@@ -84,7 +84,7 @@ export default function Employers() {
         <section className="min-h-screen w-full mx-auto relative py-10 sm:py-14 lg:py-20 flex flex-col items-center">
             {/* Employer Dashboard */}
             <div className="w-full min-h-screen mx-auto bg-gray-300 rounded-2xl px-10 py-10 mb-10 sm:mb-24 lg:mb-32 flex items-center justify-center">
-                <h1 className="font-medium font-serif text-4xl animate-pulse text-green-400">Dashboard to be displayed here</h1>
+                <h1 className="font-medium font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl animate-pulse text-green-400">Dashboard to be displayed here</h1>
             </div>
             {/* Compliance Strip */}
             <div className="w-full bg-gray-50 border border-gray-200 py-3 sm:py-4 px-3 sm:px-6 lg:px-10 mb-8 sm:mb-10">
@@ -110,7 +110,7 @@ export default function Employers() {
 
             {/* Employers Reasons */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-10 sm:mt-14">
-                <h2 className="font-serif text-gray-800 font-semibold text-xl sm:text-2xl lg:text-3xl mb-2 sm:mb-3">
+                <h2 className="font-serif text-gray-800 font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3">
                 Why employers choose Eaziwage
                 </h2>
                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-prose">
@@ -140,7 +140,7 @@ export default function Employers() {
 
             {/* Roll-Out Plans */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:mt-20">
-                <h2 className="font-serif text-gray-900 font-semibold text-xl sm:text-2xl lg:text-3xl mb-2 sm:mb-3">
+                <h2 className="font-serif text-gray-900 font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3">
                 Employer rollout plan
                 </h2>
                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-prose">
@@ -170,7 +170,7 @@ export default function Employers() {
 
             {/* Works Areas */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:mt-20 text-center lg:text-left">
-                <h2 className="font-serif font-semibold text-xl sm:text-2xl lg:text-3xl text-gray-900">
+                <h2 className="font-serif font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900">
                 Works across sectors & sizes
                 </h2>
                 <p className="text-gray-600 text-sm sm:text-base mt-3 sm:mt-4 max-w-prose mx-auto lg:mx-0">
@@ -183,8 +183,8 @@ export default function Employers() {
             </div>
              
              {/* FAQs */}
-            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-6 sm:mt-7 lg:mt-8">
-                <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl text-gray-900 font-semibold">Employer Frequently Asked Questions</h2>
+            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-2 sm:mt-3 lg:mt-4">
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 font-semibold">Employer Frequently Asked Questions</h2>
                 <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
                 {faqs.map((faqs,index) => (
                     <details key={index} className="group p-5">

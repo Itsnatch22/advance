@@ -11,9 +11,9 @@ export default function PartnersPage() {
   {/* === Intro Section === */}
   <section className="relative py-20 px-6 text-center">
     <motion.h1
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 100 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 1 }}
       className="text-4xl text-black dark:text-white font-bold md:text-6xl font-serif"
     >
       Our <span className="text-green-600">Partners</span>
@@ -185,14 +185,14 @@ export default function PartnersPage() {
 
   {/* === Outro CTA === */}
   <section className="text-center py-16">
-    <h3 className="text-2xl font-serif text-gray-800 dark:text-white font-bold">
+    <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-gray-800 dark:text-white font-bold">
       We&apos;re stronger together.
     </h3>
     <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
       Want to be part of the EaziWage ecosystem? Let&apos;s build Africa&apos;s financial future - one payday at a time.
     </p>
     <Link
-      href="/contact"
+      href="/form"
       className="mt-6 inline-block bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition"
     >
       Partner With Us

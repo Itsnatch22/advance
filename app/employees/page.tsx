@@ -54,7 +54,7 @@ const faqs = [
     },
 ];
 
-export default function Employers() {
+export default function Employees() {
     return(
         <section className="min-h-screen w-full mx-auto relative py-10 sm:py-14 lg:py-20 flex flex-col items-center">
             {/* Employer Dashboard */}
@@ -85,7 +85,7 @@ export default function Employers() {
 
             {/* Employers Reasons */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 lg:text-left text-center mt-10 sm:mt-14">
-                <h2 className="font-serif text-gray-800 font-semibold text-xl sm:text-2xl lg:text-3xl mb-2 sm:mb-3">
+                <h2 className="font-serif text-gray-800 font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3">
                 Why employees choose Eaziwage
                 </h2>
                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-prose">
@@ -115,7 +115,7 @@ export default function Employers() {
 
             {/* Roll-Out Plans */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:text-left text-center lg:mt-20">
-                <h2 className="font-serif text-gray-900 font-semibold text-xl sm:text-2xl lg:text-3xl mb-2 sm:mb-3">
+                <h2 className="font-serif text-gray-900 font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3">
                 Your Financial Empowerment Journey
                 </h2>
                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed ">
@@ -145,7 +145,7 @@ export default function Employers() {
 
             {/* Works Areas */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:mt-20 text-center lg:text-left">
-                <h2 className="font-serif font-semibold text-xl sm:text-2xl lg:text-3xl text-gray-900">
+                <h2 className="font-serif font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900">
                 Versatility across jobs & sectors
                 </h2>
                 <p className="text-gray-600 text-sm sm:text-base mt-3 sm:mt-4 mx-auto lg:mx-0">
@@ -158,7 +158,7 @@ export default function Employers() {
              
              {/* FAQs */}
             <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full text-center lg:px-10 ">
-                <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl text-gray-900 font-semibold">Employer Frequently Asked Questions</h2>
+                <h5 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 font-semibold">Employee Frequently Asked Questions</h5>
                 <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
                 {faqs.map((faqs,index) => (
                     <details key={index} className="group p-5">
