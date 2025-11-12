@@ -35,7 +35,7 @@ export default function CTA() {
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.7}}
                 viewport={{ once: true }}
-                className="text-2xl sm:text-3xl text-white dark:text-black lg:text-5xl font-bold font-serif"
+                className="text-2xl sm:text-3xl text-white lg:text-5xl font-bold font-serif"
                 >
                     Ready To {" "} 
                     <Highlighter action="underline" color="#008000">

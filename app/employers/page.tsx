@@ -87,8 +87,8 @@ export default function Employers() {
                 <h1 className="font-medium font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl animate-pulse text-green-400">Dashboard to be displayed here</h1>
             </div>
             {/* Compliance Strip */}
-            <div className="w-full bg-gray-50 border border-gray-200 py-3 sm:py-4 px-3 sm:px-6 lg:px-10 mb-8 sm:mb-10">
-                <div className="flex py-8 flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 text-center">
+            <div className="w-full bg-gray-50 dark:bg-black  py-3 sm:py-4 px-3 sm:px-6 lg:px-10 mb-8 sm:mb-10">
+                <div className="flex py-8 flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 dark:text-white text-center">
                 <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-green-500 shrink-0" />
                     <span>Regulated partners • CBK-aligned</span>
@@ -110,10 +110,10 @@ export default function Employers() {
 
             {/* Employers Reasons */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-10 sm:mt-14">
-                <h2 className="font-serif text-gray-800 font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3">
+                <h2 className="font-serif text-gray-800 dark:text-white font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3">
                 Why employers choose Eaziwage
                 </h2>
-                <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-prose">
+                <p className="text-gray-600 text-sm dark:text-white sm:text-base leading-relaxed max-w-prose">
                 A practical well-being lever that pays for itself
                 </p>
 
@@ -140,10 +140,10 @@ export default function Employers() {
 
             {/* Roll-Out Plans */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:mt-20">
-                <h2 className="font-serif text-gray-900 font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3">
+                <h2 className="font-serif dark:text-white text-gray-900 font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3">
                 Employer rollout plan
                 </h2>
-                <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-prose">
+                <p className="text-gray-600 dark:text-white text-sm sm:text-base leading-relaxed max-w-prose">
                 From sandbox to go live in days, not months.
                 </p>
 
@@ -170,10 +170,10 @@ export default function Employers() {
 
             {/* Works Areas */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:mt-20 text-center lg:text-left">
-                <h2 className="font-serif font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900">
+                <h2 className="font-serif font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl dark:text-white text-gray-900">
                 Works across sectors & sizes
                 </h2>
-                <p className="text-gray-600 text-sm sm:text-base mt-3 sm:mt-4 max-w-prose mx-auto lg:mx-0">
+                <p className="text-gray-600 text-sm sm:text-base mt-3 sm:mt-4 dark:text-white max-w-prose mx-auto lg:mx-0">
                 Retail • Hospitality • Manufacturing • Logistics • Banks • Schools •
                 Healthcare
                 </p>
@@ -184,7 +184,7 @@ export default function Employers() {
              
              {/* FAQs */}
             <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-2 sm:mt-3 lg:mt-4">
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 font-semibold">Employer Frequently Asked Questions</h2>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 dark:text-white font-semibold">Employer Frequently Asked Questions</h2>
                 <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
                 {faqs.map((faqs,index) => (
                     <details key={index} className="group p-5">

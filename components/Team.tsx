@@ -7,19 +7,19 @@ import { motion } from "framer-motion";
 
 const team = [
   {
-    image: "/team/mark.jpg",
+    image: "/team/mark.png",
     name: "Mark Kamau",
   },
   {
-    image: "/team/joel.jpg",
+    image: "/team/joel.png",
     name: "Joel Omolo",
   },
   {
-    image: "/team/henry.jpg",
+    image: "/team/henry.png",
     name: "Henry Kimani",
   },
   {
-    image: "/team/jason.jpg",
+    image: "/team/jason.png",
     name: "Jason Crawford",
   },
 ]
@@ -47,7 +47,7 @@ export function Team() {
               viewport={{ once: true }}
               className="group"
             >
-              <div className="relative mx-auto w-[800px] h-[800px] sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden shadow-md">
+              <div className="relative mx-auto w-[800px] h-90 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden shadow-md">
                 <Image
                   src={member.image}
                   alt={member.name}
