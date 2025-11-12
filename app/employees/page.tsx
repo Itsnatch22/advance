@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Clock3, Wallet, Smartphone, Users, CheckCircle2, BrainCircuit, ShieldCheck,  ArrowRight, Lightbulb, BarChart3 } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
+import UI from "./UI"
 
 const reasons = [
     { icon: Wallet, title: "No interest, ever", desc: "It’s not a loan. Just early access to your own earnings." },
@@ -57,10 +58,7 @@ const faqs = [
 export default function Employees() {
     return(
         <section className="min-h-screen w-full mx-auto relative py-10 sm:py-14 lg:py-20 flex flex-col items-center">
-            {/* Employer Dashboard */}
-            <div className="w-full min-h-screen mx-auto bg-gray-300 rounded-2xl px-10 py-10 mb-10 sm:mb-24 lg:mb-32 flex items-center justify-center">
-                <h1 className="font-medium font-serif text-4xl animate-pulse text-green-400">Dashboard to be displayed here</h1>
-            </div>
+            <UI/>
             {/* Compliance Strip */}
             <div className="w-full bg-gray-50 dark:bg-black py-3 sm:py-4 px-3 sm:px-6 lg:px-10 mb-8 sm:mb-10">
                 <div className="flex py-8 flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 dark:text-white text-center">
