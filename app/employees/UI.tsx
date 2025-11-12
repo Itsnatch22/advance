@@ -9,14 +9,14 @@ export default function UI() {
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         {/* Left column */}
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-1 text-xs text-gray-600 bg-white">
+          <span className="inline-flex items-center gap-2 rounded-full border dark:bg-black border-gray-200 px-3 py-1 text-xs text-gray-600 bg-white">
             <Sparkles className="h-3.5 w-3.5" /> Made for Employees
           </span>
-          <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight text-gray-900">
+          <h1 className="mt-4 text-3xl dark:text-white sm:text-4xl lg:text-5xl font-semibold leading-tight text-gray-900">
             Access a portion of what you&apos;ve already earned—
             <span className="block" style={{ color: BRAND }}>instantly, safely, transparently.</span>
           </h1>
-          <p className="mt-4 text-gray-600 max-w-prose">
+          <p className="mt-4 text-gray-600 dark:text-white max-w-prose">
             No loans. No interest. Just early access to your earned wages when you need them—via Mobile wallet or bank. Reduce stress, avoid costly mobile loans, and stay in control.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -24,7 +24,7 @@ export default function UI() {
               Get started <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="mt-6 flex items-center gap-4 text-sm text-gray-600">
+          <div className="mt-6 flex items-center gap-4 text-sm dark:text-white text-gray-600">
             <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> CBK-aligned</div>
             <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> ODPC data protection</div>
             <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> No interest charges</div>
