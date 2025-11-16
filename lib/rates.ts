@@ -9,7 +9,7 @@ export function loadCalcJson() {
   return JSON.parse(raw);
 }
 
-export function parseRatesSheet(data: any) {
+export function parseRatesSheet(data: unknown) {
   const ratesSheet = data?.Rates || [];
   const safeRates = Array.isArray(ratesSheet) ? ratesSheet.filter(Boolean) : [];
 

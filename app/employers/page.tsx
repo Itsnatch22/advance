@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "framer-motion";
-import { User, Wallet, Cog, LineChart, Lock, BadgeCheck, Clipboard, CircuitBoard, BrainCircuit, ShieldCheck, ChevronRight, ArrowRight } from "lucide-react";
+import { User, Wallet, Cog, LineChart, Lock, BadgeCheck, Clipboard, CircuitBoard, BrainCircuit, ShieldCheck, ArrowRight } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 import UI from "./UI";
 

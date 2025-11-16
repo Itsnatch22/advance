@@ -15,7 +15,7 @@ export async function GET(req: Request) {
       meta: cfg.meta,
       deductions: cfg.deductions || [],
     });
-  } catch (err: any) {
+  } catch (err: Error) {
     console.error("meta route error:", err);
     return NextResponse.json({ success: false, error: String(err?.message || err) }, { status: 500 });
   }

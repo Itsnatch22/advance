@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FaGoogle } from 'react-icons/fa';
 
 export default function LoginPage() {
   return (

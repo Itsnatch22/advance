@@ -1,18 +1,14 @@
 "use client";
 import React, {
   useEffect,
-  useRef,
   useState,
-  createContext,
-  useContext,
 } from "react";
 import {
   IconArrowNarrowLeft,
   IconArrowNarrowRight,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
-import { useOutsideClick } from "@/hooks/use-outside-click";
+import { motion } from "motion/react";
 
 interface CarouselProps {
   items: React.ReactElement[];
@@ -149,13 +145,12 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   );
 };
 
+ 
 export const Card = ({
   card,
-  index,
   layout = false,
 }: {
   card: Card;
-  index: number;
   layout?: boolean;
 }) => {
   // Simplified card: only show image and text, remove modal/open state
@@ -178,6 +173,8 @@ export const Card = ({
   );
 };
 
+import Image from "next/image";
+
 export const BlurImage = ({
   src,
   className,
@@ -186,7 +183,7 @@ export const BlurImage = ({
 }: { src: string; className?: string; alt?: string } & React.ImgHTMLAttributes<HTMLImageElement>) => {
   const [isLoading, setLoading] = useState(true);
   return (
-    <img
+    <Image
       className={cn(
         "h-full w-full transition duration-300",
         isLoading ? "blur-sm" : "blur-0",
@@ -197,6 +194,7 @@ export const BlurImage = ({
       loading="lazy"
       decoding="async"
       alt={alt ? alt : "Background image"}
+      fill
       {...rest}
     />
   );

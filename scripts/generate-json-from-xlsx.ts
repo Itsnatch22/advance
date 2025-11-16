@@ -13,7 +13,7 @@ async function convert(fileName: string, outName: string) {
     return;
   }
   const wb = XLSX.readFile(p, { cellDates: true });
-  const jsonOut: any = {};
+  const jsonOut: Record<string, unknown> = {};
 
   // heuristics: find sheets with "Rates", "Inputs", "Workings", "Output"
   wb.SheetNames.forEach((sheet) => {

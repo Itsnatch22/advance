@@ -19,20 +19,20 @@ async function loadDataFiles() {
   try {
     const files = await fs.readdir(dataDir);
     const jsonFiles = files.filter((f) => f.endsWith(".json"));
-    const items: { filename: string; content: any }[] = [];
+    const items: { filename: string; content: unknown }[] = [];
     for (const file of jsonFiles) {
       const raw = await fs.readFile(path.join(dataDir, file), "utf-8");
       items.push({ filename: file, content: JSON.parse(raw) });
     }
     return items;
-  } catch (err) {
+  } catch {
     // If no folder exists, return empty
     return [];
   }
 }
 
 // Naive fuzzy search: scores by whether query appears in title / headings / content
-function scoreMatch(query: string, item: any) {
+function scoreMatch(query: string, item: unknown) {
   const q = query.toLowerCase();
   let score = 0;
 
@@ -55,12 +55,12 @@ function scoreMatch(query: string, item: any) {
   return score;
 }
 
-function buildAnswerFromItem(item: any, query: string) {
+function buildAnswerFromItem(item: unknown, query: string) {
   // Prefer exact section matches; otherwise return summary (title + first section)
   const q = query.toLowerCase();
   if (Array.isArray(item.sections)) {
     // find best section
-    let best: any = null;
+    let best: unknown = null;
     let bestScore = 0;
     for (const s of item.sections) {
       let score = 0;
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     const items = await loadDataFiles();
 
     // score all items, pick the best match
-    let bestItem: any = null;
+    let bestItem: unknown = null;
     let bestScore = 0;
     for (const it of items) {
       const s = scoreMatch(q, it.content);

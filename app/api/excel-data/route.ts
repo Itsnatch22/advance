@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-let cache: { ts: number; data: any } | null = null;
+let cache: { ts: number; data: unknown } | null = null;
 const CACHE_TTL = 1000 * 60 * 1; // 1 min cache
 
 export async function GET() {

@@ -5,69 +5,22 @@ import { FiLinkedin, FiMail, FiInstagram } from 'react-icons/fi';
 import { FaXTwitter } from "react-icons/fa6";
 import { FaWhatsapp, FaFacebook } from 'react-icons/fa';
 import Link from 'next/link'
-import gsap from 'gsap';
 import { BiWallet, BiLocationPlus } from 'react-icons/bi';
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "framer-motion"
 import Locator from './Locator';
 import { Shield } from 'lucide-react';
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function Footer() {
     const [currentYear, setCurrentYear] = useState<number | null>(null);
-    const footerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // Avoid using Date at render time in a Client Component
         if (currentYear === null) {
             setCurrentYear(new Date().getFullYear());
         }
-
-        const footer = footerRef.current;
-
-        const footerCols = footer?.querySelectorAll(".footer-col");
-        if (footerCols && footerCols.length > 0) {
-            gsap.fromTo(
-                footerCols,
-                { opacity: 0, y: 30 },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.8,
-                    stagger: 0.1,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: footer,
-                        start: "top 80%",
-                        toggleActions: "play none none none",
-                    },
-                }
-            );
-        }
-
-        const bottomBarElements = footer?.querySelectorAll(".bottom-bar");
-        if (bottomBarElements && bottomBarElements.length > 0) {
-            gsap.fromTo(
-                bottomBarElements,
-                { opacity: 0, y: 20 },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.8,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: bottomBarElements,
-                        start: "top 95%",
-                        toggleActions: "play none none none",
-                    },
-                }
-            );
-        }
     })
     return(
         <footer
-  ref={footerRef}
   className="relative overflow-hidden bg-gradient-to-b from-gray-950 via-black to-green-950 text-gray-300 border-t border-gray-800"
 >
   {/* Subtle ambient glow orb */}
@@ -77,7 +30,7 @@ export default function Footer() {
   <div className="relative container mx-auto px-4 sm:px-6 md:py-16 py-12">
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 sm:gap-10 md:gap-12">
       {/* Brand */}
-      <div className="footer-col space-y-4 sm:col-span-2 md:col-span-1">
+      <div className="space-y-4 sm:col-span-2 md:col-span-1">
         <Link href="/" className="flex items-center gap-2">
           <BiWallet className="text-green-400 w-6 h-6" />
           <span className="text-xl font-bold text-white">EaziWage</span>
@@ -109,7 +62,7 @@ export default function Footer() {
       </div>
 
       {/* Product */}
-      <div className="footer-col">
+      <div>
         <h3 className="text-white font-semibold mb-4">Product</h3>
         <ul className="space-y-2">
           {[
@@ -130,7 +83,7 @@ export default function Footer() {
       </div>
 
       {/* Company */}
-      <div className="footer-col">
+      <div>
         <h3 className="text-white font-semibold mb-4">Company</h3>
         <ul className="space-y-2">
           {[
@@ -153,7 +106,7 @@ export default function Footer() {
       </div>
 
       {/* Legal */}
-      <div className='footer-col'>
+      <div>
         <h3 className='text-white font-semibold mb-4'>Legal</h3>
         <ul className='space-y-2'>
           {[
@@ -179,7 +132,7 @@ export default function Footer() {
       </div>
 
       {/* Contact */}
-      <div className="footer-col">
+      <div>
         <h3 className="text-white font-semibold mb-4">Contact</h3>
         <ul className="space-y-2">
           {[

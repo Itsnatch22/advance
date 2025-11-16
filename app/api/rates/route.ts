@@ -11,9 +11,9 @@ function loadJson() {
   return JSON.parse(raw);
 }
 
-function parseRatesSheet(data: any) {
+function parseRatesSheet(data: unknown) {
   const ratesSheet = data.Rates || [];
-  const rates: Record<string, any> = {};
+  const rates: Record<string, unknown> = {};
 
   for (const row of ratesSheet) {
     if (row && typeof row["General "] === "string" && row["Amount/Threshold"] !== undefined) {
@@ -32,7 +32,7 @@ export async function GET() {
     const data = loadJson();
     const rates = parseRatesSheet(data);
     return NextResponse.json({ success: true, rates });
-  } catch (err: any) {
+  } catch (err: Error) {
     return NextResponse.json({ success: false, error: err?.message ?? "server error" }, { status: 500 });
   }
 }

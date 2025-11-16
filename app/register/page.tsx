@@ -1,8 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
-import { FaGoogle, FaSpinner } from "react-icons/fa";
 
 export default function RegisterPage() {
  

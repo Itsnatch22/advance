@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { BiWallet, BiChevronDown, BiMenu, BiX } from "react-icons/bi";
-import { FiTrendingUp, FiUserCheck, FiShield, FiDollarSign } from "react-icons/fi";
+import { FiUserCheck, FiShield, FiDollarSign } from "react-icons/fi";
 import { Calculator } from "lucide-react";
 
 const Navbar = () => {
