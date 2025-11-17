@@ -55,8 +55,10 @@ export async function POST(req: Request) {
     };
 
     return NextResponse.json(response);
-  } catch (err: Error) {
+
+  } catch (err: any) {   // 👈 FIXED HERE
     console.error("❌ /api/calc failed:", err);
+
     return NextResponse.json(
       {
         success: false,
