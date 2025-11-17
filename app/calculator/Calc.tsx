@@ -62,32 +62,65 @@ const fmt = (n: number, locale = "en-KE") =>
     maximumFractionDigits: 0,
   }).format(Number(n || 0));
 
+// 👉 FORMATTER FOR INPUT COMMAS
+const formatNumberInput = (value: string) => {
+  const numeric = value.replace(/[^\d]/g, "");
+  if (!numeric) return "";
+  return Intl.NumberFormat("en-KE").format(Number(numeric));
+};
+
 export default function Calculator() {
   const [country, setCountry] = useState<Country>("KE");
   const [salary, setSalary] = useState<number | "">("");
   const cycleDays = 30;
-  // default daysWorked to full cycle so dev testing is easier
-  const [daysWorked, setDaysWorked] = useState<number>(cycleDays);
+
+  const [daysWorked, setDaysWorked] = useState<number>(0); // auto-set later
   const [result, setResult] = useState<CalcResult | null>(null);
 
   const [allowancesChecked, setAllowancesChecked] = useState<Record<string, boolean>>({});
   const [allowancesAmount, setAllowancesAmount] = useState<Record<string, number | "">>({});
+
   const [asOfDate, setAsOfDate] = useState<string>("");
 
+  // → INTERNAL date (hidden) used to determine month days + today’s day
   useEffect(() => {
     const today = new Date();
     setAsOfDate(today.toISOString().split("T")[0]);
   }, []);
 
+  // → Get max days in month
   const maxDays = useMemo(() => {
     if (!asOfDate) return 31;
-    const date = new Date(asOfDate);
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    const d = new Date(asOfDate);
+    return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
   }, [asOfDate]);
 
-  const feePercent = 5; // platform fee percent (UI label)
+  // → Auto-set slider to TODAY’S DAY (17, 25, etc.)
+  useEffect(() => {
+    if (!asOfDate) return;
+    const d = new Date(asOfDate);
+    setDaysWorked(d.getDate());
+  }, [asOfDate]);
+
+  // → Clamp if month changes
+  useEffect(() => {
+    if (daysWorked > maxDays) setDaysWorked(maxDays);
+  }, [maxDays]);
+
+  // → Kill results reactively
+  useEffect(() => {
+    if (!salary) setResult(null);
+  }, [salary]);
+
+  useEffect(() => {
+    if (Object.values(allowancesAmount).every(v => v === "")) {
+      setResult(null);
+    }
+  }, [allowancesAmount]);
+
+  const feePercent = 5;
   const percentOfCycle = useMemo(
-    () => Math.min(100, Math.round((Number(daysWorked || 0) / cycleDays) * 100)),
+    () => Math.min(100, Math.round((daysWorked / cycleDays) * 100)),
     [daysWorked]
   );
 
@@ -98,11 +131,12 @@ export default function Calculator() {
         : 0;
       return acc;
     }, {} as Record<string, number>);
+
     return {
       salary: Number(salary || 0),
       country,
       cycleDays,
-      daysWorked: Number(daysWorked || 0),
+      daysWorked,
       advanced: 0,
       feePercent,
       flatFee: 25,
@@ -118,41 +152,36 @@ export default function Calculator() {
     }
 
     const payload = buildPayload();
+
     try {
       const res = await fetch(`/api/calc?country=${country}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
 
+      const data = await res.json();
       if (!data.success) {
-        console.error("❌ Backend failed:", data.error || data.detail || data);
         alert("Backend calculation failed!");
         return;
       }
 
-      // Normalize backend fields to the UI-friendly shape
-      // Backend returns: gross, netPay, payeAfterRelief, nssfEmployee, nssfEmployer, shif, housingLevy, lst, sdl, wcf, rssb (object)
       let deductions: Deductions = {};
-
-      // PAYE amount: use payeAfterRelief if available, otherwise fallback to payeBeforeRelief or paye
-      const payeAmount: number =
+      const payeAmount =
         data.payeAfterRelief ?? data.paye ?? data.payeBeforeRelief ?? 0;
 
       switch (country) {
         case "UG":
           deductions = {
-            "LST": data.lst ?? 0,
+            LST: data.lst ?? 0,
             "NSSF (Employee)": data.nssfEmployee ?? 0,
             "NSSF (Employer)": data.nssfEmployer ?? 0,
-            "PAYE": payeAmount,
+            PAYE: payeAmount,
           };
           break;
 
         case "TZ":
-          // TZ returns nssfEmployee/nssfEmployer, shif (used as NHIF), sdl, wcf. Some responses might name NHIF as 'shif' or 'nhif' - handle both.
-          const nhifEmployee = data.nhifEmployee ?? data.shif ?? 0; // sometimes shif used as NHIF
+          const nhifEmployee = data.nhifEmployee ?? data.shif ?? 0;
           const nhifEmployer = data.nhifEmployer ?? 0;
           deductions = {
             "SDL (Employer)": data.sdl ?? 0,
@@ -161,43 +190,38 @@ export default function Calculator() {
             "NHIF (Employee)": nhifEmployee,
             "NSSF (Employer)": data.nssfEmployer ?? 0,
             "NSSF (Employee)": data.nssfEmployee ?? 0,
-            "PAYE": payeAmount,
+            PAYE: payeAmount,
           };
           break;
 
         case "RW":
-          // RSSB object contains pensionEmployee, medicalEmployee, maternityEmployee
           const rssbObj = data.rssb ?? {};
           deductions = {
             "RSSB Pension (Employee)": rssbObj.pensionEmployee ?? 0,
             "RSSB Medical (Employee)": rssbObj.medicalEmployee ?? 0,
             "RSSB Maternity (Employee)": rssbObj.maternityEmployee ?? 0,
-            "PAYE": payeAmount,
+            PAYE: payeAmount,
           };
           break;
 
-        default: // KE
-          // Kenya: nssf1 + nssf2 returned as nssf1/nssf2; shif; housingLevy (or ahl)
+        default:
           deductions = {
             "NSSF (Tier1+Tier2)": (data.nssf1 ?? 0) + (data.nssf2 ?? 0),
             "SHIF/NHIF": data.shif ?? data.nhif ?? 0,
             "Housing Levy": data.housingLevy ?? data.ahl ?? 0,
-            "PAYE": payeAmount,
+            PAYE: payeAmount,
           };
       }
 
-      // Decide access cap percent from map (keeps it consistent)
       const accessCapPercent = currencyMap[country].accessCapPercent;
-
-      // Backend uses netPay and gross keys — fallbacks in case names differ
       const gross = Number(data.gross ?? data.totalIncome ?? 0);
       const net = Number(data.netPay ?? data.net ?? 0);
 
       const accessCap = (net * accessCapPercent) / 100;
-      const platformFee = (accessCap * (currencyMap[country].symbol ? 5 : 5)) / 100; // 5%
+      const platformFee = (accessCap * 5) / 100;
       const accessibleNow = accessCap - platformFee;
 
-      const mappedResult: CalcResult = {
+      const mapped: CalcResult = {
         success: true,
         accruedGross: gross,
         netMonthly: net,
@@ -209,21 +233,22 @@ export default function Calculator() {
         payee: payeAmount,
       };
 
-      setResult(mappedResult);
-    } catch (err) {
-      console.error("⚠️ Frontend fetch failed:", err);
+      setResult(mapped);
+    } catch {
       alert("Failed to connect to backend");
     }
   };
 
-  // 🔁 Reset everything when switching country
   const handleCountryChange = (code: Country) => {
     setCountry(code);
     setAllowancesChecked({});
     setAllowancesAmount({});
     setResult(null);
-    setSalary(""); // let user re-enter salary for new country
-    setDaysWorked(cycleDays);
+    setSalary("");
+
+    // Reset slider to today's date again
+    const today = new Date();
+    setDaysWorked(today.getDate());
   };
 
   const currency = currencyMap[country];
@@ -258,22 +283,19 @@ export default function Calculator() {
         ))}
       </div>
 
-      <p className="text-center text-sm font-medium text-gray-600 mb-4">
-        Selected Country:{" "}
-        <span className="font-bold text-emerald-700">{country}</span> ({currencySymbol})
-      </p>
-
       {/* 💰 Salary Input */}
       <label className="text-sm text-gray-600 dark:text-gray-300">
         Gross Monthly Salary ({currencySymbol})
       </label>
       <input
-        type="number"
-        min={0}
-        placeholder="e.g. 60000"
+        type="text"
+        placeholder="e.g. 60,000"
         className="mt-1 w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg p-2 text-sm sm:text-base focus:ring-emerald-500/60"
-        value={salary}
-        onChange={(e) => setSalary(e.target.value ? +e.target.value : "")}
+        value={salary ? formatNumberInput(salary.toString()) : ""}
+        onChange={(e) => {
+          const raw = e.target.value.replace(/,/g, "");
+          setSalary(raw === "" ? "" : Number(raw));
+        }}
       />
 
       {/* ⚡ Contributions */}
@@ -293,23 +315,29 @@ export default function Calculator() {
                 <input
                   type="checkbox"
                   checked={!!allowancesChecked[a.key]}
-                  onChange={(e) =>
-                    setAllowancesChecked((s) => ({ ...s, [a.key]: e.target.checked }))
-                  }
+                  onChange={(e) => {
+                    setAllowancesChecked((s) => ({ ...s, [a.key]: e.target.checked }));
+                    if (!e.target.checked) {
+                      setAllowancesAmount((s) => ({ ...s, [a.key]: "" }));
+                    }
+                  }}
                 />
                 <span className="text-sm">{a.label}</span>
               </label>
               <input
-                type="number"
-                min={0}
+                type="text"
                 className="mt-1 w-full border rounded-lg p-2 text-sm sm:text-base focus:ring-emerald-500/60"
-                value={allowancesAmount[a.key] || ""}
+                value={
+                  allowancesAmount[a.key]
+                    ? formatNumberInput(allowancesAmount[a.key]!.toString())
+                    : ""
+                }
                 disabled={!allowancesChecked[a.key]}
                 onChange={(e) =>
-                  setAllowancesAmount((s) => ({
-                    ...s,
-                    [a.key]: e.target.value ? +e.target.value : "",
-                  }))
+                  setAllowancesAmount((s) => {
+                    const raw = e.target.value.replace(/,/g, "");
+                    return { ...s, [a.key]: raw === "" ? "" : Number(raw) };
+                  })
                 }
               />
             </div>
@@ -348,10 +376,10 @@ export default function Calculator() {
         {result && result.success && (
           <motion.div
             key={`${country}-result`}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.45 }}
             className="mt-6 bg-gradient-to-br from-emerald-50 via-green-50 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 border border-emerald-200 dark:border-green-700 rounded-2xl p-5 shadow-lg"
           >
             <h3 className="font-extrabold text-green-800 text-lg mb-3">Wage Summary</h3>

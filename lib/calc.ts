@@ -7,6 +7,9 @@ export interface Payload {
   daysWorked: number;
   cycleDays: number;
   country: string;
+
+  // 🔥 NEW: allowances with + / - values
+  allowances?: Record<string, number>;
 }
 
 export interface JsonConfig {
@@ -38,10 +41,14 @@ export interface JsonConfig {
  * Core dynamic calculation engine
  */
 export function calc(payload: Payload, cfg: JsonConfig) {
-  const { salary, daysWorked, cycleDays } = payload;
+  const { salary, daysWorked, cycleDays, allowances = {} } = payload;
 
-  // Gross pay (scaled by worked days)
-  const gross = (salary / cycleDays) * daysWorked;
+  // 🔥🔥🔥 NEW: Sum ALL allowances (+ or -)
+  const totalAllowances = Object.values(allowances).reduce((a, b) => a + (b || 0), 0);
+
+  // 🔥 Gross pay (salary + allowances, scaled)
+  const base = salary + totalAllowances;
+  const gross = (base / cycleDays) * daysWorked;
 
   // NSSF (Kenya / Uganda / TZ)
   let nssfEmployee = 0;
@@ -116,7 +123,13 @@ export function calc(payload: Payload, cfg: JsonConfig) {
   const lst = cfg.lst?.bands ? calcLST(gross, cfg.lst.bands) : 0;
 
   // Net Pay (employee)
-  const netPay = gross - (employeeDeductions + shif + housingLevy + payeAfterRelief + lst);
+  const netPay =
+    gross -
+    (employeeDeductions +
+      shif +
+      housingLevy +
+      payeAfterRelief +
+      lst);
 
   // Earned wage and access
   const earnedWage = (netPay / cycleDays) * daysWorked;
@@ -128,6 +141,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     success: true,
     country: payload.country,
     gross,
+    totalAllowances, // 🔥 NEW
     taxableIncome,
     nssfEmployee,
     nssfEmployer,
@@ -185,10 +199,6 @@ function calcLST(gross: number, bands: { upTo: number; tax: number }[]) {
   return bands[bands.length - 1].tax;
 }
 
-/**
- * readCountryConfig: loads the JSON file from /data for a given country
- * returns the parsed JSON plus a minimal meta snapshot for UI use
- */
 export function readCountryConfig(countryCode: string) {
   const fileMap: Record<string, string> = {
     KE: "calcke.json",
@@ -211,13 +221,14 @@ export function readCountryConfig(countryCode: string) {
   const meta = {
     code,
     name: code === "KE" ? "Kenya" : code === "UG" ? "Uganda" : code === "TZ" ? "Tanzania" : "Rwanda",
-    flag: code === "KE" ? "🇰🇪" : code === "UG" ? "🇺🇬" : code === "TZ" ? "🇹🇿" : "🇷🇼",
-    currency: code === "KE" ? "KES" : code === "UG" ? "UGX" : code === "TZ" ? "TZS" : "RWF",
+    flag:
+      code === "KE" ? "🇰🇪" : code === "UG" ? "🇺🇬" : code === "TZ" ? "🇹🇿" : "🇷🇼",
+    currency:
+      code === "KE" ? "KES" : code === "UG" ? "UGX" : code === "TZ" ? "TZS" : "RWF",
     lastUpdated: parsed.meta?.lastUpdated || new Date().toISOString().split("T")[0],
     description: parsed.meta?.description || "",
   };
 
-  // Also expose deduction list for UI convenience
   const deductions = [];
   if (parsed.nssf) deductions.push("NSSF");
   if (parsed.shif) deductions.push("SHIF/NHIF");
@@ -230,6 +241,3 @@ export function readCountryConfig(countryCode: string) {
 
   return { ...parsed, meta, deductions };
 }
-
-// explicit exports
-

@@ -1,22 +1,51 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import { motion } from "framer-motion"; // 👈 animation import
 import Calculator from "./Calc";
 
 export default function CalculatorPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 flex flex-col items-center py-8 sm:py-12 px-4 sm:px-6 transition-colors duration-300">
+    <main className="pt-20 sm:pt-20 lg:pt-0 min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 flex flex-col items-center py-8 sm:py-12 px-4 sm:px-6 transition-colors duration-300">
       
       <div className="max-w-7xl w-full flex flex-col lg:flex-row justify-between items-center lg:items-start gap-8 sm:gap-12">
 
         {/* LEFT SIDE — TEXT + IMAGE */}
         <div className="flex flex-col lg:w-2/3 w-full gap-6 sm:gap-8 lg:gap-10 lg:sticky lg:top-20">
           
-          {/* make this stack image on top on mobile */}
           <div className="flex flex-col sm:flex-col lg:flex-row items-center lg:items-start gap-5 sm:gap-8">
             
-            {/* IMAGE — moves above text on mobile */}
-            <div className="relative order-first lg:order-none flex-shrink-0 w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-[220px] lg:h-[220px] mb-3 sm:mb-4 mt-6 sm:mt-8 lg:mt-0">
+            {/* IMAGE — FINAL ANIMATED FLOAT + SPACING FIX */}
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.85 }}
+              animate={{
+                opacity: 1,
+                y: [0, -6, 0],     // continuous hover loop
+                scale: 1,
+              }}
+              transition={{
+                opacity: { duration: 0.8 },
+                y: {
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+                scale: {
+                  duration: 0.8,
+                  ease: [0.16, 1, 0.3, 1], // bounce
+                },
+              }}
+              className="
+                relative order-first lg:order-none flex-shrink-0
+                w-28 h-28              /* bigger on mobile */
+                sm:w-36 sm:h-36
+                md:w-48 md:h-48
+                lg:w-[220px] lg:h-[220px]
+
+                mt-2 sm:mt-6 lg:mt-0   /* near navbar */
+                mb-1                  /* tight to headline */
+              "
+            >
               <Image
                 src="/calc.png"
                 alt="EaziWage Calculator Illustration"
@@ -24,9 +53,9 @@ export default function CalculatorPage() {
                 className="object-contain rounded-2xl drop-shadow-md"
                 priority
               />
-            </div>
+            </motion.div>
 
-            {/* TEXT — now below image on mobile */}
+            {/* TEXT */}
             <div className="space-y-3 sm:space-y-4 flex-1 text-center lg:text-left">
               <p className="text-green-600 dark:text-green-400 font-semibold uppercase tracking-widest text-xs sm:text-sm">
                 Smart Salary Insights
