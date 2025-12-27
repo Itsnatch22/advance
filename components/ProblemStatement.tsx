@@ -1,17 +1,27 @@
 "use client"
-import { motion } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
 import AutoType from "./AutoType"
+import { useRef } from "react"
 
 export default function ProblemStatement() {
+    const ref = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: ref,
+        offset: ["start end", "end start"]
+    });
+
+    const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
     return(
-        <section className="relative bg-gray-50 dark:bg-neutral-950 py-16 sm:py-20 lg:py-24 overflow-hidden">
+        <section ref={ref} className="relative bg-gray-50 dark:bg-neutral-950 py-16 sm:py-20 lg:py-24 overflow-hidden">
   {/* === Soft Background Glow === */}
   <div className="absolute inset-0 bg-gradient-to-b from-green-600/5 via-transparent to-emerald-500/5 dark:from-emerald-600/10 dark:via-transparent dark:to-green-500/10 blur-2xl"></div>
 
   <div className="max-w-6xl grid lg:grid-cols-2 grid-cols-1 gap-10 sm:gap-16 lg:gap-20 items-center px-4 sm:px-6 mx-auto relative z-10">
     {/* === Image Side === */}
     <motion.div
+      style={{ y }}
       initial={{ opacity: 0, x: -50 }}
       whileInView={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8 }}

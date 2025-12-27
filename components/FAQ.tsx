@@ -1,7 +1,8 @@
 "use client"
 
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
 const faqs = [
     {
@@ -27,24 +28,49 @@ const faqs = [
 ];
 
 export default function FAQ() {
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
+
     return (
         <section className="max-w-7xl mx-auto py-16 px-4 sm:px-6">
             <motion.h2 
             initial={{opacity:0 , y:20}}
             whileInView={{opacity: 1, y: 0}}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
             className="font-serif font-bold text-3xl text-center sm:text-4xl md:text-5xl lg:text-6xl"
             >
                 Our <span className="text-green-600">Frequently</span> Asked Questions
             </motion.h2>
-            <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
-                {faqs.map((faqs,index) => (
-                    <details key={index} className="group p-5">
-                        <summary className="flex dark:text-black cursor-pointer items-center justify-between text-base sm:text-lg font-medium">
-                            {faqs.question}
-                            <ArrowRight className="ml-2 h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-90" />
-                        </summary>
-                        <p className="mt-4 leading-7 text-gray-600 text-base sm:text-lg">{faqs.answer}</p>
-                    </details>
+            <div className="mt-6 border border-gray-200 rounded-2xl bg-white overflow-hidden">
+                {faqs.map((faq, index) => (
+                    <div key={index} className="border-b border-gray-200 last:border-none">
+                        <button
+                            onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                            className="w-full flex items-center justify-between p-5 text-left focus:outline-none group"
+                        >
+                            <span className="text-base sm:text-lg font-medium text-gray-900 group-hover:text-green-700 transition-colors">
+                                {faq.question}
+                            </span>
+                            <ArrowRight 
+                                className={`ml-2 h-5 w-5 shrink-0 text-gray-500 transition-transform duration-300 ${openIndex === index ? "rotate-90 text-green-600" : ""}`} 
+                            />
+                        </button>
+                        <AnimatePresence>
+                            {openIndex === index && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                    className="overflow-hidden"
+                                >
+                                    <p className="px-5 pb-5 leading-7 text-gray-600 text-base sm:text-lg">
+                                        {faq.answer}
+                                    </p>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 ))}
             </div>
         </section>

@@ -1,14 +1,11 @@
+
 'use client'
 
-import { useEffect, useRef, useState } from 'react';
-import { FiLinkedin, FiMail, FiInstagram } from 'react-icons/fi';
-import { FaXTwitter } from "react-icons/fa6";
-import { FaWhatsapp, FaFacebook } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { Facebook, Linkedin, Mail, Twitter, Instagram, Wallet, MapPin, Shield } from 'lucide-react';
 import Link from 'next/link'
-import { BiWallet, BiLocationPlus } from 'react-icons/bi';
 import { motion } from "framer-motion"
 import Locator from './Locator';
-import { Shield } from 'lucide-react';
 
 export default function Footer() {
     const [currentYear, setCurrentYear] = useState<number | null>(null);
@@ -31,9 +28,9 @@ export default function Footer() {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 sm:gap-10 md:gap-12">
       {/* Brand */}
       <div className="space-y-4 sm:col-span-2 md:col-span-1">
-        <Link href="/" className="flex items-center gap-2">
-          <BiWallet className="text-green-400 w-6 h-6" />
-          <span className="text-xl font-bold text-white">EaziWage</span>
+        <Link href="/" className="flex items-center gap-2 group">
+          <Wallet className="text-green-400 w-6 h-6 group-hover:text-green-300 transition-colors" />
+          <span className="text-xl font-bold text-white group-hover:text-green-50 transition-colors">EaziWage</span>
         </Link>
         <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
           Empowering Kenyan workers with instant access to earned wages — reducing
@@ -42,13 +39,14 @@ export default function Footer() {
 
         <div className="flex space-x-4 pt-2">
           {[
-            { icon: FaFacebook, url: "https://www.facebook.com/share/1CwgkthTRT/" },
-            { icon: FiInstagram, url: "https://www.instagram.com/eaziwagelimited/" },
-            { icon: FaXTwitter, url: "https://x.com/eaziwagelimited?t=m-WyH8sFtbLOAiRjVKFVPw&s=08" },
-            { icon: FiLinkedin, url: "https://www.linkedin.com/company/eaziwage/?viewAsMember=true" },
+            { icon: Facebook, url: "https://www.facebook.com/share/1CwgkthTRT/" },
+            { icon: Instagram, url: "https://www.instagram.com/eaziwagelimited/" },
+            { icon: Twitter, url: "https://x.com/eaziwagelimited?t=m-WyH8sFtbLOAiRjVKFVPw&s=08" },
+            { icon: Linkedin, url: "https://www.linkedin.com/company/eaziwage/?viewAsMember=true" },
           ].map((social, index) => (
             <motion.a
-              whileHover={{ scale: 1.2 }}
+              whileHover={{ scale: 1.2, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
               href={social.url}
               key={index}
               target="_blank"
@@ -73,7 +71,7 @@ export default function Footer() {
             <li key={index}>
               <Link
                 href={link.href}
-                className="text-sm text-gray-400 hover:text-green-400 hover:translate-x-1 transition-all"
+                className="text-sm text-gray-400 hover:text-green-400 hover:translate-x-1 transition-all inline-block"
               >
                 {link.name}
               </Link>
@@ -96,7 +94,7 @@ export default function Footer() {
             <li key={index}>
               <Link
                 href={link.href}
-                className="text-sm text-gray-400 hover:text-green-400 hover:translate-x-1 transition-all"
+                className="text-sm text-gray-400 hover:text-green-400 hover:translate-x-1 transition-all inline-block"
               >
                 {link.name}
               </Link>
@@ -122,7 +120,7 @@ export default function Footer() {
               <Link
                 href={link.href}
                 target='_blank'
-                className="text-sm text-gray-400 hover:text-green-400 hover:translate-x-1 transition-all"
+                className="text-sm text-gray-400 hover:text-green-400 hover:translate-x-1 transition-all inline-block"
               >
                 {link.name}
               </Link>
@@ -136,18 +134,17 @@ export default function Footer() {
         <h3 className="text-white font-semibold mb-4">Contact</h3>
         <ul className="space-y-2">
           {[
-            { icon: FiMail, href: "mailto:support@eaziwage.com", text: "support@eaziwage.com" },
-            { icon: FaWhatsapp, href: "https://wa.me/+254723154900", text: "+254 723 154900" },
-            { icon: BiLocationPlus, href: "https://google.com/maps?q=Westlands,+Nairobi", text: "Westlands, Nairobi" },
+            { icon: Mail, href: "mailto:support@eaziwage.com", text: "support@eaziwage.com" },
+            { icon: MapPin, href: "https://google.com/maps?q=Westlands,+Nairobi", text: "Westlands, Nairobi" },
           ].map((contact, index) => (
             <li key={index}>
               <a
                 href={contact.href}
                 target={contact.href.startsWith("http") ? "_blank" : undefined}
                 rel={contact.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="flex items-center gap-2 text-sm text-gray-400 hover:text-green-400 transition"
+                className="flex items-center gap-2 text-sm text-gray-400 hover:text-green-400 transition group"
               >
-                <contact.icon className="w-5 h-5" />
+                <contact.icon className="w-5 h-5 group-hover:text-green-500 transition-colors" />
                 {contact.text}
               </a>
             </li>
@@ -162,7 +159,7 @@ export default function Footer() {
        <Locator/>
        <Link 
        href="/status" 
-       className='flex items-center gap-1 text-xs text-gray-500 md:text-left animate-pulse'>
+       className='flex items-center gap-1 text-xs text-gray-500 md:text-left animate-pulse hover:text-green-400 transition-colors'>
        <Shield className='w-3 h-3 text-green-500 inline'/> Eaziwage Status
       </Link>
     </div>
@@ -176,6 +173,5 @@ export default function Footer() {
     </p>
   </div>
 </footer>
-
     )
 }

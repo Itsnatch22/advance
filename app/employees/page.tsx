@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "framer-motion";
-import { Clock3, Wallet, Smartphone, Users, CheckCircle2, BrainCircuit, ShieldCheck,  ArrowRight, Lightbulb, BarChart3 } from "lucide-react";
+import { Clock3, Wallet, Smartphone, Users, CheckCircle2, BrainCircuit, ShieldCheck,  ArrowRight, Lightbulb, BarChart3, Repeat } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 import UI from "./UI"
 
@@ -29,6 +29,11 @@ const rolloutPlans = [
         title: "Growth",
         desc: "Build savings habits and reduce stress with transparent fees and strong protections.",
     },
+    {
+        icon: Repeat,
+        title: "Repeat",
+        desc: "Continue to earn and withdraw as needed, with no limits or hidden fees.",
+    }
 ];
 
 
@@ -83,89 +88,120 @@ export default function Employees() {
 
             {/* Employers Reasons */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 lg:text-left text-center mt-10 sm:mt-14">
-                <h2 className="font-serif text-gray-800 font-semibold text-3xl sm:text-4xl dark:text-white md:text-5xl lg:text-6xl mb-2 sm:mb-3">
-                Why employees choose Eaziwage
-                </h2>
-                <p className="text-gray-600 text-sm dark:text-white sm:text-base leading-relaxed max-w-prose">
-                A practical well-being lever that pays for itself
-                </p>
-
-                <div className="mt-8 sm:mt-10 lg:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
-                {reasons.map((item, i) => (
-                    <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: -40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: i * 0.1 }}
-                    className="w-full p-4 sm:p-5 lg:p-6 border border-gray-300 shadow-sm rounded-xl sm:rounded-2xl bg-white hover:shadow-md transition"
-                    >
-                    <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-black mb-3 sm:mb-4" />
-                    <h3 className="text-base sm:text-lg lg:text-xl text-gray-900 font-medium">
-                        {item.title}
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-600 mt-2 leading-snug">
-                        {item.desc}
+                <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+                    <h2 className="font-serif text-gray-900 dark:text-white font-bold text-4xl sm:text-5xl lg:text-6xl mb-6 tracking-tight">
+                        Why employees choose Eaziwage
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg sm:text-xl leading-relaxed">
+                        A practical well-being lever that pays for itself.
                     </p>
-                    </motion.div>
-                ))}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+                    {reasons.map((item, i) => (
+                        <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{ duration: 0.5, delay: i * 0.1 }}
+                        className="group relative p-8 rounded-3xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-900/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl" />
+                            <div className="relative">
+                                <div className="w-12 h-12 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                    <item.icon className="w-6 h-6 text-green-700 dark:text-green-400" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                                    {item.title}
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                    {item.desc}
+                                </p>
+                            </div>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
 
             {/* Roll-Out Plans */}
-            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:text-left text-center lg:mt-20">
-                <h2 className="font-serif dark:text-white text-gray-900 font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3">
-                Your Financial Empowerment Journey
-                </h2>
-                <p className="text-gray-600 dark:text-white text-sm sm:text-base leading-relaxed ">
-                Awareness → Empowerment → Growth — a smarter way to handle money you&apos;ve already earned.
-                </p>
+            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 mt-24 sm:mt-32 lg:mt-40">
+                <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+                    <h2 className="font-serif text-gray-900 dark:text-white font-bold text-4xl sm:text-5xl lg:text-6xl mb-6 tracking-tight">
+                        Your Financial Empowerment Journey
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg sm:text-xl leading-relaxed">
+                        Awareness → Empowerment → Growth — a smarter way to handle money you&apos;ve already earned.
+                    </p>
+                </div>
 
-                <div className="mt-8 sm:mt-10 lg:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {rolloutPlans.map((item, j) => (
                     <motion.div
                     key={j}
-                    initial={{ opacity: 0, y: -40 }}
+                    initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: j * 0.1 }}
-                    className="w-full p-4 sm:p-5 lg:p-6 border border-gray-300 shadow-sm hover:shadow-lg rounded-xl sm:rounded-2xl bg-white transition"
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: j * 0.1 }}
+                    className="relative p-6 sm:p-8 rounded-3xl bg-gray-50 dark:bg-white/5 border border-transparent hover:border-green-200 dark:hover:border-green-800 transition-colors duration-300"
                     >
-                    <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-black mb-3 sm:mb-4" />
-                    <h3 className="text-base sm:text-lg lg:text-xl font-medium text-gray-900">
-                        {item.title}
-                    </h3>
-                    <p className="mt-2 text-gray-600 text-sm sm:text-base leading-snug">
-                        {item.desc}
-                    </p>
+                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-white/10 shadow-sm flex items-center justify-center mb-6">
+                            <item.icon className="w-6 h-6 text-gray-900 dark:text-white" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                            {item.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                            {item.desc}
+                        </p>
                     </motion.div>
                 ))}
                 </div>
             </div>
 
             {/* Works Areas */}
-            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16 lg:mt-20 text-center lg:text-left">
-                <h2 className="font-serif dark:text-white font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900">
-                Versatility across jobs & sectors
-                </h2>
-                <p className="text-gray-600 dark:text-white text-sm sm:text-base mt-3 sm:mt-4 mx-auto lg:mx-0">
-                Real Kenyan contexts: retail, banking, hospitality, logistics, schools, factories and more.
-                </p>
+            <div className="w-full max-w-7xl px-2 sm:px-4 lg:px-6 mt-10 sm:mt-20 lg:mt-30">
+                <div className="text-center lg:text-left mb-12">
+                    <h2 className="font-serif font-bold text-4xl sm:text-5xl lg:text-6xl text-gray-900 dark:text-white mb-6 tracking-tight">
+                        Versatility across <span className="text-green-500">jobs & sectors</span>
+                    </h2>
+                    <p className="text-gray-600 dark:text-white text-sm sm:text-base mt-3 sm:mt-4 mx-auto lg:mx-0">
+                        Real Kenyan contexts: retail, banking, hospitality, logistics, schools, factories and more.
+                    </p>
+                </div>
                 <div className="mt-3 sm:mt-5">
                 <AppleCardsCarouselDemo />
                 </div>
             </div>
              
              {/* FAQs */}
-            <div className="mx-auto max-w-7xl py-16 px-4 sm:px-6 w-full lg:px-10 mt-2 sm:mt-3 lg:mt-4">
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 dark:text-white font-semibold">Employer Frequently Asked Questions</h2>
-                <div className="mt-6 divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
-                {faqs.map((faqs,index) => (
-                    <details key={index} className="group p-5">
-                    <summary className="flex dark:text-black cursor-pointer items-center justify-between text-base sm:text-lg font-medium">
-                        {faqs.question}
-                        <ArrowRight className="ml-2 h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-90" />
-                    </summary>
-                    <p className="mt-4 leading-7 text-gray-600 text-base sm:text-lg">{faqs.answer}</p>
-                    </details>
+            <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-center text-gray-900 dark:text-white font-bold mb-12">
+                    Frequently Asked Questions
+                </h2>
+                <div className="space-y-4">
+                {faqs.map((faq, index) => (
+                    <motion.div 
+                        key={index}
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.1 }}
+                        className="group rounded-2xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 overflow-hidden transition-all duration-300 hover:border-green-500/30"
+                    >
+                        <details className="p-6 cursor-pointer">
+                            <summary className="flex items-center justify-between gap-4 font-medium text-lg text-gray-900 dark:text-white list-none">
+                                <span>{faq.question}</span>
+                                <div className="relative w-6 h-6 shrink-0">
+                                    <div className="absolute inset-0 bg-green-100 dark:bg-green-900/30 rounded-full transition-transform group-open:rotate-90" />
+                                    <ArrowRight className="absolute inset-0 m-auto w-4 h-4 text-green-600 dark:text-green-400 transition-transform duration-300 group-open:rotate-90" />
+                                </div>
+                            </summary>
+                            <p className="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed text-base">
+                                {faq.answer}
+                            </p>
+                        </details>
+                    </motion.div>
                 ))}
                 </div>
             </div>

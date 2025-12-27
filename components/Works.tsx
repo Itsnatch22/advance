@@ -1,8 +1,7 @@
 'use client'
 import { motion } from "framer-motion"
-import gsap from "gsap";
-import { useEffect, useRef } from "react";
 import { Calculator, PhoneCall, RefreshCcw, BriefcaseBusiness } from "lucide-react";
+
 const steps = [
     {
         icon: BriefcaseBusiness,
@@ -30,19 +29,25 @@ const steps = [
     },
 ];
 
-export default function Works() {
-    const cardRef = useRef(null);
+const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  }
+  
+  const item = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0 }
+  }
 
-    useEffect(() => {
-        gsap.fromTo(
-            cardRef.current, 
-            {y: -50, opacity: 0},
-            {y: 0, opacity: 1, duration: 1.2, ease: "power2.out"}
-        )
-    })
+export default function Works() {
     return(
         <section className="py-16 sm:py-20 lg:py-24 bg-gray-50 dark:bg-neutral-950 transition-colors duration-500">
-  <div ref={cardRef} className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+  <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
     {/* === Title === */}
     <motion.h2
       initial={{ opacity: 0, y: 20 }}
@@ -65,40 +70,44 @@ export default function Works() {
     </motion.p>
 
     {/* === Steps Grid === */}
-    <div className="mt-12 sm:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
-      {steps.map((item, i) => (
+    <motion.div 
+    variants={container}
+    initial="hidden"
+    whileInView="show"
+    viewport={{ once: true }}
+    className="mt-12 sm:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
+      {steps.map((step, i) => (
         <motion.div
           key={i}
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: i * 0.2 }}
-          viewport={{ once: true }}
-          className="bg-white dark:bg-gray-800 border border-green-100 dark:border-green-900/30 p-6 rounded-2xl shadow hover:shadow-green-500/30 hover:border-green-400 transition transform hover:-translate-y-2"
+          variants={item}
+          whileHover={{ y: -10 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          className="bg-white dark:bg-gray-800 border border-green-100 dark:border-green-900/30 p-6 rounded-2xl shadow hover:shadow-green-500/30 hover:border-green-400 transition-colors"
         >
           <div className="flex flex-col items-center gap-5">
             {/* Icon */}
             <div className="relative">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-600/20 to-emerald-500/20 blur-xl"></div>
-              <item.icon className="w-12 h-12 text-black dark:text-white relative z-10"
+              <step.icon className="w-12 h-12 text-black dark:text-white relative z-10"
               />
             </div>
 
             {/* Step Label */}
             <span className="font-bold text-green-600 dark:text-emerald-400 text-sm tracking-wide uppercase">
-              {item.step}
+              {step.step}
             </span>
 
             {/* Title + Description */}
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white font-serif">
-              {item.title}
+              {step.title}
             </h3>
             <p className="text-gray-600 dark:text-gray-300 text-base text-center leading-relaxed">
-              {item.description}
+              {step.description}
             </p>
           </div>
         </motion.div>
       ))}
-    </div>
+    </motion.div>
   </div>
 </section>
 

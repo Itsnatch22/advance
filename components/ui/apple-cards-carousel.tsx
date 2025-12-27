@@ -1,5 +1,6 @@
 "use client";
 import React, {
+  createContext,
   useEffect,
   useState,
 } from "react";
@@ -9,6 +10,7 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
+import Image from "next/image"
 
 interface CarouselProps {
   items: React.ReactElement[];
@@ -85,7 +87,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
     >
       <div className="relative w-full">
         <div
-          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none] md:py-20"
+          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-4 [scrollbar-width:none] md:py-8"
           ref={carouselRef}
           onScroll={checkScrollability}
         >
@@ -172,8 +174,6 @@ export const Card = ({
     </motion.div>
   );
 };
-
-import Image from "next/image";
 
 export const BlurImage = ({
   src,

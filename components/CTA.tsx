@@ -29,7 +29,10 @@ export default function CTA() {
         <section
         className="py-16 sm:py-20 min-h-screen bg-[url('/cta.jpg')] bg-cover bg-center relative flex items-center"
         >
-            <div className="max-w-4xl mx-auto text-center text-white px-4 sm:px-6 relative">
+            {/* Overlay for better text readability */}
+            <div className="absolute inset-0 bg-black/40 dark:bg-black/60"></div>
+
+            <div className="max-w-4xl mx-auto text-center text-white px-4 sm:px-6 relative z-10">
                 <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0}}
@@ -48,7 +51,7 @@ export default function CTA() {
                 whileInView={{ opacity: 1, y: 0}}
                 transition={{ duration: 0.9, delay: 0.2}}
                 viewport={{ once: true }}
-                className="mt-4 text-base sm:text-lg md:text-xl dark:text-black px-4">
+                className="mt-4 text-base sm:text-lg md:text-xl text-white/90 px-4 font-medium">
                     Join leading companies already using EaziWage to improve employee satisfaction and reduce turnover.
                 </motion.p>
 
@@ -59,8 +62,19 @@ export default function CTA() {
                 viewport={{ once: true }}
                 className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4"
                 >
-                    <Link href="/schedule" className="px-6 py-3 bg-white text-green-700 font-medium rounded-xl hover:bg-green-50 transition text-center">
-                        Schedule a Demo
+                    <Link href="/schedule">
+                        <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        animate={{ boxShadow: ["0 0 0 0 rgba(255, 255, 255, 0.7)", "0 0 0 10px rgba(255, 255, 255, 0)"] }}
+                        transition={{ 
+                            boxShadow: { repeat: Infinity, duration: 1.5 },
+                            scale: { duration: 0.2 }
+                        }}
+                        className="px-6 py-3 bg-white text-green-700 font-medium rounded-xl hover:bg-green-50 transition text-center shadow-lg"
+                        >
+                            Schedule a Demo
+                        </motion.button>
                     </Link>
                 </motion.div>
             </div>

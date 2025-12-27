@@ -27,4 +27,3 @@ export const techPartners = [
   { name: "Twilio", logo: "/partners/twilio.svg", blurb: "Cloud communications platform for building SMS, Voice & Messaging applications.", href: "https://twilio.com/"  },
   { name: "Workpay", logo: "/partners/workpay.svg", blurb: "Simplified payroll solutions for businesses.", href: "https://myworkpay.com/"  },
 ]
-

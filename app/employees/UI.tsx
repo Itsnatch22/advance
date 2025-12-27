@@ -12,7 +12,7 @@ export default function UI() {
           <span className="inline-flex items-center gap-2 rounded-full border dark:bg-black border-gray-200 px-3 py-1 text-xs text-gray-600 bg-white">
             <Sparkles className="h-3.5 w-3.5" /> Made for Employees
           </span>
-          <h1 className="mt-4 text-3xl dark:text-white sm:text-4xl lg:text-5xl font-semibold leading-tight text-gray-900">
+          <h1 className="mt-4 text-3xl dark:text-white sm:text-4xl lg:text-5xl font-semibold font-serif leading-tight text-gray-900">
             Access a portion of what you&apos;ve already earned—
             <span className="block" style={{ color: BRAND }}>instantly, safely, transparently.</span>
           </h1>

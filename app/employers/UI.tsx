@@ -9,11 +9,7 @@ export default function UI() {
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         {/* Left column */}
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border dark:text-white dark:bg-black border-gray-200 px-3 py-1 text-xs text-gray-600 bg-white">
-            <Building2 className="h-3.5 w-3.5" />
-            Made for Employers
-          </span>
-          <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight dark:text-white text-gray-900">
+          <h1 className="mt-4 text-3xl sm:text-4xl font-serif lg:text-5xl font-semibold leading-tight dark:text-white text-gray-900">
             Boost productivity, retention & wellbeing—
             <span className="block" style={{ color: BRAND }}>
               with earned wage access that&apos;s payroll-integrated.
@@ -21,16 +17,16 @@ export default function UI() {
           </h1>
           <p className="mt-4 text-gray-600 dark:text-white max-w-prose">
             Provide staff early access to their already-earned salary—no loans, no interest.
-            Transparent fees (KSh 25 + 5% application), automatic settlement on payday, and strong controls for HR/Finance.
+            Transparent fees, automatic settlement on payday, and strong controls for HR/Finance.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-white font-medium shadow-sm" style={{ backgroundColor: BRAND }}>
+            <Link href="/employer-dashboard" className="inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-white font-medium shadow-sm" style={{ backgroundColor: BRAND }}>
               Get started <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="mt-6 flex items-center gap-4 text-sm dark:text-white text-gray-600">
-            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> CBK-aligned</div>
-            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> ODPC data protection</div>
+            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> Pan-African-Ready</div>
+            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> Data Protection</div>
             <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> No interest charges</div>
           </div>
         </div>
@@ -60,7 +56,7 @@ export default function UI() {
                   <button className="mt-3 w-full rounded-xl py-2.5 text-white font-medium" style={{ backgroundColor: BRAND }}>
                     Configure limits & controls
                   </button>
-                  <p className="mt-2 text-[11px] text-white/70">Flat fee KSh 25 • Application fee 5% • No interest</p>
+                  <p className="mt-2 text-[11px] text-white/70">Flat fee $0.8 • Application fee 5% • No interest</p>
                 </div>
               </div>
             </div>
