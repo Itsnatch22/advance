@@ -1,7 +1,7 @@
 // app/api/upload/route.ts  (simplified; protect this in prod)
 import { NextResponse } from 'next/server';
 
-// @ts-expect-error - req is not used in this example
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const POST = async (_req: Request) => {
   // NOTE: Next.js app router doesn't support multer directly. This is illustrative.

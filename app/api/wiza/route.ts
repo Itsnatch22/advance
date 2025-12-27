@@ -13,74 +13,108 @@ type SearchResult = {
   fallbackEmail?: string | null;
 };
 
-// Helper: load all json files from /data
+// Proper type for your docs
+interface WizaDoc {
+  title?: string;
+  sections?: {
+    heading?: string;
+    content?: string;
+  }[];
+  [key: string]: unknown;
+}
+
+// Load all JSON files from /data
 async function loadDataFiles() {
   const dataDir = path.join(process.cwd(), "data");
+
   try {
     const files = await fs.readdir(dataDir);
     const jsonFiles = files.filter((f) => f.endsWith(".json"));
-    const items: { filename: string; content: unknown }[] = [];
+
+    const items: { filename: string; content: WizaDoc }[] = [];
+
     for (const file of jsonFiles) {
       const raw = await fs.readFile(path.join(dataDir, file), "utf-8");
-      items.push({ filename: file, content: JSON.parse(raw) });
+      items.push({
+        filename: file,
+        content: JSON.parse(raw) as WizaDoc,
+      });
     }
+
     return items;
   } catch {
-    // If no folder exists, return empty
     return [];
   }
 }
 
-// Naive fuzzy search: scores by whether query appears in title / headings / content
-function scoreMatch(query: string, item: unknown) {
+// Score match strength inside the doc
+function scoreMatch(query: string, item: WizaDoc) {
   const q = query.toLowerCase();
   let score = 0;
 
   if (typeof item.title === "string" && item.title.toLowerCase().includes(q)) {
     score += 50;
   }
+
   if (Array.isArray(item.sections)) {
     for (const s of item.sections) {
       if (typeof s.heading === "string" && s.heading.toLowerCase().includes(q))
         score += 20;
+
       if (typeof s.content === "string" && s.content.toLowerCase().includes(q))
         score += 10;
     }
   }
-  // search in any top-level string fields
+
+  // fallback top-level string fields
   for (const k of Object.keys(item)) {
     const v = item[k];
     if (typeof v === "string" && v.toLowerCase().includes(q)) score += 5;
   }
+
   return score;
 }
 
-function buildAnswerFromItem(item: unknown, query: string) {
-  // Prefer exact section matches; otherwise return summary (title + first section)
+// Build answer response
+function buildAnswerFromItem(item: WizaDoc, query: string) {
   const q = query.toLowerCase();
+
   if (Array.isArray(item.sections)) {
-    // find best section
-    let best: unknown = null;
+    let best: { heading?: string; content?: string } | null = null;
     let bestScore = 0;
+
     for (const s of item.sections) {
       let score = 0;
-      if (s.heading && typeof s.heading === "string" && s.heading.toLowerCase().includes(q)) score += 30;
-      if (s.content && typeof s.content === "string" && s.content.toLowerCase().includes(q)) score += 20;
+
+      if (typeof s.heading === "string" && s.heading.toLowerCase().includes(q))
+        score += 30;
+
+      if (typeof s.content === "string" && s.content.toLowerCase().includes(q))
+        score += 20;
+
       if (score > bestScore) {
         best = s;
         bestScore = score;
       }
     }
+
     if (best && bestScore > 0) {
       return `${best.heading}\n\n${best.content}`;
     }
   }
 
-  // fallback: return title + first section content
-  const first = Array.isArray(item.sections) && item.sections[0];
-  return `${item.title}${first ? ` — ${first.heading}\n\n${first.content}` : ""}`;
+  // fallback: title + first section
+  const first =
+    Array.isArray(item.sections) && item.sections.length > 0
+      ? item.sections[0]
+      : null;
+
+  return `${item.title ?? ""}${
+    first ? ` — ${first.heading}\n\n${first.content}` : ""
+  }`;
 }
 
+// POST handler
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as ApiRequestBody;
@@ -98,9 +132,10 @@ export async function POST(request: Request) {
 
     const items = await loadDataFiles();
 
-    // score all items, pick the best match
-    let bestItem: unknown = null;
+    // Score all docs
+    let bestItem: { filename: string; content: WizaDoc } | null = null;
     let bestScore = 0;
+
     for (const it of items) {
       const s = scoreMatch(q, it.content);
       if (s > bestScore) {
@@ -109,9 +144,10 @@ export async function POST(request: Request) {
       }
     }
 
-    // threshold to decide "found"
+    // If match strong enough
     if (bestItem && bestScore >= 10) {
       const answer = buildAnswerFromItem(bestItem.content, q);
+
       return NextResponse.json({
         found: true,
         answer,
@@ -119,7 +155,7 @@ export async function POST(request: Request) {
       } as SearchResult);
     }
 
-    // Not found: return fallback message + fallbackEmail (to auto-generate a support email)
+    // Fallback: not found
     return NextResponse.json({
       found: false,
       answer:
@@ -128,8 +164,12 @@ export async function POST(request: Request) {
     } as SearchResult);
   } catch (err) {
     console.error("Wiza route error:", err);
+
     return NextResponse.json(
-      { found: false, answer: "Server error — try again later." },
+      {
+        found: false,
+        answer: "Server error — try again later.",
+      },
       { status: 500 }
     );
   }
