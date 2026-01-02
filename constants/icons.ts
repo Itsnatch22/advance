@@ -1,0 +1,33 @@
+import {
+  Users,
+  Wallet,
+  ShieldCheck,
+  TrendingUp,
+  LayoutDashboard,
+  CreditCard,
+  History,
+  Calendar,
+  Settings,
+  LogOut,
+  ChevronRight,
+  ArrowUpRight,
+  CheckCircle2,
+  Clock,
+} from 'lucide-react';
+
+export const Icons = {
+  Users,
+  Wallet,
+  ShieldCheck,
+  TrendingUp,
+  LayoutDashboard,
+  CreditCard,
+  History,
+  Calendar,
+  Settings,
+  LogOut,
+  ChevronRight,
+  ArrowUpRight,
+  CheckCircle2,
+  Clock,
+} as const;

@@ -10,12 +10,9 @@ import Locator from './Locator';
 export default function Footer() {
     const [currentYear, setCurrentYear] = useState<number | null>(null);
 
-    useEffect(() => {
-        // Avoid using Date at render time in a Client Component
-        if (currentYear === null) {
-            setCurrentYear(new Date().getFullYear());
-        }
-    })
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
     return(
         <footer
   className="relative overflow-hidden bg-gradient-to-b from-gray-950 via-black to-green-950 text-gray-300 border-t border-gray-800"

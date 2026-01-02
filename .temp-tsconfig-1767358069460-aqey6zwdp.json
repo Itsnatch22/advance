@@ -1,0 +1,58 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": false,
+    "forceConsistentCasingInFileNames": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "constants\\data.ts",
+    "constants\\colors.ts",
+    "constants\\icons.ts",
+    "types\\dashboard.ts",
+    "constants\\mockData.ts",
+    "constants\\index.ts",
+    "components\\Footer.tsx",
+    "app\\layout.tsx",
+    "components\\shared\\ComplianceStrip.tsx",
+    "components\\shared\\FeatureCard.tsx",
+    "components\\shared\\FAQItem.tsx",
+    "app\\employees\\page.tsx",
+    "app\\employees\\UI.tsx",
+    "app\\employers\\UI.tsx",
+    "app\\employers\\page.tsx",
+    "app\\(dashboards)\\employee-dashboard\\page.tsx",
+    "app\\(dashboards)\\employer-dashboard\\page.tsx",
+    "app\\page.tsx",
+    "lib\\hooks\\useDebounce.ts",
+    "c:\\Users\\Admin\\OneDrive\\Desktop\\JS\\advance\\**\\*.d.ts"
+  ]
+}

@@ -1,8 +1,7 @@
 "use client";
-import { Building2, ArrowRight, BarChart, ShieldCheck, BellRing, FileCheck2 } from "lucide-react";
-import Link from "next/link"
+import { BarChart, ShieldCheck, BellRing, FileCheck2, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
-const BRAND = "#15803D";
 export default function UI() {
     return(
         <section className="py-16 lg:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -11,7 +10,7 @@ export default function UI() {
         <div>
           <h1 className="mt-4 text-3xl sm:text-4xl font-serif lg:text-5xl font-semibold leading-tight dark:text-white text-gray-900">
             Boost productivity, retention & wellbeing—
-            <span className="block" style={{ color: BRAND }}>
+            <span className="block text-green-700">
               with earned wage access that&apos;s payroll-integrated.
             </span>
           </h1>
@@ -20,14 +19,14 @@ export default function UI() {
             Transparent fees, automatic settlement on payday, and strong controls for HR/Finance.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Link href="/employer-dashboard" className="inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-white font-medium shadow-sm" style={{ backgroundColor: BRAND }}>
+            <Link href="/employer-dashboard" className="inline-flex items-center gap-2 rounded-2xl px-5 py-3 bg-green-700 hover:bg-green-800 text-white font-medium shadow-sm transition-colors">
               Get started <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="mt-6 flex items-center gap-4 text-sm dark:text-white text-gray-600">
-            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> Pan-African-Ready</div>
-            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> Data Protection</div>
-            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4" style={{ color: BRAND }} /> No interest charges</div>
+            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4 text-green-700" /> Pan-African-Ready</div>
+            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4 text-green-700" /> Data Protection</div>
+            <div className="flex items-center gap-1"><ShieldCheck className="h-4 w-4 text-green-700" /> No interest charges</div>
           </div>
         </div>
 
@@ -53,7 +52,7 @@ export default function UI() {
                     </div>
                     <BarChart className="h-6 w-6 text-white/80" />
                   </div>
-                  <button className="mt-3 w-full rounded-xl py-2.5 text-white font-medium" style={{ backgroundColor: BRAND }}>
+                  <button className="mt-3 w-full rounded-xl py-2.5 bg-green-700 hover:bg-green-800 text-white font-medium transition-colors">
                     Configure limits & controls
                   </button>
                   <p className="mt-2 text-[11px] text-white/70">Flat fee $0.8 • Application fee 5% • No interest</p>
@@ -66,7 +65,7 @@ export default function UI() {
           <div className="absolute -right-6 -bottom-6 hidden sm:block">
             <div className="rounded-2xl bg-white shadow-lg border border-gray-100 p-4 w-56">
               <div className="flex items-center gap-3">
-                <BellRing className="h-5 w-5" style={{ color: BRAND }} />
+                <BellRing className="h-5 w-5 text-green-700" />
                 <div>
                   <p className="text-sm font-medium text-gray-900">New request policy</p>
                   <p className="text-xs text-gray-600">Limit updated: 40% of earned wages</p>
@@ -79,7 +78,7 @@ export default function UI() {
           <div className="absolute left-6 bottom-6 hidden sm:block">
             <div className="rounded-2xl bg-white shadow-lg border border-gray-100 p-4 w-56">
               <div className="flex items-center gap-3">
-                <FileCheck2 className="h-5 w-5" style={{ color: BRAND }} />
+                <FileCheck2 className="h-5 w-5 text-green-700" />
                 <div>
                   <p className="text-sm font-medium text-gray-900">Payroll synced</p>
                   <p className="text-xs text-gray-600">Auto-deductions ready for payday</p>

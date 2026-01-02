@@ -1,12 +1,25 @@
-
-"use client"
+"use client";
 import { motion } from "framer-motion";
-import { User, Wallet, Cog, LineChart, Lock, BadgeCheck, Clipboard, CircuitBoard, BrainCircuit, ShieldCheck, ArrowRight } from "lucide-react";
+import { 
+  User, 
+  Wallet, 
+  Cog, 
+  LineChart, 
+  Lock, 
+  BadgeCheck, 
+  Clipboard, 
+  CircuitBoard, 
+  BrainCircuit 
+} from "lucide-react";
+import Link from "next/link";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
+import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
+import { FeatureCard } from "@/components/shared/FeatureCard";
+import { FAQItem } from "@/components/shared/FAQItem";
 import UI from "./UI";
 import ROI from "@/components/ROI";
 import Integrations from "@/components/Integrations";
-import Link from "next/link"
+import { BRAND_COLORS } from "@/constants/colors";
 
 const reasons = [
     {
@@ -84,34 +97,22 @@ const faqs = [
     },
 ];
 
-const BRAND = "#15803D";
+
+const complianceItems = [
+  { text: "Regulated partners • Regulatory compliant" },
+  { text: "Data protection assured" },
+  { text: "Transparent pricing (Flat fee + 5%)" },
+  { text: "Auto-settlement via payroll" },
+];
+
 export default function Employers() {
     return(
         <section className="min-h-screen w-full mx-auto relative py-16 sm:py-24 lg:py-32 flex flex-col items-center overflow-hidden">
             <UI/>
-            {/* Compliance Strip */}
-            <div className="w-full bg-gray-50/50 dark:bg-white/5 border-y border-gray-100 dark:border-white/10 py-6 sm:py-8 mb-16 sm:mb-24 backdrop-blur-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 sm:gap-x-12 text-sm font-medium text-gray-600 dark:text-gray-300 text-center">
-                        <div className="flex items-center gap-2.5">
-                            <ShieldCheck className="w-5 h-5 text-green-600 dark:text-green-500 shrink-0" />
-                            <span>Regulated partners • Regulatory compliant</span>
-                        </div>
-                        <div className="flex items-center gap-2.5">
-                            <ShieldCheck className="w-5 h-5 text-green-600 dark:text-green-500 shrink-0" />
-                            <span>Data protection assured</span>
-                        </div>
-                        <div className="flex items-center gap-2.5">
-                            <ShieldCheck className="w-5 h-5 text-green-600 dark:text-green-500 shrink-0" />
-                            <span>Transparent pricing (Flat fee + 5%)</span>
-                        </div>
-                        <div className="flex items-center gap-2.5">
-                            <ShieldCheck className="w-5 h-5 text-green-600 dark:text-green-500 shrink-0" />
-                            <span>Auto-settlement via payroll</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ComplianceStrip 
+              items={complianceItems} 
+              className="border-y border-gray-100 dark:border-white/10 py-6 sm:py-8 mb-16 sm:mb-24 backdrop-blur-sm" 
+            />
 
             {/* Employers Reasons */}
             <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -125,29 +126,15 @@ export default function Employers() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-                {reasons.map((item, i) => (
-                    <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                    className="group relative p-8 rounded-3xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-900/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl" />
-                        <div className="relative">
-                            <div className="w-12 h-12 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <item.icon className="w-6 h-6 text-green-700 dark:text-green-400" />
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                                {item.title}
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                {item.desc}
-                            </p>
-                        </div>
-                    </motion.div>
-                ))}
+                  {reasons.map((item, i) => (
+                    <FeatureCard
+                      key={i}
+                      icon={item.icon}
+                      title={item.title}
+                      description={item.desc}
+                      index={i}
+                    />
+                  ))}
                 </div>
             </div>
             
@@ -215,29 +202,14 @@ export default function Employers() {
                     Frequently Asked Questions
                 </h2>
                 <div className="space-y-4">
-                {faqs.map((faq, index) => (
-                    <motion.div 
-                        key={index}
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1 }}
-                        className="group rounded-2xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 overflow-hidden transition-all duration-300 hover:border-green-500/30"
-                    >
-                        <details className="p-6 cursor-pointer">
-                            <summary className="flex items-center justify-between gap-4 font-medium text-lg text-gray-900 dark:text-white list-none">
-                                <span>{faq.question}</span>
-                                <div className="relative w-6 h-6 shrink-0">
-                                    <div className="absolute inset-0 bg-green-100 dark:bg-green-900/30 rounded-full transition-transform group-open:rotate-90" />
-                                    <ArrowRight className="absolute inset-0 m-auto w-4 h-4 text-green-600 dark:text-green-400 transition-transform duration-300 group-open:rotate-90" />
-                                </div>
-                            </summary>
-                            <p className="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed text-base">
-                                {faq.answer}
-                            </p>
-                        </details>
-                    </motion.div>
-                ))}
+                  {faqs.map((faq, index) => (
+                    <FAQItem
+                      key={index}
+                      question={faq.question}
+                      answer={faq.answer}
+                      index={index}
+                    />
+                  ))}
                 </div>
             </div>
 
@@ -253,8 +225,7 @@ export default function Employers() {
                     </div>
                     <Link 
                         href="#roi" 
-                        className="shrink-0 rounded-xl px-6 py-2.5 text-white font-medium shadow-lg shadow-green-900/20 hover:shadow-green-900/30 hover:scale-105 transition-all duration-300" 
-                        style={{ backgroundColor: BRAND }}
+                       className="shrink-0 rounded-xl px-6 py-2.5 bg-green-700 hover:bg-green-800 text-white font-medium shadow-lg shadow-green-900/20 hover:shadow-green-900/30 hover:scale-105 transition-all duration-300"
                     >
                         Get ROI
                     </Link>
