@@ -52,7 +52,7 @@ export default function PartnersPage() {
           <div key={index} className="flex-shrink-0">
             <div className="p-[2px] bg-gradient-to-br from-green-500 via-emerald-400 to-green-600 rounded-full">
               <Image
-                src={partner.logo ?? partner.href ?? "Partner logo"}
+                src={partner.logo ?? "Partner logo"}
                 alt={partner.name}
                 width={160}
                 height={80}
