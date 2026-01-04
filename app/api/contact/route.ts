@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { ContactNotification } from "@/components/emails/ContactNotification";
 import { contactSchema } from "@/lib/validations/contact";
-import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
+import { getSupabaseAdmin } from "@/lib/server/supabaseAdmin";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = new Resend(resendApiKey);
@@ -33,9 +33,9 @@ export async function POST(request: NextRequest) {
     const { name, email, message, subject } = parsed.data;
 
     // Store contact message in Supabase (server admin client)
-    const { error } = await supabaseAdmin
+    const { error } = await getSupabaseAdmin()
       .from("contacts")
-      .insert([{ name, email, subject, message }]);
+      .insert([{ name, email, subject, message }] as any);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
