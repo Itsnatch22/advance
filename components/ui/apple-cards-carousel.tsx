@@ -179,6 +179,8 @@ export const BlurImage = ({
   src,
   className,
   alt,
+  width,
+  height,
   ...rest
 }: { src: string; className?: string; alt?: string } & React.ImgHTMLAttributes<HTMLImageElement>) => {
   const [isLoading, setLoading] = useState(true);
@@ -195,7 +197,7 @@ export const BlurImage = ({
       decoding="async"
       alt={alt ? alt : "Background image"}
       fill
-      {...rest}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
     />
   );
 };

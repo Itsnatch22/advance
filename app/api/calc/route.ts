@@ -24,7 +24,7 @@ async function readCountryConfig(country: string): Promise<JsonConfig> {
     const raw = await fs.readFile(filePath, "utf8");
     const parsed = JSON.parse(raw) as JsonConfig;
     return parsed;
-  } catch (err) {
+  } catch (err: unknown) {
     console.error(`❌ Failed reading config for ${country}:`, err);
     throw new Error(`Missing or unreadable config: ${fileName}`);
   }
@@ -55,8 +55,8 @@ export async function POST(req: Request) {
     };
 
     return NextResponse.json(response);
-
-  } catch (err: any) {   // 👈 FIXED HERE
+  } catch (err: any) {
+    // 👈 FIXED HERE
     console.error("❌ /api/calc failed:", err);
 
     return NextResponse.json(

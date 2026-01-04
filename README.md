@@ -1,169 +1,122 @@
 # EaziWage - Earned Wage Access Platform
 
-![Next.js](https://img.shields.io/badge/Next.js-16.0-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
-![License](https://img.shields.io/badge/license-ISC-green)
+A Next.js 16 application providing earned wage access for employees across Africa.
 
-A comprehensive platform enabling employees across Africa to access their earned wages before payday, reducing financial stress and improving financial wellness.
+## 🚀 Tech Stack
 
-## 🚀 Features
-
-- **Wage Advance Calculator** - Calculate available advance amounts for multiple African countries (Kenya, Uganda, Tanzania, Rwanda)
-- **Multi-tenant Support** - Separate portals for employees, employers, and partners
-- **AI-Powered Assistance** - Integrated Cohere AI for smart financial guidance
-- **Real-time Analytics** - Dashboard with insights and statistics
-- **Authentication** - Secure auth with NextAuth v5
-- **Rate Limiting** - Upstash Redis-based protection
-- **Responsive Design** - Mobile-first UI with dark mode support
-- **Email Integration** - Automated notifications via Resend
-
-## 📋 Prerequisites
-
-- Node.js 18.x or higher
-- npm/yarn/pnpm/bun
-- PostgreSQL database (or Supabase)
-- Redis instance (Upstash)
-
-## 🛠️ Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Itsnatch22/advance.git
-   cd advance
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env.local
-   ```
-   
-   Fill in your environment variables:
-   - Database credentials
-   - Authentication secrets
-   - API keys (Cohere, OpenAI, Resend)
-   - Upstash Redis credentials
-
-4. **Generate Prisma client** (if using Prisma)
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
-
-5. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-   Open [http://localhost:3000](http://localhost:3000)
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4
+- **UI Components:** shadcn/ui + Radix UI
+- **Animations:** Framer Motion + GSAP
+- **Icons:** Lucide React + Tabler Icons
+- **Charts:** Recharts
+- **Authentication:** NextAuth v5
+- **Database:** Supabase
+- **Deployment:** Vercel
 
 ## 📁 Project Structure
 
 ```
-advance/
-├── app/                    # Next.js app directory
-│   ├── (auth)/            # Authentication routes
-│   ├── api/               # API routes
-│   ├── calculator/        # Wage calculator
-│   ├── employers/         # Employer portal
+├── app/                          # Next.js App Router pages
+│   ├── (dashboards)/            # Dashboard routes
+│   ├── employees/               # Employee pages
+│   ├── employers/               # Employer pages
 │   └── ...
-├── components/            # Reusable React components
-├── lib/                   # Utility functions
-├── hooks/                 # Custom React hooks
-├── constants/             # App constants
-├── data/                  # Static data files
-├── public/                # Static assets
-└── scripts/               # Build/utility scripts
+├── components/                   # React components
+│   ├── shared/                  # Reusable shared components
+│   ├── ui/                      # shadcn UI components
+│   └── ...
+├── constants/                    # Application constants
+│   ├── data.ts                  # Partner data
+│   ├── colors.ts                # Brand colors
+│   ├── icons.ts                 # Icon exports
+│   └── mockData.ts              # Mock data
+├── lib/                         # Utility functions
+│   └── hooks/                   # Custom React hooks
+├── types/                       # TypeScript type definitions
+└── public/                      # Static assets
 ```
 
-## 🔧 Available Scripts
+## 🛠️ Getting Started
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint errors
-- `npm run format` - Format code with Prettier
-- `npm run type-check` - Run TypeScript type checking
-- `npm run gen:json` - Generate JSON from Excel files
+### Prerequisites
 
-## 🌍 Supported Countries
+- Node.js 20+
+- npm or pnpm
 
-- 🇰🇪 Kenya (KE)
-- 🇺🇬 Uganda (UG)
-- 🇹🇿 Tanzania (TZ)
-- 🇷🇼 Rwanda (RW)
+### Installation
 
-## 🔐 Authentication
-
-Uses NextAuth v5 with support for:
-- Credentials provider
-- Email/password authentication
-- Role-based access control (Employee, Employer, Admin)
-
-## 📊 Tech Stack
-
-### Frontend
-- **Framework**: Next.js 16 (App Router)
-- **UI Library**: React 19
-- **Styling**: Tailwind CSS v4
-- **Components**: Radix UI, shadcn/ui
-- **Animations**: Framer Motion, GSAP
-- **Charts**: Recharts
-- **Icons**: Tabler Icons, Lucide, React Icons
-
-### Backend
-- **Database**: Supabase/PostgreSQL
-- **ORM**: Prisma
-- **Authentication**: NextAuth v5
-- **Rate Limiting**: Upstash Redis
-- **Email**: Resend + React Email
-
-### AI & Analytics
-- **AI**: Cohere AI, OpenAI
-- **Analytics**: Vercel Analytics
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
 ```bash
-vercel deploy
+# Clone the repository
+git clone https://github.com/Itsnatch22/advance.git
+
+# Navigate to project directory
+cd advance
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
 ```
 
-### Environment Variables
-Ensure all required environment variables are set in your deployment platform:
-- `DATABASE_URL`
-- `NEXTAUTH_SECRET`
-- `COHERE_API_KEY`
-- And others from `.env.example`
+Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+## 📝 Available Scripts
+
+```bash
+npm run dev          # Start development server with Turbopack
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run lint:fix     # Fix ESLint errors
+npm run format       # Format code with Prettier
+npm run type-check   # Run TypeScript type checking
+```
+
+## 🎨 Code Quality
+
+- **TypeScript:** Strict type checking enabled
+- **ESLint:** Custom configuration with Next.js rules
+- **Prettier:** Consistent code formatting
+- **Husky:** Pre-commit hooks for quality checks
+
+## 🔧 Configuration Files
+
+- `next.config.ts` - Next.js configuration
+- `tailwind.config.ts` - Tailwind CSS v4 configuration
+- `tsconfig.json` - TypeScript configuration
+- `eslintrc.json` - ESLint rules
+- `components.json` - shadcn configuration
+
+## 📦 Key Features
+
+- 🌍 Pan-African coverage (Kenya, Tanzania, Uganda, Rwanda)
+- 💰 Instant wage access for employees
+- 📊 Real-time analytics dashboards
+- 🔐 Secure authentication with NextAuth
+- 🎨 Dark mode support
+- 📱 Fully responsive design
+- ♿ Accessibility focused
+
+## 🚦 Recent Refactoring
+
+See [REFACTORING_SUMMARY.md](./REFACTORING_SUMMARY.md) for details on recent code improvements.
+
+## 📄 License
+
+ISC
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Contributions are welcome! Please read our contributing guidelines before submitting PRs.
 
-## 📝 License
+## 📞 Contact
 
-This project is licensed under the ISC License.
-
-## 👥 Authors
-
-- GitHub: [@Itsnatch22](https://github.com/Itsnatch22)
-
-## 🙏 Acknowledgments
-
-- Built with [Next.js](https://nextjs.org)
-- UI components from [shadcn/ui](https://ui.shadcn.com)
-- Powered by [Vercel](https://vercel.com)
+- Email: support@eaziwage.com
+- Location: Westlands, Nairobi
 
 ---
 
-**Note**: Excel files (*.xlsx) in the root directory contain country-specific calculator data. Use `npm run gen:json` to convert them to JSON format.
-
+Built with ❤️ by the EaziWage Team
