@@ -23,49 +23,49 @@ export default function ContactPage() {
   });
 
   const onSubmit = async (data: ContactFormData) => {
-    setIsSubmitting(true);
-    const toastId = toast.loading("Sending your message...");
+  setIsSubmitting(true);
+  const toastId = toast.loading("Sending your message...");
 
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+  try {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.success) {
+      toast.success("Message sent successfully! We'll contact you soon.", {
+        id: toastId,
+        duration: 5000,
       });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        toast.success("Message sent successfully! We'll contact you soon.", {
-          id: toastId,
-          duration: 5000,
-        });
-        reset();
-      } else {
-        // Handle validation errors
-        if (result.errors) {
-          result.errors.forEach((error: any) => {
-            toast.error(`${error.field}: ${error.message}`, {
-              id: toastId,
-            });
-          });
-        } else {
-          toast.error(result.message || "Failed to send message", {
+      reset();
+    } else {
+      // Handle validation errors
+      if (result.issues) {
+        result.issues.forEach((error: any) => {
+          toast.error(`${error.path}: ${error.message}`, {
             id: toastId,
           });
-        }
+        });
+      } else {
+        toast.error(result.message || "Failed to send message", {
+          id: toastId,
+        });
       }
-    } catch (error) {
-      toast.error("Network error. Please try again.", {
-        id: toastId,
-      });
-      console.error("Submission error:", error);
-    } finally {
-      setIsSubmitting(false);
     }
-  };
+  } catch (error) {
+    toast.error("Network error. Please try again.", {
+      id: toastId,
+    });
+    console.error("Submission error:", error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="relative flex min-h-screen flex-col bg-gray-50 dark:bg-black">

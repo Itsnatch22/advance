@@ -5,7 +5,7 @@ import { contactSchema } from "@/lib/validations/contact";
 import { getSupabaseAdmin } from "@/lib/server/supabaseAdmin";
 
 const resendApiKey = process.env.RESEND_API_KEY;
-const resend = new Resend(resendApiKey);
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!resendApiKey) {
+    if (!resendApiKey || !resend) {
       return NextResponse.json(
         { error: "Email service not configured" },
         { status: 503 }
