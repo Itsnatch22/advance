@@ -3,11 +3,16 @@
 import { useEffect, useRef } from "react";
 import Typed from "typed.js";
 
-export default function AutoType({ text, className }: { text: string; className?: string }) {
+export default function AutoType({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
   const el = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
-
     const typed = new Typed(el.current, {
       strings: [text],
       typeSpeed: 30,

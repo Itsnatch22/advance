@@ -5,6 +5,7 @@ Follow these steps to complete the project improvements:
 ## 1. Create Missing Directories
 
 Open Command Prompt and run:
+
 ```cmd
 cd C:\Users\Admin\OneDrive\Desktop\JS\advance
 md .vscode
@@ -21,6 +22,7 @@ npm install -D prettier prettier-plugin-tailwindcss husky lint-staged @types/nod
 ## 3. Create VSCode Settings
 
 Create `.vscode\settings.json`:
+
 ```json
 {
   "editor.formatOnSave": true,
@@ -35,6 +37,7 @@ Create `.vscode\settings.json`:
 ```
 
 Create `.vscode\extensions.json`:
+
 ```json
 {
   "recommendations": [
@@ -49,6 +52,7 @@ Create `.vscode\extensions.json`:
 ## 4. Create TypeScript Types
 
 Create `types\index.ts`:
+
 ```typescript
 export interface User {
   id: string;
@@ -73,6 +77,7 @@ npx husky install
 ```
 
 Create `.husky\pre-commit`:
+
 ```bash
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
@@ -103,6 +108,7 @@ Then update your scripts to reference the new location.
 ## Done! 🎉
 
 Your project now has:
+
 - ✅ Prettier for code formatting
 - ✅ Husky for git hooks
 - ✅ Stricter TypeScript

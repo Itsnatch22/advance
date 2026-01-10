@@ -77,8 +77,12 @@ export default function Calculator() {
   const [daysWorked, setDaysWorked] = useState<number>(0); // auto-set later
   const [result, setResult] = useState<CalcResult | null>(null);
 
-  const [allowancesChecked, setAllowancesChecked] = useState<Record<string, boolean>>({});
-  const [allowancesAmount, setAllowancesAmount] = useState<Record<string, number | "">>({});
+  const [allowancesChecked, setAllowancesChecked] = useState<
+    Record<string, boolean>
+  >({});
+  const [allowancesAmount, setAllowancesAmount] = useState<
+    Record<string, number | "">
+  >({});
 
   const [asOfDate, setAsOfDate] = useState<string>("");
 
@@ -113,7 +117,7 @@ export default function Calculator() {
   }, [salary]);
 
   useEffect(() => {
-    if (Object.values(allowancesAmount).every(v => v === "")) {
+    if (Object.values(allowancesAmount).every((v) => v === "")) {
       setResult(null);
     }
   }, [allowancesAmount]);
@@ -125,12 +129,15 @@ export default function Calculator() {
   );
 
   const buildPayload = () => {
-    const allowances = countryAllowances[country].reduce((acc, item) => {
-      acc[item.key] = allowancesChecked[item.key]
-        ? Number(allowancesAmount[item.key] || 0)
-        : 0;
-      return acc;
-    }, {} as Record<string, number>);
+    const allowances = countryAllowances[country].reduce(
+      (acc, item) => {
+        acc[item.key] = allowancesChecked[item.key]
+          ? Number(allowancesAmount[item.key] || 0)
+          : 0;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return {
       salary: Number(salary || 0),
@@ -256,13 +263,13 @@ export default function Calculator() {
   const locale = currency.locale;
 
   return (
-    <div className="bg-white dark:bg-gray-900 w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl shadow-2xl p-6 border border-green-100 dark:border-green-800 mx-auto mt-6">
-      <h2 className="text-3xl font-extrabold mb-5 text-center text-gray-900 dark:text-gray-100">
+    <div className="mx-auto mt-6 w-full max-w-sm rounded-2xl border border-green-100 bg-white p-6 shadow-2xl sm:max-w-md md:max-w-lg dark:border-green-800 dark:bg-gray-900">
+      <h2 className="mb-5 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
         Wage Access Calculator
       </h2>
 
       {/* 🌍 Country Selector */}
-      <div className="flex justify-center items-center gap-4 mb-6">
+      <div className="mb-6 flex items-center justify-center gap-4">
         {[
           { code: "KE", flag: "/flag/KE.png" },
           { code: "UG", flag: "/flag/UG.png" },
@@ -272,13 +279,19 @@ export default function Calculator() {
           <button
             key={f.code}
             onClick={() => handleCountryChange(f.code as Country)}
-            className={`w-11 h-11 rounded-full overflow-hidden border-2 transition-all duration-300 ${
+            className={`h-11 w-11 overflow-hidden rounded-full border-2 transition-all duration-300 ${
               country === f.code
-                ? "border-emerald-600 scale-110 shadow-md"
+                ? "scale-110 border-emerald-600 shadow-md"
                 : "border-gray-300 opacity-70 hover:opacity-100"
             }`}
           >
-            <Image src={f.flag} alt={f.code} width={44} height={44} className="object-cover" />
+            <Image
+              src={f.flag}
+              alt={f.code}
+              width={44}
+              height={44}
+              className="object-cover"
+            />
           </button>
         ))}
       </div>
@@ -290,7 +303,7 @@ export default function Calculator() {
       <input
         type="text"
         placeholder="e.g. 60,000"
-        className="mt-1 w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg p-2 text-sm sm:text-base focus:ring-emerald-500/60"
+        className="mt-1 w-full rounded-lg border border-gray-300 bg-white p-2 text-sm text-gray-900 focus:ring-emerald-500/60 sm:text-base dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
         value={salary ? formatNumberInput(salary.toString()) : ""}
         onChange={(e) => {
           const raw = e.target.value.replace(/,/g, "");
@@ -308,15 +321,21 @@ export default function Calculator() {
           transition={{ duration: 0.4 }}
           className="mt-5"
         >
-          <p className="text-sm font-semibold mb-2">Other Contributions</p>
+          <p className="mb-2 text-sm font-semibold">Other Contributions</p>
           {countryAllowances[country].map((a) => (
-            <div key={a.key} className="flex flex-wrap items-center gap-3 mb-1 transition-all duration-300">
+            <div
+              key={a.key}
+              className="mb-1 flex flex-wrap items-center gap-3 transition-all duration-300"
+            >
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={!!allowancesChecked[a.key]}
                   onChange={(e) => {
-                    setAllowancesChecked((s) => ({ ...s, [a.key]: e.target.checked }));
+                    setAllowancesChecked((s) => ({
+                      ...s,
+                      [a.key]: e.target.checked,
+                    }));
                     if (!e.target.checked) {
                       setAllowancesAmount((s) => ({ ...s, [a.key]: "" }));
                     }
@@ -326,7 +345,7 @@ export default function Calculator() {
               </label>
               <input
                 type="text"
-                className="mt-1 w-full border rounded-lg p-2 text-sm sm:text-base focus:ring-emerald-500/60"
+                className="mt-1 w-full rounded-lg border p-2 text-sm focus:ring-emerald-500/60 sm:text-base"
                 value={
                   allowancesAmount[a.key]
                     ? formatNumberInput(allowancesAmount[a.key]!.toString())
@@ -354,10 +373,12 @@ export default function Calculator() {
           max={maxDays}
           value={daysWorked}
           onChange={(e) => setDaysWorked(Number(e.target.value))}
-          className="w-full mt-2 accent-emerald-600"
+          className="mt-2 w-full accent-emerald-600"
         />
-        <div className="flex justify-between text-[11px] sm:text-xs text-gray-500 mt-1">
-          <span>{daysWorked} / {maxDays} days</span>
+        <div className="mt-1 flex justify-between text-[11px] text-gray-500 sm:text-xs">
+          <span>
+            {daysWorked} / {maxDays} days
+          </span>
           <span>{percentOfCycle}% of cycle</span>
         </div>
       </div>
@@ -366,7 +387,7 @@ export default function Calculator() {
       <button
         onClick={callBackendCalc}
         disabled={!salary}
-        className="mt-5 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow hover:scale-[1.02] active:scale-[0.99] transition-transform w-full disabled:opacity-60"
+        className="mt-5 w-full rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-2.5 font-semibold text-white shadow transition-transform hover:scale-[1.02] active:scale-[0.99] disabled:opacity-60"
       >
         Calculate
       </button>
@@ -380,12 +401,16 @@ export default function Calculator() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.45 }}
-            className="mt-6 bg-gradient-to-br from-emerald-50 via-green-50 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 border border-emerald-200 dark:border-green-700 rounded-2xl p-5 shadow-lg"
+            className="mt-6 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-green-50 to-white p-5 shadow-lg dark:border-green-700 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800"
           >
-            <h3 className="font-extrabold text-green-800 text-lg mb-3">Wage Summary</h3>
+            <h3 className="mb-3 text-lg font-extrabold text-green-800">
+              Wage Summary
+            </h3>
 
             <div className="flex justify-between border-b pb-1">
-              <p><b>Net Earnings</b></p>
+              <p>
+                <b>Net Earnings</b>
+              </p>
               <p className="font-semibold text-emerald-700">
                 {currencySymbol} {fmt(result.netMonthly, locale)}
               </p>
@@ -412,18 +437,23 @@ export default function Calculator() {
               </p>
             </div>
 
-            <div className="mt-4 bg-white/60 dark:bg-gray-800/70 border border-green-200 rounded-xl p-3 text-center">
-              <p className="text-sm text-emerald-800 font-semibold">You Can Access Now</p>
-              <p className="text-3xl font-extrabold text-emerald-700 mt-1">
+            <div className="mt-4 rounded-xl border border-green-200 bg-white/60 p-3 text-center dark:bg-gray-800/70">
+              <p className="text-sm font-semibold text-emerald-800">
+                You Can Access Now
+              </p>
+              <p className="mt-1 text-3xl font-extrabold text-emerald-700">
                 {currencySymbol} {fmt(result.accessibleNow, locale)}
               </p>
             </div>
 
-            <div className="mt-3 text-xs text-gray-600 text-center">
+            <div className="mt-3 text-center text-xs text-gray-600">
               <p>
                 <span className="font-semibold">Remittances → </span>
                 {Object.entries(result.deductions)
-                  .map(([key, val]) => `${key}: ${currencySymbol} ${fmt(val, locale)}`)
+                  .map(
+                    ([key, val]) =>
+                      `${key}: ${currencySymbol} ${fmt(val, locale)}`
+                  )
                   .join(" | ")}
               </p>
             </div>

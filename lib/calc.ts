@@ -44,7 +44,10 @@ export function calc(payload: Payload, cfg: JsonConfig) {
   const { salary, daysWorked, cycleDays, allowances = {} } = payload;
 
   // 🔥🔥🔥 NEW: Sum ALL allowances (+ or -)
-  const totalAllowances = Object.values(allowances).reduce((a, b) => a + (b || 0), 0);
+  const totalAllowances = Object.values(allowances).reduce(
+    (a, b) => a + (b || 0),
+    0
+  );
 
   // 🔥 Gross pay (salary + allowances, scaled)
   const base = salary + totalAllowances;
@@ -70,9 +73,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
   const totalNSSF = nssfEmployee + nssfEmployer + nssf1 + nssf2;
 
   // SHIF / NHIF (flat or percent)
-  const shif = cfg.shif
-    ? (cfg.shif.flat ?? gross * (cfg.shif.rate ?? 0))
-    : 0;
+  const shif = cfg.shif ? (cfg.shif.flat ?? gross * (cfg.shif.rate ?? 0)) : 0;
 
   // Housing Levy
   const housingLevy = (cfg.housing?.rate ?? 0) * gross;
@@ -110,7 +111,10 @@ export function calc(payload: Payload, cfg: JsonConfig) {
 
   // Taxable income = gross - employee social security
   const employeeDeductions =
-    nssfEmployee + rssb.pensionEmployee + rssb.medicalEmployee + rssb.maternityEmployee;
+    nssfEmployee +
+    rssb.pensionEmployee +
+    rssb.medicalEmployee +
+    rssb.maternityEmployee;
 
   const taxableIncome = gross - employeeDeductions;
 
@@ -124,12 +128,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
 
   // Net Pay (employee)
   const netPay =
-    gross -
-    (employeeDeductions +
-      shif +
-      housingLevy +
-      payeAfterRelief +
-      lst);
+    gross - (employeeDeductions + shif + housingLevy + payeAfterRelief + lst);
 
   // Earned wage and access
   const earnedWage = (netPay / cycleDays) * daysWorked;
@@ -220,12 +219,26 @@ export function readCountryConfig(countryCode: string) {
 
   const meta = {
     code,
-    name: code === "KE" ? "Kenya" : code === "UG" ? "Uganda" : code === "TZ" ? "Tanzania" : "Rwanda",
+    name:
+      code === "KE"
+        ? "Kenya"
+        : code === "UG"
+          ? "Uganda"
+          : code === "TZ"
+            ? "Tanzania"
+            : "Rwanda",
     flag:
       code === "KE" ? "🇰🇪" : code === "UG" ? "🇺🇬" : code === "TZ" ? "🇹🇿" : "🇷🇼",
     currency:
-      code === "KE" ? "KES" : code === "UG" ? "UGX" : code === "TZ" ? "TZS" : "RWF",
-    lastUpdated: parsed.meta?.lastUpdated || new Date().toISOString().split("T")[0],
+      code === "KE"
+        ? "KES"
+        : code === "UG"
+          ? "UGX"
+          : code === "TZ"
+            ? "TZS"
+            : "RWF",
+    lastUpdated:
+      parsed.meta?.lastUpdated || new Date().toISOString().split("T")[0],
     description: parsed.meta?.description || "",
   };
 

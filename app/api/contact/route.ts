@@ -17,7 +17,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Validation failed",
-          issues: parsed.error.issues.map((i) => ({ path: i.path, message: i.message })),
+          issues: parsed.error.issues.map((i) => ({
+            path: i.path,
+            message: i.message,
+          })),
         },
         { status: 400 }
       );
@@ -57,7 +60,10 @@ export async function POST(request: NextRequest) {
       }),
     });
 
-    return NextResponse.json({ message: "Message sent successfully" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Message sent successfully" },
+      { status: 200 }
+    );
   } catch (err: any) {
     console.error("Error handling contact form submission:", err);
     return NextResponse.json(

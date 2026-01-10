@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 
 export enum UserRole {
-  EMPLOYER = 'employer',
-  EMPLOYEE = 'employee'
+  EMPLOYER = "employer",
+  EMPLOYEE = "employee",
 }
 
 export enum RequestStatus {
-  PENDING = 'Pending',
-  APPROVED = 'Approved',
-  DENIED = 'Denied',
-  PAID = 'Paid'
+  PENDING = "Pending",
+  APPROVED = "Approved",
+  DENIED = "Denied",
+  PAID = "Paid",
 }
 
 export interface Employee {
@@ -19,7 +19,7 @@ export interface Employee {
   department: string;
   availableBalance: number;
   salary: number;
-  status: 'Active' | 'Inactive';
+  status: "Active" | "Inactive";
 }
 
 export interface WageRequest {

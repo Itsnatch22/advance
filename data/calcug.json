@@ -3,7 +3,7 @@
   "personalRelief": 0,
   "nssf": {
     "employeeRate": 0.05,
-    "employerRate": 0.10,
+    "employerRate": 0.1,
     "appliesOn": "gross"
   },
   "shif": {

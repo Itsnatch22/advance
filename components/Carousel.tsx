@@ -3,12 +3,10 @@
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 
 export function AppleCardsCarouselDemo() {
-  const cards = data.map((card) => (
-    <Card key={card.src} card={card} />
-  ));
+  const cards = data.map((card) => <Card key={card.src} card={card} />);
 
   return (
-    <div className="w-full h-full py-20">
+    <div className="h-full w-full py-20">
       <Carousel items={cards} />
     </div>
   );

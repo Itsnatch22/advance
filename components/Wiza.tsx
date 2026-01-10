@@ -50,7 +50,10 @@ export default function WizaChat() {
 
       const data = await res.json();
       // Simulate typing based on response length
-      const fakeTypingMs = Math.min(Math.max(data.answer.length * 12, 500), 1800);
+      const fakeTypingMs = Math.min(
+        Math.max(data.answer.length * 12, 500),
+        1800
+      );
 
       // show typing indicator briefly
       setTimeout(() => {
@@ -69,8 +72,7 @@ export default function WizaChat() {
             ...m,
             {
               from: "wiza",
-              text:
-                "I couldn't find a direct answer in our docs. I can prepare a support request for you — or you can try a different phrasing.",
+              text: "I couldn't find a direct answer in our docs. I can prepare a support request for you — or you can try a different phrasing.",
             },
             {
               from: "system",
@@ -85,8 +87,7 @@ export default function WizaChat() {
         ...m,
         {
           from: "wiza",
-          text:
-            "Oops something went wrong contacting my brain server. Try again or email support@eaziwage.com",
+          text: "Oops something went wrong contacting my brain server. Try again or email support@eaziwage.com",
         },
       ]);
       console.error("Wiza error:", err);
@@ -101,12 +102,12 @@ export default function WizaChat() {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed right-6 bottom-6 z-50">
       {/* Toggle button */}
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="Open Wiza chat"
-        className="bg-emerald-500 p-3 rounded-full shadow-lg text-white hover:bg-emerald-600 transition"
+        className="rounded-full bg-emerald-500 p-3 text-white shadow-lg transition hover:bg-emerald-600"
       >
         {open ? <X size={20} /> : <MessageCircle size={20} />}
       </button>
@@ -118,9 +119,9 @@ export default function WizaChat() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
-            className="absolute bottom-16 right-0 w-80 md:w-96 h-96 bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="absolute right-0 bottom-16 flex h-96 w-80 flex-col overflow-hidden rounded-2xl bg-white/80 shadow-2xl backdrop-blur-sm md:w-96"
           >
-            <div className="flex items-center justify-between px-3 py-2 bg-emerald-600 text-white">
+            <div className="flex items-center justify-between bg-emerald-600 px-3 py-2 text-white">
               <div className="flex items-center gap-2">
                 <span className="text-lg">Wiza</span>
                 <span className="text-sm opacity-90">— Ask me anything</span>
@@ -141,7 +142,7 @@ export default function WizaChat() {
             </div>
 
             {/* Suggestions */}
-            <div className="p-2 border-b">
+            <div className="border-b p-2">
               <div className="flex gap-2">
                 {suggestions.map((s) => (
                   <button
@@ -151,7 +152,7 @@ export default function WizaChat() {
                       // optionally send directly:
                       // setTimeout(() => sendMessage(), 120);
                     }}
-                    className="text-xs px-2 py-1 rounded-md bg-gray-100 hover:bg-gray-200 transition"
+                    className="rounded-md bg-gray-100 px-2 py-1 text-xs transition hover:bg-gray-200"
                   >
                     {s}
                   </button>
@@ -161,34 +162,36 @@ export default function WizaChat() {
 
             {/* Messages */}
             <div
-              className="flex-1 overflow-y-auto p-3 space-y-2 text-sm"
+              className="flex-1 space-y-2 overflow-y-auto p-3 text-sm"
               ref={scrollRef}
             >
               {messages.map((msg, i) => (
                 <div
                   key={i}
-                  className={`p-2 rounded-lg max-w-[80%] ${
+                  className={`max-w-[80%] rounded-lg p-2 ${
                     msg.from === "wiza"
                       ? "bg-emerald-50 text-emerald-900"
                       : msg.from === "user"
-                      ? "bg-gray-200 text-gray-900 self-end ml-auto"
-                      : "bg-neutral-100 text-neutral-800"
+                        ? "ml-auto self-end bg-gray-200 text-gray-900"
+                        : "bg-neutral-100 text-neutral-800"
                   }`}
                 >
-                  <pre className="whitespace-pre-wrap break-words">{msg.text}</pre>
+                  <pre className="break-words whitespace-pre-wrap">
+                    {msg.text}
+                  </pre>
                 </div>
               ))}
 
               {/* Typing indicator */}
               {isTyping && (
-                <div className="p-2 rounded-lg bg-emerald-50 text-emerald-900 w-max">
+                <div className="w-max rounded-lg bg-emerald-50 p-2 text-emerald-900">
                   <TypingDots />
                 </div>
               )}
             </div>
 
             {/* Input */}
-            <div className="p-2 border-t flex gap-2">
+            <div className="flex gap-2 border-t p-2">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -196,11 +199,11 @@ export default function WizaChat() {
                   if (e.key === "Enter") sendMessage();
                 }}
                 placeholder="Ask Wiza..."
-                className="flex-1 text-sm p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-400"
+                className="flex-1 rounded-lg border p-2 text-sm focus:ring-1 focus:ring-emerald-400 focus:outline-none"
               />
               <button
                 onClick={sendMessage}
-                className="bg-emerald-600 text-white px-3 rounded-lg text-sm hover:bg-emerald-700"
+                className="rounded-lg bg-emerald-600 px-3 text-sm text-white hover:bg-emerald-700"
               >
                 Send
               </button>
@@ -219,17 +222,17 @@ function TypingDots() {
       <motion.span
         animate={{ y: [0, -4, 0] }}
         transition={{ repeat: Infinity, duration: 0.6, delay: 0 }}
-        className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"
+        className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500"
       />
       <motion.span
         animate={{ y: [0, -4, 0] }}
         transition={{ repeat: Infinity, duration: 0.6, delay: 0.15 }}
-        className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"
+        className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500"
       />
       <motion.span
         animate={{ y: [0, -4, 0] }}
         transition={{ repeat: Infinity, duration: 0.6, delay: 0.3 }}
-        className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"
+        className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500"
       />
     </div>
   );

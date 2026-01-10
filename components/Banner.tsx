@@ -15,16 +15,15 @@ export default function Banner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -40, opacity: 0 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="w-full bg-gradient-to-r from-green-700 via-emerald-500 to-green-600 
-          text-white text-sm md:text-[15px] font-medium tracking-wide flex items-center justify-center 
-          gap-3 py-2 shadow-[0_2px_20px_rgba(22,163,74,0.3)] relative z-[60]"
+          className="relative z-[60] flex w-full items-center justify-center gap-3 bg-gradient-to-r from-green-700 via-emerald-500 to-green-600 py-2 text-sm font-medium tracking-wide text-white shadow-[0_2px_20px_rgba(22,163,74,0.3)] md:text-[15px]"
         >
           <span className="drop-shadow-sm">
-            🚀 <strong>EaziWage 2.0</strong> is live — early access to your pay, now simpler & faster! 💸
+            🚀 <strong>EaziWage 2.0</strong> is live — early access to your pay,
+            now simpler & faster! 💸
           </span>
           <button
             onClick={() => setVisible(false)}
-            className="text-white/70 hover:text-white absolute right-4 top-1/2 -translate-y-1/2 transition"
+            className="absolute top-1/2 right-4 -translate-y-1/2 text-white/70 transition hover:text-white"
           >
             <X size={18} />
           </button>

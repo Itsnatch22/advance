@@ -1,16 +1,9 @@
 "use client";
-import React, {
-  createContext,
-  useEffect,
-  useState,
-} from "react";
-import {
-  IconArrowNarrowLeft,
-  IconArrowNarrowRight,
-} from "@tabler/icons-react";
+import React, { createContext, useEffect, useState } from "react";
+import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import Image from "next/image"
+import Image from "next/image";
 
 interface CarouselProps {
   items: React.ReactElement[];
@@ -93,14 +86,14 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
         >
           <div
             className={cn(
-              "absolute right-0 z-[1000] h-auto w-[5%] overflow-hidden bg-gradient-to-l",
+              "absolute right-0 z-[1000] h-auto w-[5%] overflow-hidden bg-gradient-to-l"
             )}
           ></div>
 
           <div
             className={cn(
               "flex flex-row justify-start gap-4 pl-4",
-              "mx-auto max-w-7xl", // remove max-w-4xl if you want the carousel to span the full width of its container
+              "mx-auto max-w-7xl" // remove max-w-4xl if you want the carousel to span the full width of its container
             )}
           >
             {items.map((item, index) => (
@@ -147,7 +140,6 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   );
 };
 
- 
 export const Card = ({
   card,
   layout = false,
@@ -167,9 +159,9 @@ export const Card = ({
         alt={card.title}
         className="absolute inset-0 object-cover"
       />
-      <div className="relative z-20 p-4 md:p-6 text-white">
-        <p className="text-xs md:text-sm opacity-90">{card.category}</p>
-        <p className="text-lg md:text-2xl font-semibold">{card.title}</p>
+      <div className="relative z-20 p-4 text-white md:p-6">
+        <p className="text-xs opacity-90 md:text-sm">{card.category}</p>
+        <p className="text-lg font-semibold md:text-2xl">{card.title}</p>
       </div>
     </motion.div>
   );
@@ -182,14 +174,18 @@ export const BlurImage = ({
   width,
   height,
   ...rest
-}: { src: string; className?: string; alt?: string } & React.ImgHTMLAttributes<HTMLImageElement>) => {
+}: {
+  src: string;
+  className?: string;
+  alt?: string;
+} & React.ImgHTMLAttributes<HTMLImageElement>) => {
   const [isLoading, setLoading] = useState(true);
   return (
     <Image
       className={cn(
         "h-full w-full transition duration-300",
         isLoading ? "blur-sm" : "blur-0",
-        className,
+        className
       )}
       onLoad={() => setLoading(false)}
       src={src}

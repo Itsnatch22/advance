@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Toploader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Analytics } from '@vercel/analytics/next';
+import { Analytics } from "@vercel/analytics/next";
 import Wiza from "@/components/Wiza";
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
@@ -21,7 +21,8 @@ const playfairDisplay = Playfair_Display({
 
 export const metadata: Metadata = {
   title: "EaziWage - Earned Wage Access for Employees Across Africa",
-  description: "A system designed to enable employees to get access to an advance before payday.",
+  description:
+    "A system designed to enable employees to get access to an advance before payday.",
 };
 
 export default function RootLayout({

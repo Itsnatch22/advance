@@ -1,5 +1,5 @@
 "use client";
- 
+
 import { Highlighter } from "./ui/highlighter";
 import { InfiniteMovingCards } from "./ui/infinite-moving-cards";
 import Image from "next/image";
@@ -22,46 +22,42 @@ const team = [
     image: "/team/jason.png",
     name: "Jason Crawford",
   },
-]
- 
+];
+
 export function Team() {
   return (
-    <div className="min-h-[32rem] md:min-h-[40rem] w-full rounded-md flex flex-col antialiased bg-white dark:bg-black dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden px-4 sm:px-6">
-
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif mb-6 sm:mb-10 text-center">
-          What The {" "}
-          <span className="text-green-600 dark:text-400">
-            Team{" "}
-          </span> 
-            <Highlighter action="underline" color="#008000">
-            Had To Say
-            </Highlighter>
-          </h2>
-          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-10 w-full max-w-6xl">
-          {team.map((member, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              viewport={{ once: true }}
-              className="group"
-            >
-              <div className="relative mx-auto w-[800px] h-90 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden shadow-md">
-                <Image
-                  src={member.image}
-                  alt={member.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                />
-              </div>
-              <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-semibold text-gray-900 dark:text-white text-center">
-                {member.name}
-              </h3>
-            </motion.div>
-          ))}
-        </div>
-      <div className="mt-8 sm:mt-12 w-full max-w-6xl">
+    <div className="dark:bg-grid-white/[0.05] relative flex min-h-[32rem] w-full flex-col items-center justify-center overflow-hidden rounded-md bg-white px-4 antialiased sm:px-6 md:min-h-[40rem] dark:bg-black">
+      <h2 className="mb-6 text-center font-serif text-3xl font-bold sm:mb-10 sm:text-4xl md:text-5xl lg:text-6xl">
+        What The <span className="dark:text-400 text-green-600">Team </span>
+        <Highlighter action="underline" color="#008000">
+          Had To Say
+        </Highlighter>
+      </h2>
+      <div className="xs:grid-cols-2 grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 md:grid-cols-4 md:gap-10">
+        {team.map((member, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: i * 0.1 }}
+            viewport={{ once: true }}
+            className="group"
+          >
+            <div className="relative mx-auto h-90 w-[800px] overflow-hidden rounded-2xl shadow-md sm:h-32 sm:w-32 md:h-36 md:w-36">
+              <Image
+                src={member.image}
+                alt={member.name}
+                fill
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+              />
+            </div>
+            <h3 className="mt-3 text-center text-base font-semibold text-gray-900 sm:mt-4 sm:text-lg dark:text-white">
+              {member.name}
+            </h3>
+          </motion.div>
+        ))}
+      </div>
+      <div className="mt-8 w-full max-w-6xl sm:mt-12">
         <InfiniteMovingCards
           items={testimonials}
           direction="right"
@@ -71,9 +67,9 @@ export function Team() {
     </div>
   );
 }
- 
+
 const testimonials = [
-   {
+  {
     quote:
       "Building this one was a process, but am glad we finally got to establish it. Eaziwage is here to change our perspectives on how payroll systems work. Trust is the new currency and advance payment is how it's earned.",
     name: "Mark K.",

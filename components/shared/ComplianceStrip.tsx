@@ -1,5 +1,5 @@
-import { ShieldCheck } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ShieldCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ComplianceItem {
   text: string;
@@ -14,14 +14,14 @@ export function ComplianceStrip({ items, className }: ComplianceStripProps) {
   return (
     <div
       className={cn(
-        'w-full bg-gray-50 dark:bg-black py-3 sm:py-4 px-3 sm:px-6 lg:px-10',
+        "w-full bg-gray-50 px-3 py-3 sm:px-6 sm:py-4 lg:px-10 dark:bg-black",
         className
       )}
     >
-      <div className="flex py-8 flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6 text-[0.75rem] sm:text-sm text-gray-700 dark:text-white text-center">
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 py-8 text-center text-[0.75rem] text-gray-700 sm:gap-x-6 sm:text-sm dark:text-white">
         {items.map((item, index) => (
           <div key={index} className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-green-500 shrink-0" />
+            <ShieldCheck className="h-4 w-4 shrink-0 text-green-500" />
             <span>{item.text}</span>
           </div>
         ))}

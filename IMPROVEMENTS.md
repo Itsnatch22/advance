@@ -54,22 +54,26 @@
 Since PowerShell 6+ is not available on your system, you'll need to manually:
 
 1. **Create directories:**
+
    ```cmd
    md .vscode
    md types
    ```
 
 2. **Install new dependencies:**
+
    ```cmd
    npm install -D prettier prettier-plugin-tailwindcss husky lint-staged
    ```
 
 3. **Initialize Husky:**
+
    ```cmd
    npx husky install
    ```
 
 4. **Create VSCode settings** - Create `.vscode\settings.json` with:
+
    ```json
    {
      "editor.formatOnSave": true,

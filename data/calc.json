@@ -1,66 +1,202 @@
 {
   "Rates": [
-    { "General ": "Personal_Relief", "Amount/Threshold": 2400, "Description": "KES / month" },
-    { "General ": "Insurance_Relief", "Amount/Threshold": 0, "Description": "KES / month (edit if applicable)" },
-    { "General ": "Housing_Levy_Rate", "Amount/Threshold": 0.015, "Description": "AHL as fraction of Gross (default 1.5%)" },
-    { "General ": "SHIF_Flat_Rate", "Amount/Threshold": 0.0275, "Description": "If Use_SHIF_Table=FALSE, SHIF = Gross*rate" },
-    { "General ": "Pension_Deductible_Cap", "Amount/Threshold": 30000, "Description": "Monthly cap on deductible" },
-    { "General ": "Meals_Deductible_Cap", "Amount/Threshold": 5000, "Description": "Monthly cap on deductible" },
-    { "General ": "Night-Out_Deductible_Cap", "Amount/Threshold": 2000, "Description": "Daily cap on deductible" },
-    { "General ": "Post-Retirement_Medical_Fund_Deductible_Cap", "Amount/Threshold": 5000, "Description": "Monthly cap on deductible" },
-    { "General ": "Mortgage_Interest_Deductible_Cap", "Amount/Threshold": 25000, "Description": "Monthly cap on deductible" },
-    { "General ": "Provident_Fund_Deductible_Cap", "Amount/Threshold": 30000, "Description": "Monthly cap on deductible" },
-    { "General ": "Life_And_Health_Insurance_Deductible_Limit", "Amount/Threshold": 5000, "Description": "Monthly cap on deductible" },
-    { "General ": "NSSF_Tier1_Ceiling", "Amount/Threshold": 7000, "Description": "Tier I ceiling" },
-    { "General ": "NSSF_Tier2_Ceiling", "Amount/Threshold": 72000, "Description": "Tier II ceiling" },
-    { "General ": "NSSF_Employee_Rate", "Amount/Threshold": 0.06, "Description": "Employee 6%" },
-    { "General ": "AHL_Employee_Rate", "Amount/Threshold": 0.015, "Description": "Employee 1.5%" },
-    { "General ": "Life_And_Health_Insurance_Rate", "Amount/Threshold": 0.15, "Description": "Life and Health Insurance 15%" },
-    { "General ": "Provident_Fund_Deductible_Rate", "Amount/Threshold": 0.3, "Description": "Up to 30%" },
-    { "General ": "Earned_Wage_Days", "Amount/Threshold": 30, "Description": "Earned Wage Days" },
-    { "General ": "Days in Month", "Amount/Threshold": 31, "Description": "Number of Days in Month" },
-    { "General ": "Earned_Wage_Cap", "Amount/Threshold": 0.6, "Description": "Monthly cap on net pay" },
+    {
+      "General ": "Personal_Relief",
+      "Amount/Threshold": 2400,
+      "Description": "KES / month"
+    },
+    {
+      "General ": "Insurance_Relief",
+      "Amount/Threshold": 0,
+      "Description": "KES / month (edit if applicable)"
+    },
+    {
+      "General ": "Housing_Levy_Rate",
+      "Amount/Threshold": 0.015,
+      "Description": "AHL as fraction of Gross (default 1.5%)"
+    },
+    {
+      "General ": "SHIF_Flat_Rate",
+      "Amount/Threshold": 0.0275,
+      "Description": "If Use_SHIF_Table=FALSE, SHIF = Gross*rate"
+    },
+    {
+      "General ": "Pension_Deductible_Cap",
+      "Amount/Threshold": 30000,
+      "Description": "Monthly cap on deductible"
+    },
+    {
+      "General ": "Meals_Deductible_Cap",
+      "Amount/Threshold": 5000,
+      "Description": "Monthly cap on deductible"
+    },
+    {
+      "General ": "Night-Out_Deductible_Cap",
+      "Amount/Threshold": 2000,
+      "Description": "Daily cap on deductible"
+    },
+    {
+      "General ": "Post-Retirement_Medical_Fund_Deductible_Cap",
+      "Amount/Threshold": 5000,
+      "Description": "Monthly cap on deductible"
+    },
+    {
+      "General ": "Mortgage_Interest_Deductible_Cap",
+      "Amount/Threshold": 25000,
+      "Description": "Monthly cap on deductible"
+    },
+    {
+      "General ": "Provident_Fund_Deductible_Cap",
+      "Amount/Threshold": 30000,
+      "Description": "Monthly cap on deductible"
+    },
+    {
+      "General ": "Life_And_Health_Insurance_Deductible_Limit",
+      "Amount/Threshold": 5000,
+      "Description": "Monthly cap on deductible"
+    },
+    {
+      "General ": "NSSF_Tier1_Ceiling",
+      "Amount/Threshold": 7000,
+      "Description": "Tier I ceiling"
+    },
+    {
+      "General ": "NSSF_Tier2_Ceiling",
+      "Amount/Threshold": 72000,
+      "Description": "Tier II ceiling"
+    },
+    {
+      "General ": "NSSF_Employee_Rate",
+      "Amount/Threshold": 0.06,
+      "Description": "Employee 6%"
+    },
+    {
+      "General ": "AHL_Employee_Rate",
+      "Amount/Threshold": 0.015,
+      "Description": "Employee 1.5%"
+    },
+    {
+      "General ": "Life_And_Health_Insurance_Rate",
+      "Amount/Threshold": 0.15,
+      "Description": "Life and Health Insurance 15%"
+    },
+    {
+      "General ": "Provident_Fund_Deductible_Rate",
+      "Amount/Threshold": 0.3,
+      "Description": "Up to 30%"
+    },
+    {
+      "General ": "Earned_Wage_Days",
+      "Amount/Threshold": 30,
+      "Description": "Earned Wage Days"
+    },
+    {
+      "General ": "Days in Month",
+      "Amount/Threshold": 31,
+      "Description": "Number of Days in Month"
+    },
+    {
+      "General ": "Earned_Wage_Cap",
+      "Amount/Threshold": 0.6,
+      "Description": "Monthly cap on net pay"
+    },
     null,
     { "General ": "PAYE_Tax_Bands" },
-    { "General ": "Lower", "Amount/Threshold": "Upper", "Description": "Rate", "Column4": "Tax" },
-    { "General ": 0, "Amount/Threshold": 24000, "Description": 0.1, "Column4": 2400 },
-    { "General ": 24000, "Amount/Threshold": 32333, "Description": 0.25, "Column4": 2083.25 },
-    { "General ": 32333, "Amount/Threshold": 500000, "Description": 0.3, "Column4": 140300.1 },
-    { "General ": 500000, "Amount/Threshold": 800000, "Description": 0.325, "Column4": 97500 },
+    {
+      "General ": "Lower",
+      "Amount/Threshold": "Upper",
+      "Description": "Rate",
+      "Column4": "Tax"
+    },
+    {
+      "General ": 0,
+      "Amount/Threshold": 24000,
+      "Description": 0.1,
+      "Column4": 2400
+    },
+    {
+      "General ": 24000,
+      "Amount/Threshold": 32333,
+      "Description": 0.25,
+      "Column4": 2083.25
+    },
+    {
+      "General ": 32333,
+      "Amount/Threshold": 500000,
+      "Description": 0.3,
+      "Column4": 140300.1
+    },
+    {
+      "General ": 500000,
+      "Amount/Threshold": 800000,
+      "Description": 0.325,
+      "Column4": 97500
+    },
     { "General ": 800000, "Description": 0.35 }
   ],
   "Inputs": [
-    { "Inputs": "Employee", "Column2": "Sample Employee", "Column3": "<-Input" },
+    {
+      "Inputs": "Employee",
+      "Column2": "Sample Employee",
+      "Column3": "<-Input"
+    },
     { "Inputs": "Gross_Pay_Employer", "Column2": 35000, "Column3": "<-Input" },
-    { "Inputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance]", "Column3": "<-Input" },
+    {
+      "Inputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance]",
+      "Column3": "<-Input"
+    },
     { "Inputs": "Meal_Allowance_Employer", "Column3": "<-Input" },
     { "Inputs": "NightOut_Allowance_Employer", "Column3": "<-Input" },
     { "Inputs": "Pension_Cover_Employer", "Column3": "<-Input" },
     { "Inputs": "Medical_Cover_Employer", "Column3": "<-Input" },
     { "Inputs": "Days_Worked", "Column2": 30, "Column3": "<-Input" },
-    { "Inputs": "Mortgage_Interest_Contribution_Employee", "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]" },
-    { "Inputs": "Post-retirement_Medical Fund_Contribution_Employee", "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]" },
-    { "Inputs": "Provident_Fund_Contribution_Employee", "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]" },
-    { "Inputs": "Life_And_Health_Insurance_Contribution_Employee", "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]" }
+    {
+      "Inputs": "Mortgage_Interest_Contribution_Employee",
+      "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]"
+    },
+    {
+      "Inputs": "Post-retirement_Medical Fund_Contribution_Employee",
+      "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]"
+    },
+    {
+      "Inputs": "Provident_Fund_Contribution_Employee",
+      "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]"
+    },
+    {
+      "Inputs": "Life_And_Health_Insurance_Contribution_Employee",
+      "Column3": "<-Input Not Required [Maybe Consider for More Advanced Modelling]"
+    }
   ],
   "Output": [
     { "Outputs": "Employee", "Column2": "Sample Employee" },
     { "Outputs": "Gross_Pay_Employer", "Column2": 35000 },
-    { "Outputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance, Housing Allownace]", "Column2": 0 },
+    {
+      "Outputs": "Other_Remuneration_Employer [Incl. Bonuses, Travel, Cellphone, Housing Allowance, Car Allowance, Housing Allownace]",
+      "Column2": 0
+    },
     { "Outputs": "Meal_Allowance_Employer", "Column2": 0 },
     { "Outputs": "NightOut_Allowance_Employer", "Column2": 0 },
     { "Outputs": "Pension_Cover_Employer", "Column2": 0 },
     { "Outputs": "Medical_Cover_Employer", "Column2": 0 },
     { "Outputs": "Mortgage_Interest_Contribution_Employee", "Column2": 0 },
-    { "Outputs": "Post-retirement_Medical Fund_Contribution_Employee", "Column2": 0 },
+    {
+      "Outputs": "Post-retirement_Medical Fund_Contribution_Employee",
+      "Column2": 0
+    },
     { "Outputs": "Provident_Fund_Contribution_Employee", "Column2": 0 },
-    { "Outputs": "Life_And_Health_Insurance_Contribution_Employee", "Column2": 0 },
+    {
+      "Outputs": "Life_And_Health_Insurance_Contribution_Employee",
+      "Column2": 0
+    },
     { "Outputs": "Total_Income", "Column2": 35000 },
     { "Outputs": "Meal_Allowance_Deductible", "Column2": 0 },
     { "Outputs": "NightOut_Allowance_Deductible", "Column2": 0 },
     { "Outputs": "Pension_Cover_Deductible", "Column2": 0 },
     { "Outputs": "Medical_Cover_Employer_Deductible", "Column2": 0 },
-    { "Outputs": "Post-retirement_Medical Fund_Cover_Deductible", "Column2": 0 },
+    {
+      "Outputs": "Post-retirement_Medical Fund_Cover_Deductible",
+      "Column2": 0
+    },
     { "Outputs": "Mortgage_Interest_Deductible", "Column2": 0 },
     { "Outputs": "Provident_Fund_Deductible", "Column2": 0 },
     { "Outputs": "Life_And_Health_Insurance_Contribution_Cover", "Column2": 0 },
@@ -74,8 +210,20 @@
     { "Outputs": "Insurance_Relief", "Column2": 0 },
     { "Outputs": "PAYE_After_Relief", "Column2": 1853.125 },
     { "Outputs": "Net_Pay", "Column2": 29559.375 },
-    { "Outputs": "Earned_Wage", "Column2": 28605.84677419355, "Column3": "<-Earned Wage" },
-    { "Outputs": "Earned_Wage_Max_Cap", "Column2": 17735.625, "Column3": "<-Available Earned Wage Max" },
-    { "Outputs": "Earned_Wage_Available", "Column2": 17735.625, "Column3": "<-Available Earned Wage" }
+    {
+      "Outputs": "Earned_Wage",
+      "Column2": 28605.84677419355,
+      "Column3": "<-Earned Wage"
+    },
+    {
+      "Outputs": "Earned_Wage_Max_Cap",
+      "Column2": 17735.625,
+      "Column3": "<-Available Earned Wage Max"
+    },
+    {
+      "Outputs": "Earned_Wage_Available",
+      "Column2": 17735.625,
+      "Column3": "<-Available Earned Wage"
+    }
   ]
 }

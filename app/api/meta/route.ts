@@ -8,7 +8,11 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const country = (searchParams.get("country") || "KE").toUpperCase();
 
-    const filePath = path.join(process.cwd(), "data", `${country.toLowerCase()}.json`);
+    const filePath = path.join(
+      process.cwd(),
+      "data",
+      `${country.toLowerCase()}.json`
+    );
     const raw = await fs.readFile(filePath, "utf8");
     const cfg = JSON.parse(raw);
 
@@ -17,8 +21,8 @@ export async function GET(req: Request) {
       taxBrackets: cfg.taxBrackets || [],
       deductions: cfg.deductions || [],
     });
-
-  } catch (err: any) { // 👈 FIXED HERE
+  } catch (err: any) {
+    // 👈 FIXED HERE
     console.error("meta route error:", err);
 
     return NextResponse.json(

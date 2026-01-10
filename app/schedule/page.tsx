@@ -37,9 +37,15 @@ export default function SchedulePage() {
   const [email, setEmail] = useState("");
 
   const slots = useMemo(() => {
-    if (!selectedDate) return [] as { iso: string; label: string; localLabel: string }[];
+    if (!selectedDate)
+      return [] as { iso: string; label: string; localLabel: string }[];
     const day = new Date(selectedDate + "T00:00:00");
-    return generateSlotsForDay(day, BUSINESS_START, BUSINESS_END, SLOT_STEP_MINUTES);
+    return generateSlotsForDay(
+      day,
+      BUSINESS_START,
+      BUSINESS_END,
+      SLOT_STEP_MINUTES
+    );
   }, [selectedDate]);
 
   /* ------------------ Initialize date ------------------ */
@@ -57,7 +63,10 @@ export default function SchedulePage() {
         const res = await fetch("/api/calendly-events");
         const data = await res.json();
 
-        if (data && Array.isArray((data as { collection?: unknown }).collection)) {
+        if (
+          data &&
+          Array.isArray((data as { collection?: unknown }).collection)
+        ) {
           type CalendlyEvent = {
             uri: string;
             name: string;
@@ -66,7 +75,8 @@ export default function SchedulePage() {
             scheduling_url: string;
           };
 
-          const collection = (data as { collection: CalendlyEvent[] }).collection;
+          const collection = (data as { collection: CalendlyEvent[] })
+            .collection;
           const formatted: MeetingType[] = collection.map((e) => ({
             id: e.uri,
             title: e.name,
@@ -108,25 +118,25 @@ export default function SchedulePage() {
 
   /* ------------------ UI ------------------ */
   return (
-    <main className="p-6 max-w-5xl mx-auto relative">
-      <header className="mb-6 mt-10 text-center">
+    <main className="relative mx-auto max-w-5xl p-6">
+      <header className="mt-10 mb-6 text-center">
         <motion.h1
-          className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent"
+          className="bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-3xl font-bold text-transparent md:text-4xl"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           Schedule a Meeting
         </motion.h1>
-        <p className="text-sm opacity-80 mt-1">
+        <p className="mt-1 text-sm opacity-80">
           Detected timezone: <strong>{timezone}</strong>
         </p>
 
-        <div className="flex justify-center mt-4">
-          <div className="flex items-center gap-3 rounded-full border border-green-600/40 px-3 py-2 bg-white/5 backdrop-blur-md">
+        <div className="mt-4 flex justify-center">
+          <div className="flex items-center gap-3 rounded-full border border-green-600/40 bg-white/5 px-3 py-2 backdrop-blur-md">
             <button
               onClick={() => setMode("user-books")}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+              className={`rounded-full px-3 py-1 text-sm font-medium transition-all ${
                 mode === "user-books"
                   ? "bg-green-600 text-white"
                   : "text-gray-500 hover:text-green-500"
@@ -136,7 +146,7 @@ export default function SchedulePage() {
             </button>
             <button
               onClick={() => setMode("admin-books")}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+              className={`rounded-full px-3 py-1 text-sm font-medium transition-all ${
                 mode === "admin-books"
                   ? "bg-green-600 text-white"
                   : "text-gray-500 hover:text-green-500"
@@ -151,46 +161,47 @@ export default function SchedulePage() {
       {loading ? (
         <p className="text-center text-gray-500">Loading meeting types...</p>
       ) : (
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {/* Sidebar */}
           <aside className="md:col-span-1">
             <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20 shadow-[0_0_15px_rgba(22,163,74,0.15)]">
-                <h2 className="font-semibold flex items-center gap-2">
-                  <CalendarDays className="w-4 h-4 text-green-600" /> Your
+              <div className="rounded-2xl border border-green-500/20 bg-white/10 p-4 shadow-[0_0_15px_rgba(22,163,74,0.15)] dark:bg-neutral-900/50">
+                <h2 className="flex items-center gap-2 font-semibold">
+                  <CalendarDays className="h-4 w-4 text-green-600" /> Your
                   Details
                 </h2>
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
-                  className="w-full p-2 rounded-md border border-gray-200 mt-3"
+                  className="mt-3 w-full rounded-md border border-gray-200 p-2"
                 />
                 <input
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@work.com"
-                  className="w-full p-2 rounded-md border border-gray-200 mt-2"
+                  className="mt-2 w-full rounded-md border border-gray-200 p-2"
                 />
               </div>
 
-              <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20">
+              <div className="rounded-2xl border border-green-500/20 bg-white/10 p-4 dark:bg-neutral-900/50">
                 <h2 className="font-semibold">Meeting Types</h2>
                 <div className="mt-3 space-y-3">
                   {meetings.map((m) => (
                     <button
                       key={m.id}
                       onClick={() => setSelectedMeeting(m)}
-                      className={`w-full text-left p-3 rounded-lg border transition-all flex items-center justify-between hover:shadow ${
+                      className={`flex w-full items-center justify-between rounded-lg border p-3 text-left transition-all hover:shadow ${
                         selectedMeeting?.id === m.id
-                          ? "bg-transparent border-green-500/60"
+                          ? "border-green-500/60 bg-transparent"
                           : "bg-white dark:bg-neutral-900"
                       }`}
                     >
                       <div className="text-black dark:text-white">
                         <div className="font-medium">{m.title}</div>
                         <div className="text-xs opacity-70">
-                          {m.duration} mins • {m.description || "Calendly event"}
+                          {m.duration} mins •{" "}
+                          {m.description || "Calendly event"}
                         </div>
                       </div>
                       <div className="text-xs opacity-60">Select</div>
@@ -203,14 +214,15 @@ export default function SchedulePage() {
 
           {/* Right Panel */}
           <div className="md:col-span-2">
-            <div className="p-4 rounded-2xl bg-white/10 dark:bg-neutral-900/50 border border-green-500/20 shadow-sm">
+            <div className="rounded-2xl border border-green-500/20 bg-white/10 p-4 shadow-sm dark:bg-neutral-900/50">
               <h3 className="text-lg font-semibold">
                 {selectedMeeting?.title || "No meeting selected"}
               </h3>
               <p className="text-sm opacity-70">
-                {selectedMeeting?.description || "Select a meeting to continue."}
+                {selectedMeeting?.description ||
+                  "Select a meeting to continue."}
               </p>
-              <p className="text-xs opacity-60 mt-1">
+              <p className="mt-1 text-xs opacity-60">
                 Duration: {selectedMeeting?.duration || "—"} mins
               </p>
 
@@ -220,19 +232,19 @@ export default function SchedulePage() {
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="mt-2 p-2 rounded-md border"
+                  className="mt-2 rounded-md border p-2"
                 />
 
                 <div className="mt-4">
                   <label className="block text-xs opacity-80">
                     Available Slots
                   </label>
-                  <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {slots.map((s) => (
                       <button
                         key={s.iso}
                         onClick={() => handlePickSlot(s.iso)}
-                        className={`p-2 rounded-md border text-sm text-left transition-all ${
+                        className={`rounded-md border p-2 text-left text-sm transition-all ${
                           selectedSlot === s.iso
                             ? "bg-green-600 text-white"
                             : "bg-transparent hover:border-green-500"
@@ -245,12 +257,12 @@ export default function SchedulePage() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex gap-3 items-center">
+                <div className="mt-6 flex items-center gap-3">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={openCalendly}
-                    className="px-4 py-2 rounded-xl bg-green-600 text-white font-medium shadow-[0_0_15px_rgba(22,163,74,0.4)] hover:shadow-[0_0_25px_rgba(22,163,74,0.6)] transition-all"
+                    className="rounded-xl bg-green-600 px-4 py-2 font-medium text-white shadow-[0_0_15px_rgba(22,163,74,0.4)] transition-all hover:shadow-[0_0_25px_rgba(22,163,74,0.6)]"
                   >
                     Schedule via Calendly
                   </motion.button>
@@ -261,7 +273,7 @@ export default function SchedulePage() {
                       setName("");
                       setEmail("");
                     }}
-                    className="px-3 py-2 rounded-lg border text-sm hover:bg-neutral-100"
+                    className="rounded-lg border px-3 py-2 text-sm hover:bg-neutral-100"
                   >
                     Reset
                   </button>

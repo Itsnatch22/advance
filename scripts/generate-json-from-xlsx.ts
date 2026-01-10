@@ -24,7 +24,11 @@ async function convert(fileName: string, outName: string) {
   });
 
   await fs.ensureDir(outDir);
-  await fs.writeFile(path.join(outDir, outName), JSON.stringify(jsonOut, null, 2), "utf8");
+  await fs.writeFile(
+    path.join(outDir, outName),
+    JSON.stringify(jsonOut, null, 2),
+    "utf8"
+  );
   console.log("Wrote", outName);
 }
 

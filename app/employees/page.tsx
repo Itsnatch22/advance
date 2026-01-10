@@ -1,15 +1,15 @@
 "use client";
 import { motion } from "framer-motion";
-import { 
-  Clock3, 
-  Wallet, 
-  Smartphone, 
-  Users, 
-  CheckCircle2, 
-  BrainCircuit, 
-  Lightbulb, 
-  BarChart3, 
-  Repeat 
+import {
+  Clock3,
+  Wallet,
+  Smartphone,
+  Users,
+  CheckCircle2,
+  BrainCircuit,
+  Lightbulb,
+  BarChart3,
+  Repeat,
 } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
@@ -18,35 +18,35 @@ import { FAQItem } from "@/components/shared/FAQItem";
 import UI from "./UI";
 
 const reasons = [
-  { 
-    icon: Wallet, 
-    title: "No interest, ever", 
-    desc: "It's not a loan. Just early access to your own earnings." 
+  {
+    icon: Wallet,
+    title: "No interest, ever",
+    desc: "It's not a loan. Just early access to your own earnings.",
   },
-  { 
-    icon: Clock3, 
-    title: "Instant when you need it", 
-    desc: "Withdraw anytime within employer limits—24/7 processing." 
+  {
+    icon: Clock3,
+    title: "Instant when you need it",
+    desc: "Withdraw anytime within employer limits—24/7 processing.",
   },
-  { 
-    icon: Smartphone, 
-    title: "M-PESA or bank", 
-    desc: "Choose the payout channel that suits you." 
+  {
+    icon: Smartphone,
+    title: "M-PESA or bank",
+    desc: "Choose the payout channel that suits you.",
   },
-  { 
-    icon: CheckCircle2, 
-    title: "Secure & compliant", 
-    desc: "CBK-aligned model • ODPC data protection." 
+  {
+    icon: CheckCircle2,
+    title: "Secure & compliant",
+    desc: "CBK-aligned model • ODPC data protection.",
   },
-  { 
-    icon: Users, 
-    title: "Improves wellbeing", 
-    desc: "Reduce financial stress and avoid costly mobile loans." 
+  {
+    icon: Users,
+    title: "Improves wellbeing",
+    desc: "Reduce financial stress and avoid costly mobile loans.",
   },
-  { 
-    icon: CheckCircle2, 
-    title: "Transparent fees", 
-    desc: "Flat KSh 25 + Application 5%—clearly shown before you confirm." 
+  {
+    icon: CheckCircle2,
+    title: "Transparent fees",
+    desc: "Flat KSh 25 + Application 5%—clearly shown before you confirm.",
   },
 ];
 
@@ -72,7 +72,6 @@ const rolloutPlans = [
     desc: "Continue to earn and withdraw as needed, with no limits or hidden fees.",
   },
 ];
-
 
 const complianceItems = [
   { text: "Regulated partners • CBK-aligned framework" },
@@ -112,22 +111,22 @@ const faqs = [
 
 export default function Employees() {
   return (
-    <section className="min-h-screen w-full mx-auto relative py-10 sm:py-14 lg:py-20 flex flex-col items-center">
+    <section className="relative mx-auto flex min-h-screen w-full flex-col items-center py-10 sm:py-14 lg:py-20">
       <UI />
-      
+
       <ComplianceStrip items={complianceItems} className="mb-8 sm:mb-10" />
 
-      <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-10 lg:text-left text-center mt-10 sm:mt-14">
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <h2 className="font-serif text-gray-900 dark:text-white font-bold text-4xl sm:text-5xl lg:text-6xl mb-6 tracking-tight">
+      <div className="mt-10 w-full max-w-7xl px-4 text-center sm:mt-14 sm:px-6 lg:px-10 lg:text-left">
+        <div className="mx-auto mb-16 max-w-3xl text-center sm:mb-20">
+          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
             Why employees choose Eaziwage
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 text-lg sm:text-xl leading-relaxed">
+          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-gray-300">
             A practical well-being lever that pays for itself.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-10">
           {reasons.map((item, i) => (
             <FeatureCard
               key={i}
@@ -140,58 +139,61 @@ export default function Employees() {
         </div>
       </div>
 
-            {/* Roll-Out Plans */}
-            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 mt-24 sm:mt-32 lg:mt-40">
-                <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-                    <h2 className="font-serif text-gray-900 dark:text-white font-bold text-4xl sm:text-5xl lg:text-6xl mb-6 tracking-tight">
-                        Your Financial Empowerment Journey
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-300 text-lg sm:text-xl leading-relaxed">
-                        Awareness → Empowerment → Growth — a smarter way to handle money you&apos;ve already earned.
-                    </p>
-                </div>
+      {/* Roll-Out Plans */}
+      <div className="mt-24 w-full max-w-7xl px-4 sm:mt-32 sm:px-6 lg:mt-40 lg:px-8">
+        <div className="mx-auto mb-16 max-w-3xl text-center sm:mb-20">
+          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
+            Your Financial Empowerment Journey
+          </h2>
+          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-gray-300">
+            Awareness → Empowerment → Growth — a smarter way to handle money
+            you&apos;ve already earned.
+          </p>
+        </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-                {rolloutPlans.map((item, j) => (
-                    <motion.div
-                    key={j}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: j * 0.1 }}
-                    className="relative p-6 sm:p-8 rounded-3xl bg-gray-50 dark:bg-white/5 border border-transparent hover:border-green-200 dark:hover:border-green-800 transition-colors duration-300"
-                    >
-                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-white/10 shadow-sm flex items-center justify-center mb-6">
-                            <item.icon className="w-6 h-6 text-gray-900 dark:text-white" />
-                        </div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-                            {item.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                            {item.desc}
-                        </p>
-                    </motion.div>
-                ))}
-                </div>
-            </div>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
+          {rolloutPlans.map((item, j) => (
+            <motion.div
+              key={j}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: j * 0.1 }}
+              className="relative rounded-3xl border border-transparent bg-gray-50 p-6 transition-colors duration-300 hover:border-green-200 sm:p-8 dark:bg-white/5 dark:hover:border-green-800"
+            >
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm dark:bg-white/10">
+                <item.icon className="h-6 w-6 text-gray-900 dark:text-white" />
+              </div>
+              <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">
+                {item.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                {item.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
 
-            {/* Works Areas */}
-            <div className="w-full max-w-7xl px-2 sm:px-4 lg:px-6 mt-10 sm:mt-20 lg:mt-30">
-                <div className="text-center lg:text-left mb-12">
-                    <h2 className="font-serif font-bold text-4xl sm:text-5xl lg:text-6xl text-gray-900 dark:text-white mb-6 tracking-tight">
-                        Versatility across <span className="text-green-500">jobs & sectors</span>
-                    </h2>
-                    <p className="text-gray-600 dark:text-white text-sm sm:text-base mt-3 sm:mt-4 mx-auto lg:mx-0">
-                        Real Kenyan contexts: retail, banking, hospitality, logistics, schools, factories and more.
-                    </p>
-                </div>
-                <div className="mt-3 sm:mt-5">
-                <AppleCardsCarouselDemo />
-                </div>
-            </div>
-             
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
-        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-center text-gray-900 dark:text-white font-bold mb-12">
+      {/* Works Areas */}
+      <div className="mt-10 w-full max-w-7xl px-2 sm:mt-20 sm:px-4 lg:mt-30 lg:px-6">
+        <div className="mb-12 text-center lg:text-left">
+          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
+            Versatility across{" "}
+            <span className="text-green-500">jobs & sectors</span>
+          </h2>
+          <p className="mx-auto mt-3 text-sm text-gray-600 sm:mt-4 sm:text-base lg:mx-0 dark:text-white">
+            Real Kenyan contexts: retail, banking, hospitality, logistics,
+            schools, factories and more.
+          </p>
+        </div>
+        <div className="mt-3 sm:mt-5">
+          <AppleCardsCarouselDemo />
+        </div>
+      </div>
+
+      <div className="mx-auto w-full max-w-4xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+        <h2 className="mb-12 text-center font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl dark:text-white">
           Frequently Asked Questions
         </h2>
         <div className="space-y-4">

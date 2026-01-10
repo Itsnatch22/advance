@@ -6,7 +6,8 @@ import { existsSync } from "fs";
 const JSON_PATH = path.join(process.cwd(), "data", "calc.json");
 
 function loadJson() {
-  if (!existsSync(JSON_PATH)) throw new Error("calc.json not found at " + JSON_PATH);
+  if (!existsSync(JSON_PATH))
+    throw new Error("calc.json not found at " + JSON_PATH);
   const raw = fs.readFileSync(JSON_PATH, "utf8");
   return JSON.parse(raw);
 }
@@ -40,8 +41,8 @@ export async function GET() {
     const rates = parseRatesSheet(data);
 
     return NextResponse.json({ success: true, rates });
-
-  } catch (err: any) {   // 🔥 FIX 2 — TS-compliant catch block
+  } catch (err: any) {
+    // 🔥 FIX 2 — TS-compliant catch block
     return NextResponse.json(
       { success: false, error: err?.message ?? "server error" },
       { status: 500 }

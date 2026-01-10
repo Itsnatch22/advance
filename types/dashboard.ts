@@ -5,15 +5,15 @@ export interface Employee {
   salary: number;
   availableWage: number;
   withdrawnThisMonth: number;
-  status: 'Active' | 'Pending' | 'Inactive';
+  status: "Active" | "Pending" | "Inactive";
 }
 
 export interface Transaction {
   id: string;
   date: string;
   amount: number;
-  status: 'Completed' | 'Pending' | 'Failed';
-  type: 'Withdrawal' | 'Repayment';
+  status: "Completed" | "Pending" | "Failed";
+  type: "Withdrawal" | "Repayment";
 }
 
 export interface Partner {

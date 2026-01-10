@@ -12,12 +12,12 @@ export function getSupabaseAdmin() {
   if (!url || !key) {
     throw new Error(
       "Missing Supabase admin credentials. " +
-      "Make sure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in your environment."
+        "Make sure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in your environment."
     );
   }
 
   adminClient = createClient(url, key, {
-    auth: { autoRefreshToken: false, persistSession: false }
+    auth: { autoRefreshToken: false, persistSession: false },
   });
 
   return adminClient;
