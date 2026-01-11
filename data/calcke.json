@@ -1,13 +1,12 @@
 {
   "country": "KE",
-  "personalRelief": 5000,
+  "personalRelief": 2400,
   "nssf": {
     "tier1": 420,
     "tier2Rate": 0.06,
     "tier2Cap": 72000
   },
   "shif": {
-    "flat": 1650,
     "rate": 0.0275
   },
   "housing": {

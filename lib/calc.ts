@@ -63,14 +63,22 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     // % based (Uganda / Tanzania)
     nssfEmployee = gross * (cfg.nssf.employeeRate ?? 0);
     nssfEmployer = gross * (cfg.nssf.employerRate ?? 0);
-  } else if (cfg.nssf?.tier1 || cfg.nssf?.tier2Rate) {
+  } else if (payload.country === "KE" && cfg.nssf) {
     // Tier-based (Kenya)
-    nssf1 = cfg.nssf.tier1 ?? 0;
-    const cap = cfg.nssf.tier2Cap ?? gross;
-    nssf2 = Math.min(gross, cap) * (cfg.nssf.tier2Rate ?? 0);
+    const tier1Ceiling = 7000; // KRA/NSSF guidelines, should be in config
+    const tier1Rate = 0.06; // Standard NSSF rate, should be in config
+    const tier2Ceiling = cfg.nssf.tier2Cap ?? 36000; // Fallback to old cap
+    const tier2Rate = cfg.nssf.tier2Rate ?? 0;
+
+    nssf1 = Math.min(gross, tier1Ceiling) * tier1Rate;
+    nssf2 =
+      Math.max(0, Math.min(gross, tier2Ceiling) - tier1Ceiling) * tier2Rate;
+
+    nssfEmployee = nssf1 + nssf2;
+    nssfEmployer = nssfEmployee; // Employer matches in Kenya
   }
 
-  const totalNSSF = nssfEmployee + nssfEmployer + nssf1 + nssf2;
+  const totalNSSF = nssfEmployee + nssfEmployer;
 
   // SHIF / NHIF (flat or percent)
   const shif = cfg.shif ? (cfg.shif.flat ?? gross * (cfg.shif.rate ?? 0)) : 0;
@@ -116,7 +124,10 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     rssb.medicalEmployee +
     rssb.maternityEmployee;
 
-  const taxableIncome = gross - employeeDeductions;
+  // Per spreadsheet logic, KE taxable income also deducts SHIF and Housing
+  const keTaxDeductibles =
+    payload.country === "KE" ? shif + housingLevy : 0;
+  const taxableIncome = gross - employeeDeductions - keTaxDeductibles;
 
   // PAYE
   const payeBeforeRelief = calcPAYE(taxableIncome, cfg.paye?.brackets ?? []);
@@ -124,7 +135,10 @@ export function calc(payload: Payload, cfg: JsonConfig) {
   const payeAfterRelief = Math.max(payeBeforeRelief - personalRelief, 0);
 
   // Local Service Tax (Uganda LST)
-  const lst = cfg.lst?.bands ? calcLST(gross, cfg.lst.bands) : 0;
+  const lst =
+    payload.country === "UG" && cfg.lst?.bands
+      ? calcLST(gross, cfg.lst.bands)
+      : 0;
 
   // Net Pay (employee)
   const netPay =
@@ -134,7 +148,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
   const earnedWage = (netPay / cycleDays) * daysWorked;
   const accessCap = earnedWage * (cfg.accessCapPercent ?? 0.6);
   const platformFee = accessCap * (cfg.platformFeePercent ?? 0.05);
-  const youCanAccessNow = accessCap - platformFee;
+  const youCanAccessNow = accessCap;
 
   return {
     success: true,

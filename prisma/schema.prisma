@@ -1,0 +1,17 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Calculation {
+  id           String   @id @default(uuid())
+  inputValue   Json
+  resultValue  Json
+  locationLat  Float?
+  locationLng  Float?
+  createdAt    DateTime @default(now())
+}
