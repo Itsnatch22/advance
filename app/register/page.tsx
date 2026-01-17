@@ -42,7 +42,9 @@ export default function RegisterPage() {
       const payload = {
         ...formData,
         role,
-        companySize: formData.companySize ? parseInt(formData.companySize, 10) : undefined,
+        companySize: formData.companySize
+          ? parseInt(formData.companySize, 10)
+          : undefined,
       };
 
       const response = await fetch("/api/auth/register", {
@@ -192,8 +194,8 @@ export default function RegisterPage() {
               {isLoading
                 ? "Creating account..."
                 : role === "employer"
-                ? "Create employer account"
-                : "Join as employee"}
+                  ? "Create employer account"
+                  : "Join as employee"}
             </button>
           </form>
 

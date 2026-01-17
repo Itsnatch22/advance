@@ -17,7 +17,7 @@ export const registerSchema = z
     // Employer-specific fields
     companyName: z.string().optional(),
     companySize: z.number().int().positive().optional(),
-    
+
     // Employee-specific fields
     inviteToken: z.string().optional(),
     companyId: z.string().optional(),

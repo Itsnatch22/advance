@@ -232,34 +232,21 @@ export default function Calculator() {
     }
   }, [allowancesAmount]);
 
-  // → Trigger calculation when daysWorked, salary, country, or allowances change
+  // → Real-time calculation on slider move, only after initial calculation
   useEffect(() => {
-    // Debounce the calculation to prevent excessive calls during slider drag or rapid input
-    const handler = setTimeout(() => {
-      // Only proceed if salary is provided and valid
-      if (typeof salary === "number" && salary > 0) {
-        callBackendCalc();
-      } else {
-        // Clear results if salary is not valid
-        setResult(null);
-      }
-    }, 500); // 500ms debounce time
+    // Only proceed if a result has been calculated before
+    if (result) {
+      const handler = setTimeout(() => {
+        if (typeof salary === "number" && salary > 0) {
+          callBackendCalc();
+        }
+      }, 300); // Debounce for smoother slider experience
 
-    // Cleanup: clear the timeout if the dependencies change before the timeout fires
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [
-    daysWorked,
-    salary,
-    country,
-    // Deep equality check for allowancesChecked and allowancesAmount would be ideal,
-    // but for simplicity, we'll rely on object reference changes.
-    // A more robust solution might involve use-deep-compare-effect or serializing
-    // these objects to a string for the dependency array.
-    allowancesChecked,
-    allowancesAmount,
-  ]);
+      return () => {
+        clearTimeout(handler);
+      };
+    }
+  }, [daysWorked]); // Dependency on only daysWorked
 
   const feePercent = 5;
   const percentOfCycle = useMemo(

@@ -71,7 +71,12 @@ export async function POST(request: NextRequest) {
     if (role === "employer") {
       const domain = extractDomainFromEmail(email);
       // Create company for employer
-      const companyInsert: CompanyInsert = { name: companyName!, size: companySize!, created_by: userId, domain };
+      const companyInsert: CompanyInsert = {
+        name: companyName!,
+        size: companySize!,
+        created_by: userId,
+        domain,
+      };
       const { data: companyData, error: companyError } = await supabaseAdmin
         .from("companies")
         .insert(companyInsert)
@@ -92,13 +97,31 @@ export async function POST(request: NextRequest) {
       if (inviteToken) {
         const { data: invite, error: inviteError } = await supabaseAdmin
           .from("employee_invites")
-          .select<"*", { id: string; email: string; company_id: string; used: boolean; expires_at: string }>("*")
+          .select<
+            "*",
+            {
+              id: string;
+              email: string;
+              company_id: string;
+              used: boolean;
+              expires_at: string;
+            }
+          >("*")
           .eq("invite_token", inviteToken)
           .single();
 
-        if (inviteError || !invite || invite.used || new Date(invite.expires_at) < new Date() || invite.email.toLowerCase() !== email.toLowerCase()) {
+        if (
+          inviteError ||
+          !invite ||
+          invite.used ||
+          new Date(invite.expires_at) < new Date() ||
+          invite.email.toLowerCase() !== email.toLowerCase()
+        ) {
           await supabaseAdmin.auth.admin.deleteUser(userId);
-          return NextResponse.json({ error: "Invalid or expired invite token." }, { status: 400 });
+          return NextResponse.json(
+            { error: "Invalid or expired invite token." },
+            { status: 400 }
+          );
         }
 
         companyId = invite.company_id;
@@ -108,7 +131,6 @@ export async function POST(request: NextRequest) {
           .from("employee_invites")
           .update({ used: true })
           .eq("id", invite.id);
-
       } else {
         const domain = extractDomainFromEmail(email);
         const { data: existingCompany } = await supabaseAdmin
@@ -127,16 +149,14 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Create user profile
-    const { error: profileError } = await supabaseAdmin.from("users").insert(
-      {
-        id: userId,
-        email,
-        full_name: fullName,
-        role,
-        company_id: companyId,
-        company_join_status: companyJoinStatus,
-      }
-    );
+    const { error: profileError } = await supabaseAdmin.from("users").insert({
+      id: userId,
+      email,
+      full_name: fullName,
+      role,
+      company_id: companyId,
+      company_join_status: companyJoinStatus,
+    });
 
     if (profileError) {
       // Clean up auth user if profile creation fails
