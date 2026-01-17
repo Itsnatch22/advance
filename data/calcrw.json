@@ -8,10 +8,10 @@
   },
   "paye": {
     "brackets": [
-      { "upTo": 60000, "rate": 0.0 },
-      { "upTo": 100000, "rate": 0.1 },
-      { "upTo": 200000, "rate": 0.2 },
-      { "upTo": 999999999, "rate": 0.3 }
+      { "upTo": 60000, "rate": 0.0, "base": 0, "minus": 0 },
+      { "upTo": 100000, "rate": 0.1, "base": 0, "minus": 60000 },
+      { "upTo": 200000, "rate": 0.2, "base": 4000, "minus": 100000 },
+      { "upTo": 999999999, "rate": 0.3, "base": 24000, "minus": 200000 }
     ],
     "description": "Rwanda PAYE bands per Income Tax Law No. 027/2022 (monthly resident rates)."
   },

@@ -15,11 +15,11 @@
   },
   "paye": {
     "brackets": [
-      { "upTo": 235000, "rate": 0.0 },
-      { "upTo": 335000, "rate": 0.1 },
-      { "upTo": 410000, "rate": 0.2 },
-      { "upTo": 10000000, "rate": 0.3 },
-      { "upTo": 999999999, "rate": 0.4 }
+      { "upTo": 235000, "rate": 0.0, "base": 0, "minus": 0 },
+      { "upTo": 335000, "rate": 0.1, "base": 0, "minus": 235000 },
+      { "upTo": 410000, "rate": 0.2, "base": 10000, "minus": 335000 },
+      { "upTo": 10000000, "rate": 0.3, "base": 25000, "minus": 410000 },
+      { "upTo": 999999999, "rate": 0.4, "base": 2902000, "minus": 10000000 }
     ],
     "description": "Uganda PAYE brackets per ITA Cap 340, monthly threshold 235,000 UGX tax-free."
   },

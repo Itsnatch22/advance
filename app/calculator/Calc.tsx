@@ -3,6 +3,19 @@ import React, { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
+// 📊 GRAPH IMPORTS (ADDED)
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Cell,
+  TooltipProps,
+} from "recharts";
+
 type Country = "KE" | "UG" | "TZ" | "RW";
 
 const countryAllowances: Record<Country, { key: string; label: string }[]> = {
@@ -69,6 +82,103 @@ const formatNumberInput = (value: string) => {
   return Intl.NumberFormat("en-KE").format(Number(numeric));
 };
 
+// 📊 CUSTOM GRAPH COMPONENT (INVESTOR WOW FACTOR)
+const WageGraph = ({
+  result,
+  currencySymbol,
+  locale,
+}: {
+  result: CalcResult;
+  currencySymbol: string;
+  locale: string;
+}) => {
+  const data = [
+    { name: "Net Pay", value: result.netMonthly },
+    { name: "Accrued", value: result.accruedGross },
+    { name: "Access Cap", value: result.accessCap },
+    { name: "Available", value: result.accessibleNow, isKey: true },
+  ];
+
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: TooltipProps<number, string>) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="rounded-lg border border-emerald-200 bg-white/80 p-3 text-sm shadow-lg backdrop-blur-sm dark:border-green-700 dark:bg-gray-800/80">
+          <p className="font-bold text-emerald-700">{label}</p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <span className="font-semibold">{currencySymbol}</span>{" "}
+            {fmt(payload[0].value ?? 0, locale)}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+      className="mt-8 h-64 w-full rounded-2xl border border-emerald-200 bg-gray-50/50 p-4 shadow-inner dark:border-green-800 dark:bg-gray-900/50"
+    >
+      <h4 className="mb-3 text-center text-base font-bold text-gray-700 dark:text-gray-200">
+        Visual Breakdown
+      </h4>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={data}
+          margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+        >
+          <defs>
+            <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#10b981" stopOpacity={0.2} />
+            </linearGradient>
+            <linearGradient id="keyBarGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#2dd4bf" stopOpacity={0.9} />
+              <stop offset="95%" stopColor="#059669" stopOpacity={0.4} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" opacity={0.2} />
+          <XAxis
+            dataKey="name"
+            tick={{ fontSize: 12, fill: "#6b7280" }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tick={{ fontSize: 12, fill: "#6b7280" }}
+            tickFormatter={(v) =>
+              `${currencySymbol} ${fmt(v, locale).slice(0, -3)}k`
+            }
+            axisLine={false}
+            tickLine={false}
+            width={80}
+          />
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{ fill: "rgba(16, 185, 129, 0.1)" }}
+          />
+          <Bar dataKey="value" radius={[8, 8, 2, 2]}>
+            {data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={
+                  entry.isKey ? "url(#keyBarGradient)" : "url(#barGradient)"
+                }
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </motion.div>
+  );
+};
+
 export default function Calculator() {
   const [country, setCountry] = useState<Country>("KE");
   const [salary, setSalary] = useState<number | "">("");
@@ -121,6 +231,35 @@ export default function Calculator() {
       setResult(null);
     }
   }, [allowancesAmount]);
+
+  // → Trigger calculation when daysWorked, salary, country, or allowances change
+  useEffect(() => {
+    // Debounce the calculation to prevent excessive calls during slider drag or rapid input
+    const handler = setTimeout(() => {
+      // Only proceed if salary is provided and valid
+      if (typeof salary === "number" && salary > 0) {
+        callBackendCalc();
+      } else {
+        // Clear results if salary is not valid
+        setResult(null);
+      }
+    }, 500); // 500ms debounce time
+
+    // Cleanup: clear the timeout if the dependencies change before the timeout fires
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [
+    daysWorked,
+    salary,
+    country,
+    // Deep equality check for allowancesChecked and allowancesAmount would be ideal,
+    // but for simplicity, we'll rely on object reference changes.
+    // A more robust solution might involve use-deep-compare-effect or serializing
+    // these objects to a string for the dependency array.
+    allowancesChecked,
+    allowancesAmount,
+  ]);
 
   const feePercent = 5;
   const percentOfCycle = useMemo(
@@ -457,6 +596,12 @@ export default function Calculator() {
                   .join(" | ")}
               </p>
             </div>
+
+            <WageGraph
+              result={result}
+              currencySymbol={currencySymbol}
+              locale={locale}
+            />
           </motion.div>
         )}
       </AnimatePresence>
