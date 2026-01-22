@@ -93,21 +93,23 @@ const Navbar = () => {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-xl font-bold text-green-700 sm:text-2xl"
+          className="flex items-center gap-2 text-2xl font-bold text-green-700 sm:text-3xl"
         >
-          <Wallet className="h-6 w-6 text-black sm:h-7 sm:w-7 dark:text-white" />
+          <motion.div whileHover={{ rotate: 5, scale: 1.1 }}>
+            <Wallet className="h-7 w-7 text-black sm:h-8 sm:w-8 dark:text-white" />
+          </motion.div>
           EaziWage
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden items-center gap-8 lg:flex">
+        <div className="hidden items-center gap-10 lg:flex">
           {links.map((link, i) => (
             <div key={i} className="relative">
               {/* Clickable main link */}
               <Link
                 href={link.href}
                 onClick={() => setOpenDrawer(openDrawer === i ? null : i)}
-                className="group flex items-center gap-1 font-medium text-gray-700 transition hover:text-green-600 dark:text-white"
+                className="group relative flex items-center gap-1 text-lg font-medium text-gray-700 transition hover:text-green-600 dark:text-white"
               >
                 {link.name}
                 {link.drawer && (
@@ -115,6 +117,12 @@ const Navbar = () => {
                     className={`h-4 w-4 transition-transform duration-200 ${openDrawer === i ? "rotate-180" : "group-hover:translate-y-0.5"}`}
                   />
                 )}
+                <motion.span
+                  className="absolute left-0 -bottom-1 h-0.5 bg-green-600"
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  transition={{ duration: 0.3 }}
+                />
               </Link>
 
               {/* Fancy Dropdown Drawer */}
@@ -124,7 +132,7 @@ const Navbar = () => {
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     className="absolute top-12 left-0 w-[400px] overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-xl dark:border-gray-700 dark:bg-neutral-900"
                   >
                     <div className="grid gap-2">
@@ -158,12 +166,15 @@ const Navbar = () => {
 
         {/* Right side buttons */}
         <div className="hidden items-center gap-4 lg:flex">
-          <Link
-            href="/login"
-            className="px-4 py-2 font-medium text-gray-700 transition hover:text-green-600 dark:text-white"
-          >
-            Login
-          </Link>
+          <a href="https://app.eaziwage.com" target="_blank" rel="noopener noreferrer">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-4 py-2 font-medium text-gray-700 transition hover:text-green-600 dark:text-white"
+            >
+              Dashboard
+            </motion.button>
+          </a>
           <Link href="/register">
             <motion.button
               whileHover={{ scale: 1.05 }}

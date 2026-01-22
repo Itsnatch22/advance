@@ -28,12 +28,14 @@ export default function Footer() {
       <div className="absolute right-0 bottom-0 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl"></div>
 
       <div className="relative container mx-auto px-4 py-12 sm:px-6 md:py-16">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10 md:grid-cols-5 md:gap-12">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10 md:grid-cols-5 md:gap-20">
           {/* Brand */}
           <div className="space-y-4 sm:col-span-2 md:col-span-1">
             <Link href="/" className="group flex items-center gap-2">
-              <Wallet className="h-6 w-6 text-green-400 transition-colors group-hover:text-green-300" />
-              <span className="text-xl font-bold text-white transition-colors group-hover:text-green-50">
+              <motion.div whileHover={{ rotate: 5, scale: 1.1 }}>
+                <Wallet className="h-6 w-6 text-green-400 transition-colors group-hover:text-green-300" />
+              </motion.div>
+              <span className="text-2xl font-bold text-white transition-colors group-hover:text-green-50">
                 EaziWage
               </span>
             </Link>
@@ -78,19 +80,22 @@ export default function Footer() {
 
           {/* Product */}
           <div>
-            <h3 className="mb-4 font-semibold text-white">Product</h3>
-            <ul className="space-y-2">
+            <h3 className="mb-6 text-xl font-bold text-white">Product</h3>
+            <ul className="space-y-3">
               {[
-                { name: "How It Works", href: "how-it-works" },
-                { name: "Pricing", href: "pricing" },
                 { name: "Resources", href: "resources" },
               ].map((link, index) => (
                 <li key={index}>
                   <Link
                     href={link.href}
-                    className="inline-block text-sm text-gray-400 transition-all hover:translate-x-1 hover:text-green-400"
+                    className="inline-block text-base text-gray-300"
                   >
-                    {link.name}
+                    <motion.span
+                      whileHover={{ x: 5, color: "var(--color-green-400)" }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {link.name}
+                    </motion.span>
                   </Link>
                 </li>
               ))}
@@ -99,8 +104,8 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <h3 className="mb-4 font-semibold text-white">Company</h3>
-            <ul className="space-y-2">
+            <h3 className="mb-6 text-xl font-bold text-white">Company</h3>
+            <ul className="space-y-3">
               {[
                 { name: "About Us", href: "about" },
                 { name: "Careers", href: "careers" },
@@ -111,9 +116,14 @@ export default function Footer() {
                 <li key={index}>
                   <Link
                     href={link.href}
-                    className="inline-block text-sm text-gray-400 transition-all hover:translate-x-1 hover:text-green-400"
+                    className="inline-block text-base text-gray-300"
                   >
-                    {link.name}
+                    <motion.span
+                      whileHover={{ x: 5, color: "var(--color-green-400)" }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {link.name}
+                    </motion.span>
                   </Link>
                 </li>
               ))}
@@ -122,8 +132,8 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="mb-4 font-semibold text-white">Legal</h3>
-            <ul className="space-y-2">
+            <h3 className="mb-6 text-xl font-bold text-white">Legal</h3>
+            <ul className="space-y-3">
               {[
                 { name: "Data Policy", href: "/data.pdf" },
                 { name: "ABC Policy", href: "/corruption.pdf" },
@@ -137,9 +147,14 @@ export default function Footer() {
                   <Link
                     href={link.href}
                     target="_blank"
-                    className="inline-block text-sm text-gray-400 transition-all hover:translate-x-1 hover:text-green-400"
+                    className="inline-block text-base text-gray-300"
                   >
-                    {link.name}
+                    <motion.span
+                      whileHover={{ x: 5, color: "var(--color-green-400)" }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {link.name}
+                    </motion.span>
                   </Link>
                 </li>
               ))}
@@ -148,8 +163,8 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="mb-4 font-semibold text-white">Contact</h3>
-            <ul className="space-y-2">
+            <h3 className="mb-6 text-xl font-bold text-white">Contact</h3>
+            <ul className="space-y-3">
               {[
                 {
                   icon: Mail,
@@ -173,10 +188,15 @@ export default function Footer() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="group flex items-center gap-2 text-sm text-gray-400 transition hover:text-green-400"
+                    className="group flex items-center gap-2 text-base text-gray-300"
                   >
                     <contact.icon className="h-5 w-5 transition-colors group-hover:text-green-500" />
-                    {contact.text}
+                    <motion.span
+                      whileHover={{ x: 5, color: "var(--color-green-400)" }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {contact.text}
+                    </motion.span>
                   </a>
                 </li>
               ))}
@@ -202,9 +222,10 @@ export default function Footer() {
       {/* Regulatory Strip */}
       <div className="border-t border-gray-800 bg-gray-900/80">
         <p className="mx-auto max-w-4xl p-3 px-4 text-center text-xs text-gray-400 sm:p-4">
-          EaziWage is regulated by the Central Bank of Kenya. All funds are
-          provided by licensed banking partners. This service does not
-          constitute lending under the Banking Act.
+          EaziWage operates in compliance with applicable financial regulations 
+          and laws in each country of operation. Funds are provided through licensed banking 
+          and financial partners. This service does not constitute lending under
+           applicable banking laws.
         </p>
       </div>
     </footer>

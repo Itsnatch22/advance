@@ -23,20 +23,16 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/homepage/background.jpg')] bg-cover bg-center px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-0">
+    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/homepage/background.jpg')] bg-cover bg-center px-4 py-32 text-white sm:px-6 lg:px-8 lg:py-0">
       <div className="absolute inset-0 bg-gradient-to-r from-green-700/90 to-transparent"></div>
-
-      {/* Parallax-like effect for background or subtle movement could be added here if desired, 
-                but keeping it simple for performance as per request to maintain content/UI */}
-
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
-        <div className="space-y-4 sm:space-y-6">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-24">
+        <div className="space-y-4 pt-0 sm:space-y-6 lg:pt-20">
           <motion.h1
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             viewport={{ once: true }}
-            className="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl lg:text-6xl"
+            className="font-serif text-3xl leading-tight font-bold text-white sm:text-4xl lg:text-6xl"
           >
             Access Your <span ref={typedRef} className="text-white underline" />{" "}
             {""} Before PayDay
@@ -65,8 +61,13 @@ export default function Hero() {
                 whileTap={{ scale: 0.95 }}
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-base font-medium text-white transition hover:bg-green-700 sm:w-auto sm:text-lg dark:bg-black"
               >
-                Get Started Now
-                <BiChevronRight className="h-5 w-5" />
+                <motion.span
+                  initial={{ translateX: 0 }}
+                  whileHover={{ translateX: 5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <BiChevronRight className="h-5 w-5" />
+                </motion.span>
               </motion.button>
             </Link>
             <Link href="/employers">
@@ -75,8 +76,13 @@ export default function Hero() {
                 whileTap={{ scale: 0.95 }}
                 className="flex w-full items-center justify-center gap-2 rounded-xl border border-green-500 bg-transparent px-6 py-3 text-base font-medium text-white transition-colors ease-in-out hover:bg-green-50 hover:text-green-700 sm:w-auto sm:text-lg"
               >
-                For Employers
-                <BiChevronRight className="h-5 w-5" />
+                <motion.span
+                  initial={{ translateX: 0 }}
+                  whileHover={{ translateX: 5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <BiChevronRight className="h-5 w-5" />
+                </motion.span>
               </motion.button>
             </Link>
           </motion.div>

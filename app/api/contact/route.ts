@@ -6,6 +6,7 @@ import { getSupabaseAdmin } from "@/lib/server/supabaseAdmin";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
+const supportEmail = process.env.SUPPORT_EMAIL || "support@eaziwage.com";
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,8 +49,9 @@ export async function POST(request: NextRequest) {
 
     await resend.emails.send({
       from: "Contact Form <support@eaziwage.com>",
-      to: email,
-      subject: `We received your message, ${name}!`,
+      to: supportEmail,
+      replyTo: email,
+      subject: `[Contact] ${subject} — ${name}`,
       text: `Hi ${name},\n\nThank you for reaching out to us. We have received your message and will get back to you shortly.\n\nBest regards,\nThe Eaziwage Team`,
       react: ContactNotification({
         name,
@@ -59,6 +61,19 @@ export async function POST(request: NextRequest) {
         submittedAt: new Date(submittedAtIso).toLocaleString(),
       }),
     });
+
+    // 2️⃣ Auto reply to user
+    await resend.emails.send({
+      from: `EaziWage Support <${supportEmail}>`,
+      to: email,
+      subject: "We received your message",
+      text: `Hi ${name},
+
+      Thanks for reaching out. We got your message and will reply shortly.
+
+      — EaziWage Team`,
+    });
+
 
     return NextResponse.json(
       { message: "Message sent successfully" },

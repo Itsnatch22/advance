@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema, ContactFormData } from "@/lib/validations/contact";
 import { useState } from "react";
 import { toast } from "sonner";
-import toastStyle from "react-hot-toast";
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,22 +36,29 @@ export default function ContactPage() {
 
       const result = await response.json();
 
-      if (response.ok && result.success) {
+      if (response.ok) {
+        // Success - backend returns { message: "Message sent successfully" }
         toast.success("Message sent successfully! We'll contact you soon.", {
           id: toastId,
           duration: 5000,
         });
-        reset();
+        reset(); // Clear the form
       } else {
-        // Handle validation errors
+        // Handle validation errors from backend
         if (result.issues) {
+          // Backend returns validation errors with issues array
           result.issues.forEach((error: any) => {
             toast.error(`${error.path}: ${error.message}`, {
               id: toastId,
             });
           });
+        } else if (result.error) {
+          // Backend returns other errors with error field
+          toast.error(result.error, {
+            id: toastId,
+          });
         } else {
-          toast.error(result.message || "Failed to send message", {
+          toast.error("Failed to send message", {
             id: toastId,
           });
         }
