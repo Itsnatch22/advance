@@ -1,9 +1,9 @@
 // scripts/xlsx-to-json.ts
-import * as fs from "fs-extra";
+import fs from "fs-extra";
 import * as path from "path";
 import * as XLSX from "xlsx";
 
-const sourceDir = path.resolve(process.cwd(), "mnt/data"); // adjust if needed
+const sourceDir = path.resolve(process.cwd()); // adjust if needed
 const outDir = path.resolve(process.cwd(), "data");
 
 async function convert(fileName: string, outName: string) {

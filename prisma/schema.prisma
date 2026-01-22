@@ -1,6 +1,7 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -8,10 +9,15 @@ generator client {
 }
 
 model Calculation {
-  id           String   @id @default(uuid())
-  inputValue   Json
-  resultValue  Json
-  locationLat  Float?
-  locationLng  Float?
-  createdAt    DateTime @default(now())
+  id          String   @id @default(uuid())
+  grossPay    Decimal
+  netPay      Decimal
+  deductions  Json
+  country     String?
+  city        String?
+  ipAddress   String
+  device      String?
+  createdAt   DateTime @default(now())
+
+  @@map("wage_calculations")
 }
