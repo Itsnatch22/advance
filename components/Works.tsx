@@ -99,7 +99,7 @@ export default function Works() {
               <div className="flex flex-col items-center gap-5">
                 {/* Icon */}
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-600/20 to-emerald-500/20 blur-xl"></div>
+                  <div className="absolute inset-0 rounded-full bg-linear-to-br from-green-600/20 to-emerald-500/20 blur-xl"></div>
                   <step.icon className="relative z-10 h-12 w-12 text-black dark:text-white" />
                 </div>
 

@@ -12,6 +12,9 @@ import {
   BrainCircuit,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { ArrowRight } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
 import { FeatureCard } from "@/components/shared/FeatureCard";
@@ -111,6 +114,7 @@ const complianceItems = [
 ];
 
 export default function Employers() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   return (
     <section className="relative mx-auto flex min-h-screen w-full flex-col items-center overflow-hidden py-16 sm:py-24 lg:py-32">
       <UI />
@@ -190,7 +194,7 @@ export default function Employers() {
       </div>
 
       {/* Works Areas */}
-      <div className="mt-10 w-full max-w-7xl px-2 sm:mt-20 sm:px-4 lg:mt-30 lg:px-6">
+      <div className="mt-8 w-full max-w-7xl px-2 sm:mt-16 sm:px-4 lg:mt-24 lg:px-6">
         <div className="mb-12 text-center lg:text-left">
           <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
             Works across sectors & sizes
@@ -210,35 +214,41 @@ export default function Employers() {
         <h2 className="mb-12 text-center font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl dark:text-white">
           Frequently Asked Questions
         </h2>
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <FAQItem
-              key={index}
-              question={faq.question}
-              answer={faq.answer}
-              index={index}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="sticky bottom-6 z-50 mx-auto w-full max-w-xl px-4">
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1, type: "spring" }}
-          className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200/80 bg-white/90 p-4 shadow-2xl backdrop-blur-md dark:border-white/10 dark:bg-gray-900/90"
-        >
-          <div className="pl-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-            Ready to roll out earned wage access?
-          </div>
-          <Link
-            href="#roi"
-            className="shrink-0 rounded-xl bg-green-700 px-6 py-2.5 font-medium text-white shadow-lg shadow-green-900/20 transition-all duration-300 hover:scale-105 hover:bg-green-800 hover:shadow-green-900/30"
+              <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-green-500/30 dark:border-white/10 dark:bg-white/5">
+        {faqs.map((faq, index) => (
+          <div
+            key={index}
+            className="border-b border-gray-200 last:border-none dark:border-gray-700"
           >
-            Get ROI
-          </Link>
-        </motion.div>
+            <button
+              onClick={() => setOpenIndex(openIndex === index ? null : index)}
+              className="group flex w-full items-center justify-between p-5 text-left focus:outline-none"
+            >
+              <span className="text-base font-medium text-gray-900 dark:text-white transition-colors group-hover:text-green-700 sm:text-lg">
+                {faq.question}
+              </span>
+              <ArrowRight
+                className={`ml-2 h-5 w-5 shrink-0 text-gray-500 dark:text-white transition-transform duration-300 ${openIndex === index ? "rotate-90 text-green-600" : ""}`}
+              />
+            </button>
+            <AnimatePresence>
+              {openIndex === index && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <p className="px-5 pb-5 text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg">
+                    {faq.answer}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
+      </div>
       </div>
     </section>
   );

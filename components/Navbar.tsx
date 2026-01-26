@@ -166,7 +166,7 @@ const Navbar = () => {
 
         {/* Right side buttons */}
         <div className="hidden items-center gap-4 lg:flex">
-          <a href="https://app.eaziwage.com" target="_blank" rel="noopener noreferrer">
+          <Link href="https://app.eaziwage.com" target="_blank" rel="noopener noreferrer">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -174,7 +174,7 @@ const Navbar = () => {
             >
               Dashboard
             </motion.button>
-          </a>
+          </Link>
           <Link href="/register">
             <motion.button
               whileHover={{ scale: 1.05 }}

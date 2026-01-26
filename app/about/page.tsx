@@ -39,13 +39,13 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white text-gray-800 transition-colors duration-500 dark:bg-neutral-950 dark:text-gray-200">
       {/* ===== Hero ===== */}
       <section className="relative overflow-hidden px-6 py-28">
-        <div className="absolute inset-0 bg-blue-100/100 blur-3xl dark:bg-black"></div>
+        <div className="absolute inset-0 bg-green-100 blur-3xl dark:bg-black"></div>
 
         <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2">
           {/* Left: Text */}
           <div className="text-left">
             <motion.h1
-              className="bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text font-serif text-5xl leading-tight font-bold text-transparent md:text-6xl"
+              className="bg-linear-to-r from-green-600 to-emerald-400 bg-clip-text font-serif text-5xl leading-tight font-bold text-transparent md:text-6xl"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -57,7 +57,7 @@ export default function AboutPage() {
 
             <p className="mt-6 max-w-md text-lg text-gray-600 md:text-xl dark:text-gray-300">
               Empowering Africa&apos;s workforce to access what they&apos;ve
-              earned — fairly, instantly, and securely.
+              earned - fairly, instantly, and securely.
             </p>
           </div>
 
@@ -165,7 +165,7 @@ export default function AboutPage() {
               key={title}
               whileHover={{ y: -5, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 200 }}
-              className="flex flex-col items-center rounded-xl border border-gray-100 bg-gradient-to-b from-transparent via-green-500/5 to-transparent p-8 shadow-md hover:shadow-lg dark:border-neutral-700 dark:via-green-400/10"
+              className="flex flex-col items-center rounded-xl border border-gray-100 bg-linear-to-b from-transparent via-green-500/5 to-transparent p-8 shadow-md hover:shadow-lg dark:border-neutral-700 dark:via-green-400/10"
             >
               <Icon className="mb-4 h-10 w-10 text-black dark:text-white" />
               <h3 className="mb-2 text-lg font-semibold text-black dark:text-white">

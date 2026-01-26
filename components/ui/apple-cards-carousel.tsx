@@ -86,7 +86,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
         >
           <div
             className={cn(
-              "absolute right-0 z-[1000] h-auto w-[5%] overflow-hidden bg-gradient-to-l"
+              "absolute right-0 z-1000 h-auto w-[5%] overflow-hidden bg-linear-to-l"
             )}
           ></div>
 
@@ -151,7 +151,7 @@ export const Card = ({
   return (
     <motion.div
       layoutId={layout ? `card-${card.title}` : undefined}
-      className="relative z-10 flex h-80 w-56 flex-col items-end justify-end overflow-hidden rounded-3xl bg-gray-100 md:h-[32rem] md:w-96 dark:bg-neutral-900"
+      className="relative z-10 flex h-80 w-56 flex-col items-end justify-end overflow-hidden rounded-3xl bg-gray-100 md:h-128 md:w-96 dark:bg-neutral-900"
     >
       <div className="pointer-events-none absolute inset-0 z-10" />
       <BlurImage

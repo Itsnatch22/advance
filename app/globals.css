@@ -12,6 +12,24 @@
   font-family: var(--font-playfair);
 }
 
+.eaziwage-gradient {
+  background: linear-gradient(135deg, #00B37E, #00A36C, #008F59, #006F42);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

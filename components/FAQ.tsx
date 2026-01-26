@@ -46,21 +46,21 @@ export default function FAQ() {
       >
         Our <span className="text-green-600">Frequently</span> Asked Questions
       </motion.h2>
-      <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+      <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:bg-gray-800">
         {faqs.map((faq, index) => (
           <div
             key={index}
-            className="border-b border-gray-200 last:border-none"
+            className="border-b border-gray-200 last:border-none dark:border-gray-700"
           >
             <button
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
               className="group flex w-full items-center justify-between p-5 text-left focus:outline-none"
             >
-              <span className="text-base font-medium text-gray-900 transition-colors group-hover:text-green-700 sm:text-lg">
+              <span className="text-base font-medium text-gray-900 dark:text-white transition-colors group-hover:text-green-700 sm:text-lg">
                 {faq.question}
               </span>
               <ArrowRight
-                className={`ml-2 h-5 w-5 shrink-0 text-gray-500 transition-transform duration-300 ${openIndex === index ? "rotate-90 text-green-600" : ""}`}
+                className={`ml-2 h-5 w-5 shrink-0 text-gray-500 dark:text-whitetransition-transform duration-300 ${openIndex === index ? "rotate-90 text-green-600" : ""}`}
               />
             </button>
             <AnimatePresence>
@@ -72,7 +72,7 @@ export default function FAQ() {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="overflow-hidden"
                 >
-                  <p className="px-5 pb-5 text-base leading-7 text-gray-600 sm:text-lg">
+                  <p className="px-5 pb-5 text-base leading-7 text-gray-600 dark:text-white sm:text-lg">
                     {faq.answer}
                   </p>
                 </motion.div>

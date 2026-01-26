@@ -26,7 +26,7 @@ export default function CTA() {
     return () => typed.destroy();
   }, []);
   return (
-    <section className="relative flex min-h-screen items-center bg-[url('/cta.jpg')] bg-cover bg-center py-16 sm:py-20">
+    <section className="relative flex items-center eaziwage-gradient py-24 sm:py-20">
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-black/40 dark:bg-black/60"></div>
 
