@@ -1,12 +1,14 @@
 "use client";
 import { BiChevronRight } from "react-icons/bi";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import Typed from "typed.js";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
   const typedRef = useRef(null);
+  const [email, setEmail] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const typed = new Typed(typedRef.current, {
@@ -18,9 +20,15 @@ export default function Hero() {
       cursorChar: "|",
       backDelay: 2000,
     });
-
     return () => typed.destroy();
   }, []);
+
+  const handleContinue = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    // redirect to register page with email as query param
+    router.push(`https://eaziwageapp.vercel.app/register?email=${encodeURIComponent(email)}`);
+  };
 
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/homepage/background.jpg')] bg-cover bg-center px-4 py-32 text-white sm:px-6 lg:px-8 lg:py-0">
@@ -32,13 +40,13 @@ export default function Hero() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             viewport={{ once: true }}
-            className="font-serif text-3xl leading-tight font-bold text-black dark:text-white sm:text-4xl lg:text-6xl"
+            className="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl lg:text-6xl"
           >
             Access Your <span ref={typedRef} className="text-white underline" />{" "}
-            {""} Before PayDay
+            Before PayDay
           </motion.h1>
           <motion.p
-            className="max-w-lg text-base sm:text-lg"
+            className="max-w-lg text-base sm:text-lg text-black dark:text-white"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -49,18 +57,28 @@ export default function Hero() {
             improve productivity and retain top talent - just EaziWage it.
           </motion.p>
 
-          <div className="flex flex-wrap gap-4">
-            <Link href="/register" className="rounded-xl inline-flex items-center gap-2 bg-white px-6 py-3 font-semibold text-green-700">
-              Get started
-              <BiChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link href="/demo" className="rounded-xl inline-flex items-center gap-2 border border-white px-6 py-3">
-              See demo
-              <BiChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
+          {/* === Email Input Form === */}
+          <form
+            onSubmit={handleContinue}
+            className="mt-6 flex max-w-md flex-wrap gap-2"
+          >
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-3 text-black focus:ring-2 focus:ring-green-500 focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="rounded-xl bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700 flex items-center gap-2"
+            >
+              Continue
+              <BiChevronRight className="ml-1 h-5 w-5" />
+            </button>
+          </form>
         </div>
-
       </div>
     </section>
   );

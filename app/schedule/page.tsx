@@ -121,7 +121,7 @@ export default function SchedulePage() {
     <main className="relative mx-auto max-w-5xl p-6">
       <header className="mt-10 mb-6 text-center">
         <motion.h1
-          className="bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-3xl font-bold text-transparent md:text-4xl"
+          className="bg-linear-to-r from-green-600 to-emerald-400 bg-clip-text text-3xl font-bold text-transparent md:text-4xl"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}

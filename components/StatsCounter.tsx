@@ -22,7 +22,7 @@ export default function StatsCounter() {
       className="relative w-full overflow-hidden bg-gray-50 py-16 text-center text-black sm:py-20 lg:py-24 dark:bg-neutral-950 dark:text-white"
     >
       {/* Subtle gradient background for aura */}
-      <div className="absolute inset-0 bg-gradient-to-b from-green-600/5 via-transparent to-emerald-500/5 blur-2xl dark:from-emerald-400/10 dark:via-transparent dark:to-green-500/5"></div>
+      <div className="absolute inset-0 bg-linear-to-b from-green-600/5 via-transparent to-emerald-500/5 blur-2xl dark:from-emerald-400/10 dark:via-transparent dark:to-green-500/5"></div>
 
       {/* === Section Title === */}
       <motion.h2

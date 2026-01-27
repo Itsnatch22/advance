@@ -65,7 +65,7 @@ const item = {
 
 export default function Needs() {
   return (
-    <section className="relative bg-gradient-to-b from-gray-50 via-green-50/10 to-gray-50 py-16 sm:py-20 dark:from-black dark:to-gray-900">
+    <section className="relative bg-linear-to-b from-gray-50 via-green-50/10 to-gray-50 py-16 sm:py-20 dark:from-black dark:to-gray-900">
       <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}

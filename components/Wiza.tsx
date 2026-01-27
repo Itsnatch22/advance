@@ -176,7 +176,7 @@ export default function WizaChat() {
                         : "bg-neutral-100 text-neutral-800"
                   }`}
                 >
-                  <pre className="break-words whitespace-pre-wrap">
+                  <pre className="wrap-break-word whitespace-pre-wrap">
                     {msg.text}
                   </pre>
                 </div>
