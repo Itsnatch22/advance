@@ -19,7 +19,7 @@ export default function ProblemStatement() {
       className="relative overflow-hidden bg-gray-50 py-16 sm:py-20 lg:py-24 dark:bg-neutral-950"
     >
       {/* === Soft Background Glow === */}
-      <div className="absolute inset-0 bg-gradient-to-b from-green-600/5 via-transparent to-emerald-500/5 blur-2xl dark:from-emerald-600/10 dark:via-transparent dark:to-green-500/10"></div>
+      <div className="absolute inset-0 bg-linear-to-b from-green-600/5 via-transparent to-emerald-500/5 blur-2xl dark:from-emerald-600/10 dark:via-transparent dark:to-green-500/10"></div>
 
       <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-4 sm:gap-16 sm:px-6 lg:grid-cols-2 lg:gap-20">
         {/* === Image Side === */}
@@ -39,7 +39,7 @@ export default function ProblemStatement() {
               height={400}
               className="rounded-xl border border-green-100 object-cover shadow-2xl dark:border-neutral-800"
             />
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-green-600/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+            <div className="absolute inset-0 rounded-xl bg-linear-to-t from-green-600/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
           </div>
         </motion.div>
 

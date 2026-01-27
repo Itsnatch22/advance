@@ -115,17 +115,6 @@ export default function Pricing() {
             </motion.div>
           ))}
         </motion.div>
-
-        <Link href="/register" className="inline-block">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="mt-8 rounded-full bg-green-600 px-6 py-3 text-sm font-medium text-white shadow-md hover:bg-green-700 hover:shadow-lg sm:mt-10 sm:px-8 sm:text-base"
-          >
-            Get Started
-          </motion.button>
-        </Link>
       </div>
     </section>
   );
