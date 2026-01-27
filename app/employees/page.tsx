@@ -14,7 +14,9 @@ import {
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
 import { FeatureCard } from "@/components/shared/FeatureCard";
-import { FAQItem } from "@/components/shared/FAQItem";
+import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import UI from "./UI";
 
 const reasons = [
@@ -30,13 +32,13 @@ const reasons = [
   },
   {
     icon: Smartphone,
-    title: "M-PESA or bank",
+    title: "Mobile Money or Bank",
     desc: "Choose the payout channel that suits you.",
   },
   {
     icon: CheckCircle2,
     title: "Secure & compliant",
-    desc: "CBK-aligned model • ODPC data protection.",
+    desc: "Pan-Africa Ready • Data Protection.",
   },
   {
     icon: Users,
@@ -46,7 +48,7 @@ const reasons = [
   {
     icon: CheckCircle2,
     title: "Transparent fees",
-    desc: "Flat KSh 25 + Application 5%—clearly shown before you confirm.",
+    desc: "Flat USD 2 + Application 5%—clearly shown before you confirm.",
   },
 ];
 
@@ -74,9 +76,9 @@ const rolloutPlans = [
 ];
 
 const complianceItems = [
-  { text: "Regulated partners • CBK-aligned framework" },
+  { text: "Regulated partners • Pan-Africa Ready framework" },
   { text: "ODPC-compliant data handling" },
-  { text: "Transparent pricing (KSh 25 + 5%)" },
+  { text: "Transparent pricing (USD 2 + 5%)" },
   { text: "Auto-settlement via payroll" },
 ];
 
@@ -110,6 +112,7 @@ const faqs = [
 ];
 
 export default function Employees() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   return (
     <section className="relative mx-auto flex min-h-screen w-full flex-col items-center py-10 sm:py-14 lg:py-20">
       <UI />
@@ -193,19 +196,44 @@ export default function Employees() {
       </div>
 
       <div className="mx-auto w-full max-w-4xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-        <h2 className="mb-12 text-center font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl dark:text-white">
-          Frequently Asked Questions
-        </h2>
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <FAQItem
-              key={index}
-              question={faq.question}
-              answer={faq.answer}
-              index={index}
-            />
-          ))}
-        </div>
+              <h2 className="mb-12 text-center font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl dark:text-white">
+                Frequently Asked Questions
+              </h2>
+                    <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-green-500/30 dark:border-white/10 dark:bg-white/5">
+              {faqs.map((faq, index) => (
+                <div
+                  key={index}
+                  className="border-b border-gray-200 last:border-none dark:border-gray-700"
+                >
+                  <button
+                    onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                    className="group flex w-full items-center justify-between p-5 text-left focus:outline-none"
+                  >
+                    <span className="text-base font-medium text-gray-900 dark:text-white transition-colors group-hover:text-green-700 sm:text-lg">
+                      {faq.question}
+                    </span>
+                    <ArrowRight
+                      className={`ml-2 h-5 w-5 shrink-0 text-gray-500 dark:text-white transition-transform duration-300 ${openIndex === index ? "rotate-90 text-green-600" : ""}`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {openIndex === index && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg">
+                          {faq.answer}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
       </div>
     </section>
   );

@@ -61,7 +61,7 @@ export default function Integrations() {
           <div className="mt-4 grid grid-cols-2 gap-4">
             <SmallCard
               title="Flat transaction fee"
-              value="KSh 25"
+              value="USD 2"
               icon={<Wallet className="h-5 w-5" />}
             />
             <SmallCard

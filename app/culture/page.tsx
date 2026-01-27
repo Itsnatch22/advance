@@ -4,91 +4,107 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Typed from "typed.js";
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function CulturePage() {
-  const typedRef = useRef(null);
+  const typedRef = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
-    const typed = new Typed(typedRef.current, {
+    const typed = new Typed(typedRef.current!, {
       strings: ["Culture", "Vibe", "Innovation", "Identity"],
-      typeSpeed: 100,
-      backSpeed: 80,
+      typeSpeed: 80,
+      backSpeed: 50,
       loop: true,
-      backDelay: 2000,
-      smartBackspace: true,
+      backDelay: 1800,
     });
+
     return () => typed.destroy();
   }, []);
 
   return (
-    <section className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-green-200 via-green-300 to-emerald-300 px-6 py-20 text-center sm:px-10 md:px-16 md:text-left lg:px-24">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.1 }}
-        className="w-full max-w-3xl"
-      >
-        <h1 className="mb-6 font-serif text-3xl leading-tight font-bold sm:text-4xl md:text-5xl lg:text-6xl">
-          The <span ref={typedRef} className="text-emerald-700" />{" "}
-          <span className="text-neutral-900">at EaziWage</span>
-        </h1>
+    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-green-50">
+      {/* soft light glow */}
+      <div className="absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-emerald-400/20 blur-3xl" />
 
-        <p className="text-base leading-relaxed text-neutral-800 sm:text-lg md:text-xl">
-          It all started with a single speck of an idea, to a bunch of{" "}
-          <code className="rounded bg-white/30 px-1 py-0.5 font-mono text-sm sm:text-base">
-            code
-          </code>{" "}
-          to late-night commits mixed with caffeine and brainstorming — thanks
-          to{" "}
-          <Link
-            href="https://github.com"
-            target="_blank"
-            className="text-purple-700 underline underline-offset-2 transition hover:text-purple-800"
+      <section className="mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-16 px-6 py-24 lg:grid-cols-2">
+
+        {/* LEFT — COPY */}
+        <div className="space-y-6 text-left">
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl font-bold tracking-tight text-neutral-900 lg:text-6xl"
           >
-            GitHub
-          </Link>{" "}
-          and{" "}
-          <Link
-            href="https://nextjs.org"
-            target="_blank"
-            className="text-purple-700 underline underline-offset-2 transition hover:text-purple-800"
+            The{" "}
+            <span
+              ref={typedRef}
+              className="text-emerald-600"
+            />{" "}
+            at EaziWage
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="max-w-xl text-lg text-neutral-600"
           >
-            Next.js
-          </Link>
-          . Our culture isn’t just about *how* we work; it’s about *why* we
-          build.
-        </p>
+            Late-night commits. Big ideas. Small team.  
+            We build tools that help people breathe financially.
+            No corporate theatre. Just sharp minds shipping.
+          </motion.p>
 
-        <p className="mt-4 text-sm text-neutral-900 italic sm:text-base md:text-lg">
-          Here's to re-writing what fintech means to Africa.
-        </p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+            className="italic text-neutral-500"
+          >
+            Re-writing what fintech means for Africa.
+          </motion.p>
 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="pt-4"
+          >
+            <Link
+              href="mailto:support@eaziwage.com"
+              className="group inline-flex items-center gap-2 font-medium text-emerald-700"
+            >
+              support@eaziwage.com
+              <ArrowUpRight className="transition group-hover:-translate-y-1 group-hover:translate-x-1" />
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* RIGHT — VISUAL / ACCENT */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
-          className="mt-10 rounded-lg border border-dashed border-black bg-white/30 p-4 backdrop-blur-md sm:p-6"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="relative hidden lg:block"
         >
-          <p className="mb-3 font-mono text-xs tracking-wide text-neutral-700 sm:mb-4 sm:text-sm">
-            // The full story is currently loading... Stay tuned for updates!
-          </p>
-          <p className="mt-1 text-base font-semibold sm:text-lg">
-            Coming Soon 🚧
-          </p>
-        </motion.div>
+          <div className="rounded-3xl border border-emerald-100 bg-white/70 p-10 backdrop-blur-xl shadow-xl">
+            <p className="font-mono text-sm text-neutral-500">
+              // culture.ts
+            </p>
 
-        <p className="mt-6 flex flex-wrap items-center justify-center gap-2 text-base text-neutral-900 sm:text-lg md:justify-start md:text-xl">
-          For inquiries, reach us at{" "}
-          <Link
-            href="mailto:support@eaziwage.com"
-            className="font-medium text-neutral-950 underline-offset-2 hover:underline"
-          >
-            support@eaziwage.com
-          </Link>
-          <ArrowUpRight size={16} className="ml-1 inline-block" />
-        </p>
-      </motion.div>
-    </section>
+            <pre className="mt-4 text-sm text-neutral-800">
+              {`const team = [
+                "builders",
+                "dreamers",
+                "problem solvers"
+              ]
+
+              ship()
+              learn()
+              repeat()`}
+            </pre>
+          </div>
+        </motion.div>
+      </section>
+    </main>
   );
 }

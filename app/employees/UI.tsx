@@ -13,9 +13,6 @@ export default function UI() {
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         {/* Left column */}
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs text-gray-600 dark:bg-black">
-            <Sparkles className="h-3.5 w-3.5" /> Made for Employees
-          </span>
           <h1 className="mt-4 font-serif text-3xl leading-tight font-semibold text-gray-900 sm:text-4xl lg:text-5xl dark:text-white">
             Access a portion of what you&apos;ve already earned—
             <span className="block text-green-700">
@@ -37,15 +34,13 @@ export default function UI() {
           </div>
           <div className="mt-6 flex items-center gap-4 text-sm text-gray-600 dark:text-white">
             <div className="flex items-center gap-1">
-              <ShieldCheck className="h-4 w-4 text-green-700" /> CBK-aligned
+              <ShieldCheck className="h-4 w-4 text-green-700" /> Pan-Africa Ready
             </div>
             <div className="flex items-center gap-1">
-              <ShieldCheck className="h-4 w-4 text-green-700" /> ODPC data
-              protection
+              <ShieldCheck className="h-4 w-4 text-green-700" /> Data Protection
             </div>
             <div className="flex items-center gap-1">
-              <ShieldCheck className="h-4 w-4 text-green-700" /> No interest
-              charges
+              <ShieldCheck className="h-4 w-4 text-green-700" /> No interest charges
             </div>
           </div>
         </div>
@@ -71,7 +66,7 @@ export default function UI() {
                         Available to withdraw
                       </div>
                       <div className="text-2xl font-semibold text-white">
-                        KSh 12,500
+                        USD 96.90
                       </div>
                     </div>
                     <Wallet className="h-6 w-6 text-white/80" />
@@ -80,7 +75,7 @@ export default function UI() {
                     Withdraw to Mobile Wallet
                   </button>
                   <p className="mt-2 text-[11px] text-white/70">
-                    Flat fee KSh 25 • Application fee 5% • No interest
+                    Flat fee USD 2 • Application fee 5% • No interest
                   </p>
                 </div>
               </div>
