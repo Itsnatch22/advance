@@ -51,7 +51,7 @@ export default function UI() {
         {/* Right column – Phone mock */}
         <div className="relative mx-auto w-full max-w-sm">
           <div className="overflow-hidden rounded-[2.4rem] border-8 border-gray-900 bg-black shadow-2xl">
-            <div className="relative aspect-[9/19] bg-gray-950">
+            <div className="relative aspect-9/19 bg-gray-950">
               {/* green glow from screen */}
               <div
                 className="absolute inset-0"

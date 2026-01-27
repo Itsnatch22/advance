@@ -21,7 +21,7 @@ import Startup from "@/public/Startup.json";
 
 export default function CareersPage() {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50 via-green-100 to-green-200 px-6">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-emerald-50 via-green-100 to-green-200 px-6">
       {/* soft background glow for Stripe-tier luxury feel */}
       <div className="pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-emerald-400/20 blur-3xl" />
 

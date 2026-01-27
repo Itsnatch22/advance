@@ -22,7 +22,7 @@ export default function CulturePage() {
   }, []);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-green-50">
+    <main className="relative min-h-screen overflow-hidden bg-linear-to-br from-emerald-50 via-white to-green-50">
       {/* soft light glow */}
       <div className="absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-emerald-400/20 blur-3xl" />
 
