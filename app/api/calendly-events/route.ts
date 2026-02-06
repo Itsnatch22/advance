@@ -1,106 +1,122 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+
+// Initialize Supabase client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const CALENDLY_API = "https://api.calendly.com/event_types";
+const CALENDLY_USER = process.env.CALENDLY_USER_URI || ""; // Optional: specify a Calendly user URI
 
-/**
- * GET /api/calendly-events
- * Fetches a list of Calendly event types for your organization or user.
- *
- * 🔑 Requires CALENDLY_API_KEY to be set in .env.local:
- * CALENDLY_API_KEY=your_personal_or_org_token
- *
- * Docs: https://developer.calendly.com/api-docs
- */
-
-function mockResponse() {
-  return {
-    collection: [
-      {
-        uri: "mock-1",
-        name: "15-min intro",
-        description: "Mocked event for local development",
-        duration: 15,
-        scheduling_url: "https://calendly.com/your/15min",
-      },
-      {
-        uri: "mock-2",
-        name: "30-min demo",
-        description: "Mocked event for local development",
-        duration: 30,
-        scheduling_url: "https://calendly.com/your/30min",
-      },
-    ],
-  };
-}
-
-export async function GET() {
+export async function GET(request: Request) {
   const token = process.env.CALENDLY_API_KEY;
 
-  // Allow a mocked response in development when no token is set
   if (!token) {
-    if (process.env.NODE_ENV !== "production") {
-      return NextResponse.json(mockResponse(), { status: 200 });
-    }
     return NextResponse.json(
-      { error: "Missing CALENDLY_API_KEY in environment." },
+      { error: "Missing CALENDLY_API_KEY environment variable." },
       { status: 500 }
     );
   }
 
   try {
-    const res = await fetch(CALENDLY_API, {
+    // Build Calendly API URL with optional user parameter
+    let calendlyUrl = CALENDLY_API;
+    if (CALENDLY_USER) {
+      const url = new URL(CALENDLY_API);
+      url.searchParams.set("user", CALENDLY_USER);
+      calendlyUrl = url.toString();
+    }
+
+    const res = await fetch(calendlyUrl, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      // Avoid caching to reflect latest events
       cache: "no-store",
-      // Ensure Next.js treats this as a dynamic request
-      next: { revalidate: 0 },
     });
 
-    const contentType = res.headers.get("content-type") || "";
-    const maybeJson = contentType.includes("application/json");
-
     if (!res.ok) {
-      const bodyText = maybeJson
-        ? JSON.stringify(await res.json())
-        : await res.text();
-      // Propagate Calendly's status to aid debugging
+      let errorBody = {};
+      try {
+        errorBody = await res.json();
+      } catch {
+        errorBody = { message: await res.text() };
+      }
+      
+      console.error("Calendly API error:", errorBody);
+      
       return NextResponse.json(
         {
-          error: "Calendly API error",
+          error: "Calendly API request failed",
           status: res.status,
-          statusText: res.statusText,
-          body: bodyText,
+          details: errorBody,
         },
-        { status: 502 }
+        { status: res.status }
       );
     }
 
-    const data = maybeJson ? await res.json() : await res.text();
-    return NextResponse.json(data, { status: 200 });
+    const data = await res.json();
+
+    // Store meeting types in Supabase
+    if (data && Array.isArray(data.collection)) {
+      await storeMeetingsInSupabase(data.collection);
+    }
+
+    return NextResponse.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error("Calendly API Fetch Failed:", message);
-
-    // Provide mock fallback in dev if Calendly call fails
-    if (process.env.NODE_ENV !== "production") {
-      return NextResponse.json(
-        {
-          warning:
-            "Calendly fetch failed; returning mocked events in development.",
-          details: message,
-          ...mockResponse(),
-        },
-        { status: 200 }
-      );
-    }
-
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("Calendly API fetch failed:", message);
     return NextResponse.json(
-      { error: "Failed to fetch Calendly events.", details: message },
+      { error: "Internal server error while fetching Calendly events." },
       { status: 500 }
     );
+  }
+}
+
+// Store meeting types in Supabase
+async function storeMeetingsInSupabase(meetings: any[]) {
+  try {
+    // First, clear existing meetings (optional)
+    await supabase
+      .from('meeting_types')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
+
+    // Prepare meetings for insertion
+    const meetingRecords = meetings.map(meeting => ({
+      id: meeting.uri.split('/').pop() || meeting.uri, // Extract ID from URI
+      calendly_uri: meeting.uri,
+      name: meeting.name,
+      description: meeting.description || null,
+      duration: meeting.duration,
+      scheduling_url: meeting.scheduling_url,
+      color: meeting.color || null,
+      internal_note: meeting.internal_note || null,
+      active: meeting.active,
+      slug: meeting.slug,
+      kind: meeting.kind,
+      pooling_type: meeting.pooling_type || null,
+      type: meeting.type,
+      last_updated: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+    }));
+
+    // Insert into Supabase
+    const { error } = await supabase
+      .from('meeting_types')
+      .upsert(meetingRecords, {
+        onConflict: 'calendly_uri'
+      });
+
+    if (error) {
+      console.error("Supabase insert error:", error);
+    } else {
+      console.log(`Successfully stored ${meetingRecords.length} meeting types in Supabase`);
+    }
+  } catch (error) {
+    console.error("Error storing meetings in Supabase:", error);
   }
 }

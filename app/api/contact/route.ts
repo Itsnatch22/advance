@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { ContactNotification } from "@/components/emails/ContactNotification";
 import { contactSchema } from "@/lib/validations/contact";
 import { getSupabaseAdmin } from "@/lib/server/supabaseAdmin";
+import { rateLimiter } from "@/lib/rate-limit";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
@@ -11,7 +12,11 @@ const supportEmail = process.env.SUPPORT_EMAIL || "support@eaziwage.com";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "anonymous";
+    const { success } = await rateLimiter.limit(ip);
+    if (!success) {
+      return NextResponse.json({ message: "Too many requests. Try again later." }, { status: 429 });
+    }
     const parsed = contactSchema.safeParse(body);
     if (!parsed.success) {
       // Return structured Zod issues without leaking internal details
@@ -73,7 +78,6 @@ export async function POST(request: NextRequest) {
 
       — EaziWage Team`,
     });
-
 
     return NextResponse.json(
       { message: "Message sent successfully" },

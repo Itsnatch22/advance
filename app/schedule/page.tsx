@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
 
@@ -27,30 +27,22 @@ export default function SchedulePage() {
 
   const [mode, setMode] = useState<"user-books" | "admin-books">("user-books");
   const [meetings, setMeetings] = useState<MeetingType[]>([]);
-  const [selectedMeeting, setSelectedMeeting] = useState<MeetingType | null>(
-    null
-  );
+  const [selectedMeeting, setSelectedMeeting] = useState<MeetingType | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedSlot, setSelectedSlot] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
   const slots = useMemo(() => {
-    if (!selectedDate)
-      return [] as { iso: string; label: string; localLabel: string }[];
+    if (!selectedDate) return [] as { iso: string; label: string; localLabel: string }[];
     const day = new Date(selectedDate + "T00:00:00");
-    return generateSlotsForDay(
-      day,
-      BUSINESS_START,
-      BUSINESS_END,
-      SLOT_STEP_MINUTES
-    );
+    return generateSlotsForDay(day, BUSINESS_START, BUSINESS_END, SLOT_STEP_MINUTES);
   }, [selectedDate]);
 
   /* ------------------ Initialize date ------------------ */
   useEffect(() => {
-    // Initialize client-side to avoid using Date at render time
     if (!selectedDate) {
       setSelectedDate(getISODate(new Date()));
     }
@@ -59,25 +51,18 @@ export default function SchedulePage() {
   /* ------------------ Fetch Calendly ------------------ */
   useEffect(() => {
     async function fetchCalendlyEvents() {
+      setLoading(true);
+      setError(null);
       try {
         const res = await fetch("/api/calendly-events");
+        if (!res.ok) {
+          throw new Error(`API responded with status ${res.status}`);
+        }
         const data = await res.json();
 
-        if (
-          data &&
-          Array.isArray((data as { collection?: unknown }).collection)
-        ) {
-          type CalendlyEvent = {
-            uri: string;
-            name: string;
-            description?: string | null;
-            duration: number;
-            scheduling_url: string;
-          };
-
-          const collection = (data as { collection: CalendlyEvent[] })
-            .collection;
-          const formatted: MeetingType[] = collection.map((e) => ({
+        if (data && Array.isArray(data.collection)) {
+          const collection = data.collection;
+          const formatted: MeetingType[] = collection.map((e: any) => ({
             id: e.uri,
             title: e.name,
             description: e.description ?? "",
@@ -85,11 +70,16 @@ export default function SchedulePage() {
             scheduling_url: e.scheduling_url,
           }));
           setMeetings(formatted);
-          setSelectedMeeting(formatted[0] ?? null);
+          if (formatted.length > 0) {
+            setSelectedMeeting(formatted[0]);
+          }
+        } else {
+          throw new Error("Invalid response format from Calendly API");
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        console.error("Calendly fetch failed", message);
+        const message = err instanceof Error ? err.message : "Failed to load meeting types";
+        console.error("Calendly fetch error:", message);
+        setError(message);
       } finally {
         setLoading(false);
       }
@@ -160,6 +150,10 @@ export default function SchedulePage() {
 
       {loading ? (
         <p className="text-center text-gray-500">Loading meeting types...</p>
+      ) : error ? (
+        <p className="text-center text-red-500">{error}</p>
+      ) : meetings.length === 0 ? (
+        <p className="text-center text-gray-500">No meeting types available at this time.</p>
       ) : (
         <section className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {/* Sidebar */}
