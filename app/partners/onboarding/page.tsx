@@ -81,7 +81,7 @@ export default function PartnerOnboardingPage() {
   const onSubmit = async (data: PartnerFormData) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/partners/onboard", {
+      const response = await fetch("/api/partners/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

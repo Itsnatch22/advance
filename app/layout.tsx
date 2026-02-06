@@ -6,7 +6,6 @@ import Navbar from "@/components/Navbar";
 import Toploader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
-import Wiza from "@/components/Wiza";
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   weight: ["400", "500", "600", "700"],
@@ -39,7 +38,6 @@ export default function RootLayout({
         <ThemeProvider>
           <Navbar />
           {children}
-          <Wiza />
           <Analytics />
           <Footer />
         </ThemeProvider>

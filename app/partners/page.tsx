@@ -181,10 +181,10 @@ export default function PartnersPage() {
           </p>
 
           <Link
-            href="mailto:support@eaziwage.com"
+            href="/partners/onboarding"
             className="inline-block rounded-xl bg-emerald-600 px-6 py-3 font-medium text-white transition hover:bg-emerald-700"
           >
-            Contact us
+            Apply for Partnership
           </Link>
         </div>
       </section>
