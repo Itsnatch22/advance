@@ -46,7 +46,7 @@ export default function Hero() {
             Before PayDay
           </motion.h1>
           <motion.p
-            className="max-w-lg text-base sm:text-lg text-black dark:text-white"
+            className="max-w-lg text-base sm:text-lg text-white"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
