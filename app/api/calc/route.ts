@@ -1,4 +1,5 @@
 // /app/api/calc/route.ts
+export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";

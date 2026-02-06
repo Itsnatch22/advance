@@ -130,7 +130,7 @@ export default function Employers() {
             Why employers <span className="text-green-500">choose</span>{" "}
             EaziWage
           </h2>
-          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-gray-300">
+          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-white-300">
             A practical well-being lever that pays for itself. Zero cost, zero
             risk, zero hassle.
           </p>
@@ -159,7 +159,7 @@ export default function Employers() {
           <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
             Employer <span className="text-green-500">rollout plan</span>
           </h2>
-          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-gray-300">
+          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-white-300">
             From sandbox to go live in days, not months. We handle the heavy
             lifting.
           </p>
@@ -181,7 +181,7 @@ export default function Employers() {
               <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">
                 {item.title}
               </h3>
-              <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+              <p className="text-sm leading-relaxed text-gray-600 dark:text-white-400">
                 {item.desc}
               </p>
             </motion.div>
@@ -199,7 +199,7 @@ export default function Employers() {
           <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
             Works across sectors & sizes
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-gray-600 sm:text-xl lg:mx-0 dark:text-gray-300">
+          <p className="mx-auto max-w-2xl text-lg text-gray-600 sm:text-xl lg:mx-0 dark:text-white-300">
             Retail • Hospitality • Manufacturing • Logistics • Banks • Schools •
             Healthcare
           </p>
@@ -240,7 +240,7 @@ export default function Employers() {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="overflow-hidden"
                 >
-                  <p className="px-5 pb-5 text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg">
+                  <p className="px-5 pb-5 text-base leading-7 text-gray-600 dark:text-white-300 sm:text-lg">
                     {faq.answer}
                   </p>
                 </motion.div>
