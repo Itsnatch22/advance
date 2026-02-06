@@ -175,13 +175,13 @@ const Navbar = () => {
               Dashboard
             </motion.button>
           </Link>
-          <Link href="/register">
+          <Link href="/contact/sales">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="rounded-lg bg-green-600 px-4 py-2 font-medium text-white shadow-md transition hover:bg-green-700 hover:shadow-lg"
             >
-              Get Started
+              Contact Sales
             </motion.button>
           </Link>
         </div>
@@ -254,18 +254,18 @@ const Navbar = () => {
 
             <hr className="border-gray-200 dark:border-gray-800" />
             <Link
-              href="/login"
+              href="https://app.eaziwage.com/"
               onClick={() => setMobileOpen(false)}
               className="w-full rounded-xl border border-gray-200 px-4 py-3 text-center font-medium text-gray-700 transition hover:text-green-600 dark:border-gray-700 dark:text-white"
             >
-              Login
+              Dashboard
             </Link>
             <Link
-              href="/register"
+              href="/contact/sales"
               onClick={() => setMobileOpen(false)}
               className="w-full rounded-xl bg-green-600 px-4 py-3 text-center font-medium text-white shadow-md transition hover:bg-green-700"
             >
-              Get Started
+              Contact Sales
             </Link>
           </motion.div>
         )}
