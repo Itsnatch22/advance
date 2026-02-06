@@ -62,7 +62,7 @@ export default function CTA() {
           viewport={{ once: true }}
           className="mt-6 flex flex-col justify-center gap-3 px-4 sm:mt-8 sm:flex-row sm:gap-4"
         >
-          <Link href="/schedule">
+          <Link href="mailto:support@eaziwage.com">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
