@@ -278,7 +278,7 @@ export default function SalesPage() {
                 <input
                   id="name"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="Your name"
                   {...register("name")}
                   className={`w-full rounded-xl border px-4 py-3 transition focus:outline-none focus:ring-2 ${
                     errors.name
@@ -304,7 +304,7 @@ export default function SalesPage() {
                 <input
                   id="email"
                   type="email"
-                  placeholder="john@company.com"
+                  placeholder="you@company.com"
                   {...register("email")}
                   className={`w-full rounded-xl border px-4 py-3 transition focus:outline-none focus:ring-2 ${
                     errors.email
