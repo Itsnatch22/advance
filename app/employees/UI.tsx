@@ -7,6 +7,8 @@ import {
   BellRing,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+
 export default function UI() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
@@ -58,7 +60,9 @@ export default function UI() {
                 }}
               />
               <div className="absolute inset-0 flex flex-col p-5">
-                <div className="text-xs text-white/90">EaziWage</div>
+                <div className="text-xs text-white/90">
+                  <Image src="/logo.png" alt="Logo" width={30} height={30} />
+                </div>
                 <div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                   <div className="flex items-center justify-between">
                     <div>

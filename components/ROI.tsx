@@ -24,6 +24,7 @@ const FALLBACK_RATES: Record<string, number> = {
   TZS: 24,
   RWF: 8.2,
   BIF: 8.2,
+  SOS: 575,
 };
 
 const CURRENCIES = {
@@ -130,7 +131,7 @@ const LabeledNumber = ({
       max={max}
       step={step}
       onChange={(e) => onChange(Number(e.target.value || 0))}
-      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none dark:text-black"
       style={{ accentColor: BRAND }}
     />
   </label>
@@ -390,7 +391,7 @@ export default function ROI() {
           </div>
 
           <p className="mt-3 text-xs text-gray-600">
-            Fees shown in-app to employees before confirmation: Flat KSh 25 + 5% application; no interest.
+            Fees shown in-app to employees before confirmation: Flat USD 2 + 5% application; no interest.
             Configurable employer policies ensure responsible usage.
           </p>
         </div>

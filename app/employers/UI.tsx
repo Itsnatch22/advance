@@ -7,6 +7,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function UI() {
   return (
@@ -61,7 +62,9 @@ export default function UI() {
                 }}
               />
               <div className="absolute inset-0 flex flex-col p-5">
-                <div className="text-xs text-white/90">EaziWage • Employer</div>
+                <div className="text-xs text-white/90">
+                  <Image src="/logo.png" alt="Logo" width={30} height={30} />
+                </div>
                 <div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                   <div className="flex items-center justify-between">
                     <div>

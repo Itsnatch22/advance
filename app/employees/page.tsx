@@ -121,10 +121,10 @@ export default function Employees() {
 
       <div className="mt-10 w-full max-w-7xl px-4 text-center sm:mt-14 sm:px-6 lg:px-10 lg:text-left">
         <div className="mx-auto mb-16 max-w-3xl text-center sm:mb-20">
-          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
+          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
             Why employees choose Eaziwage
           </h2>
-          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-gray-300">
+          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl">
             A practical well-being lever that pays for itself.
           </p>
         </div>
@@ -145,10 +145,10 @@ export default function Employees() {
       {/* Roll-Out Plans */}
       <div className="mt-24 w-full max-w-7xl px-4 sm:mt-32 sm:px-6 lg:mt-40 lg:px-8">
         <div className="mx-auto mb-16 max-w-3xl text-center sm:mb-20">
-          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
+          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
             Your Financial Empowerment Journey
           </h2>
-          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-gray-300">
+          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl">
             Awareness → Empowerment → Growth — a smarter way to handle money
             you&apos;ve already earned.
           </p>
@@ -162,15 +162,15 @@ export default function Employees() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: j * 0.1 }}
-              className="relative rounded-3xl border border-transparent bg-gray-50 p-6 transition-colors duration-300 hover:border-green-200 sm:p-8 dark:bg-white/5 dark:hover:border-green-800"
+              className="relative rounded-3xl border border-transparent bg-gray-50 p-6 transition-colors duration-300 hover:border-green-200 sm:p-8"
             >
-              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm dark:bg-white/10">
-                <item.icon className="h-6 w-6 text-gray-900 dark:text-white" />
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
+                <item.icon className="h-6 w-6 text-gray-900" />
               </div>
-              <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">
+              <h3 className="mb-3 text-lg font-bold text-gray-900">
                 {item.title}
               </h3>
-              <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+              <p className="text-sm leading-relaxed text-gray-600">
                 {item.desc}
               </p>
             </motion.div>
@@ -181,11 +181,11 @@ export default function Employees() {
       {/* Works Areas */}
       <div className="mt-10 w-full max-w-7xl px-2 sm:mt-20 sm:px-4 lg:mt-30 lg:px-6">
         <div className="mb-12 text-center lg:text-left">
-          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
+          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
             Versatility across{" "}
             <span className="text-green-500">jobs & sectors</span>
           </h2>
-          <p className="mx-auto mt-3 text-sm text-gray-600 sm:mt-4 sm:text-base lg:mx-0 dark:text-white">
+          <p className="mx-auto mt-3 text-sm text-gray-600 sm:mt-4 sm:text-base lg:mx-0">
             Real Kenyan contexts: retail, banking, hospitality, logistics,
             schools, factories and more.
           </p>
@@ -196,24 +196,24 @@ export default function Employees() {
       </div>
 
       <div className="mx-auto w-full max-w-4xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-              <h2 className="mb-12 text-center font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl dark:text-white">
+              <h2 className="mb-12 text-center font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
                 Frequently Asked Questions
               </h2>
-                    <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-green-500/30 dark:border-white/10 dark:bg-white/5">
+                    <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-green-500/30">
               {faqs.map((faq, index) => (
                 <div
                   key={index}
-                  className="border-b border-gray-200 last:border-none dark:border-gray-700"
+                  className="border-b border-gray-200 last:border-none"
                 >
                   <button
                     onClick={() => setOpenIndex(openIndex === index ? null : index)}
                     className="group flex w-full items-center justify-between p-5 text-left focus:outline-none"
                   >
-                    <span className="text-base font-medium text-gray-900 dark:text-white transition-colors group-hover:text-green-700 sm:text-lg">
+                    <span className="text-base font-medium text-gray-900 transition-colors group-hover:text-green-700 sm:text-lg">
                       {faq.question}
                     </span>
                     <ArrowRight
-                      className={`ml-2 h-5 w-5 shrink-0 text-gray-500 dark:text-white transition-transform duration-300 ${openIndex === index ? "rotate-90 text-green-600" : ""}`}
+                      className={`ml-2 h-5 w-5 shrink-0 text-gray-500 transition-transform duration-300 ${openIndex === index ? "rotate-90 text-green-600" : ""}`}
                     />
                   </button>
                   <AnimatePresence>
@@ -225,7 +225,7 @@ export default function Employees() {
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <p className="px-5 pb-5 text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg">
+                        <p className="px-5 pb-5 text-base leading-7 text-gray-600 sm:text-lg">
                           {faq.answer}
                         </p>
                       </motion.div>

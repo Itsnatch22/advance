@@ -4,7 +4,6 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Toploader from "nextjs-toploader";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
@@ -34,13 +33,11 @@ export default function RootLayout({
       <body
         className={`${ibmPlexMono.variable} ${playfairDisplay.variable} antialiased`}
       >
-        <Toploader color="#16a34a" />
-        <ThemeProvider>
+          <Toploader color="#16a34a" />
           <Navbar />
           {children}
           <Analytics />
           <Footer />
-        </ThemeProvider>
       </body>
     </html>
   );
