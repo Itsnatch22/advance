@@ -210,7 +210,7 @@ export default function PartnerOnboardingPage() {
                   type="text"
                   {...register("companyName")}
                   className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
-                  placeholder="Acme Corporation"
+                  placeholder="Your company name"
                 />
               </FormField>
 
@@ -235,7 +235,7 @@ export default function PartnerOnboardingPage() {
                   type="text"
                   {...register("contactName")}
                   className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
-                  placeholder="John Doe"
+                  placeholder="Your name"
                 />
               </FormField>
 
@@ -259,7 +259,7 @@ export default function PartnerOnboardingPage() {
                   type="email"
                   {...register("email")}
                   className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
-                  placeholder="john@company.com"
+                  placeholder="you@company.com"
                 />
               </FormField>
 
