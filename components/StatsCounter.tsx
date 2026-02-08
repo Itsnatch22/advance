@@ -19,10 +19,10 @@ export default function StatsCounter() {
       initial={{ opacity: 0, y: 40 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true }}
-      className="relative w-full overflow-hidden bg-gray-50 py-16 text-center text-black sm:py-20 lg:py-24 dark:bg-neutral-950 dark:text-white"
+      className="relative w-full overflow-hidden bg-gray-50 py-16 text-center text-black sm:py-20 lg:py-24"
     >
       {/* Subtle gradient background for aura */}
-      <div className="absolute inset-0 bg-linear-to-b from-green-600/5 via-transparent to-emerald-500/5 blur-2xl dark:from-emerald-400/10 dark:via-transparent dark:to-green-500/5"></div>
+      <div className="absolute inset-0 bg-linear-to-b from-green-600/5 via-transparent to-emerald-500/5 blur-2xl"></div>
 
       {/* === Section Title === */}
       <motion.h2
@@ -32,7 +32,7 @@ export default function StatsCounter() {
         transition={{ duration: 0.6 }}
       >
         Connecting Africa{" "}
-        <span className="text-green-600 dark:text-emerald-400">
+        <span className="text-green-600">
           To Fair & Timely Pay
         </span>
       </motion.h2>
@@ -66,7 +66,7 @@ export default function StatsCounter() {
             viewport={{ once: false, amount: 0.5 }}
             onViewportEnter={() => setInView(true)}
             onViewportLeave={() => setInView(false)}
-            className="rounded-2xl border border-gray-100 bg-white py-8 shadow-sm sm:py-10 dark:border-neutral-800 dark:bg-neutral-900"
+            className="rounded-2xl border border-gray-100 bg-white py-8 shadow-sm sm:py-10"
           >
             <h3 className={`text-4xl font-bold sm:text-5xl ${item.color}`}>
               {inView ? (
@@ -76,7 +76,7 @@ export default function StatsCounter() {
               )}
               {item.suffix}
             </h3>
-            <p className="mt-3 px-2 text-base font-medium text-gray-600 sm:text-lg dark:text-gray-400">
+            <p className="mt-3 px-2 text-base font-medium text-gray-600 sm:text-lg">
               {item.label}
             </p>
           </motion.div>

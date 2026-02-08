@@ -121,7 +121,7 @@ function PartnerSection({
 
 export default function PartnersPage() {
   return (
-    <main className="bg-gray-50 py-16 dark:bg-black text-neutral-900 dark:text-white">
+    <main className="bg-gray-50 py-16 dark:bg-black text-neutral-900">
       {/* HERO */}
       <section className="py-32">
         <div className="mx-auto max-w-4xl px-6 text-left lg:px-12">
@@ -137,7 +137,7 @@ export default function PartnersPage() {
             powering Africa&apos;s workforce.
           </motion.h1>
 
-          <p className="mt-6 max-w-xl text-neutral-600 dark:text-white">
+          <p className="mt-6 max-w-xl text-neutral-600">
             Banks. Corporates. Technology platforms.  
             We partner with the people who move money securely and at scale.
           </p>
@@ -172,11 +172,11 @@ export default function PartnersPage() {
       {/* CTA */}
       <section className="py-32 text-center">
         <div className="mx-auto max-w-2xl space-y-6 px-6">
-          <h3 className="font-serif text-3xl font-bold text-gray-800 dark:text-white sm:text-4xl md:text-5xl lg:text-6xl">
+          <h3 className="font-serif text-3xl font-bold text-gray-800 sm:text-4xl md:text-5xl lg:text-6xl">
             Want to partner with EaziWage?
           </h3>
 
-          <p className="text-neutral-600 dark:text-white">
+          <p className="text-neutral-600">
             We&apos;re always open to working with forward-thinking teams.
           </p>
 

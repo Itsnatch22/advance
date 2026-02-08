@@ -26,7 +26,7 @@ const team = [
 
 export function Team() {
   return (
-    <div className="dark:bg-grid-white/[0.05] relative flex min-h-128 w-full flex-col items-center justify-center overflow-hidden rounded-md bg-white px-4 antialiased sm:px-6 md:min-h-160 dark:bg-black">
+    <div className="dark:bg-grid-white/[0.05] relative flex min-h-128 w-full flex-col items-center justify-center overflow-hidden rounded-md bg-white px-4 antialiased sm:px-6 md:min-h-160">
       <h2 className="mb-6 text-center font-serif text-3xl font-bold sm:mb-10 sm:text-4xl md:text-5xl lg:text-6xl">
         What The <span className="dark:text-400 text-green-600">Team </span>
         <Highlighter action="underline" color="#008000">
@@ -51,7 +51,7 @@ export function Team() {
                 className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
               />
             </div>
-            <h3 className="mt-3 text-center text-base font-semibold text-gray-900 sm:mt-4 sm:text-lg dark:text-white">
+            <h3 className="mt-3 text-center text-base font-semibold text-gray-900 sm:mt-4 sm:text-lg">
               {member.name}
             </h3>
           </motion.div>

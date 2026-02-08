@@ -65,14 +65,14 @@ const item = {
 
 export default function Needs() {
   return (
-    <section className="relative bg-linear-to-b from-gray-50 via-green-50/10 to-gray-50 py-16 sm:py-20 dark:from-black dark:to-gray-900">
+    <section className="relative bg-linear-to-b from-gray-50 via-green-50/10 to-gray-50 py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl dark:text-white"
+          className="font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl"
         >
           Built for the{" "}
           <span className="text-green-600">African Workforce</span>
@@ -82,12 +82,12 @@ export default function Needs() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mx-auto mt-4 max-w-2xl px-4 text-base text-gray-600 sm:text-lg dark:text-white"
+          className="mx-auto mt-4 max-w-2xl px-4 text-base text-gray-600 sm:text-lg"
         >
           Enterprise-grade fintech built for Africa - compliant, secure, and
           fully integrated with local banking and mobile money systems.
         </motion.p>
-        <p className="mt-2 text-sm text-gray-400 italic dark:text-gray-500">
+        <p className="mt-2 text-sm text-gray-400 italic">
           Integrated with mobile money applications, payroll providers & leading
           banks.
         </p>
@@ -105,17 +105,17 @@ export default function Needs() {
               variants={item}
               whileHover={{ y: -5 }}
               transition={{ type: "spring", stiffness: 300 }}
-              className="rounded-2xl border border-green-100 bg-white p-6 shadow transition-colors hover:border-green-400 hover:shadow-green-500/30 dark:border-green-900/30 dark:bg-gray-800"
+              className="rounded-2xl border border-green-100 bg-white p-6 shadow transition-colors hover:border-green-400 hover:shadow-green-500/30"
             >
               <div className="flex flex-col items-center gap-4">
                 <div className="group relative">
-                  <step.icon className="relative z-10 h-12 w-12 text-black dark:text-white" />
+                  <step.icon className="relative z-10 h-12 w-12 text-black" />
                   <div className="absolute inset-0 rounded-full bg-green-400 opacity-0 blur-md transition group-hover:opacity-30"></div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                <h3 className="text-lg font-semibold text-gray-800">
                   {step.title}
                 </h3>
-                <p className="text-center text-sm text-gray-600 dark:text-gray-300">
+                <p className="text-center text-sm text-gray-600">
                   {step.description}
                 </p>
               </div>

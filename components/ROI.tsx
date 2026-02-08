@@ -131,7 +131,7 @@ const LabeledNumber = ({
       max={max}
       step={step}
       onChange={(e) => onChange(Number(e.target.value || 0))}
-      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none dark:text-black"
+      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:outline-none"
       style={{ accentColor: BRAND }}
     />
   </label>

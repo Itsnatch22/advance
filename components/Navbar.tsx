@@ -85,8 +85,8 @@ const Navbar = () => {
       ref={navRef}
       className={`fixed top-0 left-0 z-50 w-full transition-all duration-300 ${
         scrolled
-          ? "border-b border-gray-200/50 bg-white/80 shadow-md backdrop-blur-md dark:border-gray-800/50 dark:bg-black/80"
-          : "bg-white shadow-none dark:bg-black"
+          ? "border-b border-gray-200/50 bg-white/80 shadow-md backdrop-blur-md"
+          : "bg-white shadow-none"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-12">
@@ -96,7 +96,7 @@ const Navbar = () => {
           className="flex items-center gap-2 text-2xl font-bold text-green-700 sm:text-3xl"
         >
           <motion.div whileHover={{ rotate: 5, scale: 1.1 }}>
-            <Wallet className="h-7 w-7 text-black sm:h-8 sm:w-8 dark:text-white" />
+            <Wallet className="h-7 w-7 text-black sm:h-8 sm:w-8" />
           </motion.div>
           EaziWage
         </Link>
@@ -109,7 +109,7 @@ const Navbar = () => {
               <Link
                 href={link.href}
                 onClick={() => setOpenDrawer(openDrawer === i ? null : i)}
-                className="group relative flex items-center gap-1 text-lg font-medium text-gray-700 transition hover:text-green-600 dark:text-white"
+                className="group relative flex items-center gap-1 text-lg font-medium text-gray-700 transition hover:text-green-600"
               >
                 {link.name}
                 {link.drawer && (
@@ -133,7 +133,7 @@ const Navbar = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    className="absolute top-12 left-0 w-[400px] overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-xl dark:border-gray-700 dark:bg-neutral-900"
+                    className="absolute top-12 left-0 w-[400px] overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-xl"
                   >
                     <div className="grid gap-2">
                       {link.drawer.map((item, j) => (
@@ -141,16 +141,16 @@ const Navbar = () => {
                           key={j}
                           href={item.href}
                           onClick={() => setOpenDrawer(null)}
-                          className="group flex items-start gap-4 rounded-lg p-3 transition hover:bg-green-50 dark:hover:bg-neutral-800"
+                          className="group flex items-start gap-4 rounded-lg p-3 transition hover:bg-green-50"
                         >
-                          <div className="mt-1 rounded-lg bg-green-100 p-2 transition-colors group-hover:bg-green-200 dark:bg-green-900/30 dark:group-hover:bg-green-900/50">
+                          <div className="mt-1 rounded-lg bg-green-100 p-2 transition-colors group-hover:bg-green-200">
                             {item.icon}
                           </div>
                           <div>
-                            <h4 className="font-semibold text-gray-800 transition-colors group-hover:text-green-700 dark:text-white dark:group-hover:text-green-400">
+                            <h4 className="font-semibold text-gray-800 transition-colors group-hover:text-green-700">
                               {item.title}
                             </h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className="text-sm text-gray-600">
                               {item.desc}
                             </p>
                           </div>
@@ -170,7 +170,7 @@ const Navbar = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-4 py-2 font-medium text-gray-700 transition hover:text-green-600 dark:text-white"
+              className="px-4 py-2 font-medium text-gray-700 transition hover:text-green-600"
             >
               Dashboard
             </motion.button>
@@ -188,7 +188,7 @@ const Navbar = () => {
 
         {/* Mobile toggle */}
         <button
-          className="p-2 text-gray-700 lg:hidden dark:text-white"
+          className="p-2 text-gray-700 lg:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? (
@@ -207,14 +207,14 @@ const Navbar = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-16 right-0 flex h-[calc(100vh-4rem)] w-full flex-col gap-6 overflow-y-auto border-l border-gray-200 bg-white p-6 shadow-lg sm:w-80 lg:hidden dark:border-gray-800 dark:bg-black"
+            className="fixed top-16 right-0 flex h-[calc(100vh-4rem)] w-full flex-col gap-6 overflow-y-auto border-l border-gray-200 bg-white p-6 shadow-lg sm:w-80 lg:hidden"
           >
             {links.map((link, i) => (
               <div key={i} className="flex flex-col gap-2">
                 <Link
                   href={link.href}
                   onClick={() => setOpenDrawer(openDrawer === i ? null : i)}
-                  className="flex items-center justify-between text-lg font-medium text-gray-700 dark:text-white"
+                  className="flex items-center justify-between text-lg font-medium text-gray-700"
                 >
                   {link.name}
                   {link.drawer && (
@@ -238,10 +238,10 @@ const Navbar = () => {
                           key={j}
                           href={item.href}
                           onClick={() => setMobileOpen(false)}
-                          className="flex items-center gap-3 rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-neutral-800"
+                          className="flex items-center gap-3 rounded-lg p-2 hover:bg-gray-100"
                         >
                           <div className="text-green-600">{item.icon}</div>
-                          <span className="font-medium text-gray-600 dark:text-gray-300">
+                          <span className="font-medium text-gray-600">
                             {item.title}
                           </span>
                         </Link>
@@ -252,11 +252,11 @@ const Navbar = () => {
               </div>
             ))}
 
-            <hr className="border-gray-200 dark:border-gray-800" />
+            <hr className="border-gray-200" />
             <Link
               href="https://app.eaziwage.com/"
               onClick={() => setMobileOpen(false)}
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-center font-medium text-gray-700 transition hover:text-green-600 dark:border-gray-700 dark:text-white"
+              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-center font-medium text-gray-700 transition hover:text-green-600"
             >
               Dashboard
             </Link>

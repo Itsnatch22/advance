@@ -173,10 +173,10 @@ export default function Employers() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: j * 0.1 }}
-              className="relative rounded-3xl border border-transparent bg-gray-50 p-6 transition-colors duration-300 hover:border-green-200 sm:p-8 dark:bg-white/5 dark:hover:border-green-800"
+              className="relative rounded-3xl border border-transparent bg-gray-50 p-6 transition-colors duration-300 hover:border-green-200 sm:p-8"
             >
-              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm dark:bg-white/10">
-                <item.icon className="h-6 w-6 text-gray-900 dark:text-white" />
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
+                <item.icon className="h-6 w-6 text-gray-900" />
               </div>
               <h3 className="mb-3 text-lg font-bold text-gray-900">
                 {item.title}
@@ -214,11 +214,11 @@ export default function Employers() {
         <h2 className="mb-12 text-center font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
           Frequently Asked Questions
         </h2>
-              <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-green-500/30 dark:border-white/10 dark:bg-white/5">
+              <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-green-500/30">
         {faqs.map((faq, index) => (
           <div
             key={index}
-            className="border-b border-gray-200 last:border-none dark:border-gray-700"
+            className="border-b border-gray-200 last:border-none"
           >
             <button
               onClick={() => setOpenIndex(openIndex === index ? null : index)}

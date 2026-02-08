@@ -63,7 +63,7 @@ export default function Pricing() {
   return (
     <section
       id="pricing"
-      className="relative bg-white py-16 text-center sm:py-20 dark:bg-neutral-950"
+      className="relative bg-white py-16 text-center sm:py-20"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <motion.h2
@@ -71,9 +71,9 @@ export default function Pricing() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="font-serif text-3xl font-bold text-green-700 sm:text-4xl md:text-5xl lg:text-6xl dark:text-green-600"
+          className="font-serif text-3xl font-bold text-green-700 sm:text-4xl md:text-5xl lg:text-6xl"
         >
-          Fast. Fair. <span className="text-black dark:text-white">Fully</span>{" "}
+          Fast. Fair. <span className="text-black">Fully</span>{" "}
           Transparent.
         </motion.h2>
 
@@ -82,7 +82,7 @@ export default function Pricing() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
           viewport={{ once: true }}
-          className="mt-4 px-4 text-base text-gray-600 sm:text-lg dark:text-gray-300"
+          className="mt-4 px-4 text-base text-gray-600 sm:text-lg"
         >
           It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan,
           and dream without waiting for payday.
@@ -101,15 +101,15 @@ export default function Pricing() {
               variants={item}
               whileHover={{ scale: 1.05, translateY: -5 }}
               transition={{ type: "spring", stiffness: 300 }}
-              className="w-full max-w-sm rounded-2xl border border-green-100 bg-white p-6 shadow transition-colors hover:border-green-400 hover:shadow-green-500/30 dark:border-green-900/30 dark:bg-gray-800"
+              className="w-full max-w-sm rounded-2xl border border-green-100 bg-white p-6 shadow transition-colors hover:border-green-400 hover:shadow-green-500/30"
             >
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-50 transition-colors group-hover:bg-green-100 dark:bg-green-900/20 dark:group-hover:bg-green-900/40">
-                <card.icon className="h-7 w-7 text-green-600 dark:text-green-400" />
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-50 transition-colors group-hover:bg-green-100">
+                <card.icon className="h-7 w-7 text-green-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 sm:text-xl dark:text-white">
+              <h3 className="text-lg font-semibold text-gray-900 sm:text-xl">
                 {card.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-sm leading-relaxed text-gray-500">
                 {card.desc}
               </p>
             </motion.div>

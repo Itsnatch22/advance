@@ -22,7 +22,7 @@ export default function Footer() {
     setCurrentYear(new Date().getFullYear());
   }, []);
   return (
-    <footer className="relative overflow-hidden border-t border-gray-800 bg-gradient-to-b from-gray-950 via-black to-green-950 text-gray-300">
+    <footer className="relative overflow-hidden border-t border-gray-800 bg-linear-to-b from-gray-950 via-black to-green-950 text-gray-300">
       {/* Subtle ambient glow orb */}
       <div className="absolute top-0 left-0 h-80 w-80 rounded-full bg-green-600/10 blur-3xl"></div>
       <div className="absolute right-0 bottom-0 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl"></div>

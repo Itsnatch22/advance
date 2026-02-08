@@ -28,7 +28,7 @@ export default function CTA() {
   return (
     <section className="relative flex items-center eaziwage-gradient py-24 sm:py-20">
       {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/40 dark:bg-black/60"></div>
+      <div className="absolute inset-0 bg-black/40"></div>
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 text-center text-white sm:px-6">
         <motion.h2
