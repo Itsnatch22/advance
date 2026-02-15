@@ -21,7 +21,7 @@ const item = {
 
 export default function Testimonials(){
     return(
-        <section className="py-24 lg:py-32 bg-slate-50">
+        <section className="py-24 lg:py-32 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-20">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 rounded-full text-sm font-semibold text-primary mb-6">
@@ -33,7 +33,7 @@ export default function Testimonials(){
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                     viewport={{ once: true }} 
-                    className="font-serif text-4xl sm:text-5xl font-bold text-slate-900 mb-5">
+                    className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-5">
                         Voices from <span className="text-green-700">East Africa</span>
                     </motion.h2>
                     <motion.p
