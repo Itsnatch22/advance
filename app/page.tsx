@@ -6,6 +6,7 @@ import ProblemStatement from "@/components/ProblemStatement";
 import StatsCounter from "@/components/StatsCounter";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
+import Testimonials from "@/components/Testimonials";
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <StatsCounter />
       <Needs />
       <Pricing />
+      <Testimonials />
       <FAQ />
       <CTA />
     </div>

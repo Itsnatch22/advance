@@ -135,3 +135,54 @@ export const techPartners = [
     href: "https://myworkpay.com/",
   },
 ] as const;
+
+export const testimonials = [
+  {
+    quote: "EaziWage saved me from expensive loan sharks. When my daughter got sick, I accessed my wages in 2 seconds and paid the hospital bill immediately. This is a game-changer!",
+    author: "Mary Wanjiku",
+    role: "Nurse at Kenyatta National Hospital",
+    location: "Nairobi, Kenya",
+    avatar: "MW",
+    rating: 5
+  },
+  {
+    quote: "As HR Director, I've seen employee satisfaction increase by 40% since we introduced EaziWage. Salary advance requests dropped by 80%, and our team is more focused and productive.",
+    author: "David Omondi",
+    role: "HR Director at Safaricom",
+    location: "Nairobi, Kenya",
+    avatar: "DO",
+    rating: 5
+  },
+  {
+    quote: "The speed is unbelievable! I requested $50 for an emergency and it was in my Mobile Wallet before I could put my phone down. I tell all my colleagues about EaziWage.",
+    author: "Joseph Mugisha",
+    role: "Delivery Driver at Glovo",
+    location: "Kampala, Uganda",
+    avatar: "JM",
+    rating: 5
+  },
+  {
+    quote: "Being a single mother, cash flow was always stressful. Now I can access my wages when school fees are due without borrowing from anyone. EaziWage gave me dignity.",
+    author: "Grace Akinyi",
+    role: "Teacher at Alliance High School",
+    location: "Nairobi, Kenya",
+    avatar: "GA",
+    rating: 5
+  },
+  {
+    quote: "We implemented EaziWage for our 500+ factory workers. Employee retention improved by 25% in just 6 months. It's now a key part of our benefits package.",
+    author: "James Mwangi",
+    role: "CEO at Twiga Foods",
+    location: "Nairobi, Kenya",
+    avatar: "JM",
+    rating: 5
+  },
+  {
+    quote: "I used to pay 30% interest on emergency loans. With EaziWage, I pay a small flat fee and keep my dignity. This is how financial services should work in Africa.",
+    author: "Sarah Nakato",
+    role: "Cashier at Nakumatt",
+    location: "Kigali, Rwanda",
+    avatar: "SN",
+    rating: 5
+  },
+] as const;

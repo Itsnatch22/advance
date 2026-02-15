@@ -13,6 +13,8 @@ import {
   ArrowUpRight,
   CheckCircle2,
   Clock,
+  Heart,
+  Star,
 } from "lucide-react";
 
 export const Icons = {
@@ -30,4 +32,6 @@ export const Icons = {
   ArrowUpRight,
   CheckCircle2,
   Clock,
+  Heart,
+  Star
 } as const;

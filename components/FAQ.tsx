@@ -47,9 +47,6 @@ export default function FAQ() {
         Our <span className="text-green-600">Frequently</span> Asked Questions
       </motion.h2>
       <div className="mx-auto w-full max-w-4xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-          <h2 className="mb-12 text-center font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
-            Frequently Asked Questions
-          </h2>
                 <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-green-500/30">
           {faqs.map((faq, index) => (
             <div
