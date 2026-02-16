@@ -65,10 +65,10 @@ export default function CulturePage() {
             className="max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl lg:leading-relaxed"
           >
             Late-night commits.{" "}
-             <Link href={"https://nextjs.org"} className="text-green-500" target="_blank">Next.js</Link>,{" "}
-             <Link href={"https://vercel.app"} className="text-green-500" target="_blank">Vercel</Link>,{" "}
-             <Link href={"https://tailwindcss.com"} className="text-green-500" target="_blank">Tailwind CSS</Link>,{" "}
-             <Link href={"https://github.com"} className="text-green-500" target="_blank">GitHub</Link>.{" "}
+             <Link href={"https://nextjs.org"} className="text-green-600" target="_blank">Next.js</Link>,{" "}
+             <Link href={"https://vercel.app"} className="text-green-600" target="_blank">Vercel</Link>,{" "}
+             <Link href={"https://tailwindcss.com"} className="text-green-600" target="_blank">Tailwind CSS</Link>,{" "}
+             <Link href={"https://github.com"} className="text-green-600" target="_blank">GitHub</Link>.{" "}
             Big ideas. Small team.  
             We build tools that help people breathe financially.
             No corporate theatre. Just sharp minds shipping.
