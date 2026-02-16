@@ -60,7 +60,7 @@ export default function Hero() {
           {/* === Email Input Form === */}
           <form
             onSubmit={handleContinue}
-            className="mt-6 flex max-w-md flex-wrap gap-2"
+            className="mt-6 flex w-full max-w-md flex-col gap-3 sm:flex-row sm:gap-2"
           >
             <input
               type="email"
@@ -68,14 +68,15 @@ export default function Hero() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-3 text-black focus:ring-2 focus:ring-green-500 focus:outline-none"
+              className="w-full flex-1 rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-black outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-green-500 sm:text-sm"
             />
+            
             <button
               type="submit"
-              className="rounded-xl bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700 flex items-center gap-2"
+              className="flex items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-3 font-semibold text-white transition-all hover:bg-green-700 active:scale-[0.98] sm:w-auto"
             >
               Continue
-              <BiChevronRight className="ml-1 h-5 w-5" />
+              <BiChevronRight className="h-5 w-5" />
             </button>
           </form>
         </div>

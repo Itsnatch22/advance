@@ -39,7 +39,7 @@ export function Team() {
             className="group flex flex-col items-center"
           >
             {/* Responsive Image Container */}
-            <div className="relative aspect-square w-full max-w-37.5 overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:shadow-xl sm:rounded-full md:max-w-[180px]">
+            <div className="relative aspect-square w-full max-w-37.5 overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:shadow-xl sm:rounded-full md:max-w-45">
               <Image
                 src={member.image}
                 alt={member.name}
