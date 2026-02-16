@@ -1,3 +1,4 @@
+// Needs.tsx - Enhanced
 "use client";
 import { motion } from "framer-motion";
 import {
@@ -14,7 +15,7 @@ import { Icons } from "@/constants";
 const steps = [
   {
     icon: ZapIcon,
-    title: "Instant Disbursment",
+    title: "Instant Disbursement",
     description:
       "Funds available within minutes through mobile money or bank transfer. No waiting periods or complex approval processes.",
   },
@@ -67,64 +68,90 @@ const item = {
 
 export default function Needs() {
   return (
-    <section className="relative bg-linear-to-b from-gray-50 via-green-50/10 to-gray-50 py-16 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-sm font-semibold text-primary mb-6">
-          <Icons.Award className="w-4 h-4" />
-          Why Choose EaziWage
+    <section className="relative overflow-hidden bg-linear-to-b from-slate-50 via-white to-slate-50/30 py-20 sm:py-24 lg:py-32">
+      {/* Ambient background effect */}
+      <div className="absolute left-0 top-0 h-96 w-96 rounded-full bg-emerald-100/30 blur-3xl"></div>
+      <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-green-100/20 blur-3xl"></div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+        {/* Section badge */}
+        <div className="mb-6 flex justify-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+            <Icons.Award className="h-4 w-4" />
+            <span>Why Choose EaziWage</span>
+          </div>
         </div>
+
+        {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl"
+          className="mb-5 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl"
         >
           Built for the{" "}
-          <span className="text-green-600">African Workforce</span>
+          <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+            African Workforce
+          </span>
         </motion.h2>
+
+        {/* Description */}
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mx-auto mt-4 max-w-2xl px-4 text-base text-gray-600 sm:text-lg"
+          className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl"
         >
           Enterprise-grade fintech built for Africa - compliant, secure, and
           fully integrated with local banking and mobile money systems.
         </motion.p>
-        <p className="mt-2 text-sm text-gray-400 italic">
+        <p className="mt-3 text-sm italic text-slate-500">
           Integrated with mobile money applications, payroll providers & leading
           banks.
         </p>
 
+        {/* Feature cards grid */}
         <motion.div
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="mt-12 grid grid-cols-1 gap-6 sm:mt-16 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3"
+          className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-8"
         >
           {steps.map((step, i) => (
             <motion.div
               key={i}
               variants={item}
-              whileHover={{ y: -5 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="rounded-2xl border border-green-100 bg-white p-6 shadow transition-colors hover:border-green-400 hover:shadow-green-500/30"
+              whileHover={{ y: -8 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-8 shadow-lg shadow-slate-900/5 transition-all duration-300 hover:border-emerald-200/80 hover:shadow-xl hover:shadow-emerald-500/10"
             >
-              <div className="flex flex-col items-center gap-4">
-                <div className="group relative">
-                  <step.icon className="relative z-10 h-12 w-12 text-black" />
-                  <div className="absolute inset-0 rounded-full bg-green-400 opacity-0 blur-md transition group-hover:opacity-30"></div>
+              {/* Gradient overlay on hover */}
+              <div className="absolute inset-0 bg-linear-to-br from-emerald-50/0 via-green-50/0 to-emerald-50/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+
+              {/* Icon */}
+              <div className="relative z-10 mb-6 inline-flex">
+                <div className="relative">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-emerald-50 to-green-50 ring-1 ring-emerald-500/10 transition-transform duration-300 group-hover:scale-110">
+                    <step.icon className="h-7 w-7 text-emerald-600" strokeWidth={2} />
+                  </div>
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 -z-10 rounded-xl bg-emerald-400/30 opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-100"></div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {step.title}
-                </h3>
-                <p className="text-center text-sm text-gray-600">
-                  {step.description}
-                </p>
               </div>
+
+              {/* Content */}
+              <h3 className="relative z-10 mb-3 text-xl font-bold text-slate-900">
+                {step.title}
+              </h3>
+              <p className="relative z-10 text-sm leading-relaxed text-slate-600">
+                {step.description}
+              </p>
+
+              {/* Bottom accent line */}
+              <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-emerald-500 to-green-500 transition-all duration-300 group-hover:w-full"></div>
             </motion.div>
           ))}
         </motion.div>

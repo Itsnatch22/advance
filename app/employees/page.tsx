@@ -114,22 +114,35 @@ const faqs = [
 export default function Employees() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   return (
-    <section className="relative mx-auto flex min-h-screen w-full flex-col items-center py-10 sm:py-14 lg:py-20">
+    <section className="relative mx-auto flex min-h-screen w-full flex-col items-center overflow-hidden bg-linear-to-b from-white via-slate-50/30 to-white py-8 sm:py-12 lg:py-16">
       <UI />
 
-      <ComplianceStrip items={complianceItems} className="mb-8 sm:mb-10" />
+      {/* Enhanced compliance strip */}
+      <ComplianceStrip 
+        items={complianceItems} 
+        className="mb-12 border-y border-slate-200/60 bg-white/80 py-6 backdrop-blur-sm sm:mb-16 lg:mb-20 sm:py-8" 
+      />
 
-      <div className="mt-10 w-full max-w-7xl px-4 text-center sm:mt-14 sm:px-6 lg:px-10 lg:text-left">
-        <div className="mx-auto mb-16 max-w-3xl text-center sm:mb-20">
-          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-            Why employees choose Eaziwage
+      {/* Why employees choose section - refined styling */}
+      <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Section header with badge */}
+        <div className="mx-auto mb-12 max-w-3xl text-center sm:mb-16 lg:mb-20">
+          <div className="mb-5 flex justify-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              For Employees
+            </div>
+          </div>
+          <h2 className="mb-5 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-5xl lg:text-6xl">
+            Why employees choose <span className="bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">Eaziwage</span>
           </h2>
-          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl">
+          <p className="text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl">
             A practical well-being lever that pays for itself.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-10">
+        {/* Enhanced feature cards grid */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
           {reasons.map((item, i) => (
             <FeatureCard
               key={i}
@@ -142,19 +155,27 @@ export default function Employees() {
         </div>
       </div>
 
-      {/* Roll-Out Plans */}
-      <div className="mt-24 w-full max-w-7xl px-4 sm:mt-32 sm:px-6 lg:mt-40 lg:px-8">
-        <div className="mx-auto mb-16 max-w-3xl text-center sm:mb-20">
-          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-            Your Financial Empowerment Journey
+      {/* Financial Empowerment Journey - refined card treatment */}
+      <div className="mt-20 w-full max-w-7xl px-4 sm:mt-24 lg:mt-32 sm:px-6 lg:px-8">
+        {/* Section header */}
+        <div className="mx-auto mb-12 max-w-3xl text-center sm:mb-16 lg:mb-20">
+          <div className="mb-5 flex justify-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              Your Journey
+            </div>
+          </div>
+          <h2 className="mb-5 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-5xl lg:text-6xl">
+            Your Financial <span className="bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">Empowerment Journey</span>
           </h2>
-          <p className="text-lg leading-relaxed text-gray-600 sm:text-xl">
+          <p className="text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl">
             Awareness → Empowerment → Growth — a smarter way to handle money
             you&apos;ve already earned.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
+        {/* Enhanced journey cards with step indicators */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 lg:gap-6">
           {rolloutPlans.map((item, j) => (
             <motion.div
               key={j}
@@ -162,78 +183,115 @@ export default function Employees() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: j * 0.1 }}
-              className="relative rounded-3xl border border-transparent bg-gray-50 p-6 transition-colors duration-300 hover:border-green-200 sm:p-8"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-6 shadow-lg shadow-slate-900/5 transition-all duration-300 hover:border-emerald-200/80 hover:shadow-xl hover:shadow-emerald-500/10 sm:p-8"
             >
-              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
-                <item.icon className="h-6 w-6 text-gray-900" />
+              {/* Step number badge */}
+              <div className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-emerald-50 to-green-50 text-xs font-bold text-emerald-700 ring-1 ring-emerald-500/10">
+                {j + 1}
               </div>
-              <h3 className="mb-3 text-lg font-bold text-gray-900">
+
+              {/* Subtle gradient overlay on hover */}
+              <div className="absolute inset-0 bg-linear-to-br from-emerald-50/0 via-green-50/0 to-emerald-50/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+
+              {/* Icon with enhanced styling */}
+              <div className="relative z-10 mb-5 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-emerald-50 to-green-50 shadow-sm ring-1 ring-emerald-500/10 transition-transform duration-300 group-hover:scale-110">
+                <item.icon className="h-7 w-7 text-emerald-600" strokeWidth={2} />
+              </div>
+
+              {/* Content */}
+              <h3 className="relative z-10 mb-3 text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
                 {item.title}
               </h3>
-              <p className="text-sm leading-relaxed text-gray-600">
+              <p className="relative z-10 text-sm leading-relaxed text-slate-600 sm:text-base">
                 {item.desc}
               </p>
+
+              {/* Bottom accent line */}
+              <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-emerald-500 to-green-500 transition-all duration-300 group-hover:w-full"></div>
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* Works Areas */}
-      <div className="mt-10 w-full max-w-7xl px-2 sm:mt-20 sm:px-4 lg:mt-30 lg:px-6">
-        <div className="mb-12 text-center lg:text-left">
-          <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+      {/* Versatility section - refined header */}
+      <div className="mt-16 w-full max-w-7xl px-2 sm:mt-20 lg:mt-24 sm:px-4 lg:px-6">
+        <div className="mb-10 text-center sm:mb-12 lg:mb-16 lg:text-left">
+          <div className="mb-5 flex justify-center lg:justify-start">
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              Versatile Solution
+            </div>
+          </div>
+          <h2 className="mb-4 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:mb-5 sm:text-5xl lg:text-6xl">
             Versatility across{" "}
-            <span className="text-green-500">jobs & sectors</span>
+            <span className="bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">jobs & sectors</span>
           </h2>
-          <p className="mx-auto mt-3 text-sm text-gray-600 sm:mt-4 sm:text-base lg:mx-0">
+          <p className="mx-auto text-sm text-slate-600 sm:text-base lg:mx-0 lg:text-lg">
             Real Kenyan contexts: retail, banking, hospitality, logistics,
             schools, factories and more.
           </p>
         </div>
-        <div className="mt-3 sm:mt-5">
+        <div className="mt-4 sm:mt-6">
           <AppleCardsCarouselDemo />
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-4xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-              <h2 className="mb-12 text-center font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
-                Frequently Asked Questions
-              </h2>
-                    <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-green-500/30">
-              {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="border-b border-gray-200 last:border-none"
-                >
-                  <button
-                    onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                    className="group flex w-full items-center justify-between p-5 text-left focus:outline-none"
-                  >
-                    <span className="text-base font-medium text-gray-900 transition-colors group-hover:text-green-700 sm:text-lg">
-                      {faq.question}
-                    </span>
-                    <ArrowRight
-                      className={`ml-2 h-5 w-5 shrink-0 text-gray-500 transition-transform duration-300 ${openIndex === index ? "rotate-90 text-green-600" : ""}`}
-                    />
-                  </button>
-                  <AnimatePresence>
-                    {openIndex === index && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="overflow-hidden"
-                      >
-                        <p className="px-5 pb-5 text-base leading-7 text-gray-600 sm:text-lg">
-                          {faq.answer}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
+      {/* FAQs - refined accordion with enhanced styling */}
+      <div className="mx-auto w-full max-w-4xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
+        {/* Section header */}
+        <div className="mb-12 text-center sm:mb-16">
+          <div className="mb-5 flex justify-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              Support
             </div>
+          </div>
+          <h2 className="font-serif text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+            Frequently Asked Questions
+          </h2>
+        </div>
+
+        {/* Enhanced FAQ accordion */}
+        <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white shadow-xl shadow-slate-900/5 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/5">
+          {faqs.map((faq, index) => (
+            <div
+              key={index}
+              className="border-b border-slate-100 last:border-none transition-colors duration-200 hover:bg-slate-50/50"
+            >
+              <button
+                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                className="group flex w-full items-center justify-between gap-4 p-5 text-left transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:p-6"
+              >
+                <span className="text-base font-semibold tracking-tight text-slate-900 transition-colors duration-200 group-hover:text-emerald-700 sm:text-lg">
+                  {faq.question}
+                </span>
+                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 transition-all duration-300 group-hover:bg-emerald-50 ${openIndex === index ? "bg-emerald-50" : ""}`}>
+                  <ArrowRight
+                    className={`h-4 w-4 text-slate-500 transition-all duration-300 ${openIndex === index ? "rotate-90 text-emerald-600" : "group-hover:text-emerald-600"}`}
+                    strokeWidth={2.5}
+                  />
+                </div>
+              </button>
+              <AnimatePresence>
+                {openIndex === index && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="border-t border-slate-100 bg-linear-to-b from-slate-50/50 to-transparent px-5 pb-6 pt-4 sm:px-6">
+                      <p className="text-sm leading-relaxed text-slate-600 sm:text-base sm:leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

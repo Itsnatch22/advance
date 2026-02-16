@@ -26,11 +26,11 @@ const corporatePartners = [
 
 const techPartners = [
   "/partners/vercel.svg",
-  "/partners/mpesa.svg",
+  "/partners/next.jpg",
   "/partners/supabase.svg",
-  "/partners/aws.svg",
+  "/partners/ts.png",
   "/partners/resend.svg",
-  "/partners/visa.svg"
+  "/partners/drizzle.jpg",
 ];
 
 /* -------------------------- components -------------------------- */
@@ -45,36 +45,49 @@ function SectionHeader({
   description: string;
 }) {
   return (
-    <div className="max-w-2xl space-y-4">
-      <p className="text-sm font-medium tracking-wide text-emerald-600 dark:text-white uppercase">
+    <div className="max-w-2xl space-y-5">
+      {/* Enhanced eyebrow badge */}
+      <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
         {eyebrow}
-      </p>
+      </div>
 
-      <h2 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white sm:text-4xl">
+      {/* Enhanced heading with better typography */}
+      <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-5xl">
         {title}
       </h2>
 
-      <p className="text-neutral-600 dark:text-white">{description}</p>
+      {/* Enhanced description with better contrast */}
+      <p className="text-base leading-relaxed text-slate-600 sm:text-lg">
+        {description}
+      </p>
     </div>
   );
 }
 
-/* calm premium logo card */
+/* Enhanced premium logo card with refined styling */
 function LogoCard({ src }: { src: string }) {
   return (
-    <div className="flex h-24 items-center justify-center rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm transition hover:shadow-md">
+    <motion.div
+      whileHover={{ y: -4, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="group flex h-28 items-center justify-center rounded-xl border border-slate-200/60 bg-white p-6 shadow-lg shadow-slate-900/5 transition-all duration-300 hover:border-emerald-200/80 hover:shadow-xl hover:shadow-emerald-500/10"
+    >
+      {/* Subtle gradient overlay on hover */}
+      <div className="absolute inset-0 rounded-xl bg-linear-to-br from-emerald-50/0 via-green-50/0 to-emerald-50/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+      
       <Image
         src={src}
         alt="partner logo"
-        width={120}
-        height={40}
-        className="h-10 w-auto object-contain opacity-80"
+        width={140}
+        height={48}
+        className="relative z-10 h-12 w-auto object-contain opacity-70 transition-opacity duration-300 group-hover:opacity-100"
       />
-    </div>
+    </motion.div>
   );
 }
 
-/* reusable section */
+/* Enhanced section with improved layout */
 function PartnerSection({
   eyebrow,
   title,
@@ -89,24 +102,28 @@ function PartnerSection({
   reverse?: boolean;
 }) {
   return (
-    <section className="py-28">
+    <section className="py-20 sm:py-24 lg:py-32">
       <div
-        className={`mx-auto grid max-w-7xl gap-16 px-6 lg:grid-cols-2 lg:px-12 ${
-          reverse ? "lg:flex-row-reverse" : ""
+        className={`mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 ${
+          reverse ? "lg:grid-flow-dense" : ""
         }`}
       >
-        <SectionHeader
-          eyebrow={eyebrow}
-          title={title}
-          description={description}
-        />
+        <div className={reverse ? "lg:col-start-2" : ""}>
+          <SectionHeader
+            eyebrow={eyebrow}
+            title={title}
+            description={description}
+          />
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-2 gap-5 sm:grid-cols-3"
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className={`grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 ${
+            reverse ? "lg:col-start-1" : ""
+          }`}
         >
           {partners.map((p, i) => (
             <LogoCard key={i} src={p} />
@@ -121,30 +138,53 @@ function PartnerSection({
 
 export default function PartnersPage() {
   return (
-    <main className="bg-gray-50 py-16 dark:bg-black text-neutral-900">
-      {/* HERO */}
-      <section className="py-32">
-        <div className="mx-auto max-w-4xl px-6 text-left lg:px-12">
-          <motion.h1
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="text-4xl font-semibold tracking-tight sm:text-6xl"
+    <main className="min-h-screen bg-linear-to-b from-white via-slate-50/30 to-white text-slate-900">
+      {/* HERO - Enhanced with refined styling */}
+      <section className="relative overflow-hidden px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
+        {/* Ambient background gradient */}
+        <div className="absolute inset-0 bg-linear-to-br from-emerald-50/60 via-green-50/40 to-transparent"></div>
+        <div className="absolute right-0 top-0 h-125 w-125 rounded-full bg-linear-to-br from-emerald-100/30 to-green-100/20 blur-3xl"></div>
+
+        <div className="relative z-10 mx-auto max-w-4xl text-left">
+          {/* Hero badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-6 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10"
           >
-            <span className="text-green-600">Trusted by the teams</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+            Our Partners
+          </motion.div>
+
+          {/* Enhanced hero heading */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="font-serif text-5xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
+          >
+            <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+              Trusted by the teams
+            </span>
             <br />
             powering Africa&apos;s workforce.
           </motion.h1>
 
-          <p className="mt-6 max-w-xl text-neutral-600">
+          {/* Enhanced description */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-6 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl"
+          >
             Banks. Corporates. Technology platforms.  
             We partner with the people who move money securely and at scale.
-          </p>
+          </motion.p>
         </div>
       </section>
 
-      {/* BANKS */}
+      {/* BANKS - Enhanced section */}
       <PartnerSection
         eyebrow="Banking"
         title="Financial institutions we work with"
@@ -152,7 +192,10 @@ export default function PartnersPage() {
         partners={bankingPartners}
       />
 
-      {/* CORPORATES (layout rhythm change) */}
+      {/* Visual separator with subtle gradient */}
+      <div className="mx-auto h-px max-w-7xl bg-linear-to-r from-transparent via-slate-200 to-transparent"></div>
+
+      {/* CORPORATES - Enhanced with reverse layout */}
       <PartnerSection
         eyebrow="Enterprise"
         title="Employers enabling financial wellbeing"
@@ -161,7 +204,10 @@ export default function PartnersPage() {
         reverse
       />
 
-      {/* TECH */}
+      {/* Visual separator */}
+      <div className="mx-auto h-px max-w-7xl bg-linear-to-r from-transparent via-slate-200 to-transparent"></div>
+
+      {/* TECH - Enhanced section */}
       <PartnerSection
         eyebrow="Technology"
         title="Built with modern infrastructure"
@@ -169,23 +215,50 @@ export default function PartnersPage() {
         partners={techPartners}
       />
 
-      {/* CTA */}
-      <section className="py-32 text-center">
-        <div className="mx-auto max-w-2xl space-y-6 px-6">
-          <h3 className="font-serif text-3xl font-bold text-gray-800 sm:text-4xl md:text-5xl lg:text-6xl">
-            Want to partner with EaziWage?
-          </h3>
+      {/* CTA - Enhanced with refined card treatment */}
+      <section className="px-4 py-24 text-center sm:px-6 sm:py-32 lg:px-8">
+        <div className="mx-auto max-w-3xl">
+          {/* Enhanced CTA card */}
+          <div className="rounded-3xl border border-slate-200/60 bg-white p-10 shadow-xl shadow-slate-900/5 sm:p-12 lg:p-16">
+            {/* CTA badge */}
+            <div className="mb-6 flex justify-center">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                Partner With Us
+              </div>
+            </div>
 
-          <p className="text-neutral-600">
-            We&apos;re always open to working with forward-thinking teams.
-          </p>
+            {/* Enhanced heading */}
+            <h3 className="mb-6 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              Want to partner with EaziWage?
+            </h3>
 
-          <Link
-            href="/partners/onboarding"
-            className="inline-block rounded-xl bg-emerald-600 px-6 py-3 font-medium text-white transition hover:bg-emerald-700"
-          >
-            Apply for Partnership
-          </Link>
+            {/* Enhanced description */}
+            <p className="mx-auto mb-8 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
+              We&apos;re always open to working with forward-thinking teams.
+            </p>
+
+            {/* Enhanced CTA button */}
+            <Link
+              href="/partners/onboarding"
+              className="group inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-8 py-4 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/30"
+            >
+              Apply for Partnership
+              <svg
+                className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
     </main>

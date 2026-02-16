@@ -11,76 +11,113 @@ import Image from "next/image";
 
 export default function UI() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-        {/* Left column */}
-        <div>
-          <h1 className="mt-4 font-serif text-3xl leading-tight font-semibold text-gray-900 sm:text-4xl lg:text-5xl dark:text-white">
-            Boost productivity, retention & wellbeing—
-            <span className="block text-green-700">
+    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+        {/* Left column - enhanced typography and spacing */}
+        <div className="max-w-2xl">
+          {/* Hero badge */}
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+            For Employers
+          </div>
+
+          {/* Enhanced heading with gradient accent */}
+          <h1 className="font-serif text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+            Boost productivity, retention & wellbeing
+            <span className="mt-2 block bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
               with earned wage access that&apos;s payroll-integrated.
             </span>
           </h1>
-          <p className="mt-4 max-w-prose text-gray-600 dark:text-white">
+
+          {/* Enhanced description with better contrast */}
+          <p className="mt-6 max-w-prose text-base leading-relaxed text-slate-600 sm:text-lg sm:leading-relaxed">
             Provide staff early access to their already-earned salary—no loans,
             no interest. Transparent fees, automatic settlement on payday, and
             strong controls for HR/Finance.
           </p>
-          <div className="mt-6 flex flex-wrap items-center gap-3">
+
+          {/* Enhanced CTA button with premium styling */}
+          <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
               href="/employer-dashboard"
-              className="inline-flex items-center gap-2 rounded-2xl bg-green-700 px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-green-800"
+              className="group inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-6 py-3.5 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/30"
             >
-              Get started <ArrowRight className="h-4 w-4" />
+              Get started 
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
             </Link>
           </div>
-          <div className="mt-6 flex items-center gap-4 text-sm text-gray-600 dark:text-white">
-            <div className="flex items-center gap-1">
-              <ShieldCheck className="h-4 w-4 text-green-700" />{" "}
-              Pan-African-Ready
+
+          {/* Enhanced trust indicators with refined styling */}
+          <div className="mt-8 flex flex-wrap items-center gap-5 border-t border-slate-200/60 pt-6 text-sm text-slate-700">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 ring-1 ring-emerald-500/10">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" strokeWidth={2.5} />
+              </div>
+              <span className="font-medium">Pan-African-Ready</span>
             </div>
-            <div className="flex items-center gap-1">
-              <ShieldCheck className="h-4 w-4 text-green-700" /> Data Protection
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 ring-1 ring-emerald-500/10">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" strokeWidth={2.5} />
+              </div>
+              <span className="font-medium">Data Protection</span>
             </div>
-            <div className="flex items-center gap-1">
-              <ShieldCheck className="h-4 w-4 text-green-700" /> No interest
-              charges
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 ring-1 ring-emerald-500/10">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" strokeWidth={2.5} />
+              </div>
+              <span className="font-medium">No interest charges</span>
             </div>
           </div>
         </div>
 
-        {/* Right column – Phone mock */}
-        <div className="relative mx-auto w-full max-w-sm">
-          <div className="overflow-hidden rounded-[2.4rem] border-8 border-gray-900 bg-black shadow-2xl">
-            <div className="relative aspect-9/19 bg-gray-950">
-              {/* green glow from screen */}
+        {/* Right column – Enhanced phone mock with refined styling */}
+        <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
+          {/* Ambient glow effect behind phone */}
+          <div className="absolute -inset-8 rounded-full bg-linear-to-br from-emerald-100/40 via-green-100/30 to-transparent blur-3xl"></div>
+
+          {/* Phone frame with premium styling */}
+          <div className="relative overflow-hidden rounded-[2.8rem] border-10 border-slate-900 bg-slate-950 shadow-2xl shadow-slate-900/40 ring-1 ring-slate-700/50">
+            <div className="relative aspect-9/19 bg-slate-950">
+              {/* Enhanced green glow from screen */}
               <div
                 className="absolute inset-0"
                 style={{
                   background:
-                    "radial-gradient(50% 60% at 50% 45%, rgba(21,128,61,0.55) 0%, rgba(21,128,61,0.18) 40%, rgba(21,128,61,0.0) 70%)",
+                    "radial-gradient(50% 60% at 50% 45%, rgba(16,185,129,0.35) 0%, rgba(16,185,129,0.12) 40%, rgba(16,185,129,0.0) 70%)",
                 }}
               />
-              <div className="absolute inset-0 flex flex-col p-5">
-                <div className="text-xs text-white/90">
-                  <Image src="/logo.png" alt="Logo" width={30} height={30} />
+
+              {/* Screen content with refined UI */}
+              <div className="absolute inset-0 flex flex-col p-6">
+                {/* Logo */}
+                <div className="text-xs">
+                  <Image src="/logo.png" alt="Logo" width={36} height={36} className="drop-shadow-lg" />
                 </div>
-                <div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+
+                {/* Dashboard card with enhanced glassmorphism */}
+                <div className="mt-auto space-y-4 rounded-2xl border border-white/10 bg-white/6 p-5 shadow-2xl backdrop-blur-xl">
+                  {/* Stats header */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-xs text-white/80">
+                      <div className="text-xs font-medium uppercase tracking-wide text-white/70">
                         Adoption (active)
                       </div>
-                      <div className="text-2xl font-semibold text-white">
+                      <div className="mt-1 text-3xl font-bold text-white">
                         63%
                       </div>
                     </div>
-                    <BarChart className="h-6 w-6 text-white/80" />
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
+                      <BarChart className="h-6 w-6 text-white/90" strokeWidth={2} />
+                    </div>
                   </div>
-                  <button className="mt-3 w-full rounded-xl bg-green-700 py-2.5 font-medium text-white transition-colors hover:bg-green-800">
+
+                  {/* CTA button */}
+                  <button className="w-full rounded-xl bg-linear-to-r from-emerald-600 to-green-600 py-3 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/40">
                     Configure limits & controls
                   </button>
-                  <p className="mt-2 text-[11px] text-white/70">
+
+                  {/* Pricing info */}
+                  <p className="text-center text-[11px] leading-relaxed text-white/60">
                     Flat fee $0.8 • Application fee 5% • No interest
                   </p>
                 </div>
@@ -88,16 +125,18 @@ export default function UI() {
             </div>
           </div>
 
-          {/* Floating confirmation card (bottom-right of phone) */}
+          {/* Enhanced floating notification card (bottom-right) */}
           <div className="absolute -right-6 -bottom-6 hidden sm:block">
-            <div className="w-56 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg">
-              <div className="flex items-center gap-3">
-                <BellRing className="h-5 w-5 text-green-700" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
+            <div className="w-60 rounded-xl border border-slate-200/60 bg-white p-4 shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/10">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-emerald-50 to-green-50 ring-1 ring-emerald-500/10">
+                  <BellRing className="h-5 w-5 text-emerald-600" strokeWidth={2} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-slate-900">
                     New request policy
                   </p>
-                  <p className="text-xs text-gray-600">
+                  <p className="mt-0.5 text-xs leading-relaxed text-slate-600">
                     Limit updated: 40% of earned wages
                   </p>
                 </div>
@@ -105,16 +144,18 @@ export default function UI() {
             </div>
           </div>
 
-          {/* Secondary floating card (bottom-left of phone) */}
-          <div className="absolute bottom-6 left-6 hidden sm:block">
-            <div className="w-56 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg">
-              <div className="flex items-center gap-3">
-                <FileCheck2 className="h-5 w-5 text-green-700" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
+          {/* Enhanced floating confirmation card (bottom-left) */}
+          <div className="absolute -bottom-6 -left-6 hidden sm:block">
+            <div className="w-60 rounded-xl border border-slate-200/60 bg-white p-4 shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/10">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-emerald-50 to-green-50 ring-1 ring-emerald-500/10">
+                  <FileCheck2 className="h-5 w-5 text-emerald-600" strokeWidth={2} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-slate-900">
                     Payroll synced
                   </p>
-                  <p className="text-xs text-gray-600">
+                  <p className="mt-0.5 text-xs leading-relaxed text-slate-600">
                     Auto-deductions ready for payday
                   </p>
                 </div>

@@ -79,10 +79,10 @@ export const corporatePartners = [
 
 export const techPartners = [
   {
-    name: "M-Pesa",
-    logo: "/partners/mpesa.svg",
-    blurb: "Revolutionizing mobile payments and financial services.",
-    href: "https://www.safaricom.co.ke/personal/m-pesa",
+    name: "NEXT.js",
+    logo: "/partners/next.jpg",
+    blurb: "The React framework for production, powering our web experience.",
+    href: "https://www.nextjs.org/",
   },
   {
     name: "AWS",

@@ -1,63 +1,74 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { motion } from "framer-motion"; // 👈 animation import
+import { motion } from "framer-motion";
 import Calculator from "./Calc";
 
 export default function CalculatorPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-green-50 via-white to-green-100 px-4 py-8 pt-20 transition-colors duration-300 sm:px-6 sm:py-12 sm:pt-20 lg:pt-0 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
-      <div className="flex w-full max-w-7xl flex-col items-center justify-between gap-8 sm:gap-12 lg:flex-row lg:items-start">
-        {/* LEFT SIDE — TEXT + IMAGE */}
-        <div className="flex w-full flex-col gap-6 sm:gap-8 lg:sticky lg:top-20 lg:w-2/3 lg:gap-10">
-          <div className="flex flex-col items-center gap-5 sm:flex-col sm:gap-8 lg:flex-row lg:items-start">
-            {/* IMAGE — FINAL ANIMATED FLOAT + SPACING FIX */}
+    <main className="flex min-h-screen flex-col items-center bg-linear-to-b from-slate-50 via-white to-slate-50/30 px-4 py-12 pt-24 sm:px-6 sm:py-16 lg:px-8 lg:pt-32">
+      <div className="flex w-full max-w-7xl flex-col items-center justify-between gap-10 sm:gap-14 lg:flex-row lg:items-start lg:gap-16">
+        
+        {/* LEFT SIDE – Enhanced text + image section */}
+        <div className="flex w-full flex-col gap-8 sm:gap-10 lg:sticky lg:top-24 lg:w-3/5 lg:gap-12">
+          <div className="flex flex-col items-center gap-6 sm:flex-col sm:gap-8 lg:flex-row lg:items-start lg:gap-10">
+            
+            {/* IMAGE – Enhanced with refined animation and styling */}
             <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.85 }}
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{
                 opacity: 1,
-                y: [0, -6, 0], // continuous hover loop
+                y: [0, -8, 0],
                 scale: 1,
               }}
               transition={{
-                opacity: { duration: 0.8 },
+                opacity: { duration: 0.8, ease: "easeOut" },
                 y: {
-                  duration: 3,
+                  duration: 3.5,
                   repeat: Infinity,
                   ease: "easeInOut",
                 },
                 scale: {
                   duration: 0.8,
-                  ease: [0.16, 1, 0.3, 1], // bounce
+                  ease: [0.16, 1, 0.3, 1],
                 },
               }}
-              className="/* bigger on mobile */ /* near navbar */ /* tight to headline */ relative order-first mt-2 mb-1 h-28 w-28 flex-shrink-0 sm:mt-6 sm:h-36 sm:w-36 md:h-48 md:w-48 lg:order-none lg:mt-0 lg:h-[220px] lg:w-[220px]"
+              className="relative order-first mt-0 h-32 w-32 shrink-0 sm:h-40 sm:w-40 md:h-52 md:w-52 lg:order-0 lg:h-64 lg:w-64"
             >
+              {/* Ambient glow behind image */}
+              <div className="absolute -inset-4 rounded-full bg-linear-to-br from-emerald-100/40 via-green-100/30 to-transparent blur-2xl"></div>
+              
               <Image
                 src="/calc.png"
                 alt="EaziWage Calculator Illustration"
                 fill
-                className="rounded-2xl object-contain drop-shadow-md"
+                className="relative z-10 rounded-2xl object-contain drop-shadow-2xl"
                 priority
               />
             </motion.div>
 
-            {/* TEXT */}
-            <div className="flex-1 space-y-3 text-center sm:space-y-4 lg:text-left">
-              <p className="text-xs font-semibold tracking-widest text-green-600 uppercase sm:text-sm dark:text-green-400">
-                Smart Salary Insights
-              </p>
+            {/* TEXT – Enhanced typography and styling */}
+            <div className="flex-1 space-y-4 text-center sm:space-y-5 lg:text-left">
+              {/* Enhanced eyebrow badge */}
+              <div className="flex justify-center lg:justify-start">
+                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                  Smart Salary Insights
+                </div>
+              </div>
 
-              <h1 className="text-2xl leading-snug font-extrabold text-gray-900 sm:text-4xl md:text-5xl dark:text-gray-100">
+              {/* Enhanced heading with gradient accent */}
+              <h1 className="font-serif text-3xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
                 Precision Wage. <br />
-                <span className="text-green-700 dark:text-green-500">
+                <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
                   Effortless Compliance.
                 </span>
               </h1>
 
-              <p className="mx-auto max-w-prose text-sm leading-relaxed text-gray-700 sm:max-w-lg sm:text-lg lg:mx-0 dark:text-gray-300">
+              {/* Enhanced description with better contrast */}
+              <p className="mx-auto max-w-prose text-base leading-relaxed text-slate-600 sm:text-lg lg:mx-0 lg:text-xl lg:leading-relaxed">
                 The{" "}
-                <span className="font-semibold text-green-600 dark:text-green-400">
+                <span className="font-semibold text-emerald-700">
                   EaziWage Access Calculator
                 </span>{" "}
                 helps employees estimate their accessible portion of earned
@@ -65,24 +76,48 @@ export default function CalculatorPage() {
                 simplified.
               </p>
 
-              <div className="rounded-md border-l-4 border-green-500 bg-green-50/50 py-2 pl-3 text-xs text-gray-600 italic sm:text-sm dark:border-green-600 dark:bg-green-900/20 dark:text-gray-400">
-                *The calculated figure is an estimate for informational purposes
-                only. Actual amounts depend on payroll verification, residency
-                and the EaziWage eligibility requirements.
+              {/* Enhanced disclaimer card */}
+              <div className="rounded-xl border border-emerald-100 bg-linear-to-br from-emerald-50/50 to-green-50/30 p-4 shadow-sm ring-1 ring-emerald-500/5">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 ring-1 ring-emerald-500/10">
+                    <svg className="h-3 w-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <p className="flex-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                    The calculated figure is an estimate for informational purposes
+                    only. Actual amounts depend on payroll verification, residency
+                    and the EaziWage eligibility requirements.
+                  </p>
+                </div>
               </div>
 
-              <p className="mt-2 text-xs font-medium text-gray-700 sm:text-base dark:text-gray-300">
+              {/* Enhanced trust statement */}
+              <p className="text-sm font-semibold text-slate-700 sm:text-base">
                 Precision builds trust. Trust drives growth.
               </p>
             </div>
           </div>
         </div>
 
-        {/* RIGHT SIDE — CALCULATOR */}
-        <div className="order-last mt-6 flex w-full justify-center lg:order-none lg:mt-0 lg:w-1/3">
-          <div className="w-full max-w-md rounded-3xl border border-green-100 bg-white/80 p-4 shadow-2xl shadow-green-200/50 backdrop-blur-xl transition-transform duration-300 hover:scale-[1.01] sm:max-w-lg sm:p-6 md:p-8 dark:border-green-800 dark:bg-gray-900/60 dark:shadow-green-900/30">
-            <Calculator />
-          </div>
+        {/* RIGHT SIDE – Enhanced calculator card */}
+        <div className="order-last mt-8 flex w-full justify-center lg:order-0 lg:mt-0 lg:w-2/5">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full max-w-md"
+          >
+            {/* Enhanced calculator container with premium card treatment */}
+            <div className="relative">
+              {/* Subtle glow effect */}
+              <div className="absolute -inset-1 rounded-3xl bg-linear-to-br from-emerald-100/50 via-green-100/30 to-transparent blur-xl"></div>
+              
+              <div className="relative rounded-3xl border border-slate-200/60 bg-white p-6 shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 transition-all duration-300 hover:shadow-emerald-500/10 sm:p-8 lg:p-10">
+                <Calculator />
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </main>

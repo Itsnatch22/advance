@@ -28,7 +28,6 @@ export default function Marquee() {
           <motion.div
             className="flex gap-20 w-max"
             animate={{ x: ['0%', '-50%'] }}
-            whileHover={{ animationPlayState: 'paused'}}
             transition={{
               repeat: Infinity,
               duration: 25,
