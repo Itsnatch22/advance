@@ -53,7 +53,7 @@ export default function CulturePage() {
             <span
               ref={typedRef}
               className="inline-block min-w-50 bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent sm:min-w-62.5 lg:min-w-75"
-            />{" "}
+            />
             at EaziWage
           </motion.h1>
 
