@@ -133,7 +133,7 @@ const Navbar = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    className="absolute top-12 left-0 w-[400px] overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-xl"
+                    className="absolute top-12 left-0 w-100 overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-xl"
                   >
                     <div className="grid gap-2">
                       {link.drawer.map((item, j) => (

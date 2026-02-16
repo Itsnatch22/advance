@@ -10,10 +10,13 @@ import {
   Wallet,
   MapPin,
   Shield,
+  Send,
+  Globe2
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Locator from "./Locator";
+import { Input } from "./ui";
 
 export default function Footer() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
@@ -26,6 +29,30 @@ export default function Footer() {
       {/* Subtle ambient glow orb */}
       <div className="absolute top-0 left-0 h-80 w-80 rounded-full bg-green-600/10 blur-3xl"></div>
       <div className="absolute right-0 bottom-0 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl"></div>
+
+      <div className="relative border-b border-slate-800 pt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4 font-serif">Stay updated with EaziWage.</h3>
+              <p className="text-slate-400 text-base sm:text-lg">
+                Get the latest news, product updates, and financial tips delivered to your inbox.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Input 
+                type="email" 
+                placeholder="Enter your email" 
+                className="h-12 sm:h-14 px-5 sm:px-6 bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 rounded-xl flex-1"
+              />
+              <button className="h-12 sm:h-14 px-6 sm:px-8 bg-green-700 hover:bg-green-500 rounded-xl font-medium inline-flex items-center justify-center text-white transition-colors duration-300">
+                <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="relative container mx-auto px-4 py-12 sm:px-6 md:py-16">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10 md:grid-cols-5 md:gap-20">
@@ -174,7 +201,7 @@ export default function Footer() {
                 {
                   icon: MapPin,
                   href: "https://google.com/maps?q=Westlands,+Nairobi",
-                  text: "Westlands, Nairobi",
+                  text: "Westlands Business Park, Nairobi",
                 },
               ].map((contact, index) => (
                 <li key={index}>
@@ -207,8 +234,12 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gray-800 pt-8 md:flex-row">
           <p className="text-center text-xs text-gray-500 md:text-left">
-            &copy; {currentYear ?? ""} EaziWage. All Rights Reserved
+            &copy; 2025 - {currentYear ?? ""} EaziWage. All Rights Reserved
           </p>
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500">
+            <Globe2 className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span>Kenya · Uganda · Tanzania · Rwanda</span>
+          </div>
           <Locator />
           <Link
             href="/status"

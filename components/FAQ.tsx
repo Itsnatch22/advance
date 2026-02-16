@@ -3,6 +3,8 @@
 import { ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import Link from "next/link";
+import { Button } from "./ui/button";
 
 const faqs = [
   {
@@ -82,6 +84,14 @@ export default function FAQ() {
             </div>
           ))}
         </div>
+        <div className="text-center mt-10">
+            <Link href="/faq">
+              <Button variant="outline" size="lg" className="rounded-xl">
+                View All FAQs
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
       </div>
     </section>
   );

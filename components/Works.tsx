@@ -5,6 +5,7 @@ import {
   PhoneCall,
   RefreshCcw,
   BriefcaseBusiness,
+  Sparkles
 } from "lucide-react";
 
 const steps = [
@@ -57,6 +58,10 @@ export default function Works() {
   return (
     <section className="bg-gray-50 py-16 transition-colors duration-500 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-sm font-semibold text-primary mb-6">
+          <Sparkles className="w-4 h-4" />
+          Simple Process
+        </div>
         {/* === Title === */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
