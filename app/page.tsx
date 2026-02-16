@@ -8,11 +8,13 @@ import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
 import Testimonials from "@/components/Testimonials";
 import Coverage from "@/components/Coverage";
+import Marquee from "@/components/Marquee";
 
 export default function HomePage() {
   return (
     <div className="overflow-hidden">
       <Hero />
+      <Marquee />
       <ProblemStatement />
       <Works />
       <StatsCounter />
