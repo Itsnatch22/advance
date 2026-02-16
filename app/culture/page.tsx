@@ -53,7 +53,7 @@ export default function CulturePage() {
             <span
               ref={typedRef}
               className="inline-block min-w-50 bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent sm:min-w-62.5 lg:min-w-75"
-            />
+            />{" "}
             at EaziWage
           </motion.h1>
 
@@ -64,7 +64,12 @@ export default function CulturePage() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl lg:leading-relaxed"
           >
-            Late-night commits. Big ideas. Small team.  
+            Late-night commits.{" "}
+             <Link href={"https://nextjs.org"} className="text-green-500" target="_blank">Next.js</Link>,{" "}
+             <Link href={"https://vercel.app"} className="text-green-500" target="_blank">Vercel</Link>,{" "}
+             <Link href={"https://tailwindcss.com"} className="text-green-500" target="_blank">Tailwind CSS</Link>,{" "}
+             <Link href={"https://github.com"} className="text-green-500" target="_blank">GitHub</Link>.{" "}
+            Big ideas. Small team.  
             We build tools that help people breathe financially.
             No corporate theatre. Just sharp minds shipping.
           </motion.p>
