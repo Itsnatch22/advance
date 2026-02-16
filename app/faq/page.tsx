@@ -15,6 +15,7 @@ import {
   MessageSquare,
   Phone,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
@@ -228,10 +229,7 @@ export default function FAQPage() {
   const [openItems, setOpenItems] = useState<Record<number, boolean>>({});
 
   const toggleItem = (index: number) => {
-    setOpenItems((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
+    setOpenItems((prev) => ({ ...prev, [index]: !prev[index] }));
   };
 
   const filteredFaqs: FAQItem[] = searchQuery
@@ -247,193 +245,118 @@ export default function FAQPage() {
   const currentCategory = categories.find((c) => c.id === activeCategory);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <section className="relative overflow-hidden pt-32 pb-20 bg-green-100">
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="bg-primary/10 dark:bg-primary/20 text-primary mb-8 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold">
-              <HelpCircle className="h-4 w-4" />
-              Help Center
-            </div>
-            <h1 className="font-serif mb-6 text-5xl font-bold text-slate-900 sm:text-6xl dark:text-white">
-              Frequently Asked <span className="text-gradient">Questions</span>
-            </h1>
-            <p className="mx-auto mb-10 max-w-2xl text-xl text-slate-600 dark:text-slate-300">
-              Find answers to common questions about EaziWage. Can't find what
-              you're looking for? Our support team is here to help.
-            </p>
+    <div className="min-h-screen bg-white text-slate-900">
 
-            {/* Search */}
-            <div className="relative mx-auto max-w-xl">
-              <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-slate-400" />
-              <Input
-                type="text"
-                placeholder="Search for answers..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="focus:border-primary h-14 rounded-2xl border-2 border-slate-200 pr-4 pl-12 text-lg dark:border-slate-700"
-              />
-            </div>
+      {/* HERO */}
+      <section className="relative overflow-hidden pt-32 pb-24 bg-linear-to-b from-slate-50 to-white">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute left-1/2 top-0 h-125 w-125-translate-x-1/2 bg-emerald-500/10 blur-[140px] rounded-full" />
+        </div>
+
+        <div className="mx-auto max-w-4xl text-center px-6">
+
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-700">
+            <HelpCircle className="h-4 w-4" />
+            Help Center
+          </div>
+
+          <h1 className="font-serif mb-6 text-5xl sm:text-6xl font-bold">
+            Frequently Asked <span className="text-emerald-600">Questions</span>
+          </h1>
+
+          <p className="mx-auto mb-10 max-w-2xl text-xl text-slate-600">
+            Real answers. No support tickets required.
+          </p>
+
+          {/* SEARCH */}
+          <div className="relative mx-auto max-w-xl">
+            <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-slate-400" />
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search for answers..."
+              className="h-14 rounded-2xl border-2 border-slate-200 bg-white/70 backdrop-blur-xl pl-12 text-lg focus:border-emerald-500"
+            />
           </div>
         </div>
       </section>
 
-      {/* Categories */}
+      {/* CATEGORIES */}
       {!searchQuery && (
-        <section className="border-y border-slate-200 bg-slate-50 py-8 dark:border-slate-800 dark:bg-slate-900">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap justify-center gap-3">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`flex items-center gap-2 rounded-xl px-5 py-3 font-medium transition-all ${
-                    activeCategory === cat.id
-                      ? "from-primary shadow-primary/30 bg-linear-to-r to-emerald-600 text-white shadow-lg"
-                      : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
-                  }`}
-                >
-                  <cat.icon className="h-4 w-4" />
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+        <section className="border-y border-slate-200 bg-white py-10">
+          <div className="flex flex-wrap justify-center gap-3 px-6">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-medium transition-all
+                ${
+                  activeCategory === cat.id
+                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20"
+                    : "border border-slate-200 bg-white text-slate-600 hover:border-emerald-500 hover:text-emerald-600"
+                }`}
+              >
+                <cat.icon className="h-4 w-4" />
+                {cat.label}
+              </button>
+            ))}
           </div>
         </section>
       )}
 
-      {/* FAQ List */}
-      <section className="bg-white py-16 dark:bg-slate-950">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          {searchQuery && (
-            <div className="mb-8">
-              <p className="text-slate-500 dark:text-slate-400">
-                Showing {filteredFaqs.length} results for "
-                <span className="text-primary">{searchQuery}</span>"
-              </p>
-            </div>
-          )}
+      {/* FAQ LIST */}
+      <section className="py-20">
+        <div className="mx-auto max-w-4xl px-6">
 
           {!searchQuery && currentCategory && (
-            <div className="mb-8">
-              <div className="flex items-center gap-4">
-                <div
-                  className={`h-12 w-12 bg-linear-to-br ${currentCategory.color} flex items-center justify-center rounded-xl`}
-                >
-                  <currentCategory.icon className="h-6 w-6 text-white" />
-                </div>
-                <h2 className="font-heading text-2xl font-bold text-slate-900 dark:text-white">
-                  {currentCategory.label}
-                </h2>
+            <div className="mb-10 flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-600 text-white">
+                <currentCategory.icon className="h-6 w-6" />
               </div>
+              <h2 className="text-2xl font-bold">{currentCategory.label}</h2>
             </div>
           )}
 
           <div className="space-y-4">
-            {filteredFaqs.map((faq, i) => (
-              <div
-                key={i}
-                className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800"
-              >
-                <button
-                  onClick={() => toggleItem(i)}
-                  className="flex w-full items-center justify-between p-6 text-left"
+
+            {filteredFaqs.map((faq, i) => {
+              const open = openItems[i];
+
+              return (
+                <motion.div
+                  key={i}
+                  layout
+                  className="rounded-2xl border border-slate-200 bg-white shadow-sm"
                 >
-                  <h3 className="pr-4 text-lg font-semibold text-slate-900 dark:text-white">
-                    {faq.q}
-                  </h3>
-                  {openItems[i] ? (
-                    <ChevronUp className="text-primary h-5 w-5 shrink-0" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 shrink-0 text-slate-400" />
-                  )}
-                </button>
-                {openItems[i] && (
-                  <div className="px-6 pb-6">
-                    <p className="leading-relaxed text-slate-600 dark:text-slate-400">
-                      {faq.a}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {filteredFaqs.length === 0 && (
-            <div className="py-16 text-center">
-              <HelpCircle className="mx-auto mb-4 h-16 w-16 text-slate-300 dark:text-slate-600" />
-              <h3 className="font-heading mb-2 text-xl font-bold text-slate-900 dark:text-white">
-                No results found
-              </h3>
-              <p className="mb-6 text-slate-500 dark:text-slate-400">
-                Try a different search term or browse by category
-              </p>
-              <Button
-                onClick={() => setSearchQuery("")}
-                variant="outline"
-                className="rounded-xl"
-              >
-                Clear Search
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Still Have Questions */}
-      <section className="bg-slate-50 py-24 dark:bg-slate-900">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-green-700 p-8 lg:p-12">
-            <div className="grid items-center gap-12 md:grid-cols-2">
-              <div>
-                <h2 className="font-heading mb-4 text-3xl font-bold text-white">
-                  Still Have Questions?
-                </h2>
-                <p className="mb-8 text-white">
-                  Our support team is available to help you with any questions
-                  or issues. Reach out and we'll get back to you within 24
-                  hours.
-                </p>
-                <div className="flex flex-col gap-4 sm:flex-row">
-                  <Link href="/contact">
-                    <Button className="from-primary h-12 w-full rounded-xl bg-linear-to-r to-emerald-600 text-white sm:w-auto">
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      Contact Support
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="outline"
-                    className="h-12 w-full rounded-xl border-slate-600 text-black hover:bg-slate-700 sm:w-auto"
+                  <button
+                    onClick={() => toggleItem(i)}
+                    className="flex w-full items-center justify-between p-6 text-left"
                   >
-                    <Phone className="mr-2 h-4 w-4" />
-                    Call Us
-                  </Button>
-                </div>
-              </div>
-              <div className="hidden justify-center md:flex">
-                <div className="relative">
-                  <div className="bg-primary/20 absolute inset-0 h-48 w-48 rounded-full blur-3xl" />
-                  <div className="relative rounded-2xl border border-slate-700 bg-slate-800 p-6">
-                    <div className="mb-4 flex items-center gap-4">
-                      <div className="bg-primary flex h-12 w-12 items-center justify-center rounded-xl">
-                        <MessageSquare className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-white">Live Chat</p>
-                        <p className="text-sm text-slate-400">Available 24/7</p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-slate-400">
-                      Average response time
-                    </p>
-                    <p className="text-white text-2xl font-bold">
-                      Under 2 minutes
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    <h3 className="pr-4 text-lg font-semibold">{faq.q}</h3>
+
+                    {open ? (
+                      <ChevronUp className="text-emerald-600" />
+                    ) : (
+                      <ChevronDown className="text-slate-400" />
+                    )}
+                  </button>
+
+                  <AnimatePresence>
+                    {open && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="px-6 pb-6 text-slate-600"
+                      >
+                        {faq.a}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+
           </div>
         </div>
       </section>

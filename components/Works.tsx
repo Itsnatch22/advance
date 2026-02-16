@@ -1,3 +1,4 @@
+// Works.tsx - Refactored with Needs.tsx UI Flow
 "use client";
 import { motion } from "framer-motion";
 import {
@@ -5,7 +6,7 @@ import {
   PhoneCall,
   RefreshCcw,
   BriefcaseBusiness,
-  Sparkles
+  Sparkles,
 } from "lucide-react";
 
 const steps = [
@@ -44,7 +45,7 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0.1,
     },
   },
 };
@@ -56,71 +57,91 @@ const item = {
 
 export default function Works() {
   return (
-    <section className="bg-gray-50 py-16 transition-colors duration-500 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-sm font-semibold text-primary mb-6">
-          <Sparkles className="w-4 h-4" />
-          Simple Process
+    <section className="relative overflow-hidden bg-linear-to-b from-slate-50 via-white to-slate-50/30 py-20 sm:py-24 lg:py-32">
+      {/* Ambient background effect */}
+      <div className="absolute left-0 top-0 h-96 w-96 rounded-full bg-emerald-100/30 blur-3xl"></div>
+      <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-green-100/20 blur-3xl"></div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+        {/* Section badge */}
+        <div className="mb-6 flex justify-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+            <Sparkles className="h-4 w-4" />
+            <span>Simple Process</span>
+          </div>
         </div>
-        {/* === Title === */}
+
+        {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="font-serif text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl"
+          className="mb-5 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl"
         >
           How EaziWage{" "}
-          <span className="text-green-700">Works</span>
+          <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+            Works
+          </span>
         </motion.h2>
 
+        {/* Description */}
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mx-auto mt-4 max-w-2xl px-4 text-base leading-relaxed text-gray-600 sm:mt-5 sm:text-lg"
+          className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl"
         >
           Access your earnings effortlessly - transparent, secure, and built for
           your financial freedom.
         </motion.p>
 
-        {/* === Steps Grid === */}
+        {/* Feature cards grid - 4 columns to match content */}
         <motion.div
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="mt-12 grid grid-cols-1 gap-6 sm:mt-16 sm:grid-cols-2 sm:gap-8 lg:mt-20 lg:grid-cols-4 lg:gap-10"
+          className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4 lg:gap-8"
         >
           {steps.map((step, i) => (
             <motion.div
               key={i}
               variants={item}
-              whileHover={{ y: -10 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="rounded-2xl border border-green-100 bg-white p-6 shadow transition-colors hover:border-green-400 hover:shadow-green-500/30"
+              whileHover={{ y: -8 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-8 shadow-lg shadow-slate-900/5 transition-all duration-300 hover:border-emerald-200/80 hover:shadow-xl hover:shadow-emerald-500/10"
             >
-              <div className="flex flex-col items-center gap-5">
-                {/* Icon */}
-                <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-linear-to-br from-green-600/20 to-emerald-500/20 blur-xl"></div>
-                  <step.icon className="relative z-10 h-12 w-12 text-black" />
+              {/* Gradient overlay on hover */}
+              <div className="absolute inset-0 bg-linear-to-br from-emerald-50/0 via-green-50/0 to-emerald-50/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+
+              {/* Icon + Step Number */}
+              <div className="relative z-10 mb-6 flex flex-col items-center">
+                <div className="relative mb-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-emerald-50 to-green-50 ring-1 ring-emerald-500/10 transition-transform duration-300 group-hover:scale-110">
+                    <step.icon className="h-7 w-7 text-emerald-600" strokeWidth={2} />
+                  </div>
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 -z-10 rounded-xl bg-emerald-400/30 opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-100"></div>
                 </div>
 
-                {/* Step Label */}
-                <span className="text-sm font-bold tracking-wide text-green-600 uppercase">
+                {/* Step Number */}
+                <span className="text-sm font-bold tracking-wider text-emerald-600 uppercase">
                   {step.step}
                 </span>
-
-                {/* Title + Description */}
-                <h3 className="font-serif text-xl font-semibold text-gray-900">
-                  {step.title}
-                </h3>
-                <p className="text-center text-base leading-relaxed text-gray-600">
-                  {step.description}
-                </p>
               </div>
+
+              {/* Content */}
+              <h3 className="relative z-10 mb-3 text-xl font-bold text-slate-900">
+                {step.title}
+              </h3>
+              <p className="relative z-10 text-sm leading-relaxed text-slate-600">
+                {step.description}
+              </p>
+
+              {/* Bottom accent line */}
+              <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-emerald-500 to-green-500 transition-all duration-300 group-hover:w-full"></div>
             </motion.div>
           ))}
         </motion.div>

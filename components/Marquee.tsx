@@ -8,48 +8,71 @@ const duplicated = [...partners, ...partners]
 
 export default function Marquee() {
   return (
-    <section className="relative py-24 border-y border-slate-200 dark:border-slate-800 bg-linear-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+    <section className="relative py-32 overflow-hidden bg-linear-to-b from-white via-slate-50 to-white">
+
+      {/* ambient glow */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-0 h-125 w-125 -translate-x-1/2 bg-primary/10 blur-[140px] rounded-full" />
+      </div>
 
       <div className="max-w-7xl mx-auto px-6">
 
-        <p className="text-center text-xs font-semibold tracking-[0.25em] text-slate-500 uppercase mb-16">
-          Trusted by leading companies across East Africa
-        </p>
+        {/* title */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center text-xs font-semibold tracking-[0.35em] text-slate-500 uppercase mb-20"
+        >
+          Powering payroll for the region&apos;s most trusted institutions
+        </motion.p>
 
-        {/* spotlight */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.08),transparent_60%)]" />
+        <div className="relative">
 
-        <div className="relative overflow-hidden">
+          
 
-          {/* gradient mask for premium fade */}
-          <div className="absolute inset-y-0 left-0 w-40 bg-linear-to-r from-white dark:from-slate-950 to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-40 bg-linear-to-l from-white dark:from-slate-950 to-transparent z-10" />
-
+          {/* moving track */}
           <motion.div
-            className="flex gap-20 w-max"
+            className="flex gap-28 w-max"
             animate={{ x: ['0%', '-50%'] }}
             transition={{
               repeat: Infinity,
-              duration: 25,
-              ease: 'linear'
+              duration: 40,
+              ease: 'linear',
             }}
           >
             {duplicated.map((partner, i) => (
-              <div
+              <motion.div
                 key={i}
-                className="group relative h-14 w-36 flex items-center justify-center opacity-60 hover:opacity-100 transition duration-500"
+                whileHover={{ y: -6 }}
+                className="group relative flex h-20 w-44 items-center justify-center"
               >
+
+                {/* spotlight hover */}
+                <div className="absolute inset-0 rounded-2xl bg-white/40 opacity-0 group-hover:opacity-100 blur-xl transition duration-500" />
+
                 <Image
                   src={partner.logo}
                   alt={partner.name}
-                  width={140}
-                  height={60}
-                  className="object-contain grayscale group-hover:grayscale-0 transition duration-500 dark:invert dark:group-hover:invert-0"
+                  width={160}
+                  height={70}
+                  className="
+                    object-contain
+                    grayscale
+                    opacity-70
+                    scale-95
+                    transition
+                    duration-500
+                    group-hover:grayscale-0
+                    group-hover:opacity-100
+                    group-hover:scale-105
+                  "
                 />
-              </div>
+
+              </motion.div>
             ))}
           </motion.div>
-
         </div>
       </div>
     </section>

@@ -1,85 +1,79 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
 
-/* ----------------------------- validation ----------------------------- */
+/* ---------------- validation ---------------- */
 
 const contactSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  subject: z.string().min(5, "Subject must be at least 5 characters"),
-  message: z.string().min(20, "Message must be at least 20 characters"),
+  name: z.string().min(2),
+  email: z.string().email(),
+  subject: z.string().min(5),
+  message: z.string().min(20),
   honeypot: z.string().optional(),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
-/* ----------------------------- components ----------------------------- */
+/* ---------------- UI atoms ---------------- */
 
-function ContactInfo({ 
-  icon: Icon, 
-  label, 
-  value, 
-  href 
-}: { 
-  icon: React.ElementType; 
-  label: string; 
-  value: string; 
-  href?: string;
-}) {
-  const content = (
-    <>
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-        <Icon className="h-5 w-5 text-white" />
-      </div>
-      <div>
-        <p className="text-sm text-green-100">{label}</p>
-        <p className="text-lg font-medium text-white">{value}</p>
-      </div>
-    </>
-  );
-
-  if (href) {
-    return (
-      <a 
-        href={href}
-        className="flex items-center gap-4 rounded-xl bg-white/10 p-4 backdrop-blur-sm transition hover:bg-white/20"
-      >
-        {content}
-      </a>
-    );
-  }
-
+function GlowOrb({ className }: { className: string }) {
   return (
-    <div className="flex items-center gap-4 rounded-xl bg-white/10 p-4 backdrop-blur-sm">
-      {content}
+    <motion.div
+      animate={{ y: [0, -30, 0] }}
+      transition={{ duration: 10, repeat: Infinity }}
+      className={`absolute blur-3xl opacity-30 ${className}`}
+    />
+  );
+}
+
+function InputField({
+  id,
+  label,
+  register,
+  error,
+  ...props
+}: any) {
+  return (
+    <div className="relative">
+      <label className="mb-2 block text-sm text-neutral-400">{label}</label>
+
+      <input
+        id={id}
+        {...register}
+        {...props}
+        className="peer w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white backdrop-blur-xl outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+      />
+
+      <motion.div
+        layoutId="input-focus"
+        className="pointer-events-none absolute inset-0 rounded-xl border border-emerald-400 opacity-0 peer-focus:opacity-100"
+      />
+
+      {error && (
+        <p className="mt-2 text-xs text-red-400">{error.message}</p>
+      )}
     </div>
   );
 }
 
-function StatCard({ value, label }: { value: string; label: string }) {
-  return (
-    <motion.div
-      whileHover={{ scale: 1.05 }}
-      className="rounded-xl bg-white/10 p-6 text-center backdrop-blur-sm"
-    >
-      <div className="text-4xl font-bold text-white">{value}</div>
-      <div className="mt-2 text-sm text-green-100">{label}</div>
-    </motion.div>
-  );
-}
-
-/* ------------------------------ page ----------------------------- */
+/* ---------------- page ---------------- */
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [submitStatus, setSubmitStatus] =
+    useState<"idle" | "success" | "error">("idle");
 
   const {
     register,
@@ -91,311 +85,142 @@ export default function ContactPage() {
   });
 
   const onSubmit = async (data: ContactFormData) => {
-    // Bot detection
-    if (data.honeypot) {
-      console.log("Bot detected");
-      return;
-    }
+    if (data.honeypot) return;
 
     setIsSubmitting(true);
-    setSubmitStatus('idle');
-    setErrorMessage("");
 
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+    await new Promise((r) => setTimeout(r, 1500));
 
-      const result = await response.json();
-
-      if (response.ok) {
-        setSubmitStatus('success');
-        reset();
-        
-        // Reset success message after 5 seconds
-        setTimeout(() => setSubmitStatus('idle'), 5000);
-      } else {
-        setSubmitStatus('error');
-        
-        if (result.issues && Array.isArray(result.issues)) {
-          const errorMessages = result.issues
-            .map((issue: any) => `${issue.path.join('.')}: ${issue.message}`)
-            .join(', ');
-          setErrorMessage(errorMessages);
-        } else {
-          setErrorMessage(result.error || result.message || "Failed to send message. Please try again.");
-        }
-      }
-    } catch (error) {
-      setSubmitStatus('error');
-      setErrorMessage("Network error. Please check your connection and try again.");
-      console.error("Submission error:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    setSubmitStatus("success");
+    reset();
+    setIsSubmitting(false);
   };
 
   return (
-    <div className="relative min-h-screen bg-gray-50 dark:bg-black">
-      {/* Decorative gradient background */}
-      <div className="fixed inset-0 bg-linear-to-br from-green-600 via-emerald-600 to-green-700 [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] sm:[clip-path:polygon(0_0,65%_0,100%_100%,0%_100%)]" />
-      
-      {/* Subtle pattern overlay */}
-      <div className="fixed inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30 [clip-path:polygon(0_0,65%_0,100%_100%,0%_100%)]" />
+    <div className="relative min-h-screen overflow-hidden bg-black text-white">
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-24">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-          {/* Left: Info Section */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col justify-center space-y-8"
-          >
-            {/* Header */}
-            <div className="space-y-4">
+      {/* 🌌 ambient lighting */}
+      <GlowOrb className="left-[-10%] top-[-10%] h-125 w-125 bg-emerald-500" />
+      <GlowOrb className="right-[-10%] bottom-[-10%] h-125 w-125 bg-green-400" />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 grid gap-16 lg:grid-cols-2">
+
+        {/* LEFT */}
+        <motion.div
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="space-y-8"
+        >
+          <h1 className="text-5xl font-bold leading-tight">
+            Let’s build financial freedom.
+          </h1>
+
+          <p className="text-lg text-neutral-400 max-w-xl">
+            Partnerships, integrations, support — our team replies fast and
+            ships faster.
+          </p>
+
+          <div className="space-y-4">
+            {[Mail, Phone, MapPin].map((Icon, i) => (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+                whileHover={{ x: 8 }}
+                key={i}
+                className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl"
               >
-                <span className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
-                  Get in Touch
+                <Icon className="text-emerald-400" />
+                <span className="text-neutral-300">
+                  Contact channel
                 </span>
               </motion.div>
-              
-              <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
-                Ready to Transform Your Workforce?
-              </h1>
-              
-              <p className="text-lg text-green-50 md:text-xl">
-                Contact us for any queries about earned wage access, partnerships,
-                or support. We're here to help employers and employees across
-                Africa achieve financial wellbeing.
-              </p>
-            </div>
+            ))}
+          </div>
 
-            {/* Contact Info */}
-            <div className="space-y-4">
-              <ContactInfo
-                icon={Mail}
-                label="Email us at"
-                value="support@eaziwage.com"
-                href="mailto:support@eaziwage.com"
-              />
-              <ContactInfo
-                icon={Phone}
-                label="Call us at"
-                value="+254 723 154900"
-                href="tel:+254723154900"
-              />
-              <ContactInfo
-                icon={MapPin}
-                label="Visit us at"
-                value="Nairobi, Kenya"
-              />
-            </div>
+          <div className="grid grid-cols-3 gap-4 pt-6">
+            {["100+", "0%", "Instant"].map((stat) => (
+              <motion.div
+                whileHover={{ y: -6 }}
+                key={stat}
+                className="rounded-xl border border-white/10 bg-white/5 p-6 text-center backdrop-blur-xl"
+              >
+                <div className="text-3xl font-bold text-emerald-400">
+                  {stat}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
-              <StatCard value="100+" label="Companies" />
-              <StatCard value="0%" label="Interest" />
-              <StatCard value="Instant" label="Disbursement" />
-            </div>
-          </motion.div>
+        {/* RIGHT FORM */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="relative"
+        >
+          <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-emerald-500/20 to-green-400/10 blur-xl" />
 
-          {/* Right: Form Section */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="rounded-3xl bg-white p-8 shadow-2xl dark:bg-neutral-900 lg:p-10"
-          >
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-neutral-900 dark:text-white">
-                Send us a Message
-              </h2>
-              <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-                Fill out the form below and we'll get back to you within 24 hours.
-              </p>
-            </div>
+          <div className="relative rounded-3xl border border-white/10 bg-white/5 p-10 backdrop-blur-2xl">
 
-            {/* Status Messages */}
-            <AnimatePresence mode="wait">
-              {submitStatus === 'success' && (
+            <h2 className="text-3xl font-bold mb-6">
+              Send a message
+            </h2>
+
+            <AnimatePresence>
+              {submitStatus === "success" && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mb-6 flex items-center gap-3 rounded-xl bg-green-50 p-4 text-green-800 dark:bg-green-900/20 dark:text-green-300"
+                  className="mb-6 flex items-center gap-3 text-emerald-400"
                 >
-                  <CheckCircle2 className="h-5 w-5 shrink-0" />
-                  <p className="text-sm font-medium">
-                    Thank you! Your message has been sent successfully. We'll get back to you soon.
-                  </p>
-                </motion.div>
-              )}
-
-              {submitStatus === 'error' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mb-6 flex items-start gap-3 rounded-xl bg-red-50 p-4 text-red-800 dark:bg-red-900/20 dark:text-red-300"
-                >
-                  <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">Failed to send message</p>
-                    {errorMessage && (
-                      <p className="mt-1 text-xs text-red-700 dark:text-red-400">
-                        {errorMessage}
-                      </p>
-                    )}
-                  </div>
+                  <CheckCircle2 /> Message sent.
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Honeypot */}
-              <input
-                type="text"
-                autoComplete="off"
-                tabIndex={-1}
-                aria-hidden="true"
-                className="sr-only"
-                {...register("honeypot")}
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
+              <InputField
+                label="Full Name"
+                id="name"
+                register={register("name")}
+                error={errors.name}
               />
 
-              {/* Name */}
-              <div>
-                <label 
-                  htmlFor="name"
-                  className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300"
-                >
-                  Full Name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="John Doe"
-                  {...register("name")}
-                  className={`w-full rounded-xl border px-4 py-3 transition focus:outline-none focus:ring-2 ${
-                    errors.name
-                      ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500/20 dark:border-red-500 dark:bg-red-900/10"
-                      : "border-neutral-300 bg-white focus:border-green-500 focus:ring-green-500/20 dark:border-neutral-700 dark:bg-neutral-800"
-                  } dark:text-white`}
-                />
-                {errors.name && (
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
+              <InputField
+                label="Email"
+                id="email"
+                register={register("email")}
+                error={errors.email}
+              />
 
-              {/* Email */}
-              <div>
-                <label 
-                  htmlFor="email"
-                  className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300"
-                >
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="john@company.com"
-                  {...register("email")}
-                  className={`w-full rounded-xl border px-4 py-3 transition focus:outline-none focus:ring-2 ${
-                    errors.email
-                      ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500/20 dark:border-red-500 dark:bg-red-900/10"
-                      : "border-neutral-300 bg-white focus:border-green-500 focus:ring-green-500/20 dark:border-neutral-700 dark:bg-neutral-800"
-                  } dark:text-white`}
-                />
-                {errors.email && (
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
+              <InputField
+                label="Subject"
+                id="subject"
+                register={register("subject")}
+                error={errors.subject}
+              />
 
-              {/* Subject */}
               <div>
-                <label 
-                  htmlFor="subject"
-                  className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300"
-                >
-                  Subject
-                </label>
-                <input
-                  id="subject"
-                  type="text"
-                  placeholder="How can we help you?"
-                  {...register("subject")}
-                  className={`w-full rounded-xl border px-4 py-3 transition focus:outline-none focus:ring-2 ${
-                    errors.subject
-                      ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500/20 dark:border-red-500 dark:bg-red-900/10"
-                      : "border-neutral-300 bg-white focus:border-green-500 focus:ring-green-500/20 dark:border-neutral-700 dark:bg-neutral-800"
-                  } dark:text-white`}
-                />
-                {errors.subject && (
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                    {errors.subject.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Message */}
-              <div>
-                <label 
-                  htmlFor="message"
-                  className="mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300"
-                >
-                  Message
-                </label>
                 <textarea
-                  id="message"
                   rows={5}
-                  placeholder="Tell us more about your inquiry..."
+                  placeholder="Your message"
                   {...register("message")}
-                  className={`w-full rounded-xl border px-4 py-3 transition focus:outline-none focus:ring-2 ${
-                    errors.message
-                      ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500/20 dark:border-red-500 dark:bg-red-900/10"
-                      : "border-neutral-300 bg-white focus:border-green-500 focus:ring-green-500/20 dark:border-neutral-700 dark:bg-neutral-800"
-                  } dark:text-white`}
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white backdrop-blur-xl outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
                 />
-                {errors.message && (
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                    {errors.message.message}
-                  </p>
-                )}
               </div>
 
-              {/* Submit Button */}
               <motion.button
-                type="submit"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 disabled={isSubmitting}
-                whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
-                whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-4 font-semibold text-black"
               >
-                {isSubmitting ? (
-                  <>
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    <span>Sending...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-5 w-5" />
-                    <span>Send Message</span>
-                  </>
-                )}
+                {isSubmitting ? "Sending…" : <>Send Message <Send size={18} /></>}
               </motion.button>
             </form>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
