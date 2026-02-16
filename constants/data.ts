@@ -189,7 +189,6 @@ export const testimonials = [
 
 export const partners = [
   { name: 'Safaricom', logo: '/logos/saf.png' },
-  { name: 'Equity Bank', logo: '/logos/equity.png' },
   { name: 'KCB Group', logo: '/logos/kcb.png' },
   { name: 'Twiga Foods', logo: '/logos/twiga.webp' },
   { name: 'M-KOPA', logo: '/logos/mkopa.webp' },
