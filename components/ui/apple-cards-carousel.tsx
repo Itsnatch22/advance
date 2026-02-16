@@ -171,9 +171,6 @@ export const BlurImage = ({
   src,
   className,
   alt,
-  width,
-  height,
-  ...rest
 }: {
   src: string;
   className?: string;

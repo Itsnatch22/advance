@@ -66,11 +66,20 @@ function InfoCard({
 function StatCard({ value, label }: { value: string; label: string }) {
   return (
     <motion.div
-      whileHover={{ scale: 1.05 }}
-      className="rounded-xl bg-white/10 p-6 text-center backdrop-blur-sm"
+      whileHover={{ y: -4, scale: 1.05 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="group relative overflow-hidden rounded-xl bg-white/5 p-6 text-center ring-1 ring-white/10 backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:ring-white/20"
     >
-      <div className="text-4xl font-bold text-white">{value}</div>
-      <div className="mt-2 text-sm text-green-100">{label}</div>
+      {/* Gradient overlay on hover */}
+      <div className="absolute inset-0 bg-linear-to-br from-emerald-500/10 to-green-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+
+      <div className="relative z-10">
+        <div className="text-3xl font-bold text-white sm:text-4xl">{value}</div>
+        <div className="mt-2 text-sm font-medium text-emerald-100">{label}</div>
+      </div>
+
+      {/* Bottom accent line */}
+      <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-emerald-400 to-green-400 transition-all duration-300 group-hover:w-full"></div>
     </motion.div>
   );
 }
@@ -160,11 +169,14 @@ export default function SalesPage() {
       />
     <div className="relative min-h-screen bg-gray-50 dark:bg-black">
 
-      {/* Decorative gradient background */}
-      <div className="fixed inset-0 bg-linear-to-br from-green-600 via-emerald-600 to-green-700 [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] sm:[clip-path:polygon(0_0,65%_0,100%_100%,0%_100%)]" />
-      
-      {/* Subtle pattern overlay */}
-      <div className="fixed inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30 [clip-path:polygon(0_0,65%_0,100%_100%,0%_100%)]" />
+      <div className="fixed inset-0 bg-linear-to-br from-emerald-600 via-green-600 to-emerald-700 [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] sm:[clip-path:polygon(0_0,65%_0,100%_100%,0%_100%)]" />
+
+      {/* Enhanced pattern overlay */}
+      <div className="fixed inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA4IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-40 [clip-path:polygon(0_0,65%_0,100%_100%,0%_100%)]" />
+
+      {/* Ambient glow effects */}
+      <div className="fixed top-1/4 left-0 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl"></div>
+      <div className="fixed right-0 bottom-1/4 h-96 w-96 rounded-full bg-green-400/20 blur-3xl"></div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-24">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
@@ -182,12 +194,13 @@ export default function SalesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <span className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
-                  Empower Your Team
-                </span>
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-white uppercase ring-1 ring-white/20 backdrop-blur-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
+                  Empower Your Workforce
+                </div>
               </motion.div>
               
-              <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
+              <h1 className="text-4xl font-serif font-bold leading-tight text-white md:text-5xl lg:text-6xl">
                 Unlock Financial Freedom for Your Employees
               </h1>
               
@@ -232,7 +245,7 @@ export default function SalesPage() {
             className="rounded-3xl bg-white p-8 shadow-2xl dark:bg-neutral-900 lg:p-10"
           >
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-neutral-900 dark:text-white">
+              <h2 className="text-3xl font-serif font-bold text-neutral-900 dark:text-white">
                 Request a Demo
               </h2>
               <p className="mt-2 text-neutral-600 dark:text-neutral-400">

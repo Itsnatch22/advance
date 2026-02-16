@@ -137,55 +137,111 @@ export const techPartners = [
 ] as const;
 
 export const testimonials = [
+  // 🇰🇪 KENYA
   {
-    quote: "EaziWage saved me from expensive loan sharks. When my daughter got sick, I accessed my wages in 2 seconds and paid the hospital bill immediately. This is a game-changer!",
-    author: "Mary Wanjiku",
-    role: "Nurse at Kenyatta National Hospital",
+    quote: "I cleared my electricity bill before it was disconnected. No stress, no calling relatives. Just opened the app and sorted it.",
+    author: "Ann Muthoni",
+    role: "Pharmacist at Goodlife Pharmacy",
     location: "Nairobi, Kenya",
-    avatar: "MW",
+    avatar: "AM",
     rating: 5
   },
   {
-    quote: "As HR Director, I've seen employee satisfaction increase by 40% since we introduced EaziWage. Salary advance requests dropped by 80%, and our team is more focused and productive.",
-    author: "David Omondi",
-    role: "HR Director at Safaricom",
+    quote: "Our support team stopped asking for salary advances every other week. Productivity is up and HR pressure is down.",
+    author: "Kelvin Onyango",
+    role: "HR Manager at iHub",
     location: "Nairobi, Kenya",
-    avatar: "DO",
+    avatar: "KO",
     rating: 5
   },
   {
-    quote: "The speed is unbelievable! I requested $50 for an emergency and it was in my Mobile Wallet before I could put my phone down. I tell all my colleagues about EaziWage.",
-    author: "Joseph Mugisha",
-    role: "Delivery Driver at Glovo",
+    quote: "Fuel for my matatu used to depend on chama loans. Now I just access what I’ve worked for.",
+    author: "Samuel Mwangi",
+    role: "Matatu Driver at Super Metro",
+    location: "Nairobi, Kenya",
+    avatar: "SM",
+    rating: 5
+  },
+
+  // 🇺🇬 UGANDA
+  {
+    quote: "My baby needed medicine at night and I had no cash. EaziWage sent the money instantly. That moment meant everything.",
+    author: "Prossy Nankya",
+    role: "Nurse at Mulago Hospital",
     location: "Kampala, Uganda",
-    avatar: "JM",
+    avatar: "PN",
     rating: 5
   },
   {
-    quote: "Being a single mother, cash flow was always stressful. Now I can access my wages when school fees are due without borrowing from anyone. EaziWage gave me dignity.",
-    author: "Grace Akinyi",
-    role: "Teacher at Alliance High School",
-    location: "Nairobi, Kenya",
-    avatar: "GA",
+    quote: "Staff used to disappear mid-month looking for side jobs. Now they stay focused because cash flow is not a problem.",
+    author: "Michael Kato",
+    role: "Operations Lead at SafeBoda",
+    location: "Kampala, Uganda",
+    avatar: "MK",
     rating: 5
   },
   {
-    quote: "We implemented EaziWage for our 500+ factory workers. Employee retention improved by 25% in just 6 months. It's now a key part of our benefits package.",
-    author: "James Mwangi",
-    role: "CEO at Twiga Foods",
-    location: "Nairobi, Kenya",
-    avatar: "JM",
+    quote: "Transport to work is no longer a daily struggle. I withdraw a small amount and move.",
+    author: "Isaac Okello",
+    role: "Warehouse Assistant at DHL",
+    location: "Kampala, Uganda",
+    avatar: "IO",
     rating: 5
   },
+
+  // 🇷🇼 RWANDA
   {
-    quote: "I used to pay 30% interest on emergency loans. With EaziWage, I pay a small flat fee and keep my dignity. This is how financial services should work in Africa.",
-    author: "Sarah Nakato",
-    role: "Cashier at Nakumatt",
+    quote: "I paid my university tuition balance without taking a loan. That freedom is priceless.",
+    author: "Claudine Uwimana",
+    role: "Accountant at BK Group",
     location: "Kigali, Rwanda",
-    avatar: "SN",
+    avatar: "CU",
     rating: 5
   },
+  {
+    quote: "Employee satisfaction improved within the first month. People feel the company actually cares.",
+    author: "Jean Paul Habimana",
+    role: "HR Director at Irembo",
+    location: "Kigali, Rwanda",
+    avatar: "JH",
+    rating: 5
+  },
+  {
+    quote: "I used it to restock my shop before month end. Sales continued without interruption.",
+    author: "Eric Ndayisenga",
+    role: "Retail Supervisor at Simba Supermarket",
+    location: "Kigali, Rwanda",
+    avatar: "EN",
+    rating: 5
+  },
+
+  // 🇹🇿 TANZANIA
+  {
+    quote: "School fees deadline came earlier than expected. I accessed my wages in seconds and paid without panic.",
+    author: "Neema Joseph",
+    role: "Teacher at Feza Schools",
+    location: "Dar es Salaam, Tanzania",
+    avatar: "NJ",
+    rating: 5
+  },
+  {
+    quote: "Our factory workers are less stressed and more consistent. Retention has improved since we introduced EaziWage.",
+    author: "Hassan Mwinyi",
+    role: "Plant Manager at Bakhresa Group",
+    location: "Dar es Salaam, Tanzania",
+    avatar: "HM",
+    rating: 5
+  },
+  {
+    quote: "I handle family expenses without borrowing from friends anymore. That respect matters to me.",
+    author: "Rehema Suleiman",
+    role: "Hotel Receptionist at Serena Hotel",
+    location: "Dar es Salaam, Tanzania",
+    avatar: "RS",
+    rating: 5
+  }
 ] as const;
+
 
 export const partners = [
   { name: 'Safaricom', logo: '/logos/saf.png' },

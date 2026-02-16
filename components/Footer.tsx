@@ -11,15 +11,57 @@ import {
   MapPin,
   Shield,
   Send,
-  Globe2
+  Globe2, CheckCircle2, AlertCircle, Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Locator from "./Locator";
 import { Input } from "./ui";
 
 export default function Footer() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) return;
+
+    setIsSubmitting(true);
+    setStatus('idle');
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, honeypot }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus('success');
+        setEmail("");
+        
+        // Reset success message after 5 seconds
+        setTimeout(() => setStatus('idle'), 5000);
+      } else {
+        setStatus('error');
+        setErrorMessage(data.error || "Failed to subscribe. Please try again.");
+      }
+    } catch (error) {
+      setStatus('error');
+      setErrorMessage("Network error. Please check your connection.");
+      console.error("Subscription error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
@@ -47,17 +89,86 @@ export default function Footer() {
                 Get the latest news, product updates, and financial tips delivered to your inbox.
               </p>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+            <div>
+            {/* Status Messages */}
+            <AnimatePresence mode="wait">
+              {status === 'success' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="mb-4 flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-400"
+                >
+                  <CheckCircle2 className="h-5 w-5 shrink-0" strokeWidth={2} />
+                  <p className="text-sm font-medium">
+                    Successfully subscribed! Check your email for confirmation.
+                  </p>
+                </motion.div>
+              )}
+
+              {status === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="mb-4 flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-400"
+                >
+                  <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" strokeWidth={2} />
+                  <div>
+                    <p className="text-sm font-medium">Subscription failed</p>
+                    {errorMessage && (
+                      <p className="mt-1 text-xs text-red-400/80">
+                        {errorMessage}
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              {/* Honeypot field */}
+              <input
+                type="text"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                autoComplete="off"
+                tabIndex={-1}
+                aria-hidden="true"
+                className="sr-only"
+              />
+
               <Input 
                 type="email" 
-                placeholder="Enter your email" 
-                className="h-12 flex-1 rounded-xl border-slate-700/60 bg-slate-800/50 px-5 text-white placeholder:text-slate-500 backdrop-blur-sm transition-all duration-300 focus:border-emerald-500/50 focus:bg-slate-800 focus:ring-2 focus:ring-emerald-500/20 sm:h-14 sm:px-6"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isSubmitting}
+                className="h-12 flex-1 rounded-xl border-slate-700/60 bg-slate-800/50 px-5 text-white placeholder:text-slate-500 backdrop-blur-sm transition-all duration-300 focus:border-emerald-500/50 focus:bg-slate-800 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:px-6"
               />
-              <button className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-6 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/30 sm:h-14 sm:px-8">
-                <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 sm:h-5 sm:w-5" strokeWidth={2} />
-                Subscribe
-              </button>
-            </div>
+              
+              <motion.button
+                type="submit"
+                disabled={isSubmitting}
+                whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
+                whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-6 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 sm:h-14 sm:px-8"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" strokeWidth={2} />
+                    <span>Subscribing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 sm:h-5 sm:w-5" strokeWidth={2} />
+                    <span>Subscribe</span>
+                  </>
+                )}
+              </motion.button>
+            </form>
+          </div>
           </div>
         </div>
       </div>
