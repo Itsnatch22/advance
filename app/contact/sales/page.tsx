@@ -1,12 +1,12 @@
-// app/sales/page.tsx
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Briefcase } from "lucide-react";
+import { Phone, MapPin, Send, CheckCircle2, AlertCircle, Briefcase } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
+import Script from "next/script";
 
 /* ----------------------------- validation ----------------------------- */
 
@@ -92,7 +92,7 @@ export default function SalesPage() {
   });
 
   const onSubmit = async (data: SalesFormData) => {
-    // Bot detection
+    // Bot detection (honeypot)
     if (data.honeypot) {
       console.log("Bot detected");
       return;
@@ -103,10 +103,27 @@ export default function SalesPage() {
     setErrorMessage("");
 
     try {
+      // reCAPTCHA v3 token
+      const recaptchaToken = await new Promise<string>((resolve, reject) => {
+        if (typeof window === "undefined" || !(window as any).grecaptcha) {
+          reject("reCAPTCHA not loaded");
+          return;
+        }
+        (window as any).grecaptcha.ready(() => {
+          (window as any).grecaptcha
+            .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!, { action: "sales_demo" })
+            .then(resolve)
+            .catch(reject);
+        });
+      });
+
+      // Submit with reCAPTCHA token
+      const submissionData = { ...data, recaptchaToken };
+
       const response = await fetch("/api/sales", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(submissionData),
       });
 
       const result = await response.json();
@@ -114,12 +131,9 @@ export default function SalesPage() {
       if (response.ok) {
         setSubmitStatus('success');
         reset();
-        
-        // Reset success message after 5 seconds
         setTimeout(() => setSubmitStatus('idle'), 5000);
       } else {
         setSubmitStatus('error');
-        
         if (result.issues && Array.isArray(result.issues)) {
           const errorMessages = result.issues
             .map((issue: any) => `${issue.path.join('.')}: ${issue.message}`)
@@ -139,7 +153,13 @@ export default function SalesPage() {
   };
 
   return (
+    <>
+    <Script
+        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+        strategy="lazyOnload"
+      />
     <div className="relative min-h-screen bg-gray-50 dark:bg-black">
+
       {/* Decorative gradient background */}
       <div className="fixed inset-0 bg-linear-to-br from-green-600 via-emerald-600 to-green-700 [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] sm:[clip-path:polygon(0_0,65%_0,100%_100%,0%_100%)]" />
       
@@ -396,5 +416,6 @@ export default function SalesPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

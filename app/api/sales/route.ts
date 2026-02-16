@@ -1,11 +1,9 @@
-// app/api/sales/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
 import { Resend } from "resend";
-import SalesNotification from "@/emails/SalesNotification"; // Adjust path as needed
+import SalesNotification from "@/emails/SalesNotification";
+import { checkRateLimit, rateLimiter } from "@/lib/rate-limit"; // ← Using provided file
 
 const salesSchema = z.object({
   name: z.string().min(2),
@@ -13,12 +11,7 @@ const salesSchema = z.object({
   company: z.string().min(3),
   message: z.string().min(20),
   honeypot: z.string().optional(),
-});
-
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, "10 m"), // 5 requests per 10 minutes
-  analytics: true,
+  recaptchaToken: z.string().min(1, "reCAPTCHA token is required"),
 });
 
 const supabaseAdmin = createClient(
@@ -30,12 +23,13 @@ const resend = new Resend(process.env.RESEND_API_KEY!);
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "anonymous";
-  const { success, limit, reset, remaining } = await ratelimit.limit(ip);
 
-  if (!success) {
+  // Rate limiting from provided file
+  const rateLimitResult = await checkRateLimit(rateLimiter, `sales:${ip}`);
+  if (!rateLimitResult.success) {
     return NextResponse.json(
       { error: "Rate limit exceeded. Please try again later." },
-      { status: 429 }
+      { status: 429, headers: rateLimitResult.headers }
     );
   }
 
@@ -45,6 +39,26 @@ export async function POST(request: NextRequest) {
 
     if (validatedData.honeypot) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+
+    // reCAPTCHA verification
+    const recaptchaResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        secret: process.env.RECAPTCHA_SECRET_KEY!,
+        response: validatedData.recaptchaToken,
+        remoteip: ip,
+      }),
+    });
+
+    const recaptchaData = await recaptchaResponse.json();
+
+    if (!recaptchaData.success || (recaptchaData.score && recaptchaData.score < 0.5)) {
+      return NextResponse.json(
+        { error: "reCAPTCHA verification failed. Please try again." },
+        { status: 400 }
+      );
     }
 
     // Insert into Supabase
