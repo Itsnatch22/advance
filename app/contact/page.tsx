@@ -320,7 +320,7 @@ export default function ContactPage() {
                   <input
                     id="name"
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Your name..."
                     {...register("name")}
                     className={`w-full rounded-xl border px-4 py-3.5 text-base transition-all duration-200 focus:ring-2 focus:outline-none ${
                       errors.name
@@ -346,7 +346,7 @@ export default function ContactPage() {
                   <input
                     id="email"
                     type="email"
-                    placeholder="john@company.com"
+                    placeholder="Your email..."
                     {...register("email")}
                     className={`w-full rounded-xl border px-4 py-3.5 text-base transition-all duration-200 focus:ring-2 focus:outline-none ${
                       errors.email
@@ -372,7 +372,7 @@ export default function ContactPage() {
                   <input
                     id="subject"
                     type="text"
-                    placeholder="How can we help you?"
+                    placeholder="Your subject..."
                     {...register("subject")}
                     className={`w-full rounded-xl border px-4 py-3.5 text-base transition-all duration-200 focus:ring-2 focus:outline-none ${
                       errors.subject
@@ -398,7 +398,7 @@ export default function ContactPage() {
                   <textarea
                     id="message"
                     rows={5}
-                    placeholder="Tell us more about your inquiry..."
+                    placeholder="Your message..."
                     {...register("message")}
                     className={`w-full rounded-xl border px-4 py-3.5 text-base transition-all duration-200 focus:ring-2 focus:outline-none ${
                       errors.message

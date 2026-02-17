@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
-import { SubscriptionNotification } from "@/emails/SubscriptionNotification";
+import SubscriptionNotification from "@/emails/SubscriptionNotification";
 
 // Initialize clients
 const supabase = createClient(
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     // Send welcome email
     try {
       await resend.emails.send({
-        from: "EaziWage <newsletter@eaziwage.com>",
+        from: "EaziWage <newsletter@contact.eaziwage.com>",
         to: email,
         subject: "Welcome to EaziWage Newsletter! 🎉",
         react: SubscriptionNotification({ email }),

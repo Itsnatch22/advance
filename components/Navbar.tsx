@@ -180,7 +180,7 @@ const Navbar = () => {
               Dashboard
             </motion.button>
           </Link>
-          <Link href="/contact/sales">
+          <Link href="/sales">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -269,7 +269,7 @@ const Navbar = () => {
               Dashboard
             </Link>
             <Link
-              href="/contact/sales"
+              href="/sales"
               onClick={() => setMobileOpen(false)}
               className="w-full rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-4 py-3 text-center font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:shadow-xl hover:shadow-emerald-500/30"
             >

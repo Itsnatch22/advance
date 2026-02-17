@@ -66,7 +66,7 @@ const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SE
     )
   : null;
 
-const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@eaziwage.com";
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@contact.eaziwage.com";
 
 /* ----------------------------- handler ----------------------------- */
 

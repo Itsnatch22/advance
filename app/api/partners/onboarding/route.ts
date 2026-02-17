@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     // Send confirmation email to partner
     try {
       await resend.emails.send({
-        from: "EaziWage Partnerships <partnerships@eaziwage.com>",
+        from: "EaziWage Partnerships <partnerships@contact.eaziwage.com>",
         to: validatedData.email,
         subject: "Partnership Application Received - EaziWage",
         react: PartnerOnboardingEmail({
@@ -84,8 +84,8 @@ export async function POST(request: NextRequest) {
     // Send notification to internal team
     try {
       await resend.emails.send({
-        from: "EaziWage System <noreply@eaziwage.com>",
-        to: "partnerships@eaziwage.com",
+        from: "EaziWage System <noreply@contact.eaziwage.com>",
+        to: "partnerships@contact.eaziwage.com",
         subject: `New ${validatedData.partnerType} Partnership Application`,
         html: `
           <h2>New Partnership Application</h2>

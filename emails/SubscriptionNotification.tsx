@@ -1,4 +1,3 @@
-// emails/SubscriptionNotification.tsx
 import {
   Body,
   Button,
@@ -6,94 +5,106 @@ import {
   Head,
   Heading,
   Html,
-  Img,
-  Link,
   Preview,
   Section,
   Text,
+  Link,
 } from "@react-email/components";
-import * as React from "react";
 
 interface SubscriptionNotificationProps {
   email: string;
 }
 
-export const SubscriptionNotification = ({
+export default function SubscriptionNotification({
   email,
-}: SubscriptionNotificationProps) => {
+}: SubscriptionNotificationProps) {
   return (
     <Html>
       <Head />
-      <Preview>Welcome to EaziWage Newsletter - Your Financial Freedom Journey Starts Here</Preview>
+      <Preview>Welcome to the EaziWage Newsletter!</Preview>
       <Body style={main}>
         <Container style={container}>
-          {/* Logo Section */}
-          <Section style={logoSection}>
-            <Img
-              src="https://eaziwage.com/logo.png"
-              width="150"
-              height="50"
-              alt="EaziWage"
-              style={logo}
-            />
+          {/* Header */}
+          <Section style={header}>
+            <Heading style={heading}>EaziWage</Heading>
           </Section>
 
-          {/* Hero Section */}
-          <Section style={heroSection}>
-            <Heading style={heading}>Welcome to EaziWage! 🎉</Heading>
-            <Text style={paragraph}>
-              Thank you for subscribing to our newsletter! We're thrilled to have you as part of the EaziWage community.
+          {/* Content */}
+          <Section style={content}>
+            <Heading style={h1}>You're Subscribed!</Heading>
+
+            <Text style={text}>Hi, {email}</Text>
+
+            <Text style={text}>
+              Thanks for subscribing to the EaziWage newsletter. We're thrilled
+              to have you on board and can't wait to share insights, updates,
+              and exclusive tips for financial wellbeing.
             </Text>
-          </Section>
 
-          {/* Content Section */}
-          <Section style={contentSection}>
-            <Text style={subheading}>What to Expect:</Text>
-            <Text style={listItem}>✅ Latest product updates and features</Text>
-            <Text style={listItem}>💡 Financial wellness tips and insights</Text>
-            <Text style={listItem}>📊 Industry trends and earned wage access news</Text>
-            <Text style={listItem}>🎁 Exclusive offers and early access</Text>
-          </Section>
+            <Section style={highlightBox}>
+              <Text style={highlightText}>
+                <strong>Here's what to expect:</strong>
+              </Text>
+              <Text style={highlightText}>
+                • Weekly updates on EaziWage and fintech trends
+                <br />
+                • Expert tips to manage your earnings smarter
+                <br />
+                • Invitations to events and special promotions
+              </Text>
+            </Section>
 
-          {/* CTA Section */}
-          <Section style={ctaSection}>
-            <Button style={button} href="https://eaziwage.com">
-              Explore EaziWage
+            <Text style={text}>
+              Stay tuned for our first newsletter, landing straight in your
+              inbox soon!
+            </Text>
+
+            <Button style={button} href="https://eaziwage.com/newsletter">
+              Explore Our Newsletter
             </Button>
+
+            <Text style={text}>
+              For any questions, reach out to{" "}
+              <Link href="mailto:newsletter@eaziwage.com" style={link}>
+                newsletter@eaziwage.com
+              </Link>
+              .
+            </Text>
+
+            <Text style={text}>
+              Best regards,
+              <br />
+              The EaziWage Team
+            </Text>
           </Section>
 
-          {/* Footer Section */}
-          <Section style={footerSection}>
+          {/* Footer */}
+          <Section style={footer}>
             <Text style={footerText}>
-              You're receiving this email because you subscribed to EaziWage newsletter at {email}.
+              © 2026 EaziWage. Empowering Africa's workforce.
             </Text>
             <Text style={footerText}>
-              <Link href="https://eaziwage.com/unsubscribe" style={link}>
-                Unsubscribe
+              <Link href="https://eaziwage.com" style={footerLink}>
+                Website
+              </Link>{" "}
+              •{" "}
+              <Link href="https://eaziwage.com/privacy" style={footerLink}>
+                Privacy Policy
+              </Link>{" "}
+              •{" "}
+              <Link href="https://eaziwage.com/terms" style={footerLink}>
+                Terms of Service
               </Link>
-              {" | "}
-              <Link href="https://eaziwage.com" style={link}>
-                Visit Website
-              </Link>
-              {" | "}
-              <Link href="https://eaziwage.com/contact" style={link}>
-                Contact Us
-              </Link>
-            </Text>
-            <Text style={footerText}>
-              © 2025 EaziWage. All rights reserved.
-            </Text>
-            <Text style={footerText}>
-              Nairobi, Kenya
             </Text>
           </Section>
         </Container>
       </Body>
     </Html>
   );
-};
+}
 
-// Styles
+/* ----------------------------- styles ----------------------------- */
+
 const main = {
   backgroundColor: "#f6f9fc",
   fontFamily:
@@ -108,63 +119,54 @@ const container = {
   maxWidth: "600px",
 };
 
-const logoSection = {
+const header = {
   padding: "32px 48px",
-  textAlign: "center" as const,
-};
-
-const logo = {
-  margin: "0 auto",
-};
-
-const heroSection = {
-  padding: "0 48px 32px",
-  textAlign: "center" as const,
   borderBottom: "1px solid #e5e7eb",
 };
 
 const heading = {
-  fontSize: "32px",
-  lineHeight: "1.3",
-  fontWeight: "700",
-  color: "#10b981",
-  margin: "0 0 16px",
-};
-
-const paragraph = {
-  fontSize: "16px",
-  lineHeight: "1.6",
-  color: "#374151",
+  fontSize: "28px",
+  fontWeight: "bold",
+  color: "#059669",
   margin: "0",
 };
 
-const contentSection = {
+const content = {
   padding: "32px 48px",
-  backgroundColor: "#f9fafb",
 };
 
-const subheading = {
-  fontSize: "20px",
-  lineHeight: "1.4",
-  fontWeight: "600",
-  color: "#1f2937",
-  margin: "0 0 16px",
+const h1 = {
+  color: "#111827",
+  fontSize: "24px",
+  fontWeight: "700",
+  margin: "0 0 24px",
+  lineHeight: "1.3",
 };
 
-const listItem = {
+const text = {
+  color: "#374151",
+  fontSize: "16px",
+  lineHeight: "1.6",
+  margin: "16px 0",
+};
+
+const highlightBox = {
+  backgroundColor: "#f0fdf4",
+  border: "2px solid #86efac",
+  borderRadius: "12px",
+  padding: "20px",
+  margin: "24px 0",
+};
+
+const highlightText = {
+  color: "#065f46",
   fontSize: "15px",
   lineHeight: "1.6",
-  color: "#4b5563",
   margin: "8px 0",
 };
 
-const ctaSection = {
-  padding: "32px 48px",
-  textAlign: "center" as const,
-};
-
 const button = {
-  backgroundColor: "#10b981",
+  backgroundColor: "#059669",
   borderRadius: "8px",
   color: "#ffffff",
   fontSize: "16px",
@@ -173,25 +175,28 @@ const button = {
   textAlign: "center" as const,
   display: "block",
   padding: "14px 24px",
-  width: "100%",
-};
-
-const footerSection = {
-  padding: "32px 48px 0",
-  textAlign: "center" as const,
-  borderTop: "1px solid #e5e7eb",
-};
-
-const footerText = {
-  fontSize: "12px",
-  lineHeight: "1.5",
-  color: "#6b7280",
-  margin: "4px 0",
+  margin: "24px 0",
 };
 
 const link = {
-  color: "#10b981",
+  color: "#059669",
   textDecoration: "underline",
 };
 
-export default SubscriptionNotification;
+const footer = {
+  borderTop: "1px solid #e5e7eb",
+  padding: "24px 48px",
+  textAlign: "center" as const,
+};
+
+const footerText = {
+  color: "#6b7280",
+  fontSize: "14px",
+  lineHeight: "1.5",
+  margin: "8px 0",
+};
+
+const footerLink = {
+  color: "#6b7280",
+  textDecoration: "underline",
+};
