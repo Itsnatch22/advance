@@ -94,6 +94,10 @@ export default function SubscriptionNotification({
               •{" "}
               <Link href="https://eaziwage.com/terms.pdf" style={footerLink}>
                 Terms of Service
+              </Link>{" "}
+              •{" "}
+              <Link href="https://eaziwage.com/unsubscribe" style={footerLink}>
+                Unsubscribe
               </Link>
             </Text>
           </Section>

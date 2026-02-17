@@ -33,6 +33,18 @@ export const resendLimiter = new Ratelimit({
 });
 
 /**
+ * Rate limiter for the unsubscribe endpoint.
+ * Limits to 10 attempts per hour per IP — generous enough for legitimate use,
+ * strict enough to block abuse / scraping confirmation of valid emails.
+ */
+export const unsubscribeLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "1 h"),
+  analytics: true,
+  prefix: "ratelimit:unsubscribe",
+});
+
+/**
  * Rate limiter for general API endpoints
  * Limits to 100 requests per minute per IP
  */
@@ -77,7 +89,7 @@ export async function checkRateLimit(
   identifier: string
 ): Promise<RateLimitResult> {
   const result = await limiter.limit(identifier);
-  
+
   return {
     success: result.success,
     limit: result.limit,
