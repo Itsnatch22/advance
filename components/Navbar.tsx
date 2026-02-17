@@ -262,7 +262,7 @@ const Navbar = () => {
 
             <hr className="border-slate-200" />
             <Link
-              href="https://eaziwageapp.vercel.app/"
+              href="https://eaziwageapp.vercel.app"
               onClick={() => setMobileOpen(false)}
               className="w-full rounded-xl border border-slate-200/60 bg-white px-4 py-3 text-center font-semibold text-slate-700 ring-1 ring-slate-900/5 transition-all hover:bg-slate-50 hover:text-emerald-600"
             >
