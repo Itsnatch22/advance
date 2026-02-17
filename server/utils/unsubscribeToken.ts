@@ -15,9 +15,3 @@ export function makeUnsubscribeToken(
     .digest("hex");
   return `${expiry}:${hmac}`;
 }
-
-// Example usage
-const token = makeUnsubscribeToken("user@example.com", "newsletter");
-const link = `https://eaziwage.com/unsubscribe?email=${encodeURIComponent(
-  "user@example.com"
-)}&product=newsletter&token=${encodeURIComponent(token)}`;
