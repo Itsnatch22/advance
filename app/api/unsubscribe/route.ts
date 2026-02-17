@@ -6,7 +6,7 @@ import { checkRateLimit, rateLimiter } from "@/lib/rate-limit";
 
 // ─── Env validation ──────────────────────────────────────────────────────────
 
-const SUPABASE_URL = process.env.SUPABASE_URL!;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const UNSUBSCRIBE_SECRET = process.env.UNSUBSCRIBE_SECRET!;
 const RESEND_API_KEY = process.env.RESEND_API_KEY!; // or any email provider
