@@ -1,13 +1,15 @@
-// emails/SalesNotification.tsx
-import * as React from "react";
-import { Button } from "@react-email/button";
-import { Container } from "@react-email/container";
-import { Head } from "@react-email/head";
-import { Heading } from "@react-email/heading";
-import { Hr } from "@react-email/hr";
-import { Html } from "@react-email/html";
-import { Section } from "@react-email/section";
-import { Text } from "@react-email/text";
+import {
+  Body,
+  Button,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Preview,
+  Section,
+  Text,
+  Link,
+} from "@react-email/components";
 
 interface SalesNotificationProps {
   name: string;
@@ -16,29 +18,179 @@ interface SalesNotificationProps {
   message: string;
 }
 
-export default function SalesNotification({ name, email, company, message }: SalesNotificationProps) {
+export default function SalesNotification({
+  name,
+  email,
+  company,
+  message,
+}: SalesNotificationProps) {
   return (
     <Html>
       <Head />
-      <Container style={{ maxWidth: "580px", margin: "0 auto", padding: "20px" }}>
-        <Heading style={{ color: "#333", fontSize: "24px" }}>New Sales Lead</Heading>
-        <Text style={{ fontSize: "16px", color: "#333" }}>
-          You have a new demo request from:
-        </Text>
-        <Section style={{ marginBottom: "20px" }}>
-          <Text><strong>Name:</strong> {name}</Text>
-          <Text><strong>Email:</strong> {email}</Text>
-          <Text><strong>Company:</strong> {company}</Text>
-          <Text><strong>Message:</strong> {message}</Text>
-        </Section>
-        <Hr style={{ margin: "20px 0" }} />
-        <Button
-          href={`mailto:${email}`}
-          style={{ background: "#22c55e", color: "#fff", padding: "12px 20px", borderRadius: "8px" }}
-        >
-          Reply to Lead
-        </Button>
-      </Container>
+      <Preview>New Sales Lead Notification</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          {/* Header */}
+          <Section style={header}>
+            <Heading style={heading}>EaziWage</Heading>
+          </Section>
+
+          {/* Content */}
+          <Section style={content}>
+            <Heading style={h1}>New Sales Lead Received</Heading>
+
+            <Text style={text}>Hi Team,</Text>
+
+            <Text style={text}>
+              A potential client has reached out expressing interest in EaziWage. Details are below:
+            </Text>
+
+            <Section style={highlightBox}>
+              <Text style={highlightText}>
+                <strong>Name:</strong> {name}
+              </Text>
+              <Text style={highlightText}>
+                <strong>Email:</strong>{" "}
+                <Link href={`mailto:${email}`} style={link}>
+                  {email}
+                </Link>
+              </Text>
+              <Text style={highlightText}>
+                <strong>Company:</strong> {company}
+              </Text>
+              <Text style={highlightText}>
+                <strong>Message:</strong> {message}
+              </Text>
+            </Section>
+
+            <Text style={text}>
+              Please follow up promptly to engage this lead and explore potential opportunities.
+            </Text>
+
+            <Button style={button} href="https://eaziwage.com/admin">
+              Go to Dashboard
+            </Button>
+          </Section>
+
+          {/* Footer */}
+          <Section style={footer}>
+            <Text style={footerText}>
+              © 2026 EaziWage. Empowering Africa's workforce.
+            </Text>
+            <Text style={footerText}>
+              <Link href="https://eaziwage.com" style={footerLink}>
+                Website
+              </Link>{" "}
+              •{" "}
+              <Link href="https://eaziwage.com/data.pdf" style={footerLink}>
+                Privacy Policy
+              </Link>{" "}
+              •{" "}
+              <Link href="https://eaziwage.com/terms.pdf" style={footerLink}>
+                Terms of Service
+              </Link>
+            </Text>
+          </Section>
+        </Container>
+      </Body>
     </Html>
   );
 }
+
+/* ----------------------------- styles ----------------------------- */
+
+const main = {
+  backgroundColor: "#f6f9fc",
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+};
+
+const container = {
+  backgroundColor: "#ffffff",
+  margin: "0 auto",
+  padding: "20px 0 48px",
+  marginBottom: "64px",
+  maxWidth: "600px",
+};
+
+const header = {
+  padding: "32px 48px",
+  borderBottom: "1px solid #e5e7eb",
+};
+
+const heading = {
+  fontSize: "28px",
+  fontWeight: "bold",
+  color: "#059669",
+  margin: "0",
+};
+
+const content = {
+  padding: "32px 48px",
+};
+
+const h1 = {
+  color: "#111827",
+  fontSize: "24px",
+  fontWeight: "700",
+  margin: "0 0 24px",
+  lineHeight: "1.3",
+};
+
+const text = {
+  color: "#374151",
+  fontSize: "16px",
+  lineHeight: "1.6",
+  margin: "16px 0",
+};
+
+const highlightBox = {
+  backgroundColor: "#f0fdf4",
+  border: "2px solid #86efac",
+  borderRadius: "12px",
+  padding: "20px",
+  margin: "24px 0",
+};
+
+const highlightText = {
+  color: "#065f46",
+  fontSize: "15px",
+  lineHeight: "1.6",
+  margin: "8px 0",
+};
+
+const button = {
+  backgroundColor: "#059669",
+  borderRadius: "8px",
+  color: "#ffffff",
+  fontSize: "16px",
+  fontWeight: "600",
+  textDecoration: "none",
+  textAlign: "center" as const,
+  display: "block",
+  padding: "14px 24px",
+  margin: "24px 0",
+};
+
+const link = {
+  color: "#059669",
+  textDecoration: "underline",
+};
+
+const footer = {
+  borderTop: "1px solid #e5e7eb",
+  padding: "24px 48px",
+  textAlign: "center" as const,
+};
+
+const footerText = {
+  color: "#6b7280",
+  fontSize: "14px",
+  lineHeight: "1.5",
+  margin: "8px 0",
+};
+
+const footerLink = {
+  color: "#6b7280",
+  textDecoration: "underline",
+};

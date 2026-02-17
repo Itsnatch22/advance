@@ -101,11 +101,11 @@ export default function PartnerOnboardingEmail({
                 Website
               </Link>{" "}
               •{" "}
-              <Link href="https://eaziwage.com/privacy" style={footerLink}>
+              <Link href="https://eaziwage.com/data.pdf" style={footerLink}>
                 Privacy Policy
               </Link>{" "}
               •{" "}
-              <Link href="https://eaziwage.com/terms" style={footerLink}>
+              <Link href="https://eaziwage.com/terms.pdf" style={footerLink}>
                 Terms of Service
               </Link>
             </Text>
