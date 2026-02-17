@@ -1,5 +1,6 @@
 import {
   Body,
+  Button,
   Container,
   Head,
   Heading,
@@ -7,8 +8,7 @@ import {
   Preview,
   Section,
   Text,
-  Row,
-  Column,
+  Link,
 } from "@react-email/components";
 
 interface ContactNotificationProps {
@@ -19,115 +19,184 @@ interface ContactNotificationProps {
   submittedAt: string;
 }
 
-export const ContactNotification = ({
+export default function ContactNotification({
   name,
   email,
   subject,
   message,
   submittedAt,
-}: ContactNotificationProps) => (
-  <Html>
-    <Head />
-    <Preview>New Contact Form Submission from {name}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={header}>
-          <Heading style={h1}>EaziWage Contact Form Submission</Heading>
-          <Text style={subtitle}>
-            Earned Wage Access for Employees Across Africa
-          </Text>
-        </Section>
+}: ContactNotificationProps) {
+  return (
+    <Html>
+      <Head />
+      <Preview>New Contact Form Submission Received</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          {/* Header */}
+          <Section style={header}>
+            <Heading style={heading}>EaziWage</Heading>
+          </Section>
 
-        <Section style={content}>
-          <Row>
-            <Column>
-              <Text style={label}>Submitted At:</Text>
-              <Text style={value}>{submittedAt}</Text>
-            </Column>
-          </Row>
+          {/* Content */}
+          <Section style={content}>
+            <Heading style={h1}>New Contact Submission</Heading>
 
-          <Row style={row}>
-            <Column style={halfColumn}>
-              <Text style={label}>Name:</Text>
-              <Text style={value}>{name}</Text>
-            </Column>
-            <Column style={halfColumn}>
-              <Text style={label}>Email:</Text>
-              <Text style={value}>{email}</Text>
-            </Column>
-          </Row>
+            <Text style={text}>Hi Team,</Text>
 
-          <Row style={row}>
-            <Column>
-              <Text style={label}>Subject:</Text>
-              <Text style={value}>{subject}</Text>
-            </Column>
-          </Row>
+            <Text style={text}>
+              You have received a new contact form submission. Details are as
+              follows:
+            </Text>
 
-          <Row style={row}>
-            <Column>
-              <Text style={label}>Message:</Text>
-              <Text style={messageStyle}>{message}</Text>
-            </Column>
-          </Row>
-        </Section>
+            <Section style={highlightBox}>
+              <Text style={highlightText}>
+                <strong>Name:</strong> {name}
+              </Text>
+              <Text style={highlightText}>
+                <strong>Email:</strong>{" "}
+                <Link href={`mailto:${email}`} style={link}>
+                  {email}
+                </Link>
+              </Text>
+              <Text style={highlightText}>
+                <strong>Subject:</strong> {subject}
+              </Text>
+              <Text style={highlightText}>
+                <strong>Message:</strong> {message}
+              </Text>
+              <Text style={highlightText}>
+                <strong>Submitted At:</strong> {submittedAt}
+              </Text>
+            </Section>
 
-        <Section style={footer}>
-          <Text style={footerText}>
-            This message was sent via the EaziWage contact form. Please respond
-            within 24 hours.
-          </Text>
-          <Text style={footerText}>
-            Nairobi, Kenya | +254 723 154900 | support@eaziwage.com
-          </Text>
-        </Section>
-      </Container>
-    </Body>
-  </Html>
-);
+            <Text style={text}>
+              Please review the submission and follow up accordingly.
+            </Text>
 
-// Styles remain the same as in previous example
-const main = { backgroundColor: "#f6f9fc", fontFamily: "Arial, sans-serif" };
-const container = { margin: "0 auto", padding: "20px", maxWidth: "600px" };
-const header = {
-  backgroundColor: "#16a34a",
-  padding: "30px",
-  textAlign: "center" as const,
-  borderRadius: "8px 8px 0 0",
+            <Button style={button} href="https://eaziwage.com/admin">
+              Go to Dashboard
+            </Button>
+          </Section>
+
+          {/* Footer */}
+          <Section style={footer}>
+            <Text style={footerText}>
+              © 2026 EaziWage. Empowering Africa's workforce.
+            </Text>
+            <Text style={footerText}>
+              <Link href="https://eaziwage.com" style={footerLink}>
+                Website
+              </Link>{" "}
+              •{" "}
+              <Link href="https://eaziwage.com/data.pdf" style={footerLink}>
+                Privacy Policy
+              </Link>{" "}
+              •{" "}
+              <Link href="https://eaziwage.com/terms.pdf" style={footerLink}>
+                Terms of Service
+              </Link>
+            </Text>
+          </Section>
+        </Container>
+      </Body>
+    </Html>
+  );
+}
+
+/* ----------------------------- styles ----------------------------- */
+
+const main = {
+  backgroundColor: "#f6f9fc",
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
 };
-const h1 = { color: "#ffffff", margin: "0", fontSize: "24px" };
-const subtitle = { color: "#d1fae5", margin: "5px 0 0", fontSize: "14px" };
-const content = {
+
+const container = {
   backgroundColor: "#ffffff",
-  padding: "30px",
-  borderRadius: "0 0 8px 8px",
+  margin: "0 auto",
+  padding: "20px 0 48px",
+  marginBottom: "64px",
+  maxWidth: "600px",
 };
-const row = { margin: "20px 0" };
-const halfColumn = { width: "48%", display: "inline-block" };
-const label = {
-  color: "#6b7280",
-  fontSize: "14px",
-  fontWeight: "600",
-  margin: "0 0 5px",
+
+const header = {
+  padding: "32px 48px",
+  borderBottom: "1px solid #e5e7eb",
 };
-const value = { color: "#111827", fontSize: "16px", margin: "0 0 15px" };
-const messageStyle = {
+
+const heading = {
+  fontSize: "28px",
+  fontWeight: "bold",
+  color: "#059669",
+  margin: "0",
+};
+
+const content = {
+  padding: "32px 48px",
+};
+
+const h1 = {
   color: "#111827",
+  fontSize: "24px",
+  fontWeight: "700",
+  margin: "0 0 24px",
+  lineHeight: "1.3",
+};
+
+const text = {
+  color: "#374151",
   fontSize: "16px",
   lineHeight: "1.6",
-  backgroundColor: "#f9fafb",
-  padding: "15px",
-  borderRadius: "4px",
-  border: "1px solid #e5e7eb",
+  margin: "16px 0",
 };
+
+const highlightBox = {
+  backgroundColor: "#f0fdf4",
+  border: "2px solid #86efac",
+  borderRadius: "12px",
+  padding: "20px",
+  margin: "24px 0",
+};
+
+const highlightText = {
+  color: "#065f46",
+  fontSize: "15px",
+  lineHeight: "1.6",
+  margin: "8px 0",
+};
+
+const button = {
+  backgroundColor: "#059669",
+  borderRadius: "8px",
+  color: "#ffffff",
+  fontSize: "16px",
+  fontWeight: "600",
+  textDecoration: "none",
+  textAlign: "center" as const,
+  display: "block",
+  padding: "14px 24px",
+  margin: "24px 0",
+};
+
+const link = {
+  color: "#059669",
+  textDecoration: "underline",
+};
+
 const footer = {
-  marginTop: "30px",
-  paddingTop: "20px",
   borderTop: "1px solid #e5e7eb",
+  padding: "24px 48px",
+  textAlign: "center" as const,
 };
+
 const footerText = {
   color: "#6b7280",
-  fontSize: "12px",
-  textAlign: "center" as const,
-  margin: "5px 0",
+  fontSize: "14px",
+  lineHeight: "1.5",
+  margin: "8px 0",
+};
+
+const footerLink = {
+  color: "#6b7280",
+  textDecoration: "underline",
 };

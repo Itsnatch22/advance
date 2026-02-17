@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
-import {ContactNotification} from "@/emails/ContactNotification";
+import ContactNotification from "@/emails/ContactNotification";
 
 /* ----------------------------- validation ----------------------------- */
 
