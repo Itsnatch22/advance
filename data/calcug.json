@@ -40,7 +40,7 @@
     "description": "Local Service Tax (LST) as per municipal scales (monthly)."
   },
   "accessCapPercent": 0.6,
-  "platformFeePercent": 0.05,
+  "platformFeePercent": 0.045,
   "earnedWageCapPercent": 0.6,
   "meta": {
     "description": "Uganda PAYE, NSSF, and LST payroll configuration aligned with the Income Tax Act (Cap 340) and NSSF Act (Cap 222). No SHIF or housing levy currently in force.",

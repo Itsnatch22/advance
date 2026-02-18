@@ -150,17 +150,26 @@ export function calc(payload: Payload, cfg: JsonConfig) {
   const netPay =
     gross - (employeeDeductions + shif + housingLevy + payeAfterRelief + lst);
 
-  // Earned wage and access
-  const earnedWage = (netPay / cycleDays) * daysWorked;
-  const accessCap = earnedWage * (cfg.accessCapPercent ?? 0.6);
+  // Earned wage and access (Gross-based as per latest user request)
+  // Note: 'gross' is already scaled by (daysWorked / cycleDays) at line 61
+  const accruedGross = gross; 
+  const accessCap = accruedGross * (cfg.accessCapPercent ?? 0.6);
+  
+  // Platform fees
   const platformFee = accessCap * (cfg.platformFeePercent ?? 0.05);
-  const youCanAccessNow = accessCap;
+  const processingFeeUSD = 0.80;
+  const usdToLocalRate = payload.country === "KE" ? 155 : 
+                        payload.country === "UG" ? 3750 : 
+                        payload.country === "TZ" ? 2500 : 1300;
+  const processingFee = processingFeeUSD * usdToLocalRate;
+  
+  const youReceive = accessCap - platformFee - processingFee;
 
   return {
     success: true,
     country: payload.country,
     gross,
-    totalAllowances, // 🔥 NEW
+    totalAllowances,
     taxableIncome,
     nssfEmployee,
     nssfEmployer,
@@ -178,10 +187,12 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     payeAfterRelief,
     lst,
     netPay,
-    earnedWage,
+    accruedGross,
     accessCap,
     platformFee,
-    youCanAccessNow,
+    processingFee,
+    youReceive,
+    youCanAccessNow: accessCap,
     remittances: {
       NSSF: nssfEmployee,
       RSSB: rssb.pensionEmployee,

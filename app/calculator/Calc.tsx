@@ -3,6 +3,8 @@ import React, { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
+
+
 // 📊 GRAPH IMPORTS (ADDED)
 import {
   BarChart,
@@ -54,6 +56,8 @@ type CalcResult = {
   accessCapPercent: number;
   accessCap: number;
   platformFee: number;
+  processingFee: number;
+  youReceive: number;
   accessibleNow: number;
   deductions: Deductions;
   payee: number;
@@ -196,6 +200,8 @@ export default function Calculator() {
 
   const [asOfDate, setAsOfDate] = useState<string>("");
 
+  const [loading, setLoading] = useState(false); // 👈 loader state
+
   // → INTERNAL date (hidden) used to determine month days + today’s day
   useEffect(() => {
     const today = new Date();
@@ -268,7 +274,7 @@ export default function Calculator() {
     return {
       salary: Number(salary || 0),
       country,
-      cycleDays,
+      cycleDays: maxDays,
       daysWorked,
       advanced: 0,
       feePercent,
@@ -287,6 +293,8 @@ export default function Calculator() {
     const payload = buildPayload();
 
     try {
+      setLoading(true); // 👈 start loader
+
       const res = await fetch(`/api/calc?country=${country}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -347,28 +355,33 @@ export default function Calculator() {
       }
 
       const accessCapPercent = currencyMap[country].accessCapPercent;
-      const gross = Number(data.gross ?? data.totalIncome ?? 0);
-      const net = Number(data.netPay ?? data.net ?? 0);
-
-      const accessCap = (net * accessCapPercent) / 100;
-      const platformFee = (accessCap * 5) / 100;
-      const accessibleNow = accessCap - platformFee;
+      const gross = Number(data.gross ?? 0);
+      const net = Number(data.netPay ?? 0);
+      const accruedGross = Number(data.accruedGross ?? 0);
+      const accessCap = Number(data.accessCap ?? 0);
+      const platformFee = Number(data.platformFee ?? 0);
+      const processingFee = Number(data.processingFee ?? 0);
+      const youReceive = Number(data.youReceive ?? 0);
 
       const mapped: CalcResult = {
         success: true,
-        accruedGross: gross,
+        accruedGross,
         netMonthly: net,
         accessCapPercent,
         accessCap,
         platformFee,
-        accessibleNow,
+        processingFee,
+        youReceive,
+        accessibleNow: accessCap, // For the display
         deductions,
         payee: payeAmount,
       };
 
       setResult(mapped);
+      setLoading(false); // 👈 stop loader
     } catch {
       alert("Failed to connect to backend");
+      setLoading(false); // 👈 stop loader
     }
   };
 
@@ -389,6 +402,7 @@ export default function Calculator() {
   const locale = currency.locale;
 
   return (
+    
     <div className="mx-auto mt-6 w-full max-w-sm rounded-2xl border border-green-100 bg-white p-6 shadow-2xl sm:max-w-md md:max-w-lg dark:border-green-800 dark:bg-gray-900">
       <h2 className="mb-5 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
         Wage Access Calculator
@@ -529,46 +543,48 @@ export default function Calculator() {
             transition={{ duration: 0.45 }}
             className="mt-6 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-green-50 to-white p-5 shadow-lg dark:border-green-700 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800"
           >
-            <h3 className="mb-3 text-lg font-extrabold text-green-800">
-              Wage Summary
-            </h3>
-
-            <div className="flex justify-between border-b pb-1">
-              <p>
-                <b>Net Earnings</b>
-              </p>
-              <p className="font-semibold text-emerald-700">
-                {currencySymbol} {fmt(result.netMonthly, locale)}
-              </p>
-            </div>
-
-            <div className="flex justify-between border-b pb-1">
-              <p>Accrued Earnings</p>
-              <p className="font-semibold text-emerald-700">
-                {currencySymbol} {fmt(result.accruedGross, locale)}
-              </p>
-            </div>
-
-            <div className="flex justify-between border-b pb-1">
-              <p>Access Cap ({result.accessCapPercent}%)</p>
-              <p className="font-semibold text-emerald-700">
+            <div className="mt-4 rounded-xl border border-green-200 bg-white/60 p-3 text-center dark:bg-gray-800/70">
+              <div className="mb-2 flex items-center justify-center gap-1.5 text-xs font-medium text-emerald-800 uppercase tracking-wider">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Accessible Amount
+              </div>
+              <p className="text-4xl font-extrabold text-emerald-700">
                 {currencySymbol} {fmt(result.accessCap, locale)}
               </p>
-            </div>
-
-            <div className="flex justify-between border-b pb-1">
-              <p>Platform Fee (5%)</p>
-              <p className="font-semibold text-red-500">
-                - {currencySymbol} {fmt(result.platformFee, locale)}
+              <p className="mt-1 text-[10px] font-medium text-emerald-600/80 uppercase tracking-widest">
+                Based on {result.accessCapPercent}% of earned wages
               </p>
             </div>
 
-            <div className="mt-4 rounded-xl border border-green-200 bg-white/60 p-3 text-center dark:bg-gray-800/70">
-              <p className="text-sm font-semibold text-emerald-800">
-                You Can Access Now
+            <div className="mt-6 space-y-3">
+              <div className="flex justify-between items-center bg-white/40 dark:bg-black/20 p-2 rounded-lg border border-emerald-100/50 dark:border-white/5 transition-all hover:bg-white/60">
+                <p className="text-sm text-slate-600 dark:text-slate-400">Earned So Far</p>
+                <p className="font-bold text-slate-800 dark:text-slate-200">
+                  {currencySymbol} {fmt(result.accruedGross, locale)}
+                </p>
+              </div>
+
+              <div className="flex justify-between items-center p-2">
+                <p className="text-sm text-slate-600 dark:text-slate-400">Application Fee (~4.5%)</p>
+                <p className="font-bold text-red-500">
+                  - {currencySymbol} {fmt(result.platformFee, locale)}
+                </p>
+              </div>
+
+              <div className="flex justify-between items-center p-2">
+                <p className="text-sm text-slate-600 dark:text-slate-400">Processing Fee ($0.80)</p>
+                <p className="font-bold text-red-500">
+                  - {currencySymbol} {fmt(result.processingFee, locale)}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-xl border-2 border-emerald-500/20 bg-emerald-500/5 p-4 text-center backdrop-blur-sm">
+              <p className="text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-widest mb-1">
+                You Receive
               </p>
-              <p className="mt-1 text-3xl font-extrabold text-emerald-700">
-                {currencySymbol} {fmt(result.accessibleNow, locale)}
+              <p className="text-2xl font-black text-emerald-700 dark:text-emerald-400">
+                {currencySymbol} {fmt(result.youReceive, locale)}
               </p>
             </div>
 
@@ -589,9 +605,46 @@ export default function Calculator() {
               currencySymbol={currencySymbol}
               locale={locale}
             />
+
+            {/* 🔥 NEW: Fee Structure Card */}
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50/50 p-5 dark:border-slate-700 dark:bg-slate-800/50">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-5 w-5 items-center justify-center rounded-full border border-slate-400 text-[10px] text-slate-500">
+                  i
+                </div>
+                <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                  Fee Structure
+                </h4>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-500 dark:text-slate-400">Application Fee</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">3.5% - 6%</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-500 dark:text-slate-400">Processing Fee</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">$0.80/transaction</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-500 dark:text-slate-400">Interest</span>
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 border-t border-slate-200 dark:border-slate-800 pt-6">
+              <p className="text-center text-sm font-medium text-slate-500 dark:text-slate-400 mb-4">
+                Ready to access your earned wages?
+              </p>
+              <button className="w-full rounded-2xl bg-linear-to-r from-emerald-600 to-green-600 py-4 font-bold text-white shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02] hover:shadow-emerald-500/40 active:scale-[0.98]">
+                Get Started →
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
+    
   );
 }

@@ -22,7 +22,7 @@
     ]
   },
   "accessCapPercent": 0.6,
-  "platformFeePercent": 0.05,
+  "platformFeePercent": 0.045,
   "earnedWageCapPercent": 0.6,
   "meta": {
     "description": "Kenya PAYE, NSSF, SHIF, Housing Levy config aligned to Income Tax Act Cap 470, NSSF Act 2013, Social Health Insurance Act 2023, and Finance Act 2023.",

@@ -16,7 +16,7 @@
     "description": "Rwanda PAYE bands per Income Tax Law No. 027/2022 (monthly resident rates)."
   },
   "accessCapPercent": 0.45,
-  "platformFeePercent": 0.05,
+  "platformFeePercent": 0.045,
   "earnedWageCapPercent": 0.45,
   "meta": {
     "description": "Rwanda PAYE and RSSB pension, medical, and maternity insurance config aligned to 2022–2025 statutory updates under RSSB Law No. 009/2021–2023.",

@@ -46,7 +46,7 @@
     "description": "Local Service Tax (LST) sample band data; not formally applied in mainland Tanzania but retained for future compatibility."
   },
   "accessCapPercent": 0.3,
-  "platformFeePercent": 0.05,
+  "platformFeePercent": 0.045,
   "earnedWageCapPercent": 0.3,
   "meta": {
     "description": "Tanzania PAYE, NSSF, NHIF, SDL, and WCF configuration per Finance Act 2025 and TRA payroll standards. Public sector (PSSSF) handled via same structure (15/5 split).",
