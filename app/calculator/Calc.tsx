@@ -588,17 +588,7 @@ export default function Calculator() {
               </p>
             </div>
 
-            <div className="mt-3 text-center text-xs text-gray-600">
-              <p>
-                <span className="font-semibold">Remittances → </span>
-                {Object.entries(result.deductions)
-                  .map(
-                    ([key, val]) =>
-                      `${key}: ${currencySymbol} ${fmt(val, locale)}`
-                  )
-                  .join(" | ")}
-              </p>
-            </div>
+
 
             <WageGraph
               result={result}
