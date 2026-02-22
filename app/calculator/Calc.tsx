@@ -355,7 +355,6 @@ export default function Calculator() {
       }
 
       const accessCapPercent = currencyMap[country].accessCapPercent;
-      const gross = Number(data.gross ?? 0);
       const net = Number(data.netPay ?? 0);
       const accruedGross = Number(data.accruedGross ?? 0);
       const accessCap = Number(data.accessCap ?? 0);
@@ -527,7 +526,7 @@ export default function Calculator() {
       <button
         onClick={callBackendCalc}
         disabled={!salary}
-        className="mt-5 w-full rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-2.5 font-semibold text-white shadow transition-transform hover:scale-[1.02] active:scale-[0.99] disabled:opacity-60"
+        className="mt-5 w-full rounded-xl bg-linear-to-r from-green-600 to-emerald-500 px-4 py-2.5 font-semibold text-white shadow transition-transform hover:scale-[1.02] active:scale-[0.99] disabled:opacity-60"
       >
         Calculate
       </button>
@@ -541,7 +540,7 @@ export default function Calculator() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.45 }}
-            className="mt-6 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-green-50 to-white p-5 shadow-lg dark:border-green-700 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800"
+            className="mt-6 rounded-2xl border border-emerald-200 bg-linear-to-br from-emerald-50 via-green-50 to-white p-5 shadow-lg dark:border-green-700 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800"
           >
             <div className="mt-4 rounded-xl border border-green-200 bg-white/60 p-3 text-center dark:bg-gray-800/70">
               <div className="mb-2 flex items-center justify-center gap-1.5 text-xs font-medium text-emerald-800 uppercase tracking-wider">

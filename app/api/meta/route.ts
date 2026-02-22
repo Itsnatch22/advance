@@ -21,12 +21,12 @@ export async function GET(req: Request) {
       taxBrackets: cfg.taxBrackets || [],
       deductions: cfg.deductions || [],
     });
-  } catch (err: any) {
+  } catch (err: { message?: string } | unknown) {
     // 👈 FIXED HERE
     console.error("meta route error:", err);
-
+    const errorMessage = err instanceof Error ? err.message : "server error";
     return NextResponse.json(
-      { success: false, error: String(err?.message || err) },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

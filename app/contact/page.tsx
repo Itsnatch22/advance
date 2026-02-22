@@ -136,7 +136,7 @@ export default function ContactPage() {
 
         if (result.issues && Array.isArray(result.issues)) {
           const errorMessages = result.issues
-            .map((issue: any) => `${issue.path.join(".")}: ${issue.message}`)
+            .map((issue: { path: string[]; message: string }) => `${issue.path.join(".")}: ${issue.message}`)
             .join(", ");
           setErrorMessage(errorMessages);
         } else {

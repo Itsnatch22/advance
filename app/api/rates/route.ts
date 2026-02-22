@@ -14,9 +14,9 @@ function loadJson() {
 
 function parseRatesSheet(data: unknown) {
   // 🔥 FIX 1 — Safely cast unknown JSON structure
-  const safe = data as { Rates?: any[] };
+  const safe = data as { Rates?: unknown };
 
-  const ratesSheet = safe.Rates || [];
+  const ratesSheet = Array.isArray(safe.Rates) ? safe.Rates : [];
   const rates: Record<string, unknown> = {};
 
   for (const row of ratesSheet) {
@@ -41,10 +41,11 @@ export async function GET() {
     const rates = parseRatesSheet(data);
 
     return NextResponse.json({ success: true, rates });
-  } catch (err: any) {
+  } catch (err: unknown) {
     // 🔥 FIX 2 — TS-compliant catch block
+    const errorMessage = err instanceof Error ? err.message : "server error";
     return NextResponse.json(
-      { success: false, error: err?.message ?? "server error" },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }
