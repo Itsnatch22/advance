@@ -1,6 +1,5 @@
 "use client";
 import {
-  Sparkles,
   ArrowRight,
   Wallet,
   ShieldCheck,

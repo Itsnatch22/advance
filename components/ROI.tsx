@@ -88,7 +88,7 @@ function saveFxToCache(rates: Record<string, number>) {
   try {
     const payload = { ts: Date.now(), rates };
     localStorage.setItem(FX_CACHE_KEY, JSON.stringify(payload));
-  } catch (e) {
+  } catch (e: unknown) {
     // ignore
   }
 }
