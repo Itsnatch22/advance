@@ -11,18 +11,15 @@ import {
   CircuitBoard,
   BrainCircuit,
 } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
 import { FeatureCard } from "@/components/shared/FeatureCard";
-import { FAQItem } from "@/components/shared/FAQItem";
 import UI from "./UI";
 import ROI from "@/components/ROI";
 import Integrations from "@/components/Integrations";
-import { BRAND_COLORS } from "@/constants/colors";
 
 const reasons = [
   {

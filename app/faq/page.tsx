@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
   HelpCircle,
   Search,
@@ -12,11 +11,8 @@ import {
   CreditCard,
   Shield,
   Clock,
-  MessageSquare,
-  Phone,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
 type FAQItem = {

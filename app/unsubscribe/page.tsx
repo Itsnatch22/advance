@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type Product = "newsletter" | "partners" | "sales" | "all";
 
@@ -467,9 +468,9 @@ export default function UnsubscribePage() {
                         "Confirm unsubscribe"
                       )}
                     </button>
-                    <a href="/" className="link-keep">
+                    <Link href="/" className="link-keep">
                       Keep me subscribed
-                    </a>
+                    </Link>
                   </div>
                 </form>
               </>

@@ -131,10 +131,11 @@ export async function POST(req: Request) {
   } catch (err: { message?: string } | unknown) {
     console.error("❌ /api/calc failed:", err);
 
+    const errorMessage = err instanceof Error ? err.message : "server error";
     return NextResponse.json(
       {
         success: false,
-        error: err?.message || "Internal calculation error",
+        error: errorMessage || "Internal calculation error",
       },
       { status: 500 }
     );
