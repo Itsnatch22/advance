@@ -30,7 +30,14 @@ export interface JsonConfig {
   };
   sdl?: { employerRate?: number };
   wcf?: { employerRate?: number };
-  paye?: { brackets?: { upTo: number; rate: number }[] };
+  paye?: {
+    brackets?: {
+      upTo: number;
+      rate: number;
+      base?: number;
+      minus?: number;
+    }[];
+  };
   lst?: { bands?: { upTo: number; tax: number }[] };
   accessCapPercent?: number;
   platformFeePercent?: number;
@@ -125,8 +132,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     rssb.maternityEmployee;
 
   // Per spreadsheet logic, KE taxable income also deducts SHIF and Housing
-  const keTaxDeductibles =
-    payload.country === "KE" ? shif + housingLevy : 0;
+  const keTaxDeductibles = payload.country === "KE" ? shif + housingLevy : 0;
   const taxableIncome = gross - employeeDeductions - keTaxDeductibles;
 
   // PAYE
@@ -188,20 +194,55 @@ export function calc(payload: Payload, cfg: JsonConfig) {
 }
 
 // PAYE helper
-function calcPAYE(taxable: number, brackets: { upTo: number; rate: number }[]) {
-  if (!brackets.length) return 0;
-  let tax = 0;
-  let last = 0;
-  for (const b of brackets) {
-    if (taxable > b.upTo) {
-      tax += (b.upTo - last) * b.rate;
-      last = b.upTo;
-    } else {
-      tax += (taxable - last) * b.rate;
-      break;
+function calcPAYE(
+  taxable: number,
+  brackets: {
+    upTo: number;
+    rate: number;
+    base?: number;
+    minus?: number;
+  }[]
+) {
+  if (!brackets || !brackets.length) return 0;
+
+  // Check if we are using base/minus system (Uganda, Rwanda) or marginal (Kenya)
+  const isBracketSystem =
+    brackets[0].base !== undefined && brackets[0].minus !== undefined;
+
+  if (isBracketSystem) {
+    // Bracket system with base and minus
+    let tax = 0;
+    let bracketFound = false;
+    for (const b of brackets) {
+      if (taxable <= b.upTo) {
+        tax = (b.base ?? 0) + (taxable - (b.minus ?? 0)) * b.rate;
+        bracketFound = true;
+        break;
+      }
     }
+    // Handle income exceeding the highest bracket
+    if (!bracketFound) {
+      const lastBracket = brackets[brackets.length - 1];
+      tax =
+        (lastBracket.base ?? 0) +
+        (taxable - (lastBracket.minus ?? 0)) * lastBracket.rate;
+    }
+    return Math.max(0, Math.round(tax * 100) / 100);
+  } else {
+    // Marginal system (Kenya)
+    let tax = 0;
+    let last = 0;
+    for (const b of brackets) {
+      if (taxable > b.upTo) {
+        tax += (b.upTo - last) * b.rate;
+        last = b.upTo;
+      } else {
+        tax += (taxable - last) * b.rate;
+        break;
+      }
+    }
+    return Math.round(tax * 100) / 100;
   }
-  return Math.round(tax * 100) / 100;
 }
 
 // LST helper (Uganda)
