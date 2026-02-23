@@ -17,8 +17,7 @@ async function verifyAll() {
     console.log(`Earned So Far: ${result.accruedGross}`);
     console.log(`Accessible Now: ${result.accessCap}`);
     console.log(`Application Fee: ${result.platformFee}`);
-    console.log(`Processing Fee: ${result.processingFee}`);
-    console.log(`You Receive: ${result.youReceive}`);
+    console.log(`You Receive: ${result.youCanAccessNow}`);
   }
 }
 

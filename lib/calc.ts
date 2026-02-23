@@ -125,8 +125,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     rssb.maternityEmployee;
 
   // Per spreadsheet logic, KE taxable income also deducts SHIF and Housing
-  const keTaxDeductibles =
-    payload.country === "KE" ? shif + housingLevy : 0;
+  const keTaxDeductibles = payload.country === "KE" ? shif + housingLevy : 0;
   const taxableIncome = gross - employeeDeductions - keTaxDeductibles;
 
   // PAYE
@@ -154,6 +153,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     success: true,
     country: payload.country,
     gross,
+    accruedGross: gross, // Alias for backward compatibility
     totalAllowances, // 🔥 NEW
     taxableIncome,
     nssfEmployee,
