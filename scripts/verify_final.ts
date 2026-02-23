@@ -5,7 +5,7 @@ async function verifyFinal() {
     { country: "KE", salary: 50000, daysWorked: 18, cycleDays: 28 },
     { country: "UG", salary: 50000, daysWorked: 18, cycleDays: 28 },
     { country: "TZ", salary: 50000, daysWorked: 18, cycleDays: 28 },
-    { country: "RW", salary: 50000, daysWorked: 18, cycleDays: 28 }
+    { country: "RW", salary: 50000, daysWorked: 18, cycleDays: 28 },
   ];
 
   for (const c of cases) {
@@ -16,8 +16,7 @@ async function verifyFinal() {
     console.log(`Earned So Far: ${result.accruedGross}`);
     console.log(`Accessible Now: ${result.accessCap}`);
     console.log(`Application Fee: ${result.platformFee}`);
-    console.log(`Processing Fee: ${result.processingFee}`);
-    console.log(`You Receive: ${result.youReceive}`);
+    console.log(`You Receive: ${result.youCanAccessNow}`);
   }
 }
 
