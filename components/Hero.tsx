@@ -19,7 +19,7 @@ export default function Hero() {
 
     const handleVideoModal = () => {
         handleSetWatch(true);
-        console.error('Video player not implemented yet')
+        console.log('Video player not implemented yet')
     }
   return (
     <section className='relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden'>
