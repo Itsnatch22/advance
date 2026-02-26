@@ -250,7 +250,7 @@ export const partners = [
   { name: 'M-KOPA', logo: '/logos/mkopa.webp' },
   { name: 'Jumia', logo: '/logos/jumia.png' },
   { name: 'Naivas', logo: '/partners/naivas.svg' },
-  { name: 'Carrefour', logo: '/partners/carrefour.svg' },
+  { name: 'Carrefour', logo: '/partners/ca4.png' },
   { name: 'EABL', logo: '/partners/eabl.svg' },
   { name: 'CIC Insurance', logo: '/partners/CIC.png' },
 ]
