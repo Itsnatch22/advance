@@ -249,4 +249,8 @@ export const partners = [
   { name: 'Twiga Foods', logo: '/logos/twiga.webp' },
   { name: 'M-KOPA', logo: '/logos/mkopa.webp' },
   { name: 'Jumia', logo: '/logos/jumia.png' },
+  { name: 'Naivas', logo: '/partners/naivas.svg' },
+  { name: 'Carrefour', logo: '/partners/carrefour.svg' },
+  { name: 'EABL', logo: '/partners/eabl.svg' },
+  { name: 'CIC Insurance', logo: '/partners/CIC.png' },
 ]
