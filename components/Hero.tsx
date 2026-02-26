@@ -32,7 +32,6 @@ export default function Hero() {
             <div className='grid lg:grid-cols-2 gap-16 items-center'>
                 <div className='stagger-content'>
                     <div className='inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-emerald-400 ring-1 ring-white/20 backdrop-blur-sm'>
-                        <span className='h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse'/>
                         <Sparkles className='w-4 h-4' />
                         <span>Financial Freedom for Everyone</span>
                     </div>
