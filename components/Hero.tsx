@@ -44,7 +44,7 @@ export default function Hero() {
                     className='font-serif text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-7xl'>
                         Your Money.
                         <br/>
-                        <span className='text-green-600'>Your Timeline</span>
+                        <span className='text-green-600'>Your Timeline.</span>
                     </motion.h1>
 
                     <motion.p
