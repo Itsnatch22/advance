@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Typed from "typed.js";
 import { useRouter } from "next/navigation";
 
-export default function Hero() {
+export default function Homepage() {
   const typedRef = useRef(null);
   const [email, setEmail] = useState("");
   const router = useRouter();
