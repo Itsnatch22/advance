@@ -63,15 +63,11 @@ export default function Hero() {
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 mb-14">
                         <Link href="https://app.eaziwage.com/register">
-                        <Button size="lg" className="sm:w-full flex items-center h-14 justify-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/40" data-testid="hero-get-started">
+                        <Button type='button' onClick={handleVideoModal} size="lg" variant="outline" className="flex items-center h-14 justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-8 py-3.5 font-semibold text-slate-900 shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-slate-50 hover:shadow-xl hover:shadow-slate-900/20" data-testid="hero-watch-demo">
                             Get Started Free
                             <ArrowRight className="w-5 h-5 ml-2" />
                         </Button>
                         </Link>
-                        <Button type='button' onClick={handleVideoModal} size="lg" variant="outline" className="flex items-center h-14 justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-8 py-3.5 font-semibold text-slate-900 shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-slate-50 hover:shadow-xl hover:shadow-slate-900/20" data-testid="hero-watch-demo">
-                            <Play className="w-5 h-5 mr-2" />
-                            Watch Demo
-                        </Button>
                     </div>
 
                     {/* Stats Grid */}
