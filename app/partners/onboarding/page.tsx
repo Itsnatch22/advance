@@ -149,7 +149,7 @@ export default function PartnerOnboardingPage() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <h1 className="mb-4 text-4xl font-bold text-neutral-900 sm:text-5xl dark:text-white">
+          <h1 className="mb-4 font-serif text-4xl font-bold text-neutral-900 sm:text-5xl dark:text-white">
             Partner with <span className="text-emerald-600">EaziWage</span>
           </h1>
           <p className="text-lg text-neutral-600 dark:text-neutral-400">
