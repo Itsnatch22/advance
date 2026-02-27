@@ -1,11 +1,10 @@
 'use client';
 import { motion } from 'framer-motion';
-import Link from 'next/link'
-import { Button } from './ui/button'
 import { Zap, Users, Sparkles, Banknote, Star, Check,
-    Wallet, ArrowRight, Play, TrendingUp, ChevronRight } 
+    Wallet, TrendingUp, ChevronRight } 
 from 'lucide-react'
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const heroStats = [
   { value: '50K+', label: 'Active Users', icon: Users },
@@ -15,7 +14,14 @@ const heroStats = [
 ];
 
 export default function Hero() {
+    const [email, setEmail] = useState("");
+    const router = useRouter();
     const [ watch, handleSetWatch ] = useState(false);
+    const handleContinue = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    router.push(`https://app.eaziwage.com/register?email=${encodeURIComponent(email)}`);
+  };
 
     const handleVideoModal = () => {
         handleSetWatch(true);
@@ -26,8 +32,8 @@ export default function Hero() {
         {/* Background effects */}
         <div className="absolute inset-0 gradient-mesh" />
         <div className="absolute inset-0 bg-grid" />
-        <div className="absolute top-10 sm:top-20 right-0 w-[400px] sm:w-[500px] lg:w-[600px] h-[400px] sm:h-[500px] lg:h-[600px] bg-primary/10 rounded-full blur-[100px] sm:blur-[120px] lg:blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[350px] sm:w-[450px] lg:w-[500px] h-[350px] sm:h-[450px] lg:h-[500px] bg-emerald-500/10 rounded-full blur-[100px] sm:blur-[120px] lg:blur-[150px]" />
+        <div className="absolute top-10 sm:top-20 right-0 w-100 sm:w-125 lg:w-150 h-100 sm:h-125 lg:h-150 bg-primary/10 rounded-full blur-[100px] sm:blur-[120px] lg:blur-[150px]" />
+        <div className="absolute bottom-0 left-0 w-87.5 sm:w-112.5 lg:w-125 h-87.5 sm:h-112.5 lg:h-125 bg-emerald-500/10 rounded-full blur-[100px] sm:blur-[120px] lg:blur-[150px]" />
 
         <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center'>
@@ -60,22 +66,37 @@ export default function Hero() {
                         Just your hard-earned money when you need it most.
                     </motion.p>
 
-                    {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4 mb-14">
-                        <Link href="https://app.eaziwage.com/register">
-                        <Button size="lg" className="sm:w-full flex items-center h-14 justify-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/40" data-testid="hero-get-started">
-                            Get Started Free
-                            <ArrowRight className="w-5 h-5 ml-2" />
-                        </Button>
-                        </Link>
-                        <Button type='button' onClick={handleVideoModal} size="lg" variant="outline" className="flex items-center h-14 justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-8 py-3.5 font-semibold text-slate-900 shadow-lg shadow-slate-900/10 transition-all duration-300 hover:bg-slate-50 hover:shadow-xl hover:shadow-slate-900/20" data-testid="hero-watch-demo">
-                            <Play className="w-5 h-5 mr-2" />
-                            Watch Demo
-                        </Button>
+                    <motion.form
+                    onSubmit={handleContinue}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                    className="mt-8 w-full max-w-xl"
+                    >
+                    <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-2 backdrop-blur-md transition-all duration-300 focus-within:border-emerald-400/50 focus-within:bg-white/10 focus-within:ring-2 focus-within:ring-emerald-400/20 sm:flex-row">
+                        <input
+                        type="email"
+                        placeholder="Enter your email address"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="flex-1 rounded-xl border-0 bg-white/90 px-5 py-3.5 text-base text-slate-900 placeholder:text-slate-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 sm:text-sm"
+                        />
+                        
+                        <motion.button
+                        type="submit"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="group flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/40"
+                        >
+                        <span>Continue</span>
+                        <ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                        </motion.button>
                     </div>
+                    </motion.form>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mt-4 sm:mt-6 lg:mt-8">
                         {heroStats.map((stat, i) => (
                         <motion.div 
                             key={i} 

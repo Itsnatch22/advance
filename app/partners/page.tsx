@@ -18,7 +18,7 @@ const bankingPartners = [
 const corporatePartners = [
   "/partners/naivas.svg",
   "/partners/carrefour.png",
-  "/partners/mayfair.png",
+  "/partners/mayfair.svg",
   "/partners/eabl.svg",
   "/partners/jubilee.png",
   "/partners/CIC.png",
@@ -30,7 +30,7 @@ const techPartners = [
   "/partners/supabase.svg",
   "/partners/ts.png",
   "/partners/resend.svg",
-  "/partners/drizzle.jpg",
+  "/partners/mpesa.svg",
 ];
 
 /* -------------------------- components -------------------------- */

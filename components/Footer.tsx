@@ -191,7 +191,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-slate-400">
-              Empowering Kenyan workers with instant access to earned wages —
+              Empowering African workers with instant access to earned wages —
               reducing financial stress and boosting workplace performance.
             </p>
 
