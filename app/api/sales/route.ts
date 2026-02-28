@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     // Send email notification
     await resend.emails.send({
-      from: "sales@contact.eaziwage.com",
+      from: "sales@eaziwage.com",
       to: "admin@eaziwage.com",
       subject: "New Sales Lead",
       react: SalesNotification({

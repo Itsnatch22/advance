@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     // Send welcome email
     try {
       await resend.emails.send({
-        from: "EaziWage <newsletter@contact.eaziwage.com>",
+        from: "EaziWage <newsletter@eaziwage.com>",
         to: email,
         subject: "Welcome to EaziWage Newsletter! 🎉",
         react: SubscriptionNotification({ email }),
