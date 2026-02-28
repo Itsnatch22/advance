@@ -137,7 +137,7 @@ export default function Hero() {
                                 <div className="bg-white/15 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3.5 sm:p-4 md:p-5">
                                     <div className="flex justify-between text-xs sm:text-sm mb-2 sm:mb-3">
                                         <span className="opacity-80">Earned this month</span>
-                                        <span className="font-bold">USD 191.54</span>
+                                        <span className="font-bold">KSH 24,708.66</span>
                                     </div>
                                     <div className="w-full bg-white/20 rounded-full h-2 sm:h-3">
                                         <div className="bg-white rounded-full h-2 sm:h-3 w-1/2 shadow-lg" />
@@ -167,7 +167,7 @@ export default function Hero() {
                                             <Check className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-emerald-600" />
                                         </div>
                                         <div>
-                                            <p className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">USD 38.46 Sent</p>
+                                            <p className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">KSH 4,961.34 Sent</p>
                                             <p className="text-xs sm:text-sm text-slate-500">To Mobile Wallet · 2 sec ago</p>
                                         </div>
                                     </div>
