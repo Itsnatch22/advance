@@ -216,7 +216,7 @@ export default function AboutPage() {
               Our Journey
             </motion.div>
             <h2 className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl">
-              Our <span className="italic text-green-600">Story</span>
+              Our <span className="text-green-600">Story</span>
             </h2>
           </div>
 
@@ -260,7 +260,7 @@ export default function AboutPage() {
             What Drives Us
           </motion.div>
           <h2 className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl">
-            Our Core <span className="italic text-green-600">Values</span>
+            Our Core <span className="text-green-600">Values</span>
           </h2>
         </div>
 

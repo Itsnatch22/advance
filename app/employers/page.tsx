@@ -123,7 +123,7 @@ const FloatingOrb = ({ color, delay, className }: { color: string; delay: number
       delay,
       ease: "easeInOut",
     }}
-    className={`absolute h-[500px] w-[500px] rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+    className={`absolute h-125 w-125 rounded-full blur-[120px] opacity-20 ${color} ${className}`}
   />
 );
 
@@ -219,7 +219,7 @@ export default function Employers() {
               <span>For Employers</span>
             </motion.div>
             <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-              Why employers <span className="italic text-green-600">choose</span> EaziWage
+              Why employers <span className="text-green-600">choose</span> EaziWage
             </h2>
             <p className="mt-6 mx-auto max-w-3xl text-xl text-slate-500">
               A practical well-being lever that pays for itself. Zero cost, zero
@@ -255,7 +255,7 @@ export default function Employers() {
               Implementation
             </motion.div>
             <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-              Employer <span className="italic text-green-600">rollout plan</span>
+              Employer <span className="text-green-600">rollout plan</span>
             </h2>
             <p className="mt-6 mx-auto max-w-3xl text-xl text-slate-500">
               From sandbox to go live in days, not months. We handle the heavy
@@ -291,7 +291,7 @@ export default function Employers() {
               Versatile Solution
             </motion.div>
             <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-              Works across <span className="italic text-green-600">sectors & sizes</span>
+              Works across <span className="text-green-600">sectors & sizes</span>
             </h2>
             <p className="mt-6 text-xl text-slate-500">
               Retail • Hospitality • Manufacturing • Logistics • Banks • Schools • Healthcare
@@ -313,7 +313,7 @@ export default function Employers() {
               Support
             </motion.div>
             <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-              Frequently Asked <span className="italic text-green-600">Questions</span>
+              Frequently Asked <span className="text-green-600">Questions</span>
             </h2>
           </div>
 
@@ -324,7 +324,7 @@ export default function Employers() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className={`group relative overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-all duration-500 ${
+                className={`group relative overflow-hidden rounded-4xl border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-all duration-500 ${
                   openIndex === index ? "shadow-2xl shadow-green-500/10 ring-1 ring-green-500/20" : "hover:bg-white"
                 }`}
               >

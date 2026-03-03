@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, MouseEvent } from "react";
 import {
   HelpCircle,
   Search,
@@ -12,7 +12,7 @@ import {
   Shield,
   Clock,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Input } from "../../components/ui/input";
 
 type FAQItem = {
@@ -31,45 +31,14 @@ type CategoryId =
 const categories: {
   id: CategoryId;
   label: string;
-  icon: typeof HelpCircle;
-  color: string;
+  icon: any;
 }[] = [
-  {
-    id: "general",
-    label: "General",
-    icon: HelpCircle,
-    color: "from-primary to-emerald-600",
-  },
-  {
-    id: "employees",
-    label: "For Employees",
-    icon: Users,
-    color: "from-emerald-500 to-teal-600",
-  },
-  {
-    id: "employers",
-    label: "For Employers",
-    icon: Building2,
-    color: "from-teal-500 to-primary",
-  },
-  {
-    id: "fees",
-    label: "Fees & Pricing",
-    icon: CreditCard,
-    color: "from-primary to-emerald-500",
-  },
-  {
-    id: "security",
-    label: "Security & Privacy",
-    icon: Shield,
-    color: "from-emerald-600 to-teal-600",
-  },
-  {
-    id: "technical",
-    label: "Technical",
-    icon: Clock,
-    color: "from-teal-600 to-primary",
-  },
+  { id: "general", label: "General", icon: HelpCircle },
+  { id: "employees", label: "For Employees", icon: Users },
+  { id: "employers", label: "For Employers", icon: Building2 },
+  { id: "fees", label: "Fees & Pricing", icon: CreditCard },
+  { id: "security", label: "Security & Privacy", icon: Shield },
+  { id: "technical", label: "Technical", icon: Clock },
 ];
 
 const faqs: Record<CategoryId, FAQItem[]> = {
@@ -219,13 +188,104 @@ const faqs: Record<CategoryId, FAQItem[]> = {
   ],
 };
 
+const FloatingOrb = ({ color, delay, className }: { color: string; delay: number; className?: string }) => (
+  <motion.div
+    animate={{
+      y: [0, -40, 0],
+      x: [0, 20, 0],
+      scale: [1, 1.1, 1],
+    }}
+    transition={{
+      duration: 10 + Math.random() * 5,
+      repeat: Infinity,
+      delay,
+      ease: "easeInOut",
+    }}
+    className={`absolute h-[500px] w-[500px] rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+  />
+);
+
+const FAQItemCard = ({ faq, isOpen, toggle }: { faq: FAQItem; isOpen: boolean; toggle: () => void }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), { stiffness: 150, damping: 20 });
+
+  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    x.set((event.clientX - rect.left) / rect.width - 0.5);
+    y.set((event.clientY - rect.top) / rect.height - 0.5);
+    mouseX.set(event.clientX - rect.left);
+    mouseY.set(event.clientY - rect.top);
+  }
+
+  return (
+    <motion.div style={{ perspective: 1000 }} className="w-full">
+      <motion.div
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => { x.set(0); y.set(0); }}
+        style={{ rotateX, rotateY }}
+        className={`group relative overflow-hidden rounded-[2rem] border border-slate-200/60 transition-all duration-500 ${
+          isOpen ? "bg-white shadow-2xl shadow-green-500/10 ring-1 ring-green-500/20" : "bg-white/40 backdrop-blur-2xl hover:bg-white"
+        }`}
+      >
+        <motion.div
+          style={{
+            background: useTransform(
+              [mouseX, mouseY],
+              ([mx, my]) => `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.04), transparent 80%)`
+            ),
+          }}
+          className="absolute inset-0 pointer-events-none"
+        />
+
+        <button
+          onClick={toggle}
+          className="relative z-10 flex w-full items-center justify-between p-8 text-left"
+        >
+          <span className={`text-xl font-bold tracking-tight transition-colors duration-300 ${isOpen ? "text-green-700" : "text-slate-900"}`}>
+            {faq.q}
+          </span>
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-500 ${
+            isOpen ? "bg-green-600 text-white rotate-180" : "bg-slate-100 text-slate-500 group-hover:bg-green-500 group-hover:text-white"
+          }`}>
+            <ChevronDown size={20} />
+          </div>
+        </button>
+
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="px-8 pb-8">
+                <div className="h-px w-full bg-slate-100 mb-8" />
+                <p className="text-lg leading-relaxed text-slate-500">
+                  {faq.a}
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className={`absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 ${isOpen ? "w-full" : "group-hover:w-full"}`} />
+      </motion.div>
+    </motion.div>
+  );
+};
+
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState<CategoryId>("general");
   const [searchQuery, setSearchQuery] = useState("");
-  const [openItems, setOpenItems] = useState<Record<number, boolean>>({});
+  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
-  const toggleItem = (index: number) => {
-    setOpenItems((prev) => ({ ...prev, [index]: !prev[index] }));
+  const toggleItem = (q: string) => {
+    setOpenItems((prev) => ({ ...prev, [q]: !prev[q] }));
   };
 
   const filteredFaqs: FAQItem[] = searchQuery
@@ -241,58 +301,78 @@ export default function FAQPage() {
   const currentCategory = categories.find((c) => c.id === activeCategory);
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <main className="relative min-h-screen overflow-hidden bg-white">
+      {/* Immersive Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
+        <FloatingOrb color="bg-emerald-100" delay={2} className="top-[30%] right-[5%]" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
+      </div>
 
       {/* HERO */}
-      <section className="relative overflow-hidden pt-32 pb-24 bg-linear-to-b from-slate-50 to-white">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute left-1/2 top-0 h-125 w-125-translate-x-1/2 bg-emerald-500/10 blur-[140px] rounded-full" />
-        </div>
+      <section className="relative pt-40 pb-32 lg:pt-56 lg:pb-48">
+        <div className="relative z-10 mx-auto max-w-5xl text-center px-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600 backdrop-blur-md"
+          >
+            <HelpCircle size={14} className="animate-pulse" />
+            <span>Help Center</span>
+          </motion.div>
 
-        <div className="mx-auto max-w-4xl text-center px-6">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
+          >
+            Frequently Asked <span className="italic text-green-600">Questions</span>
+          </motion.h1>
 
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-700">
-            <HelpCircle className="h-4 w-4" />
-            Help Center
-          </div>
-
-          <h1 className="font-serif mb-6 text-5xl sm:text-6xl font-bold">
-            Frequently Asked <span className="text-emerald-600">Questions</span>
-          </h1>
-
-          <p className="mx-auto mb-10 max-w-2xl text-xl text-slate-600">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 1 }}
+            className="mt-8 mx-auto mb-16 max-w-2xl text-xl text-slate-500"
+          >
             Real answers. No support tickets required.
-          </p>
+          </motion.p>
 
           {/* SEARCH */}
-          <div className="relative mx-auto max-w-xl">
-            <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-slate-400" />
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="relative mx-auto max-w-2xl group"
+          >
+            <Search className="absolute top-1/2 left-6 h-6 w-6 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-green-600" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for answers..."
-              className="h-14 rounded-2xl border-2 border-slate-200 bg-white/70 backdrop-blur-xl pl-12 text-lg focus:border-emerald-500"
+              className="h-20 rounded-3xl border-slate-200 bg-white/80 pl-16 pr-8 text-xl shadow-2xl backdrop-blur-xl transition-all focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
             />
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* CATEGORIES */}
       {!searchQuery && (
-        <section className="border-y border-slate-200 bg-white py-10">
-          <div className="flex flex-wrap justify-center gap-3 px-6">
+        <section className="relative z-10 border-y border-slate-100 bg-white/40 py-12 backdrop-blur-md">
+          <div className="flex flex-wrap justify-center gap-4 px-6">
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-medium transition-all
+                className={`flex items-center gap-3 rounded-2xl px-8 py-4 text-sm font-black uppercase tracking-widest transition-all duration-300
                 ${
                   activeCategory === cat.id
-                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20"
-                    : "border border-slate-200 bg-white text-slate-600 hover:border-emerald-500 hover:text-emerald-600"
+                    ? "bg-slate-900 text-white shadow-2xl scale-105"
+                    : "border border-slate-200 bg-white text-slate-400 hover:border-green-500 hover:text-green-600"
                 }`}
               >
-                <cat.icon className="h-4 w-4" />
+                <cat.icon size={18} />
                 {cat.label}
               </button>
             ))}
@@ -301,61 +381,34 @@ export default function FAQPage() {
       )}
 
       {/* FAQ LIST */}
-      <section className="py-20">
+      <section className="relative z-10 py-32 lg:py-48">
         <div className="mx-auto max-w-4xl px-6">
-
           {!searchQuery && currentCategory && (
-            <div className="mb-10 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-600 text-white">
-                <currentCategory.icon className="h-6 w-6" />
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              key={activeCategory}
+              className="mb-16 flex items-center gap-6"
+            >
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10">
+                <currentCategory.icon size={28} />
               </div>
-              <h2 className="text-2xl font-bold">{currentCategory.label}</h2>
-            </div>
+              <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900">{currentCategory.label}</h2>
+            </motion.div>
           )}
 
-          <div className="space-y-4">
-
-            {filteredFaqs.map((faq, i) => {
-              const open = openItems[i];
-
-              return (
-                <motion.div
-                  key={i}
-                  layout
-                  className="rounded-2xl border border-slate-200 bg-white shadow-sm"
-                >
-                  <button
-                    onClick={() => toggleItem(i)}
-                    className="flex w-full items-center justify-between p-6 text-left"
-                  >
-                    <h3 className="pr-4 text-lg font-semibold">{faq.q}</h3>
-
-                    {open ? (
-                      <ChevronUp className="text-emerald-600" />
-                    ) : (
-                      <ChevronDown className="text-slate-400" />
-                    )}
-                  </button>
-
-                  <AnimatePresence>
-                    {open && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="px-6 pb-6 text-slate-600"
-                      >
-                        {faq.a}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
-
+          <div className="space-y-6">
+            {filteredFaqs.map((faq, i) => (
+              <FAQItemCard
+                key={faq.q}
+                faq={faq}
+                isOpen={!!openItems[faq.q]}
+                toggle={() => toggleItem(faq.q)}
+              />
+            ))}
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

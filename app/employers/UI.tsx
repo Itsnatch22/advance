@@ -118,7 +118,7 @@ export default function UI() {
 
                   {/* Pricing info */}
                   <p className="text-center text-[11px] leading-relaxed text-white/60">
-                    Flat fee $0.8 • Application fee 5% • No interest
+                    Flat fee KES 104 • Application fee 5% • No interest
                   </p>
                 </div>
               </div>

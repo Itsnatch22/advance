@@ -1,5 +1,7 @@
 "use client";
-import { motion } from "framer-motion";
+
+import React, { useState, useRef, MouseEvent } from "react";
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import {
   Clock3,
   Wallet,
@@ -10,13 +12,11 @@ import {
   Lightbulb,
   BarChart3,
   Repeat,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
-import { FeatureCard } from "@/components/shared/FeatureCard";
-import { AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { ArrowRight } from "lucide-react";
 import UI from "./UI";
 
 const reasons = [
@@ -111,188 +111,253 @@ const faqs = [
   },
 ];
 
+const FloatingOrb = ({ color, delay, className }: { color: string; delay: number; className?: string }) => (
+  <motion.div
+    animate={{
+      y: [0, -40, 0],
+      x: [0, 20, 0],
+      scale: [1, 1.1, 1],
+    }}
+    transition={{
+      duration: 10 + Math.random() * 5,
+      repeat: Infinity,
+      delay,
+      ease: "easeInOut",
+    }}
+    className={`absolute h-125 w-125 rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+  />
+);
+
+const TiltFeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title: string; desc: string; index: number }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+
+  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    x.set((event.clientX - rect.left) / rect.width - 0.5);
+    y.set((event.clientY - rect.top) / rect.height - 0.5);
+    mouseX.set(event.clientX - rect.left);
+    mouseY.set(event.clientY - rect.top);
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      style={{ perspective: 1000 }}
+      className="h-full"
+    >
+      <motion.div
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => { x.set(0); y.set(0); }}
+        style={{ rotateX, rotateY }}
+        className="group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+      >
+        <motion.div
+          style={{
+            background: useTransform(
+              [mouseX, mouseY],
+              ([mx, my]) => `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
+            ),
+          }}
+          className="absolute inset-0 pointer-events-none rounded-[2.5rem]"
+        />
+        
+        <div className="relative z-10">
+          <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
+            <Icon className="h-8 w-8" strokeWidth={1.5} />
+          </div>
+          <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 group-hover:text-green-700 transition-colors">
+            {title}
+          </h3>
+          <p className="text-lg leading-relaxed text-slate-500">
+            {desc}
+          </p>
+        </div>
+        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
+      </motion.div>
+    </motion.div>
+  );
+};
+
 export default function Employees() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  
   return (
-    <section className="relative mx-auto flex min-h-screen w-full flex-col items-center overflow-hidden bg-linear-to-b from-white via-slate-50/30 to-white py-8 sm:py-12 lg:py-16">
-      <UI />
-
-      {/* Enhanced compliance strip */}
-      <ComplianceStrip 
-        items={complianceItems} 
-        className="mb-12 border-y border-slate-200/60 bg-white/80 py-6 backdrop-blur-sm sm:mb-16 lg:mb-20 sm:py-8" 
-      />
-
-      {/* Why employees choose section - refined styling */}
-      <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section header with badge */}
-        <div className="mx-auto mb-12 max-w-3xl text-center sm:mb-16 lg:mb-20">
-          <div className="mb-5 flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-              For Employees
-            </div>
-          </div>
-          <h2 className="mb-5 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-5xl lg:text-6xl">
-            Why employees choose <span className="bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">Eaziwage</span>
-          </h2>
-          <p className="text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl">
-            A practical well-being lever that pays for itself.
-          </p>
-        </div>
-
-        {/* Enhanced feature cards grid */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
-          {reasons.map((item, i) => (
-            <FeatureCard
-              key={i}
-              icon={item.icon}
-              title={item.title}
-              description={item.desc}
-              index={i}
-            />
-          ))}
-        </div>
+    <main className="relative min-h-screen overflow-hidden bg-white">
+      {/* Immersive Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
+        <FloatingOrb color="bg-emerald-100" delay={2} className="bottom-[-10%] left-[10%]" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
       </div>
 
-      {/* Financial Empowerment Journey - refined card treatment */}
-      <div className="mt-20 w-full max-w-7xl px-4 sm:mt-24 lg:mt-32 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <div className="mx-auto mb-12 max-w-3xl text-center sm:mb-16 lg:mb-20">
-          <div className="mb-5 flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-              Your Journey
-            </div>
-          </div>
-          <h2 className="mb-5 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-5xl lg:text-6xl">
-            Your Financial <span className="bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">Empowerment Journey</span>
-          </h2>
-          <p className="text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl">
-            Awareness → Empowerment → Growth — a smarter way to handle money
-            you&apos;ve already earned.
-          </p>
-        </div>
+      <section className="relative z-10 py-12 lg:py-20">
+        <UI />
+        
+        <ComplianceStrip
+          items={complianceItems}
+          className="my-16 border-y border-slate-200/60 bg-white/40 py-8 backdrop-blur-md"
+        />
 
-        {/* Enhanced journey cards with step indicators */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 lg:gap-6">
-          {rolloutPlans.map((item, j) => (
+        {/* Why Employees Section */}
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
+          <div className="mb-24 text-center">
             <motion.div
-              key={j}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: j * 0.1 }}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-6 shadow-lg shadow-slate-900/5 transition-all duration-300 hover:border-emerald-200/80 hover:shadow-xl hover:shadow-emerald-500/10 sm:p-8"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
             >
-              {/* Step number badge */}
-              <div className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-emerald-50 to-green-50 text-xs font-bold text-emerald-700 ring-1 ring-emerald-500/10">
-                {j + 1}
-              </div>
-
-              {/* Subtle gradient overlay on hover */}
-              <div className="absolute inset-0 bg-linear-to-br from-emerald-50/0 via-green-50/0 to-emerald-50/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-
-              {/* Icon with enhanced styling */}
-              <div className="relative z-10 mb-5 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-emerald-50 to-green-50 shadow-sm ring-1 ring-emerald-500/10 transition-transform duration-300 group-hover:scale-110">
-                <item.icon className="h-7 w-7 text-emerald-600" strokeWidth={2} />
-              </div>
-
-              {/* Content */}
-              <h3 className="relative z-10 mb-3 text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
-                {item.title}
-              </h3>
-              <p className="relative z-10 text-sm leading-relaxed text-slate-600 sm:text-base">
-                {item.desc}
-              </p>
-
-              {/* Bottom accent line */}
-              <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-emerald-500 to-green-500 transition-all duration-300 group-hover:w-full"></div>
+              <Sparkles size={14} className="animate-pulse" />
+              <span>For Employees</span>
             </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Versatility section - refined header */}
-      <div className="mt-16 w-full max-w-7xl px-2 sm:mt-20 lg:mt-24 sm:px-4 lg:px-6">
-        <div className="mb-10 text-center sm:mb-12 lg:mb-16 lg:text-left">
-          <div className="mb-5 flex justify-center lg:justify-start">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-              Versatile Solution
-            </div>
+            <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+              Why employees choose <span className="text-green-600">Eaziwage</span>
+            </h2>
+            <p className="mt-6 mx-auto max-w-3xl text-xl text-slate-500">
+              A practical well-being lever that pays for itself.
+            </p>
           </div>
-          <h2 className="mb-4 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:mb-5 sm:text-5xl lg:text-6xl">
-            Versatility across{" "}
-            <span className="bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">jobs & sectors</span>
-          </h2>
-          <p className="mx-auto text-sm text-slate-600 sm:text-base lg:mx-0 lg:text-lg">
-            Real Kenyan contexts: retail, banking, hospitality, logistics,
-            schools, factories and more.
-          </p>
+
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {reasons.map((item, i) => (
+              <TiltFeatureCard
+                key={i}
+                icon={item.icon}
+                title={item.title}
+                desc={item.desc}
+                index={i}
+              />
+            ))}
+          </div>
         </div>
-        <div className="mt-4 sm:mt-6">
+
+        {/* Empowerment Journey */}
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
+          <div className="mb-24 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              Your Journey
+            </motion.div>
+            <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+              Your Financial <span className="text-green-600">Empowerment Journey</span>
+            </h2>
+            <p className="mt-6 mx-auto max-w-3xl text-xl text-slate-500">
+              Awareness → Empowerment → Growth — a smarter way to handle money
+              you&apos;ve already earned.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {rolloutPlans.map((item, j) => (
+              <TiltFeatureCard
+                key={j}
+                icon={item.icon}
+                title={item.title}
+                desc={item.desc}
+                index={j}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Versatility Section */}
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
+          <div className="mb-16 text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+              Versatile Solution
+            </motion.div>
+            <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+              Versatility across <span className="text-green-600">jobs & sectors</span>
+            </h2>
+            <p className="mt-6 text-xl text-slate-500">
+              Real Kenyan contexts: retail, banking, hospitality, logistics, schools, factories and more.
+            </p>
+          </div>
           <AppleCardsCarouselDemo />
         </div>
-      </div>
 
-      {/* FAQs - refined accordion with enhanced styling */}
-      <div className="mx-auto w-full max-w-4xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
-        {/* Section header */}
-        <div className="mb-12 text-center sm:mb-16">
-          <div className="mb-5 flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-              Support
-            </div>
-          </div>
-          <h2 className="font-serif text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-            Frequently Asked Questions
-          </h2>
-        </div>
-
-        {/* Enhanced FAQ accordion */}
-        <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white shadow-xl shadow-slate-900/5 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/5">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="border-b border-slate-100 last:border-none transition-colors duration-200 hover:bg-slate-50/50"
+        {/* FAQ Section */}
+        <div className="mx-auto max-w-4xl px-6 py-32 lg:py-40">
+          <div className="mb-24 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
             >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="group flex w-full items-center justify-between gap-4 p-5 text-left transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:p-6"
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              Support
+            </motion.div>
+            <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+              Frequently Asked <span className="text-green-600">Questions</span>
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className={`group relative overflow-hidden rounded-4xl border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-all duration-500 ${
+                  openIndex === index ? "shadow-2xl shadow-green-500/10 ring-1 ring-green-500/20" : "hover:bg-white"
+                }`}
               >
-                <span className="text-base font-semibold tracking-tight text-slate-900 transition-colors duration-200 group-hover:text-emerald-700 sm:text-lg">
-                  {faq.question}
-                </span>
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 transition-all duration-300 group-hover:bg-emerald-50 ${openIndex === index ? "bg-emerald-50" : ""}`}>
-                  <ArrowRight
-                    className={`h-4 w-4 text-slate-500 transition-all duration-300 ${openIndex === index ? "rotate-90 text-emerald-600" : "group-hover:text-emerald-600"}`}
-                    strokeWidth={2.5}
-                  />
-                </div>
-              </button>
-              <AnimatePresence>
-                {openIndex === index && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="overflow-hidden"
-                  >
-                    <div className="border-t border-slate-100 bg-linear-to-b from-slate-50/50 to-transparent px-5 pb-6 pt-4 sm:px-6">
-                      <p className="text-sm leading-relaxed text-slate-600 sm:text-base sm:leading-relaxed">
-                        {faq.answer}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
+                <button
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  className="flex w-full items-center justify-between text-left"
+                >
+                  <span className={`text-xl font-bold tracking-tight transition-colors duration-300 ${openIndex === index ? "text-green-700" : "text-slate-900"}`}>
+                    {faq.question}
+                  </span>
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-500 ${
+                    openIndex === index ? "bg-green-600 text-white rotate-90" : "bg-slate-100 text-slate-500 group-hover:bg-green-500 group-hover:text-white"
+                  }`}>
+                    <ArrowRight size={20} />
+                  </div>
+                </button>
+                <AnimatePresence>
+                  {openIndex === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <div className="pt-8 mt-8 border-t border-slate-100">
+                        <p className="text-lg leading-relaxed text-slate-500">
+                          {faq.answer}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 }

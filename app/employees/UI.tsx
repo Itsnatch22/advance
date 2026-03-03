@@ -102,7 +102,7 @@ export default function UI() {
                         Available to withdraw
                       </div>
                       <div className="mt-1 text-3xl font-bold text-white">
-                        USD 96.90
+                        KES 12,597
                       </div>
                     </div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
