@@ -116,7 +116,7 @@ export default function Hero() {
                                 
                                 <motion.button
                                     type="submit"
-                                    target="_blank"
+                                    onClick={() => window.open("https://app.eaziwage.com/register", "_blank")}
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-green-600 px-8 py-4 font-bold text-white shadow-xl shadow-green-500/20 transition-all duration-300 hover:bg-green-500"
