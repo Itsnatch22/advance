@@ -1,30 +1,83 @@
 "use client";
-import { motion } from "framer-motion";
-import { ShieldCheck, Cpu, Users, Eye } from "lucide-react";
-import gsap from "gsap";
-import * as React from "react";
+
+import React, { useRef, MouseEvent, useEffect } from "react";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { ShieldCheck, Cpu, Users, Eye, Sparkles } from "lucide-react";
 import { Team } from "@/components/Team";
 import Image from "next/image";
 import Typed from "typed.js";
 
+const FloatingOrb = ({ color, delay, className }: { color: string; delay: number; className?: string }) => (
+  <motion.div
+    animate={{
+      y: [0, -40, 0],
+      x: [0, 20, 0],
+      scale: [1, 1.1, 1],
+    }}
+    transition={{
+      duration: 10 + Math.random() * 5,
+      repeat: Infinity,
+      delay,
+      ease: "easeInOut",
+    }}
+    className={`absolute h-125 w-125 rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+  />
+);
+
+const TiltAboutCard = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+
+  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    x.set((event.clientX - rect.left) / rect.width - 0.5);
+    y.set((event.clientY - rect.top) / rect.height - 0.5);
+    mouseX.set(event.clientX - rect.left);
+    mouseY.set(event.clientY - rect.top);
+  }
+
+  return (
+    <motion.div style={{ perspective: 1000 }} className="h-full">
+      <motion.div
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => { x.set(0); y.set(0); }}
+        style={{ rotateX, rotateY }}
+        className={`group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-10 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10 ${className}`}
+      >
+        <motion.div
+          style={{
+            background: useTransform(
+              [mouseX, mouseY],
+              ([mx, my]) => `radial-gradient(400px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
+            ),
+          }}
+          className="absolute inset-0 pointer-events-none rounded-[2.5rem]"
+        />
+        {children}
+        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
+      </motion.div>
+    </motion.div>
+  );
+};
+
 export default function AboutPage() {
-  const storyRef = React.useRef<HTMLDivElement>(null);
-  const valuesRef = React.useRef<HTMLDivElement>(null);
-  const typedRef = React.useRef<HTMLSpanElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const typedRef = useRef<HTMLSpanElement>(null);
 
-  React.useEffect(() => {
-    gsap.fromTo(
-      storyRef.current,
-      { opacity: 0, y: -50 },
-      { opacity: 1, y: 0, duration: 1.2, ease: "power2.out" }
-    );
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
 
-    gsap.fromTo(
-      valuesRef.current,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1.2, ease: "power2.out", delay: 0.3 }
-    );
+  const yHero = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
+  useEffect(() => {
     const typed = new Typed(typedRef.current, {
       strings: ["Heartbeat", "Pulse", "Essence"],
       smartBackspace: true,
@@ -38,210 +91,218 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50/30">
-      {/* ===== Hero ===== */}
-      {/* Enhanced: refined gradient overlay, improved spacing system, better contrast */}
-      <section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
-        {/* Refined gradient background with layered depth */}
-        <div className="absolute inset-0 bg-linear-to-br from-emerald-50/60 via-green-50/40 to-transparent"></div>
-        <div className="absolute right-0 top-0 h-125 w-125 rounded-full bg-linear-to-br from-emerald-100/30 to-green-100/20 blur-3xl"></div>
+    <main ref={containerRef} className="relative min-h-screen overflow-hidden bg-white">
+      {/* Immersive Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
+        <FloatingOrb color="bg-emerald-100" delay={2} className="top-[40%] right-[10%]" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
+      </div>
 
-        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-16 lg:grid-cols-2 lg:gap-20">
-          {/* Left: Text - improved typography scale and spacing */}
-          <div className="text-left">
+      {/* ===== Hero ===== */}
+      <motion.section 
+        style={{ y: yHero, opacity: opacityHero }}
+        className="relative overflow-hidden px-6 pt-32 pb-24 lg:pt-48 lg:pb-40"
+      >
+        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-20 lg:grid-cols-2 lg:gap-32">
+          <div className="text-left space-y-8">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+            >
+              <Sparkles size={14} className="animate-pulse" />
+              <span>Who We Are</span>
+            </motion.div>
+
             <motion.h1
-              className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-500 bg-clip-text font-serif text-5xl font-bold leading-[1.1] tracking-tight text-transparent sm:text-6xl lg:text-7xl"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="font-serif text-5xl font-bold leading-[0.95] tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
             >
-              The <span ref={typedRef} className="inline-block min-w-50" />
-              of
+              The <span ref={typedRef} className="text-green-600 inline-block min-w-50" />
               <br /> 
-              Financial Freedom
+              of Financial Freedom
             </motion.h1>
 
-            {/* Enhanced subheading with better contrast and spacing */}
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-slate-600 sm:text-xl sm:leading-relaxed">
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 1 }}
+              className="max-w-xl text-xl leading-relaxed text-slate-500"
+            >
               Empowering Africa&apos;s workforce to access what they&apos;ve
               earned - fairly, instantly, and securely.
-            </p>
+            </motion.p>
           </div>
 
-          {/* Right: Image - added card treatment with shadow depth */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1 }}
-            className="flex justify-center lg:justify-end"
+            initial={{ opacity: 0, scale: 0.9, rotate: 5 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="relative"
           >
-            <div className="relative">
-              {/* Subtle glow effect behind image */}
-              <div className="absolute -inset-4 rounded-3xl bg-linear-to-br from-emerald-100/50 to-green-100/30 blur-2xl"></div>
-              <Image
-                width={550}
-                height={400}
-                src="/about/about.png"
-                alt="Financial freedom illustration"
-                className="relative w-full max-w-md rounded-2xl shadow-2xl shadow-emerald-500/10 ring-1 ring-slate-900/5"
-              />
-            </div>
+            <div className="absolute -inset-10 rounded-full bg-green-500/10 blur-3xl" />
+            <Image
+              width={600}
+              height={450}
+              src="/about/about.png"
+              alt="Financial freedom illustration"
+              className="relative w-full max-w-lg rounded-[2.5rem] shadow-2xl shadow-slate-900/10 ring-1 ring-slate-200"
+            />
+            {/* Floating accent card */}
+            <motion.div
+              animate={{ y: [0, -20, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-8 -left-8 rounded-3xl border border-white/20 bg-white/40 p-6 backdrop-blur-2xl shadow-xl hidden sm:block"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
+                <p className="text-sm font-bold text-slate-900">EaziWage ecosystem</p>
+              </div>
+            </motion.div>
           </motion.div>
+        </div>
+      </motion.section>
 
-          {/* Mission card - elevated card design with better hierarchy */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1 }}
-            viewport={{ once: true }}
-            className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-lg shadow-slate-900/5 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/5 lg:p-10"
-          >
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-700">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+      {/* Mission & Vision Grid */}
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+          <TiltAboutCard>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
               Our Mission
             </div>
-            <h2 className="mb-5 font-serif text-3xl font-bold tracking-tight text-slate-900 lg:text-4xl">
+            <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-slate-900 lg:text-5xl">
               Empowering Financial Freedom
             </h2>
-            <p className="text-base leading-relaxed text-slate-600 lg:text-lg">
+            <p className="text-lg leading-relaxed text-slate-500">
               To empower employees and employers with a safe, transparent
               platform that provides early access to earned wages — reducing
               financial anxiety while strengthening workplace trust and
               productivity.
             </p>
-          </motion.div>
+          </TiltAboutCard>
 
-          {/* Vision card - matching elevated treatment */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1 }}
-            viewport={{ once: true }}
-            className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-lg shadow-slate-900/5 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/5 lg:p-10"
-          >
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-700">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+          <TiltAboutCard>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
               Our Vision
             </div>
-            <h2 className="mb-5 font-serif text-3xl font-bold tracking-tight text-slate-900 lg:text-4xl">
+            <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-slate-900 lg:text-5xl">
               Africa&apos;s Trusted Partner
             </h2>
-            <p className="text-base leading-relaxed text-slate-600 lg:text-lg">
+            <p className="text-lg leading-relaxed text-slate-500">
               To be Africa&apos;s most trusted workplace finance partner —
               fostering financial wellness through innovation, transparency, and
               secure technology.
             </p>
-          </motion.div>
+          </TiltAboutCard>
         </div>
       </section>
 
       {/* ===== Our Story ===== */}
-      {/* Enhanced: layered card on subtle gradient, improved readability */}
-      <section className="relative bg-linear-to-b from-slate-50 to-white px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-        <div className="relative z-10 mx-auto max-w-4xl">
-          {/* Section badge */}
-          <div className="mb-6 flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+      <section className="relative overflow-hidden py-32">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="mb-16 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
               Our Journey
-            </div>
+            </motion.div>
+            <h2 className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl">
+              Our <span className="italic text-green-600">Story</span>
+            </h2>
           </div>
 
-          <h2 className="mb-8 text-center font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-            Our Story
-          </h2>
-
-          {/* Story content in elevated card */}
-          <div className="space-y-6 rounded-3xl border border-slate-200/60 bg-white p-8 shadow-xl shadow-slate-900/5 sm:p-10 lg:p-12">
-            <p className="text-lg leading-relaxed text-slate-700 lg:text-xl lg:leading-relaxed">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative space-y-8 rounded-[3rem] border border-slate-200/60 bg-white p-12 shadow-2xl shadow-slate-900/5 backdrop-blur-3xl sm:p-16"
+          >
+            <p className="font-serif text-2xl leading-relaxed text-slate-700 italic">
               EaziWage was born from a simple truth: thousands of workers across
               Kenya and Africa face a financial gap before payday. Many turn to
               costly mobile loans — a cycle that creates stress, debt, and lost
               productivity.
             </p>
 
-            <p className="text-lg leading-relaxed text-slate-700 lg:text-xl lg:leading-relaxed">
+            <div className="h-px w-24 bg-green-500/30" />
+
+            <p className="text-xl leading-relaxed text-slate-500">
               We built EaziWage to break that cycle. Our team of engineers and
               finance experts joined forces to craft a secure, scalable, and
               inclusive system that gives employees control over their earned
               income — backed by trusted banks and mobile money platforms.
             </p>
-          </div>
+            
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-64 w-64 rounded-full bg-green-500/5 blur-3xl" />
+          </motion.div>
         </div>
       </section>
 
       {/* ===== Core Values ===== */}
-      {/* Enhanced: refined card system, better hover states, improved visual hierarchy */}
-      <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-        {/* Section badge */}
-        <div className="mb-6 flex justify-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-32 lg:px-8">
+        <div className="mb-24 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
             What Drives Us
-          </div>
+          </motion.div>
+          <h2 className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl">
+            Our Core <span className="italic text-green-600">Values</span>
+          </h2>
         </div>
 
-        <h2 className="mb-16 text-center font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-          Our Core Values
-        </h2>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
               icon: ShieldCheck,
               title: "Integrity",
               text: "We uphold security and transparency in every transaction.",
-              color: "emerald",
             },
             {
               icon: Cpu,
               title: "Innovation",
               text: "We harness technology to empower people and scale access.",
-              color: "green",
             },
             {
               icon: Users,
               title: "Accessibility",
               text: "Designed for everyone — employers, employees, and partners alike.",
-              color: "teal",
             },
             {
               icon: Eye,
               title: "Transparency",
               text: "Clarity and visibility at every financial touchpoint.",
-              color: "emerald",
             },
           ].map(({ icon: Icon, title, text }) => (
-            <motion.div
-              key={title}
-              whileHover={{ y: -8, scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="group relative flex flex-col items-start overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-8 shadow-lg shadow-slate-900/5 transition-all duration-300 hover:border-emerald-200/80 hover:shadow-2xl hover:shadow-emerald-500/10"
-            >
-              {/* Subtle gradient overlay on hover */}
-              <div className="absolute inset-0 bg-linear-to-br from-emerald-50/0 via-green-50/0 to-emerald-50/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-
-              {/* Icon with accent background */}
-              <div className="relative z-10 mb-5 inline-flex rounded-xl bg-linear-to-br from-emerald-50 to-green-50 p-3 ring-1 ring-emerald-500/10 transition-transform duration-300 group-hover:scale-110">
-                <Icon className="h-7 w-7 text-emerald-600" strokeWidth={2} />
+            <TiltAboutCard key={title} className="p-12 text-center items-center flex flex-col">
+              <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
+                <Icon className="h-8 w-8" strokeWidth={1.5} />
               </div>
-
-              {/* Content */}
-              <h3 className="relative z-10 mb-3 text-xl font-bold tracking-tight text-slate-900">
+              <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 group-hover:text-green-700 transition-colors">
                 {title}
               </h3>
-              <p className="relative z-10 text-sm leading-relaxed text-slate-600">
+              <p className="text-base leading-relaxed text-slate-500">
                 {text}
               </p>
-
-              {/* Bottom accent line */}
-              <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-emerald-500 to-green-500 transition-all duration-300 group-hover:w-full"></div>
-            </motion.div>
+            </TiltAboutCard>
           ))}
         </div>
       </section>
 
       <Team />
-    </div>
+    </main>
   );
 }

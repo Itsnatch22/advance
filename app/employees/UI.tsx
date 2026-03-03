@@ -38,7 +38,7 @@ export default function UI() {
           {/* Enhanced CTA button with premium styling */}
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
-              href="/employee-dashboard"
+              href="https://app.eaziwage.com/register"
               className="group inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-6 py-3.5 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/30"
             >
               Get started 

@@ -1,9 +1,7 @@
 'use client';
-import { motion } from 'framer-motion';
-import { Zap, Users, Sparkles, Banknote, Star, Check,
-    Wallet, TrendingUp, ChevronRight } 
-from 'lucide-react'
-import { useState } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { Zap, Users, Sparkles, Banknote, Star, Check, Wallet, TrendingUp, ChevronRight } from 'lucide-react';
+import React, { useState, useRef, MouseEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
 const heroStats = [
@@ -16,181 +14,230 @@ const heroStats = [
 export default function Hero() {
     const [email, setEmail] = useState("");
     const router = useRouter();
-    const [ watch, handleSetWatch ] = useState(false);
-    const handleContinue = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    router.push(`https://app.eaziwage.com/register?email=${encodeURIComponent(email)}`);
-  };
+    const containerRef = useRef<HTMLElement>(null);
+    
+    // Scroll parallax for phone mockup
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end start"]
+    });
+    
+    const yPhone = useTransform(scrollYProgress, [0, 1], [0, -150]);
+    const rotatePhone = useTransform(scrollYProgress, [0, 1], [0, -5]);
+    const opacityPhone = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-    const handleVideoModal = () => {
-        handleSetWatch(true);
-        console.log('Video player not implemented yet')
+    // Mouse parallax for the mockup
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+
+    const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), { stiffness: 100, damping: 30 });
+    const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), { stiffness: 100, damping: 30 });
+
+    function onMouseMove(event: MouseEvent<HTMLDivElement>) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        x.set((event.clientX - rect.left) / rect.width - 0.5);
+        y.set((event.clientY - rect.top) / rect.height - 0.5);
+        mouseX.set(event.clientX - rect.left);
+        mouseY.set(event.clientY - rect.top);
     }
-  return (
-    <section className='relative pt-20 pb-16 sm:pt-24 sm:pb-20 md:pt-28 md:pb-24 lg:pt-40 lg:pb-32 overflow-hidden'>
-        {/* Background effects */}
-        <div className="absolute inset-0 gradient-mesh" />
-        <div className="absolute inset-0 bg-grid" />
-        <div className="absolute top-10 sm:top-20 right-0 w-100 sm:w-125 lg:w-150 h-100 sm:h-125 lg:h-150 bg-primary/10 rounded-full blur-[100px] sm:blur-[120px] lg:blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-87.5 sm:w-112.5 lg:w-125 h-87.5 sm:h-112.5 lg:h-125 bg-emerald-500/10 rounded-full blur-[100px] sm:blur-[120px] lg:blur-[150px]" />
 
-        <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center'>
-                {/* Left Column - Content */}
-                <div className='stagger-content'>
-                    {/* Badge */}
-                    <div className='inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-emerald-400 ring-1 ring-white/20 backdrop-blur-sm mb-6 sm:mb-8'>
-                        <Sparkles className='w-3 h-3 sm:w-4 sm:h-4' />
-                        <span>Financial Freedom for Everyone</span>
-                    </div>
+    const handleContinue = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email) return;
+        router.push(`https://app.eaziwage.com/register?email=${encodeURIComponent(email)}`);
+    };
 
-                    {/* Heading */}
-                    <motion.h1
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 1, delay: 0.2 }}
-                    className='font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] tracking-tight text-slate-900 mb-4 sm:mb-6'>
-                        Your Money.
-                        <br/>
-                        <span className='text-green-600'>Your Timeline.</span>
-                    </motion.h1>
+    return (
+        <section 
+            ref={containerRef}
+            className='relative pt-32 pb-24 lg:pt-48 lg:pb-40 overflow-hidden bg-white'
+        >
+            {/* Architectural Background */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-0 right-[-10%] w-200 h-200 bg-green-50/50 rounded-full blur-[120px]" />
+                <div className="absolute bottom-[-20%] left-[-10%] w-150 h-150 bg-emerald-50/50 rounded-full blur-[120px]" />
+                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
+            </div>
 
-                    {/* Description */}
-                    <motion.p
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 1, delay: 0.2 }}
-                    className="text-base sm:text-lg md:text-xl text-slate-600 max-w-xl leading-relaxed mb-8 sm:mb-10">
-                        Access up to 60% of your earned wages instantly. No loans, no interest, no waiting for payday. 
-                        Just your hard-earned money when you need it most.
-                    </motion.p>
-
-                    <motion.form
-                    onSubmit={handleContinue}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    className="mt-8 w-full max-w-xl"
-                    >
-                    <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-2 backdrop-blur-md transition-all duration-300 focus-within:border-emerald-400/50 focus-within:bg-white/10 focus-within:ring-2 focus-within:ring-emerald-400/20 sm:flex-row">
-                        <input
-                        type="email"
-                        placeholder="Enter your email address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="flex-1 rounded-xl border-0 bg-white/90 px-5 py-3.5 text-base text-slate-900 placeholder:text-slate-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 sm:text-sm"
-                        />
-                        
-                        <motion.button
-                        type="submit"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="group flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/40"
-                        >
-                        <span>Continue</span>
-                        <ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                        </motion.button>
-                    </div>
-                    </motion.form>
-
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mt-4 sm:mt-6 lg:mt-8">
-                        {heroStats.map((stat, i) => (
-                        <motion.div 
-                            key={i} 
+            <div className='relative max-w-7xl mx-auto px-6 lg:px-8'>
+                <div className='grid lg:grid-cols-2 gap-16 lg:gap-24 items-center'>
+                    
+                    {/* Content Column */}
+                    <div className='relative z-10'>
+                        <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.3 + (i * 0.1) }}
-                            className="text-center sm:text-left"
+                            transition={{ duration: 0.6 }}
+                            className='inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600 mb-8'
                         >
-                            <div className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 mb-1">
-                                <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                                <span className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</span>
-                            </div>
-                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{stat.label}</p>
+                            <Sparkles className='w-4 h-4' />
+                            <span>Financial Freedom for Everyone</span>
                         </motion.div>
-                        ))}
-                    </div>
-                </div>
 
-                {/* Right Column - Phone Mockup */}
-                <div className="relative mt-12 lg:mt-0">
-                    {/* Background glow effect */}
-                    <div className="absolute -top-6 sm:-top-10 -left-6 sm:-left-10 w-full h-full bg-linear-to-br from-primary/20 to-emerald-500/20 rounded-4xl sm:rounded-[3rem] transform rotate-6 blur-sm" />
-                    
-                    {/* Phone container */}
-                    <div className="relative bg-slate-900 rounded-[1.75rem] sm:rounded-[2.5rem] p-2.5 sm:p-4 shadow-2xl shadow-slate-900/50 glow-primary">
-                        <div className="bg-white dark:bg-slate-800 rounded-3xl sm:rounded-4xl overflow-hidden">
-                            {/* Phone screen header */}
-                            <div className="bg-linear-to-br from-primary via-emerald-500 to-teal-600 p-5 sm:p-6 md:p-8 text-white">
-                                <div className="flex justify-between items-start mb-6 sm:mb-8">
-                                    <div>
-                                        <p className="text-xs sm:text-sm opacity-80 mb-1">Available Balance</p>
-                                        <p className="text-2xl sm:text-3xl md:text-4xl font-bold">KES 12,450</p>
-                                    </div>
-                                    <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl flex items-center justify-center">
-                                        <Wallet className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
-                                    </div>
-                                </div>
-                                <div className="bg-white/15 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3.5 sm:p-4 md:p-5">
-                                    <div className="flex justify-between text-xs sm:text-sm mb-2 sm:mb-3">
-                                        <span className="opacity-80">Earned this month</span>
-                                        <span className="font-bold">KSH 24,708.66</span>
-                                    </div>
-                                    <div className="w-full bg-white/20 rounded-full h-2 sm:h-3">
-                                        <div className="bg-white rounded-full h-2 sm:h-3 w-1/2 shadow-lg" />
-                                    </div>
-                                    <p className="text-[10px] sm:text-xs mt-2 sm:mt-3 opacity-70">60% available for advance</p>
-                                </div>
+                        <motion.h1
+                            initial={{ opacity: 0, x: -30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className='font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[0.95] tracking-tight text-slate-900 mb-8'
+                        >
+                            Your Money.
+                            <br/>
+                            <span className='text-green-600'>Your Timeline.</span>
+                        </motion.h1>
+
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="text-lg md:text-xl text-slate-500 max-w-xl leading-relaxed mb-12"
+                        >
+                            Access up to 60% of your earned wages instantly. No loans, no interest, no waiting for payday. 
+                            Just your hard-earned money when you need it most.
+                        </motion.p>
+
+                        <motion.form
+                            onSubmit={handleContinue}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.4 }}
+                            className="relative w-full max-w-xl mb-16"
+                        >
+                            <div className="group relative flex flex-col gap-3 rounded-2xl border border-slate-200/60 bg-white/50 p-2 backdrop-blur-xl transition-all duration-500 focus-within:border-green-500/30 focus-within:shadow-2xl focus-within:shadow-green-500/10 sm:flex-row">
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email address"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="flex-1 rounded-xl border-0 bg-transparent px-5 py-4 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none sm:text-sm"
+                                />
+                                
+                                <motion.button
+                                    type="submit"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-green-600 px-8 py-4 font-bold text-white shadow-xl shadow-green-500/20 transition-all duration-300 hover:bg-green-500"
+                                >
+                                    <span className="relative z-10">Continue</span>
+                                    <ChevronRight className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                                    <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                                </motion.button>
                             </div>
-                            
-                            {/* Phone screen content */}
-                            <div className="p-4 sm:p-5 md:p-6 space-y-3 sm:space-y-4 bg-slate-50 dark:bg-slate-900">
-                                <div className="flex items-center justify-between p-3.5 sm:p-4 md:p-5 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-                                    <div className="flex items-center gap-2.5 sm:gap-3 md:gap-4">
-                                        <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-primary/10 rounded-lg sm:rounded-xl flex items-center justify-center">
-                                            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-primary" />
-                                        </div>
+                        </motion.form>
+
+                        {/* Stats Row */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 pt-8 border-t border-slate-100">
+                            {heroStats.map((stat, i) => (
+                                <motion.div 
+                                    key={i} 
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.6, delay: 0.6 + (i * 0.1) }}
+                                >
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <stat.icon className="w-4 h-4 text-green-600" />
+                                        <span className="text-2xl font-black tracking-tight text-slate-900">{stat.value}</span>
+                                    </div>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{stat.label}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Visual Column */}
+                    <motion.div 
+                        onMouseMove={onMouseMove}
+                        onMouseLeave={() => { x.set(0); y.set(0); }}
+                        style={{ y: yPhone, rotate: rotatePhone, opacity: opacityPhone }}
+                        className="relative perspective-1000 hidden lg:block"
+                    >
+                        {/* 3D Phone Frame */}
+                        <motion.div 
+                            style={{ rotateX, rotateY }}
+                            className="relative z-20 mx-auto w-full max-w-85 rounded-[3rem] border-12 border-slate-900 bg-slate-900 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)]"
+                        >
+                            <div className="relative overflow-hidden rounded-[2.2rem] bg-slate-50">
+                                {/* App Interface */}
+                                <div className="bg-linear-to-br from-green-600 to-emerald-700 p-8 text-white">
+                                    <div className="flex justify-between items-start mb-8">
                                         <div>
-                                            <p className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">Quick Advance</p>
-                                            <p className="text-xs sm:text-sm text-slate-500">Get funds in seconds</p>
+                                            <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-1">Available Balance</p>
+                                            <p className="text-3xl font-bold">KES 12,450</p>
+                                        </div>
+                                        <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
+                                            <Wallet className="w-6 h-6" />
                                         </div>
                                     </div>
-                                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
+                                    <div className="rounded-2xl bg-white/10 backdrop-blur-md p-5 border border-white/10">
+                                        <div className="flex justify-between text-xs font-bold mb-3">
+                                            <span className="opacity-70">Earned this month</span>
+                                            <span>KSH 24,708.66</span>
+                                        </div>
+                                        <div className="h-2 w-full bg-white/20 rounded-full overflow-hidden">
+                                            <motion.div 
+                                                initial={{ width: 0 }}
+                                                animate={{ width: "60%" }}
+                                                transition={{ duration: 1.5, ease: "easeOut" }}
+                                                className="h-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]" 
+                                            />
+                                        </div>
+                                        <p className="text-[10px] font-bold uppercase tracking-tighter mt-3 opacity-50 text-center">60% available for advance</p>
+                                    </div>
                                 </div>
                                 
-                                <div className="flex items-center justify-between p-3.5 sm:p-4 md:p-5 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-                                    <div className="flex items-center gap-2.5 sm:gap-3 md:gap-4">
-                                        <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg sm:rounded-xl flex items-center justify-center">
-                                            <Check className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-emerald-600" />
+                                <div className="p-6 space-y-4">
+                                    <div className="flex items-center justify-between p-4 bg-white rounded-2xl shadow-sm border border-slate-100">
+                                        <div className="flex items-center gap-4">
+                                            <div className="h-10 w-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600">
+                                                <TrendingUp className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-900">Quick Advance</p>
+                                                <p className="text-xs text-slate-400">Instant Disbursement</p>
+                                            </div>
+                                        </div>
+                                        <ChevronRight className="w-4 h-4 text-slate-300" />
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-4 p-4 bg-green-50/50 rounded-2xl border border-green-100">
+                                        <div className="h-10 w-10 rounded-xl bg-green-600 flex items-center justify-center text-white">
+                                            <Check className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <p className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">KSH 4,961.34 Sent</p>
-                                            <p className="text-xs sm:text-sm text-slate-500">To Mobile Wallet · 2 sec ago</p>
+                                            <p className="text-sm font-bold text-slate-900">KSH 4,961.34 Sent</p>
+                                            <p className="text-xs text-green-600 font-bold">Transfer Complete · 2s ago</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    {/* Floating card - Hidden on mobile, visible on larger screens */}
-                    <div className="hidden md:block absolute -right-4 lg:-right-8 top-1/3 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-2xl p-3.5 sm:p-4 md:p-5 animate-float border border-slate-100 dark:border-slate-700">
-                        <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg sm:rounded-xl flex items-center justify-center">
-                                <Check className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+                        </motion.div>
+
+                        {/* Floating Notifications */}
+                        <motion.div 
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute -right-12 top-1/4 z-30 hidden xl:block"
+                        >
+                            <div className="rounded-2xl border border-slate-200/60 bg-white/80 p-5 backdrop-blur-xl shadow-2xl shadow-slate-900/10">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-10 w-10 rounded-xl bg-green-500 flex items-center justify-center text-white shadow-lg shadow-green-500/20">
+                                        <Check className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-slate-900">Transfer Complete</p>
+                                        <p className="text-xs font-bold text-green-600">1.8 seconds</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white whitespace-nowrap">Transfer Complete</p>
-                                <p className="text-xs sm:text-sm text-slate-500">1.8 seconds</p>
-                            </div>
-                        </div>
-                    </div>
+                        </motion.div>
+
+                        {/* Ambient decorative elements */}
+                        <div className="absolute -z-10 -bottom-10 -left-10 h-64 w-64 rounded-full bg-green-500/10 blur-3xl" />
+                    </motion.div>
                 </div>
             </div>
-        </div>
-    </section>
-  )
+        </section>
+    );
 }

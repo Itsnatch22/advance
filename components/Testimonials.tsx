@@ -1,133 +1,154 @@
 "use client";
+import React, { useRef, useState, MouseEvent } from "react";
 import { Icons } from "@/constants";
 import { testimonials } from "@/constants/data";
-import { motion, easeOut } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.15,
-    },
-  },
-};
+const TestimonialCard = ({ testimonial }: { testimonial: any }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
 
-const item = {
-  hidden: { opacity: 0, y: 40 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: easeOut },
-  },
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+
+  function onMouseMove(event: MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseXPos = event.clientX - rect.left;
+    const mouseYPos = event.clientY - rect.top;
+
+    x.set(mouseXPos / width - 0.5);
+    y.set(mouseYPos / height - 0.5);
+
+    mouseX.set(mouseXPos);
+    mouseY.set(mouseYPos);
+  }
+
+  function onMouseLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  return (
+    <motion.div
+      style={{
+        perspective: 1000,
+      }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="h-full"
+    >
+      <motion.div
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        style={{
+          rotateX,
+          rotateY,
+        }}
+        className="group relative h-full w-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white/40 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+      >
+        {/* spotlight effect */}
+        <motion.div
+          style={{
+            background: useTransform(
+              [mouseX, mouseY],
+              ([mx, my]) => `radial-gradient(450px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.08), transparent 80%)`
+            ),
+          }}
+          className="absolute inset-0 pointer-events-none"
+        />
+
+        <div className="relative z-10 flex h-full flex-col">
+          {/* stars reveal */}
+          <div className="mb-6 flex items-center gap-1.5">
+            {[...Array(testimonial.rating)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ delay: 0.1 * i, type: "spring", stiffness: 200 }}
+              >
+                <Icons.Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              </motion.div>
+            ))}
+          </div>
+
+          <p className="mb-8 font-serif text-lg leading-relaxed text-slate-700 italic">
+            "{testimonial.quote}"
+          </p>
+
+          <div className="mt-auto flex items-center gap-4">
+            <div className="relative h-14 w-14 overflow-hidden rounded-2xl bg-linear-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center font-bold text-green-700 text-xl border border-green-500/10 shadow-inner">
+               <span className="relative z-10 group-hover:scale-110 transition-transform duration-500">{testimonial.avatar}</span>
+               <div className="absolute inset-0 bg-white/40 blur-sm translate-y-full group-hover:translate-y-0 transition-transform duration-700" />
+            </div>
+
+            <div>
+              <p className="font-bold tracking-tight text-slate-900 group-hover:text-green-700 transition-colors">
+                {testimonial.author}
+              </p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                {testimonial.role} • {testimonial.location}
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* subtle glass border highlight */}
+        <div className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/20 group-hover:ring-green-500/20 transition-all duration-500" />
+      </motion.div>
+    </motion.div>
+  );
 };
 
 export default function Testimonials() {
   return (
-    <section className="relative py-24 lg:py-32 bg-white overflow-hidden">
-      {/* ambient background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-1/3 w-125 h-125 bg-green-100/40 blur-[120px] rounded-full" />
-        <div className="absolute bottom-0 right-1/3 w-125 h-125 bg-primary/10 blur-[120px] rounded-full" />
+    <section className="relative overflow-hidden bg-slate-50/50 py-32">
+      {/* architectural background elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-green-100/30 blur-[120px]" />
+        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-emerald-100/30 blur-[120px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* staged intro */}
-        <div className="text-center mb-20">
-
+      <div className="relative mx-auto max-w-7xl px-6">
+        <div className="mb-24 text-center">
           <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="mb-6 inline-block rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1 text-xs font-bold uppercase tracking-[0.2em] text-green-600"
+          >
+            Social Proof
+          </motion.div>
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10"
+            className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl"
           >
-            <Icons.Heart className="w-4 h-4" />
-            Customer Stories
-          </motion.div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            viewport={{ once: true }}
-            className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-5"
-          >
-            Voices from <span className="text-green-700">East Africa</span>
+            Built on <span className="text-green-600">Trust</span>.
           </motion.h2>
-
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="text-xl mx-auto max-w-2xl text-slate-600"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-6 text-lg text-slate-500 max-w-2xl mx-auto"
           >
-            Real stories from workers and employers who've discovered financial freedom with EaziWage.
+            Discover why businesses and employees across the continent rely on EaziWage for financial flexibility.
           </motion.p>
         </div>
 
-        {/* staggered grid */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={index}
-              variants={item}
-              whileHover="hover"
-              className="group relative bg-white rounded-2xl p-8 border border-slate-100 shadow-sm transition-all duration-500"
-            >
-              {/* glow layer */}
-              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-green-500/0 via-green-500/0 to-green-500/10 opacity-0 group-hover:opacity-100 transition duration-500" />
-
-              {/* content */}
-              <div className="relative z-10">
-
-                {/* stars */}
-                <div className="flex items-center gap-2 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Icons.Star
-                      key={i}
-                      className="w-5 h-5 fill-yellow-400 text-yellow-400 transition-transform duration-300 group-hover:scale-110"
-                    />
-                  ))}
-                </div>
-
-                <p className="text-slate-600 mb-6 leading-relaxed">
-                  "{testimonial.quote}"
-                </p>
-
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold transition-transform duration-300 group-hover:scale-110">
-                    {testimonial.avatar}
-                  </div>
-
-                  <div>
-                    <p className="font-semibold text-slate-900">
-                      {testimonial.author}
-                    </p>
-                    <p className="text-sm text-slate-500">
-                      {testimonial.role}
-                    </p>
-                    <p className="text-sm text-slate-400">
-                      {testimonial.location}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* bottom sweep line */}
-              <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-emerald-500 to-green-500 transition-all duration-300 group-hover:w-full"></div>
-            </motion.div>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((t, i) => (
+            <TestimonialCard key={i} testimonial={t} />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

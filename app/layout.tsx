@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Toploader from "nextjs-toploader";
 import { Analytics } from "@vercel/analytics/next";
+import CookieBanner from "@/components/CookieBanner";
+
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   weight: ["400", "500", "600", "700"],
@@ -36,6 +38,7 @@ export default function RootLayout({
           <Toploader color="#16a34a" />
           <Navbar />
           {children}
+          <CookieBanner />
           <Analytics />
           <Footer />
       </body>

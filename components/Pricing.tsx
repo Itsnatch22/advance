@@ -1,7 +1,7 @@
-// Pricing.tsx - Enhanced
 "use client";
 
-import { motion } from "framer-motion";
+import React, { MouseEvent } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import {
   Percent,
   RefreshCw,
@@ -44,104 +44,121 @@ const pricing = [
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
+const PricingCard = ({ card }: { card: any }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+
+  function onMouseMove(event: MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    x.set((event.clientX - rect.left) / rect.width - 0.5);
+    y.set((event.clientY - rect.top) / rect.height - 0.5);
+    mouseX.set(event.clientX - rect.left);
+    mouseY.set(event.clientY - rect.top);
+  }
+
+  function onMouseLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      style={{ perspective: 1000 }}
+      className="w-full"
+    >
+      <motion.div
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        style={{ rotateX, rotateY }}
+        className="group relative h-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+      >
+        <motion.div
+          style={{
+            background: useTransform(
+              [mouseX, mouseY],
+              ([mx, my]) => `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
+            ),
+          }}
+          className="absolute inset-0 pointer-events-none"
+        />
+
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="mb-6">
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-green-50 to-emerald-50 ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110 shadow-sm">
+              <card.icon className="h-8 w-8 text-green-600" strokeWidth={1.5} />
+              <div className="absolute inset-0 rounded-2xl bg-green-400/20 blur-xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+            </div>
+          </div>
+
+          <h3 className="mb-3 text-xl font-bold text-slate-900 group-hover:text-green-700 transition-colors">
+            {card.title}
+          </h3>
+          <p className="text-sm leading-relaxed text-slate-500">
+            {card.desc}
+          </p>
+        </div>
+
+        <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-green-500 to-emerald-500 transition-all duration-700 group-hover:w-full" />
+      </motion.div>
+    </motion.div>
+  );
 };
 
 export default function Pricing() {
   return (
     <section
       id="pricing"
-      className="relative overflow-hidden bg-white py-20 text-center sm:py-24 lg:py-32"
+      className="relative overflow-hidden bg-white py-32"
     >
-      {/* Ambient background */}
-      <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-emerald-100/30 blur-3xl"></div>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-green-50/50 blur-[120px]" />
+      </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section badge */}
-        <div className="mb-6 flex justify-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-            Transparent Pricing
-          </div>
-        </div>
+      <div className="relative z-10 mx-auto max-w-7xl px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+          Transparent Pricing
+        </motion.div>
 
-        {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="mb-5 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl"
+          className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl"
         >
           Fast. Fair.{" "}
-          <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
-            Fully Transparent.
-          </span>
+          <span className="text-green-600">Fully Transparent.</span>
         </motion.h2>
 
-        {/* Description */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="mt-6 text-xl text-slate-500 max-w-3xl mx-auto"
         >
           It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan,
           and dream without waiting for payday.
         </motion.p>
 
-        {/* Pricing cards grid */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="mt-16 grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3"
-        >
+        <div className="mt-20 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {pricing.map((card, i) => (
-            <motion.div
-              key={i}
-              variants={item}
-              whileHover={{ scale: 1.03, y: -8 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="group relative w-full max-w-sm overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-8 shadow-lg shadow-slate-900/5 transition-all duration-300 hover:border-emerald-200/80 hover:shadow-xl hover:shadow-emerald-500/10"
-            >
-              {/* Gradient overlay on hover */}
-              <div className="absolute inset-0 bg-linear-to-br from-emerald-50/0 via-green-50/0 to-emerald-50/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-
-              {/* Icon */}
-              <div className="relative z-10 mx-auto mb-6 inline-flex">
-                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-linear-to-br from-emerald-50 to-green-50 ring-1 ring-emerald-500/10 transition-transform duration-300 group-hover:scale-110">
-                  <card.icon className="h-8 w-8 text-emerald-600" strokeWidth={2} />
-                </div>
-              </div>
-
-              {/* Content */}
-              <h3 className="relative z-10 mb-3 text-xl font-bold text-slate-900">
-                {card.title}
-              </h3>
-              <p className="relative z-10 text-sm leading-relaxed text-slate-600">
-                {card.desc}
-              </p>
-
-              {/* Bottom accent line */}
-              <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-emerald-500 to-green-500 transition-all duration-300 group-hover:w-full"></div>
-            </motion.div>
+            <PricingCard key={i} card={card} />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
