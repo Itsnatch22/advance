@@ -224,7 +224,7 @@ export default function WizaChat() {
                     >
                       <RefreshCcw className="h-2 w-2" /> Reset Chat
                     </button>
-                    <span className="text-[9px] text-slate-300 font-medium">Powered by AI</span>
+                    <span className="text-[9px] text-slate-300 font-medium">Powered by Eaziwage</span>
                   </div>
                 </>
               )}
