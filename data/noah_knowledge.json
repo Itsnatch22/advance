@@ -1,26 +1,55 @@
 [
   {
     "id": "who_are_we",
-    "title": "Who are we?",
-    "text": "EaziWage is a platform that enables employees to access a portion of their salary they've already earned before their official payday. This service is designed to help employees manage their finances more effectively by providing them with greater flexibility and control over their earnings.",
-    "source": "https://www.eaziwage.vercel.app"
+    "title": "Who is EaziWage?",
+    "text": "EaziWage is Africa's most trusted workplace finance partner, empowering the workforce to access their earned wages fairly, instantly, and securely. We provide a comprehensive platform that enables employees across Kenya, Uganda, Tanzania, and Rwanda to access a portion of their already earned salary before payday, reducing financial stress and improving overall financial wellness.",
+    "source": "https://eaziwage.com"
   },
   {
     "id": "problem_we_solve",
-    "title": "Problem we solve",
-    "text": "The plroblem we are solving is to decrease employee dependency on high-interest loans and payday lenders (shylocks) by providing a more affordable and accessible alternative for accessing earned wages. This helps employees avoid the financial stress and burden associated with traditional lending options.",
-    "source": "https://www.eaziwage.vercel.app"
+    "title": "What Problem Does EaziWage Solve?",
+    "text": "We address the 'Productivity Gap' caused by financial stress. Most employees struggle to stretch their income until payday, often turning to expensive mobile loans or shylocks. This cycle drains productivity, increases absenteeism, and lowers morale. EaziWage breaks this cycle by providing a simple, secure, and transparent alternative to high-interest debt.",
+    "source": "https://eaziwage.com"
   },
   {
     "id": "how_it_works",
-    "title": "How it works",
+    "title": "How EaziWage Works",
     "text": [
-      "Employees get to work as normal.",
-      "The system tracks the days they've worked and calculates the earned wages based of salary earnings.",
-      "Employees can then request a portion of their earned wages through the EaziWage platform.",
-      "Once the request is approved, the funds are transferred to the employee's bank account, usually within a few minutes to a few hours.",
-      "On the employee's regular payday, the advanced amount is automatically deducted from their salary."
+      "1. Work Your Days: Continue working as normal while our system tracks your earned wages in real-time.",
+      "2. Calculate Advance: Access up to 60% of your net earnings. The platform automatically calculates your eligibility.",
+      "3. Request Advance: Submit a request via our platform. Funds are disbursed instantly to your mobile money (M-Pesa, etc.) or bank account.",
+      "4. Automatic Repayment: The advanced amount is automatically deducted when your salary is processed on payday. No manual repayments required."
     ],
-    "source": "https://www.eaziwage.vercel.app/how-it-works"
+    "source": "https://eaziwage.com"
+  },
+  {
+    "id": "employee_benefits",
+    "title": "Benefits for Employees",
+    "text": "Employees choose EaziWage because it offers 0% interest—it's not a loan, but early access to their own money. It's available 24/7/365, provides instant disbursements to mobile money or bank accounts, and helps avoid costly debt traps. We charge transparent flat fees (typically USD 2 + a 5% application fee) clearly shown before confirmation.",
+    "source": "https://eaziwage.com"
+  },
+  {
+    "id": "employer_benefits",
+    "title": "Benefits for Employers",
+    "text": "For employers, EaziWage is a zero-cost, zero-risk, and zero-hassle well-being lever. It improves employee retention and productivity without impacting the balance sheet (zero balance-sheet loans). We provide seamless integration with HRIS/Payroll systems, granular controls over withdrawal limits, and actionable analytics dashboards for HR and Finance teams.",
+    "source": "https://eaziwage.com"
+  },
+  {
+    "id": "pricing",
+    "title": "Transparent Pricing",
+    "text": "EaziWage is built on transparency: 0% interest charges, no subscription fees, and no hidden data retrieval fees. We only charge a small transaction fee and a nominal application fee of up to 5% per withdrawal to cover processing costs. All fees are clearly displayed before any transaction is confirmed.",
+    "source": "https://eaziwage.com"
+  },
+  {
+    "id": "security_compliance",
+    "title": "Security and Compliance",
+    "text": "EaziWage is Pan-Africa Ready and fully compliant with local regulations, including the Employment Act and ODPC data protection guidelines. we use industry-standard encryption, PCI-DSS-aligned practices, and regular audits to ensure employee data and transactions are secure. We partner with regulated banks and mobile money providers across the region.",
+    "source": "https://eaziwage.com"
+  },
+  {
+    "id": "eligibility",
+    "title": "Who is Eligible?",
+    "text": "EaziWage is available to employees whose employers have signed up for the platform in Kenya, Uganda, Tanzania, or Rwanda. Eligibility is determined by payroll data, work history, and the specific policies set by your employer.",
+    "source": "https://eaziwage.com"
   }
 ]

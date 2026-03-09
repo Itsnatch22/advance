@@ -3,6 +3,7 @@ import { z } from "zod";
 import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 import ContactNotification from "@/emails/ContactNotification";
+import ContactAutoReply from "@/emails/ContactAutoReply";
 
 /* ----------------------------- validation ----------------------------- */
 
@@ -188,45 +189,10 @@ export async function POST(request: NextRequest) {
         from: `EaziWage Support <${SUPPORT_EMAIL}>`,
         to: email,
         subject: "We received your message - EaziWage",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: #16a34a; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 24px;">EaziWage</h1>
-              <p style="color: #d1fae5; margin: 5px 0 0; font-size: 14px;">Earned Wage Access for Africa</p>
-            </div>
-            
-            <div style="background: #ffffff; padding: 30px; border-radius: 0 0 8px 8px;">
-              <h2 style="color: #111827; margin: 0 0 16px;">Hi ${name},</h2>
-              
-              <p style="color: #374151; line-height: 1.6; margin: 0 0 16px;">
-                Thank you for reaching out to us. We've received your message and our team will get back to you within 24 hours.
-              </p>
-              
-              <div style="background: #f9fafb; border-left: 4px solid #16a34a; padding: 16px; margin: 24px 0;">
-                <p style="color: #6b7280; margin: 0 0 8px; font-size: 14px; font-weight: 600;">Your Message:</p>
-                <p style="color: #111827; margin: 0; font-size: 14px;"><strong>Subject:</strong> ${subject}</p>
-              </div>
-              
-              <p style="color: #374151; line-height: 1.6; margin: 24px 0 0;">
-                In the meantime, feel free to explore more about how EaziWage is transforming financial wellbeing for Africa's workforce.
-              </p>
-              
-              <p style="color: #374151; line-height: 1.6; margin: 16px 0 0;">
-                Best regards,<br>
-                <strong>The EaziWage Team</strong>
-              </p>
-            </div>
-            
-            <div style="padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
-              <p style="color: #6b7280; font-size: 12px; margin: 5px 0;">
-                Nairobi, Kenya | +254 723 154900 | support@eaziwage.com
-              </p>
-              <p style="color: #6b7280; font-size: 12px; margin: 5px 0;">
-                © ${new Date().getFullYear()} EaziWage. All rights reserved.
-              </p>
-            </div>
-          </div>
-        `,
+        react: ContactAutoReply({
+          name,
+          subject,
+        }),
       });
     } catch (emailError) {
       console.error("Failed to send auto-reply:", emailError);

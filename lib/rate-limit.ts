@@ -5,7 +5,7 @@ import { getEnv } from "../env";
 // Validate environment on module load
 const env = getEnv();
 
-const redis = new Redis({
+export const redis = new Redis({
   url: env.UPSTASH_REDIS_REST_URL,
   token: env.UPSTASH_REDIS_REST_TOKEN,
 });

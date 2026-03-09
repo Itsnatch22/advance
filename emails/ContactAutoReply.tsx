@@ -1,6 +1,5 @@
 import {
   Body,
-  Button,
   Container,
   Head,
   Heading,
@@ -12,27 +11,21 @@ import {
   Img,
 } from "@react-email/components";
 
-interface ContactNotificationProps {
+interface ContactAutoReplyProps {
   name: string;
-  email: string;
   subject: string;
-  message: string;
-  submittedAt: string;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
 
-export default function ContactNotification({
+export default function ContactAutoReply({
   name,
-  email,
   subject,
-  message,
-  submittedAt,
-}: ContactNotificationProps) {
+}: ContactAutoReplyProps) {
   return (
     <Html>
       <Head />
-      <Preview>New Contact Form Submission Received</Preview>
+      <Preview>We received your message - EaziWage</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Header */}
@@ -48,47 +41,36 @@ export default function ContactNotification({
 
           {/* Content */}
           <Section style={content}>
-            <Heading style={h1}>New Contact Submission</Heading>
-
-            <Text style={text}>Hi Team,</Text>
+            <Heading style={h1}>Hi {name},</Heading>
 
             <Text style={text}>
-              You have received a new contact form submission. Details are as
-              follows:
+              Thank you for reaching out to us. We've received your message and
+              our team will get back to you within 24 hours.
             </Text>
 
             <Section style={highlightBox}>
               <Text style={highlightText}>
-                <strong>Name:</strong> {name}
-              </Text>
-              <Text style={highlightText}>
-                <strong>Email:</strong>{" "}
-                <Link href={`mailto:${email}`} style={link}>
-                  {email}
-                </Link>
-              </Text>
-              <Text style={highlightText}>
-                <strong>Subject:</strong> {subject}
-              </Text>
-              <Text style={highlightText}>
-                <strong>Message:</strong> {message}
-              </Text>
-              <Text style={highlightText}>
-                <strong>Submitted At:</strong> {submittedAt}
+                <strong>Your Message Subject:</strong> {subject}
               </Text>
             </Section>
 
             <Text style={text}>
-              Please review the submission and follow up accordingly.
+              In the meantime, feel free to explore more about how EaziWage is
+              transforming financial wellbeing for Africa's workforce.
             </Text>
 
-            <Button style={button} href={`${baseUrl}/admin`}>
-              Go to Dashboard
-            </Button>
+            <Text style={text}>
+              Best regards,
+              <br />
+              <strong>The EaziWage Team</strong>
+            </Text>
           </Section>
 
           {/* Footer */}
           <Section style={footer}>
+            <Text style={footerText}>
+              Nairobi, Kenya | +254 723 154900 | support@eaziwage.com
+            </Text>
             <Text style={footerText}>
               © 2026 EaziWage. Empowering Africa's workforce.
             </Text>
@@ -103,10 +85,6 @@ export default function ContactNotification({
               •{" "}
               <Link href={`${baseUrl}/terms.pdf`} style={footerLink}>
                 Terms of Service
-              </Link>{" "}
-              •{" "}
-              <Link href={`${baseUrl}/unsubscribe`} style={footerLink}>
-                Unsubscribe
               </Link>
             </Text>
           </Section>
@@ -155,7 +133,6 @@ const h1 = {
   fontWeight: "700",
   margin: "0 0 24px",
   lineHeight: "1.3",
-  textAlign: "center" as const,
 };
 
 const text = {
@@ -178,24 +155,6 @@ const highlightText = {
   fontSize: "15px",
   lineHeight: "1.6",
   margin: "8px 0",
-};
-
-const button = {
-  backgroundColor: "#16a34a",
-  borderRadius: "12px",
-  color: "#ffffff",
-  fontSize: "16px",
-  fontWeight: "700",
-  textDecoration: "none",
-  textAlign: "center" as const,
-  display: "block",
-  padding: "16px 24px",
-  margin: "32px 0",
-};
-
-const link = {
-  color: "#16a34a",
-  textDecoration: "underline",
 };
 
 const footer = {

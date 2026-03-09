@@ -236,14 +236,38 @@ export async function POST(req: Request) {
       );
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
     const now = new Date().toISOString();
+
+    // Keep newsletter table in sync with subscribe endpoint.
+    if (product === "newsletter" || product === "all") {
+      const { error: newsletterError } = await supabase
+        .from("newsletter_subscriptions")
+        .upsert(
+          {
+            email: normalizedEmail,
+            status: "inactive",
+            unsubscribed_at: now,
+          },
+          { onConflict: "email" }
+        )
+        .select();
+
+      if (newsletterError) {
+        console.error("[unsubscribe] Newsletter table error:", newsletterError);
+        return NextResponse.json(
+          { message: "Database error. Please try again." },
+          { status: 500, headers: rl.headers }
+        );
+      }
+    }
 
     // ── Upsert subscription row ──
     const { error } = await supabase
       .from("subscriptions")
       .upsert(
         {
-          email,
+          email: normalizedEmail,
           product,
           subscribed: false,
           unsubscribed_at: now,
@@ -253,17 +277,21 @@ export async function POST(req: Request) {
       )
       .select();
 
-    if (error) {
+    // 42P01 = undefined_table; keep compatibility when this table is absent.
+    if (error && error.code !== "42P01") {
       console.error("[unsubscribe] Supabase error:", error);
       return NextResponse.json(
         { message: "Database error. Please try again." },
         { status: 500, headers: rl.headers }
       );
     }
+    if (error?.code === "42P01") {
+      console.warn('[unsubscribe] "subscriptions" table not found; skipped legacy preference upsert.');
+    }
 
     // ── Schedule confirmation email ──
     // Fire-and-forget — don't block the response on email delivery.
-    scheduleConfirmationEmail(email, product).catch((err) =>
+    scheduleConfirmationEmail(normalizedEmail, product).catch((err) =>
       console.error("[unsubscribe] scheduleConfirmationEmail threw:", err)
     );
 

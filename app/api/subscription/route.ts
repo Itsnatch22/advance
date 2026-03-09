@@ -5,27 +5,48 @@ import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import SubscriptionNotification from "@/emails/SubscriptionNotification";
 
-// Initialize clients
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getSupabaseClient() {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+  return createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+}
 
-// Validation schema
+const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
+
 const subscriptionSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: z
+    .string()
+    .trim()
+    .email("Please enter a valid email address")
+    .transform((value) => value.toLowerCase()),
   honeypot: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    
-    // Validate input
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      console.error("Subscription route misconfigured: missing Supabase env vars");
+      return NextResponse.json(
+        { error: "Subscription service is temporarily unavailable." },
+        { status: 500 }
+      );
+    }
+
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid request body. Expected JSON payload." },
+        { status: 400 }
+      );
+    }
+
     const validationResult = subscriptionSchema.safeParse(body);
-    
     if (!validationResult.success) {
       return NextResponse.json(
         {
@@ -38,29 +59,25 @@ export async function POST(request: NextRequest) {
 
     const { email, honeypot } = validationResult.data;
 
-    // Bot detection
     if (honeypot) {
       console.log("Bot detected, ignoring submission");
-      return NextResponse.json(
-        { message: "Subscription successful" },
-        { status: 200 }
-      );
+      return NextResponse.json({ message: "Subscription successful" }, { status: 200 });
     }
 
-    // Check if email already exists
-    const { data: existingSubscription, error: checkError } = await supabase
+    // Case-insensitive lookup protects against legacy mixed-case rows.
+    const { data: existingRows, error: checkError } = await supabase
       .from("newsletter_subscriptions")
       .select("email, status")
-      .eq("email", email)
-      .single();
+      .ilike("email", email)
+      .limit(1);
 
-    if (checkError && checkError.code !== "PGRST116") {
-      // PGRST116 is "not found" error, which is fine
+    if (checkError) {
       console.error("Error checking subscription:", checkError);
       throw new Error("Database error");
     }
 
-    // If already subscribed
+    const existingSubscription = existingRows?.[0];
+
     if (existingSubscription) {
       if (existingSubscription.status === "active") {
         return NextResponse.json(
@@ -68,48 +85,54 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      
-      // Reactivate if previously unsubscribed
+
       const { error: updateError } = await supabase
         .from("newsletter_subscriptions")
         .update({
           status: "active",
           subscribed_at: new Date().toISOString(),
+          unsubscribed_at: null,
         })
-        .eq("email", email);
+        .ilike("email", email);
 
       if (updateError) {
         console.error("Error reactivating subscription:", updateError);
         throw new Error("Failed to reactivate subscription");
       }
     } else {
-      // Create new subscription
-      const { error: insertError } = await supabase
-        .from("newsletter_subscriptions")
-        .insert({
-          email,
-          status: "active",
-          subscribed_at: new Date().toISOString(),
-          source: "website_footer",
-        });
+      const { error: insertError } = await supabase.from("newsletter_subscriptions").insert({
+        email,
+        status: "active",
+        subscribed_at: new Date().toISOString(),
+        source: "website_footer",
+      });
 
       if (insertError) {
+        if (insertError.code === "23505") {
+          // Unique-constraint race from concurrent requests.
+          return NextResponse.json(
+            { error: "This email is already subscribed to our newsletter" },
+            { status: 400 }
+          );
+        }
         console.error("Error creating subscription:", insertError);
         throw new Error("Failed to create subscription");
       }
     }
 
-    // Send welcome email
-    try {
-      await resend.emails.send({
-        from: "EaziWage <newsletter@eaziwage.com>",
-        to: email,
-        subject: "Welcome to EaziWage Newsletter! 🎉",
-        react: SubscriptionNotification({ email }),
-      });
-    } catch (emailError) {
-      console.error("Error sending welcome email:", emailError);
-      // Don't fail the subscription if email fails
+    if (resend) {
+      try {
+        await resend.emails.send({
+          from: "EaziWage <newsletter@eaziwage.com>",
+          to: email,
+          subject: "Welcome to EaziWage Newsletter!",
+          react: SubscriptionNotification({ email }),
+        });
+      } catch (emailError) {
+        console.error("Error sending welcome email:", emailError);
+      }
+    } else {
+      console.warn("RESEND_API_KEY is missing; welcome email not sent.");
     }
 
     return NextResponse.json(

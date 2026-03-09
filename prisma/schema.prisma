@@ -31,3 +31,14 @@ model CookieConsent {
 
   @@map("cookie_consents")
 }
+
+model NewsletterSubscription {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  status         String    @default("active")
+  source         String?
+  subscribedAt   DateTime  @default(now()) @map("subscribed_at")
+  unsubscribedAt DateTime? @map("unsubscribed_at")
+
+  @@map("newsletter_subscriptions")
+}

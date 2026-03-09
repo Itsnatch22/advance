@@ -9,6 +9,7 @@ import {
   Section,
   Text,
   Link,
+  Img,
 } from "@react-email/components";
 
 interface SalesNotificationProps {
@@ -17,6 +18,8 @@ interface SalesNotificationProps {
   company: string;
   message: string;
 }
+
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
 
 export default function SalesNotification({
   name,
@@ -32,7 +35,13 @@ export default function SalesNotification({
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
-            <Heading style={heading}>EaziWage</Heading>
+            <Img
+              src={`${baseUrl}/logo.png`}
+              width="140"
+              height="auto"
+              alt="EaziWage"
+              style={logo}
+            />
           </Section>
 
           {/* Content */}
@@ -67,7 +76,7 @@ export default function SalesNotification({
               Please follow up promptly to engage this lead and explore potential opportunities.
             </Text>
 
-            <Button style={button} href="https://eaziwage.com/admin">
+            <Button style={button} href={`${baseUrl}/admin`}>
               Go to Dashboard
             </Button>
           </Section>
@@ -78,19 +87,19 @@ export default function SalesNotification({
               © 2026 EaziWage. Empowering Africa's workforce.
             </Text>
             <Text style={footerText}>
-              <Link href="https://eaziwage.com" style={footerLink}>
+              <Link href={baseUrl} style={footerLink}>
                 Website
               </Link>{" "}
               •{" "}
-              <Link href="https://eaziwage.com/data.pdf" style={footerLink}>
+              <Link href={`${baseUrl}/data.pdf`} style={footerLink}>
                 Privacy Policy
               </Link>{" "}
               •{" "}
-              <Link href="https://eaziwage.com/terms.pdf" style={footerLink}>
+              <Link href={`${baseUrl}/terms.pdf`} style={footerLink}>
                 Terms of Service
               </Link>{" "}
               •{" "}
-              <Link href="https://eaziwage.com/unsubscribe" style={footerLink}>
+              <Link href={`${baseUrl}/unsubscribe`} style={footerLink}>
                 Unsubscribe
               </Link>
             </Text>
@@ -112,21 +121,22 @@ const main = {
 const container = {
   backgroundColor: "#ffffff",
   margin: "0 auto",
-  padding: "20px 0 48px",
+  padding: "0 0 48px",
   marginBottom: "64px",
   maxWidth: "600px",
+  borderRadius: "12px",
+  overflow: "hidden",
+  border: "1px solid #e5e7eb",
 };
 
 const header = {
   padding: "32px 48px",
-  borderBottom: "1px solid #e5e7eb",
+  backgroundColor: "#ffffff",
+  borderBottom: "1px solid #f3f4f6",
 };
 
-const heading = {
-  fontSize: "28px",
-  fontWeight: "bold",
-  color: "#059669",
-  margin: "0",
+const logo = {
+  margin: "0 auto",
 };
 
 const content = {
@@ -139,6 +149,7 @@ const h1 = {
   fontWeight: "700",
   margin: "0 0 24px",
   lineHeight: "1.3",
+  textAlign: "center" as const,
 };
 
 const text = {
@@ -150,7 +161,7 @@ const text = {
 
 const highlightBox = {
   backgroundColor: "#f0fdf4",
-  border: "2px solid #86efac",
+  border: "1px solid #d1fae5",
   borderRadius: "12px",
   padding: "20px",
   margin: "24px 0",
@@ -164,37 +175,39 @@ const highlightText = {
 };
 
 const button = {
-  backgroundColor: "#059669",
-  borderRadius: "8px",
+  backgroundColor: "#16a34a",
+  borderRadius: "12px",
   color: "#ffffff",
   fontSize: "16px",
-  fontWeight: "600",
+  fontWeight: "700",
   textDecoration: "none",
   textAlign: "center" as const,
   display: "block",
-  padding: "14px 24px",
-  margin: "24px 0",
+  padding: "16px 24px",
+  margin: "32px 0",
 };
 
 const link = {
-  color: "#059669",
+  color: "#16a34a",
   textDecoration: "underline",
 };
 
 const footer = {
-  borderTop: "1px solid #e5e7eb",
-  padding: "24px 48px",
+  borderTop: "1px solid #f3f4f6",
+  padding: "32px 48px",
   textAlign: "center" as const,
+  backgroundColor: "#f9fafb",
 };
 
 const footerText = {
   color: "#6b7280",
   fontSize: "14px",
   lineHeight: "1.5",
-  margin: "8px 0",
+  margin: "4px 0",
 };
 
 const footerLink = {
-  color: "#6b7280",
-  textDecoration: "underline",
+  color: "#16a34a",
+  textDecoration: "none",
+  fontWeight: "600",
 };

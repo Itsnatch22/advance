@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Toploader from "nextjs-toploader";
 import { Analytics } from "@vercel/analytics/next";
 import CookieBanner from "@/components/CookieBanner";
+import WizaChat from "@/components/WizaChat";
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
@@ -40,6 +41,7 @@ export default function RootLayout({
           {children}
           <CookieBanner />
           <Analytics />
+          <WizaChat />
           <Footer />
       </body>
     </html>
