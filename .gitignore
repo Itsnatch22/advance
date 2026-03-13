@@ -57,3 +57,5 @@ next-env.d.ts
 .qodo
 
 /generated/prisma
+
+.trigger

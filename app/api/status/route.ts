@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseUser } from "@/lib/supabase/server";
 import { redis } from "@/lib/rate-limit";
 import os from "os";
 
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   // Perform health checks in parallel
   const [supabaseRes, redisRes] = await Promise.allSettled([
     // Check Supabase connectivity by querying a small amount of data
-    supabase.from("companies").select("id", { count: "exact", head: true }).limit(1),
+    supabaseUser.from("companies").select("id", { count: "exact", head: true }).limit(1),
     // Check Redis connectivity
     redis.ping(),
   ]);

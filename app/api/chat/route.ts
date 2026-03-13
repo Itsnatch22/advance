@@ -5,7 +5,7 @@ import {
 } from "ai";
 import fs from "fs/promises";
 import path from "path";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, } from "next/server";
 import noahKnowledge from "@/data/noah_knowledge.json";
 
 export const maxDuration = 30;

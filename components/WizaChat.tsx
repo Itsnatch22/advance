@@ -116,7 +116,7 @@ export default function WizaChat() {
                   </div>
                   <div>
                     <CardTitle className="text-sm font-bold flex items-center gap-1.5">
-                      Wiza AI <Sparkles className="h-3 w-3 text-emerald-300" />
+                      Wiza Chat <Sparkles className="h-3 w-3 text-emerald-300" />
                     </CardTitle>
                     {!isMinimized && (
                       <p className="text-[10px] text-emerald-100 opacity-90">Always online</p>
