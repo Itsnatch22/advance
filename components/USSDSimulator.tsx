@@ -270,7 +270,7 @@ export default function USSDSimulator() {
                 whileInView={{ opacity: 1, rotateY: 0, x: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, type: "spring" }}
-                className="relative w-[300px] h-[600px] bg-slate-950 rounded-[40px] border-[8px] border-slate-800 shadow-[20px_20px_60px_rgba(0,0,0,0.5),_inset_0_0_20px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden"
+                className="relative w-75 h-150 bg-slate-950 rounded-[40px] border-8 border-slate-800 shadow-[20px_20px_60px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden"
             >
               {/* Phone Speaker Notch */}
               <div className="absolute top-0 inset-x-0 h-6 flex justify-center z-20">
@@ -278,7 +278,7 @@ export default function USSDSimulator() {
               </div>
 
               {/* Screen Area */}
-              <div className="h-[280px] bg-slate-900 w-full relative p-4 flex flex-col border-b-2 border-slate-800/50">
+              <div className="h-70 bg-slate-900 w-full relative p-4 flex flex-col border-b-2 border-slate-800/50">
                   
                   {/* Status Bar */}
                   <div className="flex justify-between items-center text-[10px] text-slate-500 mb-2 font-mono">
@@ -298,7 +298,7 @@ export default function USSDSimulator() {
                     style={{ textShadow: "0px 0px 1px rgba(0,0,0,0.3)" }}
                   >
                         {/* Screen Glare Layer */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 pointer-events-none" />
+                        <div className="absolute inset-0 bg-linear-to-tr from-transparent via-white/5 to-white/10 pointer-events-none" />
 
                         <AnimatePresence mode="wait">
                             {isLoading ? (
@@ -314,7 +314,7 @@ export default function USSDSimulator() {
                                 <motion.div 
                                     key="content"
                                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                    className="whitespace-pre-wrap break-words"
+                                    className="whitespace-pre-wrap wrap-break-word"
                                 >
                                     {formatText(currentNode.text)}
                                     <br/><br/>
@@ -352,7 +352,7 @@ export default function USSDSimulator() {
                      <ChevronLeft className="w-4 h-4 text-slate-400" />
                   </button>
                   <button onClick={handleCancel} className="w-14 h-8 rounded-full bg-slate-800 border-b-2 border-slate-700 active:border-b-0 active:translate-y-0.5 transition-all flex items-center justify-center">
-                     <Phone className="w-4 h-4 text-red-400 rotate-[135deg]" />
+                     <Phone className="w-4 h-4 text-red-400 rotate-135" />
                   </button>
               </div>
 
@@ -367,7 +367,7 @@ export default function USSDSimulator() {
                       <button 
                          key={btn.num}
                          onClick={() => handleDial(btn.num)}
-                         className="h-10 rounded-full bg-slate-800/80 border-b-[3px] border-slate-900 active:border-b-0 active:translate-y-[3px] transition-all flex flex-col items-center justify-center group"
+                         className="h-10 rounded-full bg-slate-800/80 border-b-[3px] border-slate-900 active:border-b-0 active:translate-y-0.75 transition-all flex flex-col items-center justify-center group"
                       >
                           <span className="text-white font-bold leading-none text-lg group-active:text-emerald-400">{btn.num}</span>
                           {btn.sub && <span className="text-[8px] text-slate-500 font-bold -mt-0.5">{btn.sub}</span>}
