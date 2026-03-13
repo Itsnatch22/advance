@@ -1,5 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
 import { createUIMessageStream, createUIMessageStreamResponse, type UIMessage } from "ai";
 import noahKnowledge from "@/data/noah_knowledge.json";
 
@@ -17,6 +15,7 @@ Be concise, helpful, and professional.
 Always greet users warmly when they greet you.
 When users request a human, urgent support, or escalation, provide clear human support handoff details.
 If you don't know the answer, politely direct users to ${SUPPORT_EMAIL}.
+If you don't know the answer, politely direct users to support@eaziwage.com.
 Do not reveal sensitive information or PII.`;
 
 const knowledgeBase = noahKnowledge
@@ -178,6 +177,43 @@ async function getFallbackReply(query: string): Promise<string> {
 
   if (!best || best.score === 0) {
     return `I couldn't find that confidently right now. Please contact ${SUPPORT_EMAIL} and the team will help quickly.`;
+
+function extractLatestUserMessage(messages: UIMessage[]): string {
+  const latestUserMessage = [...messages].reverse().find((message) => message.role === "user");
+  return latestUserMessage ? extractMessageText(latestUserMessage).toLowerCase() : "";
+}
+
+function buildGeminiContents(messages: UIMessage[]) {
+  return messages
+    .filter((message) => message.role === "user" || message.role === "assistant")
+    .map((message) => ({
+      role: message.role === "assistant" ? "model" : "user",
+      parts: [{ text: extractMessageText(message) }],
+    }))
+    .filter((message) => message.parts[0].text.length > 0);
+}
+
+function getFallbackReply(query: string): string {
+  if (!query) {
+    return "I can help with EaziWage eligibility, fees, countries supported, and how withdrawals work. What would you like to know?";
+  }
+
+  const scored = noahKnowledge
+    .map((entry) => {
+      const text = `${entry.title} ${Array.isArray(entry.text) ? entry.text.join(" ") : entry.text}`.toLowerCase();
+      const score = query
+        .split(/\s+/)
+        .filter((word) => word.length > 2)
+        .reduce((acc, word) => (text.includes(word) ? acc + 1 : acc), 0);
+
+      return { entry, score };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  const best = scored[0];
+
+  if (!best || best.score === 0) {
+    return "I couldn't find that in my fallback knowledge right now. Please contact support@eaziwage.com and the team will help quickly.";
   }
 
   const bestText = Array.isArray(best.entry.text) ? best.entry.text.join(" ") : best.entry.text;
@@ -205,6 +241,7 @@ async function getGeminiReply(messages: UIMessage[], apiKey: string, query: stri
     ? `\n\nThe user appears to request human intervention. Give a brief helpful response and provide this exact handoff: ${getHumanHandoffMessage()}`
     : "";
 
+async function getGeminiReply(messages: UIMessage[], apiKey: string): Promise<string> {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
     {
@@ -220,6 +257,7 @@ async function getGeminiReply(messages: UIMessage[], apiKey: string, query: stri
               }${escalationInstruction}`,
             },
           ],
+          parts: [{ text: `${systemPrompt}\n\nUse this internal knowledge base as your primary context:\n${knowledgeBase}` }],
         },
         contents: buildGeminiContents(messages),
         generationConfig: {
@@ -264,6 +302,8 @@ export async function POST(req: Request) {
   if (needsHumanIntervention(latestUserQuery)) {
     return streamAssistantText(getHumanHandoffMessage());
   }
+  const { messages } = await req.json();
+  const safeMessages: UIMessage[] = Array.isArray(messages) ? messages : [];
 
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 
@@ -276,5 +316,13 @@ export async function POST(req: Request) {
     return streamAssistantText(reply);
   } catch {
     return streamAssistantText(await getFallbackReply(latestUserQuery));
+    return streamAssistantText(getFallbackReply(extractLatestUserMessage(safeMessages)));
+  }
+
+  try {
+    const reply = await getGeminiReply(safeMessages, apiKey);
+    return streamAssistantText(reply);
+  } catch {
+    return streamAssistantText(getFallbackReply(extractLatestUserMessage(safeMessages)));
   }
 }
