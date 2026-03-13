@@ -170,7 +170,7 @@ const Navbar = () => {
         </div>
 
         {/* Right side buttons - Enhanced */}
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-3 lg:flex"> 
           <Link href="https://app.eaziwage.com" target="_blank" rel="noopener noreferrer">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -261,6 +261,7 @@ const Navbar = () => {
             ))}
 
             <hr className="border-slate-200" />
+
             <Link
               href="https://app.eaziwage.com"
               onClick={() => setMobileOpen(false)}

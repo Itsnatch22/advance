@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
         message: process.env.RESEND_API_KEY ? "API Key present" : "Missing API Key",
       },
       ai: {
-        name: "Noah AI (OpenAI)",
+        name: "OpenAI",
         status: process.env.OPENAI_API_KEY ? "healthy" : "not-configured",
         message: process.env.OPENAI_API_KEY ? "API Key present" : "Missing API Key",
       }

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Locator from "./Locator";
 import { Input } from "./ui";
+import AppStoreButtons from "./AppStoreButtons";
 
 export default function Footer() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
@@ -228,6 +229,13 @@ export default function Footer() {
                 </motion.a>
               ))}
             </div>
+
+            {/* App Store Badges 
+            <div className="pt-6">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">Coming Soon to Mobile</p>
+              <AppStoreButtons />
+            </div>
+            */}
           </div>
 
           {/* Product - enhanced link styling */}
@@ -264,6 +272,7 @@ export default function Footer() {
                 { name: "Partners", href: "partners" },
                 { name: "Culture", href: "culture" },
                 { name: "Contact", href: "contact" },
+                { name: "Security", href: "security" },
               ].map((link, index) => (
                 <li key={index}>
                   <Link

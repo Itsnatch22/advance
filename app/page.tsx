@@ -9,6 +9,7 @@ import FAQ from "@/components/FAQ";
 import Testimonials from "@/components/Testimonials";
 import Coverage from "@/components/Coverage";
 import Marquee from "@/components/Marquee";
+import WizaHeroPreview from "@/components/WizaHeroPreview";
 
 export default function HomePage() {
   return (
@@ -20,6 +21,7 @@ export default function HomePage() {
       <StatsCounter />
       <Needs />
       <Pricing />
+      <WizaHeroPreview/>
       <Testimonials />
       <Coverage />
       <FAQ />

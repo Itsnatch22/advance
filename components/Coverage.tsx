@@ -4,6 +4,7 @@ import React, { useRef, MouseEvent } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, easeOut } from 'framer-motion'
 import { Globe } from 'lucide-react'
 import Image from 'next/image'
+import ImpactMap from './ImpactMap'
 
 const countries = [
   { name: 'Kenya', flag: '/flag/KE.png', providers: ['M-PESA', 'Airtel Money'], users: '25,000+', currency: 'KES', cap: 60 },
@@ -158,6 +159,11 @@ export default function Coverage() {
           </motion.p>
         </div>
 
+        {/*
+        <div className="mb-20">
+          <ImpactMap />
+        </div>
+          */}
         <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
           {countries.map((country) => (
             <CountryCard key={country.name} country={country} />

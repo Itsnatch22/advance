@@ -42,3 +42,15 @@ model NewsletterSubscription {
 
   @@map("newsletter_subscriptions")
 }
+
+model MeetingLog {
+  id              String   @id @default(uuid())
+  userEmail       String   @map("user_email")
+  adminEmail      String   @map("admin_email")
+  meetingType     String   @map("meeting_type")
+  calendlyEventId String?  @map("calendly_event_id")
+  scheduledAt     DateTime? @map("scheduled_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("meeting_logs")
+}
