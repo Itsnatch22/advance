@@ -125,15 +125,7 @@ async function getGeminiReply(messages: UIMessage[], apiKey: string): Promise<st
 }
 
 export async function POST(req: Request) {
-  let messages: unknown;
-
-  try {
-    ({ messages } = await req.json());
-  } catch (error) {
-    console.error("Wiza chat request JSON parse error", error);
-    return Response.json({ error: "Invalid JSON request body." }, { status: 400 });
-  }
-
+  const { messages } = await req.json();
   const safeMessages: UIMessage[] = Array.isArray(messages) ? messages : [];
 
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
