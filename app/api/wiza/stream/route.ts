@@ -1,12 +1,13 @@
 // app/api/wiza/stream/route.ts
 // SSE endpoint: POST { session_id, content }
-// → creates/reuses session, saves user message, streams Gemini reply,
-//   saves completed AI message, returns session_id on first event.
+// → streams Gemini reply with enhanced financial coaching capabilities
+// → guest mode enabled by default (no auth required)
+// → optionally saves to DB if user is authenticated
 
 import { NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { streamWizaReply, buildSystemPrompt } from '@/lib/gemini';
-import type { WizaMessage, StreamEvent } from '@/types/wiza';
+import type { StreamEvent } from '@/types/wiza';
 import type { Content } from '@google/generative-ai';
 
 // Service-role client — bypasses RLS for server writes
@@ -18,19 +19,22 @@ const supabase = createClient(
 const HISTORY_LIMIT = 20; // last N messages fed to Gemini
 
 export async function POST(req: NextRequest) {
-  // ── 1. Auth (Optional for preview) ────────────────────────────────────────
+  // ── 1. Optional auth check (guest mode allowed) ────────────────────────────
   const authHeader = req.headers.get('Authorization');
   let employeeId: string | null = null;
+  let isAuthenticated = false;
 
   if (authHeader?.startsWith('Bearer ')) {
-    // Verify JWT with Supabase auth helper
     const userClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       { global: { headers: { Authorization: authHeader } } },
     );
     const { data: { user } } = await userClient.auth.getUser();
-    if (user) employeeId = user.id;
+    if (user) {
+      employeeId = user.id;
+      isAuthenticated = true;
+    }
   }
 
   // ── 2. Parse body ──────────────────────────────────────────────────────────
@@ -47,7 +51,7 @@ export async function POST(req: NextRequest) {
   // ── 3. Load employee context for system prompt ─────────────────────────────
   let systemPrompt: string;
 
-  if (employeeId) {
+  if (isAuthenticated && employeeId) {
     const { data: profile } = await supabase
       .from('employee_onboarding')
       .select('first_name, last_name, financial_health_score')
@@ -92,7 +96,7 @@ export async function POST(req: NextRequest) {
       financialScore: profile?.financial_health_score ?? 75,
     });
   } else {
-    // Guest mode defaults
+    // ── GUEST MODE: Interactive demo with sample data ───────────────────────
     systemPrompt = buildSystemPrompt({
       employeeName: 'there',
       earnedWages: 50000,
@@ -105,10 +109,10 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // ── 4. Get or create session ────────────────────────────────────────────────
+  // ── 4. Get or create session (only if authenticated) ───────────────────────
   let sessionId = incomingSessionId;
 
-  if (employeeId) {
+  if (isAuthenticated && employeeId) {
     if (!sessionId) {
       const { data: newSession, error: sessionErr } = await supabase
         .from('wiza_sessions')
@@ -125,7 +129,7 @@ export async function POST(req: NextRequest) {
       sessionId = newSession.id;
     }
 
-    // ── 5. Save user message ─────────────────────────────────────────────────
+    // ── 5. Save user message (authenticated only) ───────────────────────────
     await supabase.from('wiza_messages').insert({
       session_id: sessionId,
       role: 'user',
@@ -133,10 +137,10 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // ── 6. Load conversation history ───────────────────────────────────────────
+  // ── 6. Load conversation history (authenticated only) ──────────────────────
   let geminiHistory: Content[] = [];
 
-  if (employeeId && sessionId) {
+  if (isAuthenticated && employeeId && sessionId) {
     const { data: history } = await supabase
       .from('wiza_messages')
       .select('role, content')
@@ -165,8 +169,10 @@ export async function POST(req: NextRequest) {
       };
 
       try {
-        // First event — tell client which session this is (if any)
-        if (sessionId) send({ type: 'session_id', session_id: sessionId! });
+        // First event — tell client which session this is (if authenticated)
+        if (sessionId && isAuthenticated) {
+          send({ type: 'session_id', session_id: sessionId });
+        }
 
         let fullReply = '';
 
@@ -179,8 +185,8 @@ export async function POST(req: NextRequest) {
           send({ type: 'chunk', text: chunk });
         }
 
-        // ── 8. Persist completed AI message (if authenticated) ───────────────
-        if (employeeId && sessionId) {
+        // ── 8. Persist completed AI message (authenticated only) ────────────
+        if (isAuthenticated && employeeId && sessionId) {
           await supabase.from('wiza_messages').insert({
             session_id: sessionId,
             role: 'model',

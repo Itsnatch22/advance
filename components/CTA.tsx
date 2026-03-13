@@ -91,7 +91,7 @@ export default function CTA() {
           className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5"
         >
           {/* Primary CTA */}
-          <Link href="mailto:support@eaziwage.com">
+          <Link href="/schedule">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

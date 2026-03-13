@@ -1,8 +1,9 @@
 // hooks/useWizaChat.ts
 // Manages SSE connection, message state, and session lifecycle.
+// Works in both guest mode (no auth) and authenticated mode.
 
 import { useState, useCallback, useRef } from 'react';
-import type { WizaMessage, StreamEvent } from '@/types/wiza';
+import type { StreamEvent } from '@/types/wiza';
 import { supabaseUser } from '@/lib/supabase/server';
 
 export interface ChatMessage {
@@ -47,7 +48,7 @@ export function useWizaChat() {
 
     setMessages(prev => [...prev, userMsg, aiPlaceholder]);
 
-    // Grab auth token (optional for landing-page preview)
+    // Grab auth token (optional — works in guest mode without it)
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token;
 
@@ -132,26 +133,65 @@ export function useWizaChat() {
     }
   }, [sessionId, streaming, supabase]);
 
-  // ── Request summary ──────────────────────────────────────────────────────
+  // ── Request summary ─────────────────────────────────────────────────────
+  // Authenticated: dispatches Trigger.dev background job (email/SMS delivery)
+  // Guest: sends message history to the API, injects summary into chat
   const requestSummary = useCallback(async (): Promise<string> => {
-    if (!sessionId) return 'No active session to summarise.';
-
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token;
-    if (!token) return 'Not authenticated.';
 
-    const res = await fetch('/api/wiza/summarize', {
-      method:  'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization:  `Bearer ${token}`,
-      },
-      body: JSON.stringify({ session_id: sessionId }),
-    });
+    // ── Authenticated path ────────────────────────────────────────────────
+    if (token && sessionId) {
+      const res = await fetch('/api/wiza/summarize', {
+        method:  'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+        },
+        body: JSON.stringify({ session_id: sessionId }),
+      });
+      const json = await res.json();
+      return json.message ?? 'Summary request sent.';
+    }
 
-    const json = await res.json();
-    return json.message ?? 'Summary request sent.';
-  }, [sessionId, supabase]);
+    // ── Guest path: summarise from in-memory messages ─────────────────────
+    const completedMessages = messages.filter(m => !m.pending);
+    if (!completedMessages.length) return 'Nothing to summarise yet.';
+
+    try {
+      const res = await fetch('/api/wiza/summarize', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // No Authorization header — route detects guest mode
+        body: JSON.stringify({
+          messages: completedMessages.map(m => ({
+            role:    m.role,
+            content: m.content,
+          })),
+        }),
+      });
+
+      const json = await res.json();
+
+      if (json.summary) {
+        // Inject the summary as a Wiza message so it's visible in the chat
+        setMessages(prev => [
+          ...prev,
+          {
+            id:      crypto.randomUUID(),
+            role:    'model',
+            content: `📋 **Session Summary**\n\n${json.summary}`,
+            pending: false,
+          },
+        ]);
+        return 'Summary ready!';
+      }
+
+      return json.error ?? 'Could not generate summary.';
+    } catch {
+      return 'Failed to generate summary. Please try again.';
+    }
+  }, [sessionId, messages, supabase]);
 
   // ── Start fresh session ──────────────────────────────────────────────────
   const newSession = useCallback(() => {
