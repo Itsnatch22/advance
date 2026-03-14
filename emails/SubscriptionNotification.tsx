@@ -30,7 +30,7 @@ export default function SubscriptionNotification({
           {/* Header */}
           <Section style={header}>
             <Img
-              src={`${baseUrl}/logo.png`}
+              src={`/logo.png`}
               width="140"
               height="auto"
               alt="EaziWage"
