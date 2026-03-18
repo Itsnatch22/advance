@@ -6,29 +6,47 @@ import path from "path";
 import { calc, type Payload, type JsonConfig } from "@/lib/calc";
 import { supabaseAdmin } from "@/lib/supabase";
 
-// Base data path where your JSON config files live
-const dataDir = path.join(process.cwd(), "data");
+// Hardcoded config file paths to prevent path traversal
+const CONFIG_PATHS = {
+  KE: path.join(process.cwd(), "data", "calcke.json"),
+  UG: path.join(process.cwd(), "data", "calcug.json"),
+  TZ: path.join(process.cwd(), "data", "calctz.json"),
+  RW: path.join(process.cwd(), "data", "calcrw.json"),
+} as const;
 
-// Dynamically read JSON config per country
+type AllowedCountry = keyof typeof CONFIG_PATHS;
+
+// Read JSON config for a country using only hardcoded paths
 async function readCountryConfig(country: string): Promise<JsonConfig> {
-  const fileMap: Record<string, string> = {
-    KE: "calcke.json",
-    UG: "calcug.json",
-    TZ: "calctz.json",
-    RW: "calcrw.json",
-  };
+  const rawCode = (country || "").toUpperCase();
 
-  const code = (country || "KE").toUpperCase();
-  const fileName = fileMap[code] || fileMap["KE"];
-  const filePath = path.join(dataDir, fileName);
+  // Select hardcoded path based on validated country code
+  let filePath: string;
+  switch (rawCode) {
+    case "KE":
+      filePath = CONFIG_PATHS.KE;
+      break;
+    case "UG":
+      filePath = CONFIG_PATHS.UG;
+      break;
+    case "TZ":
+      filePath = CONFIG_PATHS.TZ;
+      break;
+    case "RW":
+      filePath = CONFIG_PATHS.RW;
+      break;
+    default:
+      filePath = CONFIG_PATHS.KE;
+      break;
+  }
 
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const parsed = JSON.parse(raw) as JsonConfig;
     return parsed;
   } catch (err: unknown) {
-    console.error(`❌ Failed reading config for ${country}:`, err);
-    throw new Error(`Missing or unreadable config: ${fileName}`);
+    console.error("Failed reading config file:", err);
+    throw new Error("Missing or unreadable config file");
   }
 }
 
