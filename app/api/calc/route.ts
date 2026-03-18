@@ -11,24 +11,34 @@ const dataDir = path.join(process.cwd(), "data");
 
 // Dynamically read JSON config per country
 async function readCountryConfig(country: string): Promise<JsonConfig> {
-  const fileMap: Record<string, string> = {
-    KE: "calcke.json",
-    UG: "calcug.json",
-    TZ: "calctz.json",
-    RW: "calcrw.json",
-  };
-
   const code = (country || "KE").toUpperCase();
-  const fileName = fileMap[code] || fileMap["KE"];
-  const filePath = path.join(dataDir, fileName);
+
+  // Use switch with literal paths to prevent path traversal
+  // User input only selects which literal path to use
+  let filePath: string;
+  switch (code) {
+    case "UG":
+      filePath = path.join(dataDir, "calcug.json");
+      break;
+    case "TZ":
+      filePath = path.join(dataDir, "calctz.json");
+      break;
+    case "RW":
+      filePath = path.join(dataDir, "calcrw.json");
+      break;
+    case "KE":
+    default:
+      filePath = path.join(dataDir, "calcke.json");
+      break;
+  }
 
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const parsed = JSON.parse(raw) as JsonConfig;
     return parsed;
   } catch (err: unknown) {
-    console.error(`❌ Failed reading config for ${country}:`, err);
-    throw new Error(`Missing or unreadable config: ${fileName}`);
+    console.error("Failed reading config for country:", code, err);
+    throw new Error("Missing or unreadable config for country: " + code);
   }
 }
 
