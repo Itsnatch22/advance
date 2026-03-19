@@ -10,22 +10,29 @@ import Testimonials from "@/components/Testimonials";
 import Coverage from "@/components/Coverage";
 import Marquee from "@/components/Marquee";
 import WizaHeroPreview from "@/components/WizaHeroPreview";
+import ErrorBoundary from "@/components/ErrorBoundary";
+
+export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
   return (
-    <div className="overflow-hidden">
-      <Hero />
-      <Marquee />
-      <ProblemStatement />
-      <Works />
-      <StatsCounter />
-      <Needs />
-      <Pricing />
-      <WizaHeroPreview/>
-      <Testimonials />
-      <Coverage />
-      <FAQ />
-      <CTA />
-    </div>
+    <ErrorBoundary>
+      <div className="overflow-hidden">
+        <Hero />
+        <Marquee />
+        <ProblemStatement />
+        <Works />
+        <StatsCounter />
+        <Needs />
+        <Pricing />
+        <ErrorBoundary>
+          <WizaHeroPreview/>
+        </ErrorBoundary>
+        <Testimonials />
+        <Coverage />
+        <FAQ />
+        <CTA />
+      </div>
+    </ErrorBoundary>
   );
 }
