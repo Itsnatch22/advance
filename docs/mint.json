@@ -1,0 +1,142 @@
+{
+  "name": "EaziWage",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#2E75B6",
+    "light": "#4A90D9",
+    "dark": "#1E5A8E",
+    "anchors": {
+      "from": "#2E75B6",
+      "to": "#4A90D9"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@eaziwage.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://app.eaziwage.com"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    },
+    {
+      "name": "Guides",
+      "url": "guides"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Website",
+      "icon": "house",
+      "url": "https://eaziwage.com"
+    },
+    {
+      "name": "Community",
+      "icon": "discord",
+      "url": "https://discord.gg/eaziwage"
+    },
+    {
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://eaziwage.com/blog"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "employees/getting-started",
+        "employers/getting-started",
+        "developers/getting-started"
+      ]
+    },
+    {
+      "group": "Employee Guides",
+      "pages": [
+        "employees/requesting-advances",
+        "employees/payment-methods",
+        "employees/kyc-verification",
+        "employees/transaction-history",
+        "employees/understanding-fees"
+      ]
+    },
+    {
+      "group": "Employer Guides",
+      "pages": [
+        "employers/onboarding-employees",
+        "employers/approving-advances",
+        "employers/payroll-integration",
+        "employers/analytics",
+        "employers/managing-policies"
+      ]
+    },
+    {
+      "group": "Integration Guides",
+      "pages": [
+        "integrations/overview",
+        "integrations/payroll-systems",
+        "integrations/hris",
+        "integrations/webhooks",
+        "integrations/custom"
+      ]
+    },
+    {
+      "group": "API Documentation",
+      "pages": [
+        "api-reference/introduction",
+        "api-reference/authentication",
+        "api-reference/errors",
+        "api-reference/rate-limits"
+      ]
+    },
+    {
+      "group": "Endpoints",
+      "pages": [
+        "api-reference/endpoint/employees",
+        "api-reference/endpoint/advances",
+        "api-reference/endpoint/transactions",
+        "api-reference/endpoint/organizations",
+        "api-reference/endpoint/webhooks"
+      ]
+    },
+    {
+      "group": "Compliance & Legal",
+      "pages": [
+        "compliance/privacy-policy",
+        "compliance/terms-of-service",
+        "compliance/data-protection",
+        "compliance/regulatory"
+      ]
+    },
+    {
+      "group": "Support",
+      "pages": [
+        "support/faq",
+        "support/troubleshooting",
+        "support/contact"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "twitter": "https://twitter.com/eaziwage",
+    "linkedin": "https://linkedin.com/company/eaziwage",
+    "github": "https://github.com/eaziwage"
+  },
+  "analytics": {
+    "ga4": {
+      "measurementId": "G-XXXXXXXXXX"
+    }
+  }
+}

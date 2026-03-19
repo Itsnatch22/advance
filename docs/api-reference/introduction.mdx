@@ -1,0 +1,52 @@
+---
+title: 'API Reference'
+description: 'Complete API documentation for EaziWage integration'
+---
+
+## Authentication
+
+All API requests require authentication using API keys:
+
+```bash
+curl https://api.eaziwage.com/v1/employees \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+<Note>
+  Keep your API keys secure and never commit them to version control.
+</Note>
+
+## Base URLs
+
+| Environment | Base URL |
+|-------------|----------|
+| Production  | `https://api.eaziwage.com/v1` |
+| Sandbox     | `https://sandbox-api.eaziwage.com/v1` |
+
+## Rate Limits
+
+API requests are limited to:
+- 1000 requests per hour for authenticated requests
+- 100 requests per hour for unauthenticated requests
+
+<Warning>
+  Exceeding rate limits will result in 429 (Too Many Requests) responses.
+</Warning>
+
+## Common Errors
+
+| Status Code | Description |
+|-------------|-------------|
+| 400 | Bad Request - Invalid parameters |
+| 401 | Unauthorized - Invalid API key |
+| 403 | Forbidden - Insufficient permissions |
+| 404 | Not Found - Resource doesn't exist |
+| 429 | Too Many Requests - Rate limit exceeded |
+| 500 | Internal Server Error |
+
+## Need Help?
+
+- Check our [Integration Guides](/integrations/overview)
+- Review [Webhook Documentation](/integrations/webhooks)
+- Contact support at [support@eaziwage.com](mailto:support@eaziwage.com)

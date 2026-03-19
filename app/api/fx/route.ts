@@ -1,7 +1,7 @@
-// app/api/fx/route.ts
 import { NextResponse } from "next/server";
 
-const SYMBOLS = ["KES", "UGX", "TZS", "RWF", "BIF", "SOS"].join(",");
+// USD added so the client can convert the flat $2 advance fee to KES
+const SYMBOLS = ["KES", "UGX", "TZS", "RWF", "BIF", "SOS", "USD"].join(",");
 
 export async function GET() {
   try {
@@ -20,8 +20,7 @@ export async function GET() {
       { rates: data.rates ?? null, fetchedAt: Date.now() },
       { status: 200 }
     );
-  } catch (err: { message?: string } | unknown) {
-    // keep response simple; client will fallback to embedded rates
+  } catch (err: unknown) {
     return NextResponse.json({ error: "Failed to fetch FX rates" }, { status: 502 });
   }
 }

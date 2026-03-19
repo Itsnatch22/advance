@@ -11,10 +11,75 @@ const heroStats = [
   { value: '4.9', label: 'Rating', icon: Star },
 ];
 
-export default function Hero() {
+interface PublicStats {
+    total_users: number;
+    active_employers: number;
+    active_employees: number;
+    total_disbursed: number;
+    updated_at: string;
+}
+
+function formatUsers(n: number): string {
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M+`;
+    if (n >= 1_000) return `${Math.floor(n / 1_000)}K+`;
+    return `${n}+`;
+}
+
+
+function formatDisbursed(n: number): string {
+    const usd = n / 129;
+    if (usd >= 1_000_000_000) return `$${(usd / 1_000_000_000).toFixed(1)}B+`;
+    if (usd >= 1_000_000) return `$${(usd / 1_000_000).toFixed(1)}M+`;
+    if (usd >= 1_000) return `$${Math.floor(usd / 1_000)}K+`;
+    return `$${usd.toFixed(0)}`;
+}
+
+//Let's fetch the data
+
+async function fetchStats(): Promise<PublicStats | null> {
+    try {
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/stats`, {
+            next: { revalidate: 21600 },
+        });
+        if (!res.ok) return null;
+        const json = await res.json();
+        return json.data ?? null;
+    } catch {
+        return null;
+    }
+}
+export default async function Hero() {
     const [email, setEmail] = useState("");
     const router = useRouter();
     const containerRef = useRef<HTMLElement>(null);
+    const stats = await fetchStats();
+
+
+    const resolvedStats = stats && stats.total_users > 0
+    ? [
+        {
+            value: formatUsers(stats.total_users),
+            label: 'Active Users',
+            icon: Users,
+        },
+        {
+          value: formatDisbursed(stats.total_disbursed),
+          label: "Disbursed",
+          icon: Banknote,
+        },
+        {
+          value: "<3s",
+          label: "Instant Transfer",
+          icon: Zap,
+        },
+        {
+          value: "4.9",
+          label: "Rating",
+          icon: Star,
+        },
+    ] : heroStats;
+    
     
     // Scroll parallax for phone mockup
     const { scrollYProgress } = useScroll({
@@ -129,18 +194,18 @@ export default function Hero() {
 
                         {/* Stats Row */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 pt-8 border-t border-slate-100">
-                            {heroStats.map((stat, i) => (
+                            {resolvedStats.map(({ value, label, icon: Icon }) => (
                                 <motion.div 
-                                    key={i} 
+                                    key={label} 
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.6, delay: 0.6 + (i * 0.1) }}
+                                    transition={{ duration: 0.6, delay: 0.6 + (resolvedStats.indexOf({ value, label, icon: Icon }) * 0.1) }}
                                 >
                                     <div className="flex items-center gap-2 mb-1">
-                                        <stat.icon className="w-4 h-4 text-green-600" />
-                                        <span className="text-2xl font-black tracking-tight text-slate-900">{stat.value}</span>
+                                        <Icon className="w-4 h-4 text-green-600" />
+                                        <span className="text-2xl font-black tracking-tight text-slate-900">{value}</span>
                                     </div>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{stat.label}</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{label}</p>
                                 </motion.div>
                             ))}
                         </div>
