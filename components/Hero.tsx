@@ -1,92 +1,21 @@
 'use client';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { Zap, Users, Sparkles, Banknote, Star, Check, Wallet, TrendingUp, ChevronRight } from 'lucide-react';
-import React, { useState, useRef, MouseEvent } from 'react';
+import React, { useState, useRef, Suspense, MouseEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import HeroStats from './HeroStats'; // async server component
 
-const heroStats = [
-  { value: '50K+', label: 'Active Users', icon: Users },
-  { value: '$2B+', label: 'Disbursed', icon: Banknote },
-  { value: '<3s', label: 'Instant Transfer', icon: Zap },
-  { value: '4.9', label: 'Rating', icon: Star },
-];
-
-interface PublicStats {
-    total_users: number;
-    active_employers: number;
-    active_employees: number;
-    total_disbursed: number;
-    updated_at: string;
-}
-
-function formatUsers(n: number): string {
-    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M+`;
-    if (n >= 1_000) return `${Math.floor(n / 1_000)}K+`;
-    return `${n}+`;
-}
-
-
-function formatDisbursed(n: number): string {
-    const usd = n / 129;
-    if (usd >= 1_000_000_000) return `$${(usd / 1_000_000_000).toFixed(1)}B+`;
-    if (usd >= 1_000_000) return `$${(usd / 1_000_000).toFixed(1)}M+`;
-    if (usd >= 1_000) return `$${Math.floor(usd / 1_000)}K+`;
-    return `$${usd.toFixed(0)}`;
-}
-
-//Let's fetch the data
-
-async function fetchStats(): Promise<PublicStats | null> {
-    try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-        const res = await fetch(`${baseUrl}/api/stats`, {
-            next: { revalidate: 21600 },
-        });
-        if (!res.ok) return null;
-        const json = await res.json();
-        return json.data ?? null;
-    } catch {
-        return null;
-    }
-}
-export default async function Hero() {
+export default function Hero() {
     const [email, setEmail] = useState("");
     const router = useRouter();
     const containerRef = useRef<HTMLElement>(null);
-    const stats = await fetchStats();
 
-
-    const resolvedStats = stats && stats.total_users > 0
-    ? [
-        {
-            value: formatUsers(stats.total_users),
-            label: 'Active Users',
-            icon: Users,
-        },
-        {
-          value: formatDisbursed(stats.total_disbursed),
-          label: "Disbursed",
-          icon: Banknote,
-        },
-        {
-          value: "<3s",
-          label: "Instant Transfer",
-          icon: Zap,
-        },
-        {
-          value: "4.9",
-          label: "Rating",
-          icon: Star,
-        },
-    ] : heroStats;
-    
-    
     // Scroll parallax for phone mockup
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end start"]
     });
-    
+
     const yPhone = useTransform(scrollYProgress, [0, 1], [0, -150]);
     const rotatePhone = useTransform(scrollYProgress, [0, 1], [0, -5]);
     const opacityPhone = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
@@ -115,7 +44,7 @@ export default async function Hero() {
     };
 
     return (
-        <section 
+        <section
             ref={containerRef}
             className='relative pt-32 pb-24 lg:pt-48 lg:pb-40 overflow-hidden bg-white'
         >
@@ -128,7 +57,7 @@ export default async function Hero() {
 
             <div className='relative max-w-7xl mx-auto px-6 lg:px-8'>
                 <div className='grid lg:grid-cols-2 gap-16 lg:gap-24 items-center'>
-                    
+
                     {/* Content Column */}
                     <div className='relative z-10'>
                         <motion.div
@@ -144,19 +73,18 @@ export default async function Hero() {
                         <motion.h1
                             initial={{ opacity: 0, x: -30 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.8, ease: "easeOut" }}
-                            className='font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[0.95] tracking-tight text-slate-900 mb-8'
+                            transition={{ duration: 0.7, delay: 0.1 }}
+                            className='font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl mb-8'
                         >
-                            Your Money.
-                            <br/>
+                            Your Money. <br />
                             <span className='text-green-600'>Your Timeline.</span>
                         </motion.h1>
 
                         <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="text-lg md:text-xl text-slate-500 max-w-xl leading-relaxed mb-12"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 0.2 }}
+                            className='text-lg leading-relaxed text-slate-500 max-w-lg mb-12'
                         >
                             Access up to 60% of your earned wages instantly. No loans, no interest, no waiting for payday. 
                             Just your hard-earned money when you need it most.
@@ -178,7 +106,6 @@ export default async function Hero() {
                                     required
                                     className="flex-1 rounded-xl border-0 bg-transparent px-5 py-4 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none sm:text-sm"
                                 />
-                                
                                 <motion.button
                                     type="submit"
                                     whileHover={{ scale: 1.02 }}
@@ -192,34 +119,23 @@ export default async function Hero() {
                             </div>
                         </motion.form>
 
-                        {/* Stats Row */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 pt-8 border-t border-slate-100">
-                            {resolvedStats.map(({ value, label, icon: Icon }) => (
-                                <motion.div 
-                                    key={label} 
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.6, delay: 0.6 + (resolvedStats.indexOf({ value, label, icon: Icon }) * 0.1) }}
-                                >
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <Icon className="w-4 h-4 text-green-600" />
-                                        <span className="text-2xl font-black tracking-tight text-slate-900">{value}</span>
-                                    </div>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{label}</p>
-                                </motion.div>
-                            ))}
+                        {/* Stats Row — async server component wrapped in Suspense */}
+                        <div className="pt-8 border-t border-slate-100">
+                            <Suspense fallback={<StatsFallback />}>
+                                <HeroStats />
+                            </Suspense>
                         </div>
                     </div>
 
                     {/* Visual Column */}
-                    <motion.div 
+                    <motion.div
                         onMouseMove={onMouseMove}
                         onMouseLeave={() => { x.set(0); y.set(0); }}
                         style={{ y: yPhone, rotate: rotatePhone, opacity: opacityPhone }}
                         className="relative perspective-1000 hidden lg:block"
                     >
                         {/* 3D Phone Frame */}
-                        <motion.div 
+                        <motion.div
                             style={{ rotateX, rotateY }}
                             className="relative z-20 mx-auto w-full max-w-85 rounded-[3rem] border-12 border-slate-900 bg-slate-900 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)]"
                         >
@@ -241,17 +157,17 @@ export default async function Hero() {
                                             <span>KSH 24,708.66</span>
                                         </div>
                                         <div className="h-2 w-full bg-white/20 rounded-full overflow-hidden">
-                                            <motion.div 
+                                            <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: "60%" }}
                                                 transition={{ duration: 1.5, ease: "easeOut" }}
-                                                className="h-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]" 
+                                                className="h-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]"
                                             />
                                         </div>
                                         <p className="text-[10px] font-bold uppercase tracking-tighter mt-3 opacity-50 text-center">60% available for advance</p>
                                     </div>
                                 </div>
-                                
+
                                 <div className="p-6 space-y-4">
                                     <div className="flex items-center justify-between p-4 bg-white rounded-2xl shadow-sm border border-slate-100">
                                         <div className="flex items-center gap-4">
@@ -265,7 +181,7 @@ export default async function Hero() {
                                         </div>
                                         <ChevronRight className="w-4 h-4 text-slate-300" />
                                     </div>
-                                    
+
                                     <div className="flex items-center gap-4 p-4 bg-green-50/50 rounded-2xl border border-green-100">
                                         <div className="h-10 w-10 rounded-xl bg-green-600 flex items-center justify-center text-white">
                                             <Check className="w-5 h-5" />
@@ -279,8 +195,8 @@ export default async function Hero() {
                             </div>
                         </motion.div>
 
-                        {/* Floating Notifications */}
-                        <motion.div 
+                        {/* Floating Notification */}
+                        <motion.div
                             animate={{ y: [0, -10, 0] }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                             className="absolute -right-12 top-1/4 z-30 hidden xl:block"
@@ -304,5 +220,19 @@ export default async function Hero() {
                 </div>
             </div>
         </section>
+    );
+}
+
+// Shown while HeroStats is streaming in — matches the stats grid layout
+function StatsFallback() {
+    return (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="space-y-2 animate-pulse">
+                    <div className="h-7 w-16 rounded-lg bg-slate-100" />
+                    <div className="h-3 w-20 rounded-lg bg-slate-100" />
+                </div>
+            ))}
+        </div>
     );
 }
