@@ -246,6 +246,7 @@ export default function Footer() {
             <ul className="space-y-3.5">
               {[
                 { name: "Resources", href: "resources" },
+                { name: "Documentation", href: "docs" },
               ].map((link, index) => (
                 <li key={index}>
                   <Link

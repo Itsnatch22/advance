@@ -21,6 +21,7 @@
     "@ai-sdk/openai": "^3.0.41",
     "@ai-sdk/react": "^3.0.118",
     "@google/generative-ai": "^0.24.1",
+    "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^5.2.2",
     "@nanostores/react": "github:ai/react",
     "@prisma/client": "^7.2.0",

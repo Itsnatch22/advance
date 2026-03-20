@@ -18,16 +18,6 @@
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://eaziwage.vercel.app/login</loc>
-  <lastmod>2025-10-25T06:55:50+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://eaziwage.vercel.app/register</loc>
-  <lastmod>2025-10-25T06:55:50+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
   <loc>https://eaziwage.vercel.app/employers</loc>
   <lastmod>2025-10-25T06:55:50+00:00</lastmod>
   <priority>0.80</priority>
@@ -83,12 +73,12 @@
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://eaziwage.vercel.app/whistleblow.pdf</loc>
+  <loc>https://eaziwage.com/whistleblow.pdf</loc>
   <lastmod>2025-10-25T06:55:49+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://eaziwage.vercel.app/terms.pdf</loc>
+  <loc>https://eaziwage.com/terms.pdf</loc>
   <lastmod>2025-10-25T06:55:50+00:00</lastmod>
   <priority>0.80</priority>
 </url>

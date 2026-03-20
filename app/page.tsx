@@ -6,7 +6,6 @@ import ProblemStatement from "@/components/ProblemStatement";
 import StatsCounter from "@/components/StatsCounter";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
-import Testimonials from "@/components/Testimonials";
 import Coverage from "@/components/Coverage";
 import Marquee from "@/components/Marquee";
 import WizaHeroPreview from "@/components/WizaHeroPreview";
@@ -28,7 +27,9 @@ export default function HomePage() {
         <ErrorBoundary>
           <WizaHeroPreview/>
         </ErrorBoundary>
+        {/*
         <Testimonials />
+        */}
         <Coverage />
         <FAQ />
         <CTA />
