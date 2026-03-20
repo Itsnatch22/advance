@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useSpring, useMotionValue } from "fram
 import Link from "next/link";
 import { ArrowUpRight, Code2, Palette, Sparkles, TrendingUp, Users, Zap, ChevronRight } from "lucide-react";
 import Lottie from "lottie-react";
-import Rocket from "@/public/rocket.json";
+import Rocket from "@/public/Rocket.json";
 
 const RevealText = ({ text, delay = 0 }: { text: string; delay?: number }) => (
   <motion.span
