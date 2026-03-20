@@ -1,4 +1,3 @@
-// Navbar.tsx - Enhanced
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -78,6 +77,7 @@ const Navbar = () => {
         },
       ],
     },
+    { name: "Documentation", href: "/docs"}
   ];
 
   return (
