@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useSpring, useMotionValue } from "fram
 import Link from "next/link";
 import { ArrowUpRight, Code2, Palette, Sparkles, TrendingUp, Users, Zap, ChevronRight } from "lucide-react";
 import Lottie from "lottie-react";
-import Startup from "@/public/Startup.json";
+import Rocket from "@/public/rocket.json";
 
 const RevealText = ({ text, delay = 0 }: { text: string; delay?: number }) => (
   <motion.span
@@ -111,7 +111,7 @@ export default function CareersPage() {
           className="relative mb-16 h-64 w-64 lg:h-80 lg:w-80"
         >
           <div className="absolute -inset-10 rounded-full bg-green-500/10 blur-3xl" />
-          <Lottie animationData={Startup} loop className="relative z-10" />
+          <Lottie animationData={Rocket} loop className="relative z-10" />
         </motion.div>
 
         <motion.h1
