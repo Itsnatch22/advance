@@ -81,7 +81,6 @@ export default function AboutPage() {
     const typed = new Typed(typedRef.current, {
       strings: ["Heartbeat", "Pulse", "Essence"],
       smartBackspace: true,
-      cursorChar: "|",
       backDelay: 2000,
       typeSpeed: 100,
       backSpeed: 80,
