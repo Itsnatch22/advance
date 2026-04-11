@@ -1,11 +1,3 @@
-// app/api/wiza/summarize/route.ts
-// POST { session_id?, messages? }
-//
-// Authenticated users  → session_id required, persists summary flag, dispatches Trigger.dev job
-// Guest users          → messages[] required, generates summary inline and returns it directly
-//
-// Both paths return { summary } so the client can display/copy it.
-
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { tasks } from '@trigger.dev/sdk';

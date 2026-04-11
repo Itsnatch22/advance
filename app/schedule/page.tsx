@@ -2,24 +2,27 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Calendar, 
-  Users, 
-  ShieldCheck, 
-  Sparkles, 
-  Clock, 
+import {
+  Calendar,
+  Users,
+  ShieldCheck,
+  Clock,
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
 } from "lucide-react";
 import Script from "next/script";
 
-const FloatingOrb = ({ color, delay, className }: { color: string; delay: number; className?: string }) => (
+const FloatingOrb = ({
+  color,
+  delay,
+  className,
+}: {
+  color: string;
+  delay: number;
+  className?: string;
+}) => (
   <motion.div
-    animate={{
-      y: [0, -40, 0],
-      x: [0, 20, 0],
-      scale: [1, 1.1, 1],
-    }}
+    animate={{ y: [0, -40, 0], x: [0, 20, 0], scale: [1, 1.1, 1] }}
     transition={{
       duration: 10 + Math.random() * 5,
       repeat: Infinity,
@@ -30,38 +33,70 @@ const FloatingOrb = ({ color, delay, className }: { color: string; delay: number
   />
 );
 
-export default function SchedulePage() {
-  const [meetingType, setMeetingType] = useState<"admin_to_user" | "user_to_admin">("user_to_admin");
-  const [isScheduled, setIsScheduled] = useState(false);
-  const containerRef = useRef<HTMLElement>(null);
+const CALENDLY_LINKS: Record<"user_to_admin" | "admin_to_user", string> = {
+  user_to_admin:
+    "https://calendly.com/eaziwage/user-consultation?hide_landing_page_details=1&hide_gdpr_banner=1&primary_color=16a34a",
+  admin_to_user:
+    "https://calendly.com/eaziwage/admin-call?hide_landing_page_details=1&hide_gdpr_banner=1&primary_color=16a34a",
+};
 
-  // Calendly logic
+export default function SchedulePage() {
+  const [meetingType, setMeetingType] = useState<
+    "admin_to_user" | "user_to_admin"
+  >("user_to_admin");
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [scriptReady, setScriptReady] = useState(false);
+  const containerRef = useRef<HTMLElement>(null);
+  const embedRef = useRef<HTMLDivElement>(null);
+
+  // Initialize or re-initialize the Calendly widget
   useEffect(() => {
-    const handleCalendlyEvent = (e: any) => {
-      if (e.data.event && e.data.event.indexOf("calendly.event_scheduled") !== -1) {
-        // Meeting scheduled!
+    if (!scriptReady || isScheduled || !embedRef.current) return;
+
+    // Clear previous widget instance before re-mounting
+    embedRef.current.innerHTML = "";
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).Calendly.initInlineWidget({
+      url: CALENDLY_LINKS[meetingType],
+      parentElement: embedRef.current,
+      prefill: {},
+      utm: {},
+    });
+  }, [scriptReady, meetingType, isScheduled]);
+
+  // Listen for Calendly post-message events
+  useEffect(() => {
+    const handleCalendlyEvent = (e: MessageEvent) => {
+      if (
+        e.origin !== "https://calendly.com" ||
+        !e.data?.event
+      )
+        return;
+
+      if (e.data.event === "calendly.event_scheduled") {
         handleMeetingScheduled(e.data.payload);
       }
     };
 
     window.addEventListener("message", handleCalendlyEvent);
     return () => window.removeEventListener("message", handleCalendlyEvent);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meetingType]);
 
   const handleMeetingScheduled = async (payload: any) => {
     setIsScheduled(true);
-    
-    // Trigger our API to log and send confirmation emails
+
     try {
       await fetch("/api/schedule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userEmail: payload.invitee.email,
-          adminEmail: "support@eaziwage.com", // Fallback or dynamic
-          meetingType: meetingType,
-          calendlyEventId: payload.event.uuid,
-          scheduledAt: new Date().toISOString(), // Calendly payload doesn't easily provide the start time in this event, typically we'd use a webhook for precise data
+          userEmail: payload?.invitee?.email ?? "",
+          adminEmail: "support@eaziwage.com",
+          meetingType,
+          calendlyEventId: payload?.event?.uuid ?? "",
+          scheduledAt: payload?.event?.start_time ?? new Date().toISOString(),
         }),
       });
     } catch (error) {
@@ -69,16 +104,34 @@ export default function SchedulePage() {
     }
   };
 
+  const handleMeetingTypeChange = (type: "admin_to_user" | "user_to_admin") => {
+    setMeetingType(type);
+    // Clear embed so useEffect re-mounts cleanly
+    if (embedRef.current) embedRef.current.innerHTML = "";
+  };
+
   return (
-    <main ref={containerRef} className="relative min-h-screen overflow-hidden bg-white">
-      {/* Immersive Background */}
+    <main
+      ref={containerRef}
+      className="relative min-h-screen overflow-hidden bg-white"
+    >
+      {/* Background */}
       <div className="fixed inset-0 pointer-events-none">
-        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
-        <FloatingOrb color="bg-emerald-100" delay={2} className="bottom-[10%] right-[10%]" />
+        <FloatingOrb
+          color="bg-green-100"
+          delay={0}
+          className="top-[-10%] left-[10%]"
+        />
+        <FloatingOrb
+          color="bg-emerald-100"
+          delay={2}
+          className="bottom-[10%] right-[10%]"
+        />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       <section className="relative z-10 mx-auto max-w-7xl px-6 pt-32 pb-24 lg:pt-48 lg:pb-40">
+        {/* Header */}
         <div className="text-center mb-16">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -95,7 +148,7 @@ export default function SchedulePage() {
             transition={{ duration: 0.8 }}
             className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
           >
-            Let&apos;s Connect and <br/>
+            Let&apos;s Connect and <br />
             <span className="text-green-600">Grow Together</span>
           </motion.h1>
 
@@ -105,8 +158,8 @@ export default function SchedulePage() {
             transition={{ delay: 0.3, duration: 1 }}
             className="mt-8 max-w-2xl mx-auto text-xl text-slate-500"
           >
-            Schedule a session with our team to discuss partnerships, 
-            support, or how EaziWage can transform your workforce.
+            Schedule a session with our team to discuss partnerships, support,
+            or how EaziWage can transform your workforce.
           </motion.p>
         </div>
 
@@ -115,20 +168,20 @@ export default function SchedulePage() {
           <div className="flex justify-center mb-12">
             <div className="flex p-1 bg-slate-100 rounded-2xl">
               <button
-                onClick={() => setMeetingType("user_to_admin")}
+                onClick={() => handleMeetingTypeChange("user_to_admin")}
                 className={`px-6 py-3 rounded-xl text-sm font-bold transition-all ${
-                  meetingType === "user_to_admin" 
-                    ? "bg-white text-slate-900 shadow-sm" 
+                  meetingType === "user_to_admin"
+                    ? "bg-white text-slate-900 shadow-sm"
                     : "text-slate-500 hover:text-slate-700"
                 }`}
               >
                 User to Admin
               </button>
               <button
-                onClick={() => setMeetingType("admin_to_user")}
+                onClick={() => handleMeetingTypeChange("admin_to_user")}
                 className={`px-6 py-3 rounded-xl text-sm font-bold transition-all ${
-                  meetingType === "admin_to_user" 
-                    ? "bg-white text-slate-900 shadow-sm" 
+                  meetingType === "admin_to_user"
+                    ? "bg-white text-slate-900 shadow-sm"
                     : "text-slate-500 hover:text-slate-700"
                 }`}
               >
@@ -138,7 +191,7 @@ export default function SchedulePage() {
           </div>
         )}
 
-        {/* Calendly Embed Area */}
+        {/* Embed Area */}
         <div className="relative mx-auto max-w-5xl">
           <AnimatePresence mode="wait">
             {isScheduled ? (
@@ -151,9 +204,12 @@ export default function SchedulePage() {
                 <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-green-100 text-green-600">
                   <CheckCircle2 size={48} />
                 </div>
-                <h2 className="text-4xl font-serif font-bold text-slate-900 mb-4">Meeting Scheduled!</h2>
+                <h2 className="text-4xl font-serif font-bold text-slate-900 mb-4">
+                  Meeting Scheduled!
+                </h2>
                 <p className="text-xl text-slate-500 max-w-md mx-auto mb-12">
-                  We&apos;ve sent a confirmation email to you. We look forward to our conversation.
+                  We&apos;ve sent a confirmation email to you. We look forward
+                  to our conversation.
                 </p>
                 <button
                   onClick={() => setIsScheduled(false)}
@@ -170,9 +226,24 @@ export default function SchedulePage() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="overflow-hidden rounded-[3rem] border border-slate-200 bg-white/40 backdrop-blur-2xl shadow-2xl"
               >
-                <div 
-                  className="calendly-inline-widget w-full h-175" 
-                  data-url={`https://calendly.com/eaziwage/${meetingType === "admin_to_user" ? "admin-call" : "user-consultation"}?hide_landing_page_details=1&hide_gdpr_banner=1&primary_color=16a34a`}
+                {/* Loading shimmer shown until script fires onReady */}
+                {!scriptReady && (
+                  <div className="flex items-center justify-center h-[700px]">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="h-10 w-10 rounded-full border-4 border-green-200 border-t-green-600 animate-spin" />
+                      <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+                        Loading scheduler...
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Calendly mounts here via initInlineWidget */}
+                <div
+                  ref={embedRef}
+                  className={`w-full h-[700px] transition-opacity duration-300 ${
+                    scriptReady ? "opacity-100" : "opacity-0 absolute"
+                  }`}
                 />
               </motion.div>
             )}
@@ -180,7 +251,7 @@ export default function SchedulePage() {
         </div>
       </section>
 
-      {/* Benefits Info */}
+      {/* Benefits */}
       <section className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-3">
           {[
@@ -200,20 +271,31 @@ export default function SchedulePage() {
               desc: "All meetings are conducted through secure, encrypted video channels.",
             },
           ].map((item, i) => (
-            <div key={i} className="group relative overflow-hidden rounded-4xl border border-slate-200/60 bg-white/40 p-8 backdrop-blur-xl transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/10">
+            <div
+              key={i}
+              className="group relative overflow-hidden rounded-4xl border border-slate-200/60 bg-white/40 p-8 backdrop-blur-xl transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+            >
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600 transition-transform duration-500 group-hover:scale-110">
                 <item.icon size={28} strokeWidth={1.5} />
               </div>
-              <h3 className="mb-3 text-xl font-bold text-slate-900">{item.title}</h3>
+              <h3 className="mb-3 text-xl font-bold text-slate-900">
+                {item.title}
+              </h3>
               <p className="text-slate-500 leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <Script 
-        src="https://assets.calendly.com/assets/external/widget.js" 
-        strategy="lazyOnload" 
+      {/*
+        strategy="afterInteractive" ensures the DOM is ready before Calendly
+        script runs. onReady fires once the script has fully executed,
+        at which point we call initInlineWidget safely.
+      */}
+      <Script
+        src="https://assets.calendly.com/assets/external/widget.js"
+        strategy="afterInteractive"
+        onReady={() => setScriptReady(true)}
       />
     </main>
   );
