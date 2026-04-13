@@ -388,10 +388,10 @@ export default function Footer() {
         <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
           <div className="rounded-xl border border-slate-800/60 bg-slate-800/30 p-4 sm:p-5">
             <p className="text-center text-xs leading-relaxed text-slate-400 sm:text-sm sm:leading-relaxed">
-              EaziWage operates in compliance with applicable financial regulations 
-              and laws in each country of operation. Funds are provided through licensed banking 
-              and financial partners. This service does not constitute lending under
-              applicable banking laws.
+              EaziWage is a registered business operating in compliance with applicable 
+              laws in each country of operation. Earned wage access is facilitated through 
+              licensed banking and financial partners. This service does not constitute 
+              lending under applicable banking laws.
             </p>
           </div>
         </div>
