@@ -383,7 +383,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Regulatory Strip - enhanced card treatment */}
+      {/* Regulatory Strip*/}
       <div className="border-t border-slate-800/60 bg-slate-900/80 backdrop-blur-sm">
         <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
           <div className="rounded-xl border border-slate-800/60 bg-slate-800/30 p-4 sm:p-5">
