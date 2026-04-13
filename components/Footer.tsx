@@ -13,11 +13,11 @@ import {
   Send,
   Globe2, CheckCircle2, AlertCircle, Loader2,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Locator from "./Locator";
 import { Input } from "./ui";
-import AppStoreButtons from "./AppStoreButtons";
 
 export default function Footer() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
@@ -383,16 +383,57 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Regulatory Strip*/}
-      <div className="border-t border-slate-800/60 bg-slate-900/80 backdrop-blur-sm">
-        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
-          <div className="rounded-xl border border-slate-800/60 bg-slate-800/30 p-4 sm:p-5">
-            <p className="text-center text-xs leading-relaxed text-slate-400 sm:text-sm sm:leading-relaxed">
-              EaziWage is a registered business operating in compliance with applicable 
-              laws in each country of operation. Earned wage access is facilitated through 
-              licensed banking and financial partners. This service does not constitute 
-              lending under applicable banking laws.
-            </p>
+      {/* Trust Strip */}
+      <div className="border-t border-slate-800/60 bg-slate-950/90 backdrop-blur-sm">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <div className="grid gap-4 rounded-2xl border border-emerald-500/15 bg-linear-to-r from-slate-900 via-slate-900 to-emerald-950/40 p-5 shadow-[0_0_0_1px_rgba(16,185,129,0.04)] sm:gap-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 ring-1 ring-emerald-500/20 sm:h-16 sm:w-16">
+                <Shield className="h-7 w-7 text-emerald-400 sm:h-8 sm:w-8" strokeWidth={2} />
+              </div>
+
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-300 ring-1 ring-emerald-500/20">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                  Government Compliance
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold text-white sm:text-base">
+                    Built to work within Kenya&apos;s regulated payment environment.
+                  </p>
+                  <p className="mt-1 max-w-3xl text-xs leading-relaxed text-slate-400 sm:text-sm">
+                    EaziWage operates with compliance-first controls and works through licensed financial infrastructure so employers and workers can trust every payout flow.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-start sm:justify-end">
+              <div className="flex items-center gap-4 rounded-2xl border border-slate-800/80 bg-white px-4 py-3 shadow-lg shadow-black/20">
+                <div className="flex h-12 items-center">
+                  <Image
+                    src="/nairobi-pay.svg"
+                    alt="Nairobi Pay compliance mark"
+                    width={171}
+                    height={96}
+                    className="h-12 w-auto object-contain"
+                  />
+                </div>
+                <div className="h-10 w-px bg-slate-200" />
+                <div className="space-y-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    Compliance Signal
+                  </p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    Nairobi Pay aligned
+                  </p>
+                  <p className="text-xs leading-relaxed text-slate-600">
+                    Trusted rails for public-sector compatible payment flows.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
