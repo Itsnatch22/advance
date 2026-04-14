@@ -9,6 +9,7 @@ import {
   Instagram,
   MapPin,
   Shield,
+  ShieldCheck,
   Send,
   Globe2, CheckCircle2, AlertCircle, Loader2,
 } from "lucide-react";
@@ -394,7 +395,7 @@ export default function Footer() {
           <div className="grid gap-4 rounded-2xl border border-emerald-500/15 bg-linear-to-r from-slate-900 via-slate-900 to-emerald-950/40 p-5 shadow-[0_0_0_1px_rgba(16,185,129,0.04)] sm:gap-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 ring-1 ring-emerald-500/20 sm:h-16 sm:w-16">
-                <Shield className="h-7 w-7 text-emerald-400 sm:h-8 sm:w-8" strokeWidth={2} />
+                <ShieldCheck className="h-7 w-7 text-emerald-400 sm:h-8 sm:w-8" strokeWidth={2} />
               </div>
 
               <div className="space-y-2">

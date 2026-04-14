@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const nextConfig: NextConfig = {
   async headers() {
@@ -34,11 +35,16 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    optimizePackageImports: ["@tabler/icons-react", "lucide-react"],
+    optimizePackageImports: [
+      "@tabler/icons-react",
+      "lucide-react",
+    ],
   },
 
   poweredByHeader: false,
   compress: true,
 };
 
-export default nextConfig;
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+})(nextConfig);
