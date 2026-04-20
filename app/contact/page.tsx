@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useRef, useState, MouseEvent } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import {
   Mail,
   Phone,
@@ -28,7 +34,15 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 /* ----------------------------- components ----------------------------- */
 
-const FloatingOrb = ({ color, delay, className }: { color: string; delay: number; className?: string }) => (
+const FloatingOrb = ({
+  color,
+  delay,
+  className,
+}: {
+  color: string;
+  delay: number;
+  className?: string;
+}) => (
   <motion.div
     animate={{
       y: [0, -40, 0],
@@ -41,20 +55,38 @@ const FloatingOrb = ({ color, delay, className }: { color: string; delay: number
       delay,
       ease: "easeInOut",
     }}
-    className={`absolute h-125 w-125 rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
   />
 );
 
-const TiltContactCard = ({ icon: Icon, label, value, href }: { icon: any; label: string; value: string; href?: string }) => {
+const TiltContactCard = ({
+  icon: Icon,
+  label,
+  value,
+  href,
+}: {
+  icon: any;
+  label: string;
+  value: string;
+  href?: string;
+}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
+    stiffness: 150,
+    damping: 20,
+  });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
+    stiffness: 150,
+    damping: 20,
+  });
 
-  function handleMouseMove(event: MouseEvent<HTMLDivElement | HTMLAnchorElement>) {
+  function handleMouseMove(
+    event: MouseEvent<HTMLDivElement | HTMLAnchorElement>
+  ) {
     const rect = event.currentTarget.getBoundingClientRect();
     x.set((event.clientX - rect.left) / rect.width - 0.5);
     y.set((event.clientY - rect.top) / rect.height - 0.5);
@@ -65,7 +97,10 @@ const TiltContactCard = ({ icon: Icon, label, value, href }: { icon: any; label:
   const Content = (
     <motion.div
       onMouseMove={handleMouseMove}
-      onMouseLeave={() => { x.set(0); y.set(0); }}
+      onMouseLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
       style={{ rotateX, rotateY }}
       className="group relative flex items-center gap-6 rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
     >
@@ -73,19 +108,22 @@ const TiltContactCard = ({ icon: Icon, label, value, href }: { icon: any; label:
         style={{
           background: useTransform(
             [mouseX, mouseY],
-            ([mx, my]) => `radial-gradient(300px circle at ${mx}px ${my}px, rgba(255, 255, 255, 0.1), transparent 80%)`
+            ([mx, my]) =>
+              `radial-gradient(300px circle at ${mx}px ${my}px, rgba(255, 255, 255, 0.1), transparent 80%)`
           ),
         }}
-        className="absolute inset-0 pointer-events-none rounded-3xl"
+        className="pointer-events-none absolute inset-0 rounded-3xl"
       />
-      
+
       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 ring-1 ring-white/30 transition-transform duration-500 group-hover:scale-110 group-hover:bg-white group-hover:text-green-600">
         <Icon className="h-6 w-6" strokeWidth={2} />
       </div>
-      
+
       <div className="relative z-10">
-        <p className="text-xs font-black uppercase tracking-[0.2em] text-green-100/60">{label}</p>
-        <p className="text-lg font-bold text-white tracking-tight">{value}</p>
+        <p className="text-xs font-black tracking-[0.2em] text-green-100/60 uppercase">
+          {label}
+        </p>
+        <p className="text-lg font-bold tracking-tight text-white">{value}</p>
       </div>
     </motion.div>
   );
@@ -93,7 +131,9 @@ const TiltContactCard = ({ icon: Icon, label, value, href }: { icon: any; label:
   return (
     <motion.div style={{ perspective: 1000 }}>
       {href ? (
-        <a href={href} className="block">{Content}</a>
+        <a href={href} className="block">
+          {Content}
+        </a>
       ) : (
         Content
       )}
@@ -104,10 +144,14 @@ const TiltContactCard = ({ icon: Icon, label, value, href }: { icon: any; label:
 const StatCard = ({ value, label }: { value: string; label: string }) => (
   <motion.div
     whileHover={{ y: -5, scale: 1.05 }}
-    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:bg-white/10 hover:border-white/20"
+    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:border-white/20 hover:bg-white/10"
   >
-    <div className="text-3xl font-black tracking-tighter text-white sm:text-4xl">{value}</div>
-    <div className="mt-1 text-[10px] font-black uppercase tracking-[0.2em] text-green-100/60">{label}</div>
+    <div className="text-3xl font-black tracking-tighter text-white sm:text-4xl">
+      {value}
+    </div>
+    <div className="mt-1 text-[10px] font-black tracking-[0.2em] text-green-100/60 uppercase">
+      {label}
+    </div>
     <div className="absolute bottom-0 left-0 h-1 w-0 bg-white transition-all duration-500 group-hover:w-full" />
   </motion.div>
 );
@@ -116,7 +160,9 @@ const StatCard = ({ value, label }: { value: string; label: string }) => (
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const {
@@ -149,11 +195,17 @@ export default function ContactPage() {
         setTimeout(() => setSubmitStatus("idle"), 5000);
       } else {
         setSubmitStatus("error");
-        setErrorMessage(result.error || result.message || "Failed to send message. Please try again.");
+        setErrorMessage(
+          result.error ||
+            result.message ||
+            "Failed to send message. Please try again."
+        );
       }
     } catch (error) {
       setSubmitStatus("error");
-      setErrorMessage("Network error. Please check your connection and try again.");
+      setErrorMessage(
+        "Network error. Please check your connection and try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -162,17 +214,24 @@ export default function ContactPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-white">
       {/* Immersive Green Backdrop */}
-      <div className="fixed inset-0 pointer-events-none">
+      <div className="pointer-events-none fixed inset-0">
         <div className="absolute inset-0 bg-green-600" />
         <div className="absolute inset-0 bg-linear-to-br from-green-500 via-green-600 to-emerald-700 sm:[clip-path:polygon(0_0,65%_0,100%_100%,0%_100%)]" />
-        <FloatingOrb color="bg-green-300" delay={0} className="top-[-10%] left-[10%]" />
-        <FloatingOrb color="bg-emerald-300" delay={2} className="bottom-[-10%] left-[40%]" />
+        <FloatingOrb
+          color="bg-green-300"
+          delay={0}
+          className="top-[-10%] left-[10%]"
+        />
+        <FloatingOrb
+          color="bg-emerald-300"
+          delay={2}
+          className="bottom-[-10%] left-[40%]"
+        />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.05]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-40">
         <div className="grid gap-20 lg:grid-cols-2 lg:items-center">
-          
           {/* Left Side: Info */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -184,13 +243,13 @@ export default function ContactPage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-white backdrop-blur-md"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-white uppercase backdrop-blur-md"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse"></span>
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white"></span>
                 Get in Touch
               </motion.div>
 
-              <h1 className="font-serif text-5xl font-bold leading-[0.95] tracking-tight text-white sm:text-7xl">
+              <h1 className="font-serif text-5xl leading-tight font-bold tracking-tight text-white sm:text-7xl">
                 Ready to Transform Your <span>Workforce?</span>
               </h1>
 
@@ -201,7 +260,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="space-y-4 max-w-md">
+            <div className="max-w-md space-y-4">
               <TiltContactCard
                 icon={Mail}
                 label="Email us at"
@@ -221,7 +280,7 @@ export default function ContactPage() {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4 max-w-md">
+            <div className="grid max-w-md grid-cols-3 gap-4">
               <StatCard value="100+" label="Companies" />
               <StatCard value="0%" label="Interest" />
               <StatCard value="Instant" label="Disbursement" />
@@ -233,16 +292,16 @@ export default function ContactPage() {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative perspective-1000"
+            className="perspective-1000 relative"
           >
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/95 p-10 backdrop-blur-2xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)]">
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/95 p-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-2xl">
               <div className="mb-10">
                 <h2 className="mb-2 font-serif text-4xl font-bold tracking-tight text-slate-900">
                   Send us a Message
                 </h2>
                 <p className="text-lg text-slate-500">
-                  Fill out the form below and we&apos;ll get back to you within 24
-                  hours.
+                  Fill out the form below and we&apos;ll get back to you within
+                  24 hours.
                 </p>
               </div>
 
@@ -252,59 +311,89 @@ export default function ContactPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mb-8 overflow-hidden rounded-2xl bg-green-50 p-5 text-green-700 border border-green-100"
+                    className="mb-8 overflow-hidden rounded-2xl border border-green-100 bg-green-50 p-5 text-green-700"
                   >
                     <div className="flex items-center gap-3">
                       <CheckCircle2 size={20} className="shrink-0" />
-                      <p className="text-sm font-bold">Thank you! Your message has been sent successfully.</p>
+                      <p className="text-sm font-bold">
+                        Thank you! Your message has been sent successfully.
+                      </p>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <input type="text" className="sr-only" {...register("honeypot")} />
-                
+                <input
+                  type="text"
+                  className="sr-only"
+                  {...register("honeypot")}
+                />
+
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
+                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                    Full Name
+                  </label>
                   <input
                     placeholder="Your name..."
                     {...register("name")}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
                   />
-                  {errors.name && <p className="text-xs font-bold text-red-500 ml-1">{errors.name.message}</p>}
+                  {errors.name && (
+                    <p className="ml-1 text-xs font-bold text-red-500">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
+                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                    Email Address
+                  </label>
                   <input
                     type="email"
                     placeholder="Your email..."
                     {...register("email")}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
                   />
-                  {errors.email && <p className="text-xs font-bold text-red-500 ml-1">{errors.email.message}</p>}
+                  {errors.email && (
+                    <p className="ml-1 text-xs font-bold text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Subject</label>
+                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                    Subject
+                  </label>
                   <input
                     placeholder="Your subject..."
                     {...register("subject")}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
                   />
-                  {errors.subject && <p className="text-xs font-bold text-red-500 ml-1">{errors.subject.message}</p>}
+                  {errors.subject && (
+                    <p className="ml-1 text-xs font-bold text-red-500">
+                      {errors.subject.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Message</label>
+                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                    Message
+                  </label>
                   <textarea
                     rows={4}
                     placeholder="Your message..."
                     {...register("message")}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
                   />
-                  {errors.message && <p className="text-xs font-bold text-red-500 ml-1">{errors.message.message}</p>}
+                  {errors.message && (
+                    <p className="ml-1 text-xs font-bold text-red-500">
+                      {errors.message.message}
+                    </p>
+                  )}
                 </div>
 
                 <motion.button

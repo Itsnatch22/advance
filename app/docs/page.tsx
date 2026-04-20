@@ -147,18 +147,14 @@ export default function DocsPage() {
           className="relative mb-16 h-64 w-64 lg:h-80 lg:w-80"
         >
           <div className="absolute -inset-10 rounded-full bg-green-500/10 blur-3xl" />
-          <Lottie
-            animationData={EditDocument}
-            loop
-            className="relative z-10"
-          />
+          <Lottie animationData={EditDocument} loop className="relative z-10" />
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-serif text-5xl leading-[0.95] font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
+          className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
         >
           Docs launching <br />
           <span className="text-green-600">soon</span>
@@ -198,7 +194,7 @@ export default function DocsPage() {
       </motion.section>
 
       {/* What's Coming Section */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-32 lg:px-8">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
         <div className="mb-24 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -223,7 +219,7 @@ export default function DocsPage() {
       </section>
 
       {/* Why Build on EaziWage */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-32 lg:px-8">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
         <div className="mb-24 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

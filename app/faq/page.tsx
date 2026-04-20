@@ -12,7 +12,13 @@ import {
   Shield,
   Clock,
 } from "lucide-react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import { Input } from "../../components/ui/input";
 
 type FAQItem = {
@@ -188,7 +194,15 @@ const faqs: Record<CategoryId, FAQItem[]> = {
   ],
 };
 
-const FloatingOrb = ({ color, delay, className }: { color: string; delay: number; className?: string }) => (
+const FloatingOrb = ({
+  color,
+  delay,
+  className,
+}: {
+  color: string;
+  delay: number;
+  className?: string;
+}) => (
   <motion.div
     animate={{
       y: [0, -40, 0],
@@ -201,18 +215,32 @@ const FloatingOrb = ({ color, delay, className }: { color: string; delay: number
       delay,
       ease: "easeInOut",
     }}
-    className={`absolute h-[500px] w-[500px] rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+    className={`absolute h-[500px] w-[500px] rounded-full opacity-20 blur-[120px] ${color} ${className}`}
   />
 );
 
-const FAQItemCard = ({ faq, isOpen, toggle }: { faq: FAQItem; isOpen: boolean; toggle: () => void }) => {
+const FAQItemCard = ({
+  faq,
+  isOpen,
+  toggle,
+}: {
+  faq: FAQItem;
+  isOpen: boolean;
+  toggle: () => void;
+}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), { stiffness: 150, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), { stiffness: 150, damping: 20 });
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), {
+    stiffness: 150,
+    damping: 20,
+  });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), {
+    stiffness: 150,
+    damping: 20,
+  });
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -226,32 +254,44 @@ const FAQItemCard = ({ faq, isOpen, toggle }: { faq: FAQItem; isOpen: boolean; t
     <motion.div style={{ perspective: 1000 }} className="w-full">
       <motion.div
         onMouseMove={handleMouseMove}
-        onMouseLeave={() => { x.set(0); y.set(0); }}
+        onMouseLeave={() => {
+          x.set(0);
+          y.set(0);
+        }}
         style={{ rotateX, rotateY }}
         className={`group relative overflow-hidden rounded-[2rem] border border-slate-200/60 transition-all duration-500 ${
-          isOpen ? "bg-white shadow-2xl shadow-green-500/10 ring-1 ring-green-500/20" : "bg-white/40 backdrop-blur-2xl hover:bg-white"
+          isOpen
+            ? "bg-white shadow-2xl ring-1 shadow-green-500/10 ring-green-500/20"
+            : "bg-white/40 backdrop-blur-2xl hover:bg-white"
         }`}
       >
         <motion.div
           style={{
             background: useTransform(
               [mouseX, mouseY],
-              ([mx, my]) => `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.04), transparent 80%)`
+              ([mx, my]) =>
+                `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.04), transparent 80%)`
             ),
           }}
-          className="absolute inset-0 pointer-events-none"
+          className="pointer-events-none absolute inset-0"
         />
 
         <button
           onClick={toggle}
           className="relative z-10 flex w-full items-center justify-between p-8 text-left"
         >
-          <span className={`text-xl font-bold tracking-tight transition-colors duration-300 ${isOpen ? "text-green-700" : "text-slate-900"}`}>
+          <span
+            className={`text-xl font-bold tracking-tight transition-colors duration-300 ${isOpen ? "text-green-700" : "text-slate-900"}`}
+          >
             {faq.q}
           </span>
-          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-500 ${
-            isOpen ? "bg-green-600 text-white rotate-180" : "bg-slate-100 text-slate-500 group-hover:bg-green-500 group-hover:text-white"
-          }`}>
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-500 ${
+              isOpen
+                ? "rotate-180 bg-green-600 text-white"
+                : "bg-slate-100 text-slate-500 group-hover:bg-green-500 group-hover:text-white"
+            }`}
+          >
             <ChevronDown size={20} />
           </div>
         </button>
@@ -265,7 +305,7 @@ const FAQItemCard = ({ faq, isOpen, toggle }: { faq: FAQItem; isOpen: boolean; t
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="px-8 pb-8">
-                <div className="h-px w-full bg-slate-100 mb-8" />
+                <div className="mb-8 h-px w-full bg-slate-100" />
                 <p className="text-lg leading-relaxed text-slate-500">
                   {faq.a}
                 </p>
@@ -273,7 +313,9 @@ const FAQItemCard = ({ faq, isOpen, toggle }: { faq: FAQItem; isOpen: boolean; t
             </motion.div>
           )}
         </AnimatePresence>
-        <div className={`absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 ${isOpen ? "w-full" : "group-hover:w-full"}`} />
+        <div
+          className={`absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 ${isOpen ? "w-full" : "group-hover:w-full"}`}
+        />
       </motion.div>
     </motion.div>
   );
@@ -303,19 +345,27 @@ export default function FAQPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-white">
       {/* Immersive Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
-        <FloatingOrb color="bg-emerald-100" delay={2} className="top-[30%] right-[5%]" />
+      <div className="pointer-events-none absolute inset-0">
+        <FloatingOrb
+          color="bg-green-100"
+          delay={0}
+          className="top-[-10%] left-[10%]"
+        />
+        <FloatingOrb
+          color="bg-emerald-100"
+          delay={2}
+          className="top-[30%] right-[5%]"
+        />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* HERO */}
       <section className="relative pt-40 pb-32 lg:pt-56 lg:pb-48">
-        <div className="relative z-10 mx-auto max-w-5xl text-center px-6">
+        <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600 backdrop-blur-md"
+            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase backdrop-blur-md"
           >
             <HelpCircle size={14} className="animate-pulse" />
             <span>Help Center</span>
@@ -327,31 +377,32 @@ export default function FAQPage() {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
           >
-            Frequently Asked <span className="italic text-green-600">Questions</span>
+            Frequently Asked{" "}
+            <span className="text-green-600 italic">Questions</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 1 }}
-            className="mt-8 mx-auto mb-16 max-w-2xl text-xl text-slate-500"
+            className="mx-auto mt-8 mb-16 max-w-2xl text-xl text-slate-500"
           >
             Real answers. No support tickets required.
           </motion.p>
 
           {/* SEARCH */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="relative mx-auto max-w-2xl group"
+            className="group relative mx-auto max-w-2xl"
           >
             <Search className="absolute top-1/2 left-6 h-6 w-6 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-green-600" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for answers..."
-              className="h-20 rounded-3xl border-slate-200 bg-white/80 pl-16 pr-8 text-xl shadow-2xl backdrop-blur-xl transition-all focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
+              className="h-20 rounded-3xl border-slate-200 bg-white/80 pr-8 pl-16 text-xl shadow-2xl backdrop-blur-xl transition-all focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
             />
           </motion.div>
         </div>
@@ -365,10 +416,9 @@ export default function FAQPage() {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`flex items-center gap-3 rounded-2xl px-8 py-4 text-sm font-black uppercase tracking-widest transition-all duration-300
-                ${
+                className={`flex items-center gap-3 rounded-2xl px-8 py-4 text-sm font-black tracking-widest uppercase transition-all duration-300 ${
                   activeCategory === cat.id
-                    ? "bg-slate-900 text-white shadow-2xl scale-105"
+                    ? "scale-105 bg-slate-900 text-white shadow-2xl"
                     : "border border-slate-200 bg-white text-slate-400 hover:border-green-500 hover:text-green-600"
                 }`}
               >
@@ -381,10 +431,10 @@ export default function FAQPage() {
       )}
 
       {/* FAQ LIST */}
-      <section className="relative z-10 py-32 lg:py-48">
+      <section className="relative z-10 py-40">
         <div className="mx-auto max-w-4xl px-6">
           {!searchQuery && currentCategory && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               key={activeCategory}
@@ -393,7 +443,9 @@ export default function FAQPage() {
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10">
                 <currentCategory.icon size={28} />
               </div>
-              <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900">{currentCategory.label}</h2>
+              <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900">
+                {currentCategory.label}
+              </h2>
             </motion.div>
           )}
 

@@ -13,7 +13,8 @@ import {
   Mail, 
   RefreshCcw,
   Clock,
-  Server
+  Server,
+  CalendarDays
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +40,43 @@ interface StatusData {
     platform: string;
     cpus: number;
   };
+}
+
+interface CalendarDay {
+  date: Date;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+}
+
+const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function buildCalendarDays(baseDate: Date): CalendarDay[] {
+  const startOfMonth = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
+  const endOfMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
+
+  const start = new Date(startOfMonth);
+  start.setDate(start.getDate() - start.getDay());
+
+  const end = new Date(endOfMonth);
+  end.setDate(end.getDate() + (6 - end.getDay()));
+
+  const days: CalendarDay[] = [];
+  const cursor = new Date(start);
+  const today = new Date();
+
+  while (cursor <= end) {
+    days.push({
+      date: new Date(cursor),
+      isCurrentMonth: cursor.getMonth() === baseDate.getMonth(),
+      isToday:
+        cursor.getDate() === today.getDate() &&
+        cursor.getMonth() === today.getMonth() &&
+        cursor.getFullYear() === today.getFullYear(),
+    });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  return days;
 }
 
 export default function StatusPage() {
@@ -96,6 +134,14 @@ export default function StatusPage() {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
+
+  const trackerDate = lastUpdated;
+  const trackerDays = buildCalendarDays(trackerDate);
+  const trackerMonthLabel = trackerDate.toLocaleDateString("en-KE", {
+    month: "long",
+    year: "numeric",
+  });
+  const nextCheckAt = new Date(lastUpdated.getTime() + 30_000);
 
   if (loading && !data) {
     return (
@@ -168,6 +214,149 @@ export default function StatusPage() {
             </p>
           </div>
           {data && getStatusBadge(data.status)}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="mb-8"
+        >
+          <Card className="overflow-hidden border-zinc-200/80 bg-white/95 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/95">
+            <CardHeader className="border-b border-zinc-100 bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-950/40">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">
+                    <CalendarDays className="h-3.5 w-3.5" />
+                    Calendar Tracker
+                  </div>
+                  <CardTitle className="text-xl font-bold">{trackerMonthLabel}</CardTitle>
+                  <CardDescription className="mt-1 max-w-2xl">
+                    A month-at-a-glance tracker for live monitoring windows. Today reflects the current system state, while the calendar gives teams a clear operating view without hiding the most recent check cadence.
+                  </CardDescription>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">Today</p>
+                    <div className="mt-2 flex items-center gap-2">
+                      {data && getStatusIcon(data.status)}
+                      <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                        {data?.status === "operational" ? "Operational" : "Attention needed"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">Last Check</p>
+                    <p className="mt-2 font-mono text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                      {lastUpdated.toLocaleTimeString("en-KE", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">Next Auto Check</p>
+                    <p className="mt-2 font-mono text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                      {nextCheckAt.toLocaleTimeString("en-KE", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-5 sm:p-6">
+              <div className="mb-4 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
+                <div className="inline-flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
+                  <span>Live operational day</span>
+                </div>
+                <div className="inline-flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-500" />
+                  <span>Live degraded day</span>
+                </div>
+                <div className="inline-flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-zinc-300 dark:bg-zinc-600" />
+                  <span>Monitoring window</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-7 gap-2">
+                {WEEKDAY_LABELS.map((day) => (
+                  <div
+                    key={day}
+                    className="px-2 pb-2 text-center text-[10px] font-bold uppercase tracking-[0.22em] text-zinc-400"
+                  >
+                    {day}
+                  </div>
+                ))}
+
+                {trackerDays.map((day) => {
+                  const isOperationalToday = day.isToday && data?.status === "operational";
+                  const isDegradedToday = day.isToday && data?.status !== "operational";
+
+                  return (
+                    <div
+                      key={day.date.toISOString()}
+                      className={`min-h-24 rounded-2xl border p-3 transition-colors sm:min-h-28 ${
+                        day.isCurrentMonth
+                          ? "border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+                          : "border-zinc-100 bg-zinc-50/80 text-zinc-300 dark:border-zinc-900 dark:bg-zinc-950/50 dark:text-zinc-700"
+                      } ${day.isToday ? "ring-2 ring-emerald-500/30" : ""}`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <span
+                          className={`text-sm font-bold ${
+                            day.isToday
+                              ? "text-zinc-900 dark:text-zinc-100"
+                              : "text-zinc-500 dark:text-zinc-400"
+                          }`}
+                        >
+                          {day.date.getDate()}
+                        </span>
+                        <span
+                          className={`mt-1 h-2.5 w-2.5 rounded-full ${
+                            isOperationalToday
+                              ? "bg-green-500"
+                              : isDegradedToday
+                                ? "bg-yellow-500"
+                                : "bg-zinc-300 dark:bg-zinc-600"
+                          }`}
+                        />
+                      </div>
+
+                      <div className="mt-6 space-y-1">
+                        {day.isToday ? (
+                          <>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-400">
+                              Live Now
+                            </p>
+                            <p className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                              {data?.status === "operational" ? "Systems healthy" : "Watching degraded services"}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-400">
+                              Monitoring
+                            </p>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                              Scheduled checks
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">

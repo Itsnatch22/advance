@@ -16,6 +16,28 @@ export interface PublicSession {
   updated_at:    string;
 }
 
+type PublicChatPart = {
+  type: 'text';
+  text: string;
+};
+
+type PublicChatMessage = {
+  id: string;
+  role: string;
+  parts: PublicChatPart[];
+  createdAt?: string;
+  created_at?: string;
+};
+
+function createWelcomeMessage(createdAt = new Date().toISOString()): PublicChatMessage {
+  return {
+    id: 'welcome',
+    role: 'assistant',
+    parts: [{ type: 'text', text: "Hi! I'm Wiza, your EaziWage AI assistant. How can I help you today?" }],
+    createdAt,
+  };
+}
+
 // ── Visitor ID — create once, persist forever ─────────────────────────────
 function getOrCreateVisitorId(): string {
   if (typeof window === 'undefined') return '';
@@ -34,6 +56,7 @@ export function useWizaPublicChat() {
   const [sessions,       setSessions]       = useState<PublicSession[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyLoaded,  setHistoryLoaded]  = useState(false);
+  const messageTimestampsRef = useRef<Record<string, string>>({});
 
   // Track current session so we can send it with each message
   const sessionIdRef = useRef<string | null>(null);
@@ -49,7 +72,7 @@ export function useWizaPublicChat() {
         session_id: sessionIdRef.current,
       }),
       // Read session_id back from response headers
-      onResponse: (res: { headers: { get: (arg0: string) => any; }; }) => {
+      onResponse: (res: Response) => {
         const sid = res.headers.get('X-Session-Id');
         const vid = res.headers.get('X-Visitor-Id');
         if (sid && sid !== sessionIdRef.current) {
@@ -59,15 +82,33 @@ export function useWizaPublicChat() {
           if (vid) fetchSessions(vid);
         }
       },
-    } as any),
+    }),
     messages: [
-      {
-        id:    'welcome',
-        role:  'assistant',
-        parts: [{ type: 'text', text: "Hi! I'm Wiza, your EaziWage AI assistant. How can I help you today?" }],
-      } as any,
+      createWelcomeMessage(),
     ],
   });
+
+  useEffect(() => {
+    const nextMessages = (chat.messages as PublicChatMessage[]).map((message, index) => {
+      const existingTimestamp = message.createdAt ?? message.created_at;
+      if (existingTimestamp) {
+        messageTimestampsRef.current[message.id] = existingTimestamp;
+        return message;
+      }
+
+      const fallbackTimestamp =
+        messageTimestampsRef.current[message.id] ??
+        new Date(Date.now() + index).toISOString();
+
+      messageTimestampsRef.current[message.id] = fallbackTimestamp;
+      return { ...message, createdAt: fallbackTimestamp };
+    });
+
+    const changed = nextMessages.some((message, index) => message !== chat.messages[index]);
+    if (changed) {
+      chat.setMessages(nextMessages);
+    }
+  }, [chat.messages, chat.setMessages]);
 
   // ── Init visitor ID on mount ─────────────────────────────────────────
   useEffect(() => {
@@ -96,15 +137,12 @@ export function useWizaPublicChat() {
       const data = await res.json();
 
       const loaded = [
-        {
-          id:    'welcome',
-          role:  'assistant',
-          parts: [{ type: 'text', text: "Hi! I'm Wiza, your EaziWage AI assistant. How can I help you today?" }],
-        } as any,
-        ...(data.messages ?? []).map((m: { id: string; role: string; content: string }) => ({
+        createWelcomeMessage(data.messages?.[0]?.created_at ?? new Date().toISOString()),
+        ...(data.messages ?? []).map((m: { id: string; role: string; content: string; created_at: string }) => ({
           id:    m.id,
           role:  m.role,
           parts: [{ type: 'text', text: m.content }],
+          createdAt: m.created_at,
         })),
       ];
 
@@ -132,13 +170,7 @@ export function useWizaPublicChat() {
     setSessionId(null);
     sessionIdRef.current = null;
     setHistoryLoaded(false);
-    chat.setMessages([
-      {
-        id:    'welcome',
-        role:  'assistant',
-        parts: [{ type: 'text', text: "Hi! I'm Wiza, your EaziWage AI assistant. How can I help you today?" }],
-      } as any,
-    ]);
+    chat.setMessages([createWelcomeMessage()]);
   }, [chat]);
 
   const isLoading = chat.status === 'submitted' || chat.status === 'streaming';

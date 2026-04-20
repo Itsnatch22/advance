@@ -11,6 +11,7 @@ export interface ChatMessage {
   role:    'user' | 'model';
   content: string;
   pending: boolean; // true while the AI chunk is still streaming in
+  createdAt: string;
 }
 
 export function useWizaChat() {
@@ -35,6 +36,7 @@ export function useWizaChat() {
       role:    'user',
       content: content.trim(),
       pending: false,
+      createdAt: new Date().toISOString(),
     };
 
     // Add a pending AI bubble
@@ -44,6 +46,7 @@ export function useWizaChat() {
       role:    'model',
       content: '',
       pending: true,
+      createdAt: new Date().toISOString(),
     };
 
     setMessages(prev => [...prev, userMsg, aiPlaceholder]);
@@ -182,6 +185,7 @@ export function useWizaChat() {
             role:    'model',
             content: `📋 **Session Summary**\n\n${json.summary}`,
             pending: false,
+            createdAt: new Date().toISOString(),
           },
         ]);
         return 'Summary ready!';

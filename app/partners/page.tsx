@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useRef, MouseEvent } from "react";
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionValue,
+} from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Building2, Cpu } from "lucide-react";
@@ -37,7 +43,15 @@ const techPartners = [
 
 /* -------------------------- components -------------------------- */
 
-const FloatingOrb = ({ color, delay, className }: { color: string; delay: number; className?: string }) => (
+const FloatingOrb = ({
+  color,
+  delay,
+  className,
+}: {
+  color: string;
+  delay: number;
+  className?: string;
+}) => (
   <motion.div
     animate={{
       y: [0, -40, 0],
@@ -50,7 +64,7 @@ const FloatingOrb = ({ color, delay, className }: { color: string; delay: number
       delay,
       ease: "easeInOut",
     }}
-    className={`absolute h-125 w-125 rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
   />
 );
 
@@ -60,8 +74,14 @@ const TiltLogoCard = ({ src }: { src: string }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
+    stiffness: 150,
+    damping: 20,
+  });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
+    stiffness: 150,
+    damping: 20,
+  });
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -75,7 +95,10 @@ const TiltLogoCard = ({ src }: { src: string }) => {
     <motion.div style={{ perspective: 1000 }} className="h-28">
       <motion.div
         onMouseMove={handleMouseMove}
-        onMouseLeave={() => { x.set(0); y.set(0); }}
+        onMouseLeave={() => {
+          x.set(0);
+          y.set(0);
+        }}
         style={{ rotateX, rotateY }}
         className="group relative flex h-full items-center justify-center rounded-2xl border border-slate-200/60 bg-white/50 p-6 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
       >
@@ -83,12 +106,13 @@ const TiltLogoCard = ({ src }: { src: string }) => {
           style={{
             background: useTransform(
               [mouseX, mouseY],
-              ([mx, my]) => `radial-gradient(200px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.08), transparent 80%)`
+              ([mx, my]) =>
+                `radial-gradient(200px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.08), transparent 80%)`
             ),
           }}
-          className="absolute inset-0 pointer-events-none"
+          className="pointer-events-none absolute inset-0"
         />
-        
+
         <Image
           src={src}
           alt="partner logo"
@@ -102,36 +126,65 @@ const TiltLogoCard = ({ src }: { src: string }) => {
   );
 };
 
-function SectionHeader({ eyebrow, title, description, icon: Icon }: { eyebrow: string; title: string; description: string; icon: any }) {
+function SectionHeader({
+  eyebrow,
+  title,
+  description,
+  icon: Icon,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  icon: any;
+}) {
   return (
     <div className="max-w-xl space-y-6">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+        className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
       >
         <Icon size={14} className="animate-pulse" />
         <span>{eyebrow}</span>
       </motion.div>
 
-      <h2 className="font-serif text-4xl font-bold leading-tight tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+      <h2 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
         {title}
       </h2>
 
-      <p className="text-xl leading-relaxed text-slate-500">
-        {description}
-      </p>
+      <p className="text-xl leading-relaxed text-slate-500">{description}</p>
     </div>
   );
 }
 
-function PartnerSection({ eyebrow, title, description, partners, icon, reverse = false }: { eyebrow: string; title: string; description: string; partners: string[]; icon: any; reverse?: boolean }) {
+function PartnerSection({
+  eyebrow,
+  title,
+  description,
+  partners,
+  icon,
+  reverse = false,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  partners: string[];
+  icon: any;
+  reverse?: boolean;
+}) {
   return (
-    <section className="relative py-32 overflow-hidden">
-      <div className={`mx-auto grid max-w-7xl gap-16 px-6 lg:grid-cols-2 lg:items-center lg:px-8 ${reverse ? "lg:grid-flow-dense" : ""}`}>
+    <section className="relative overflow-hidden py-40">
+      <div
+        className={`mx-auto grid max-w-7xl gap-16 px-6 lg:grid-cols-2 lg:items-center lg:px-8 ${reverse ? "lg:grid-flow-dense" : ""}`}
+      >
         <div className={reverse ? "lg:col-start-2" : ""}>
-          <SectionHeader eyebrow={eyebrow} title={title} description={description} icon={icon} />
+          <SectionHeader
+            eyebrow={eyebrow}
+            title={title}
+            description={description}
+            icon={icon}
+          />
         </div>
 
         <motion.div
@@ -156,33 +209,44 @@ export default function PartnersPage() {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
   });
 
   const yHero = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <main ref={containerRef} className="relative min-h-screen bg-white text-slate-900">
+    <main
+      ref={containerRef}
+      className="relative min-h-screen bg-white text-slate-900"
+    >
       {/* Immersive Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
-        <FloatingOrb color="bg-emerald-100" delay={2} className="top-[30%] right-[5%]" />
+      <div className="pointer-events-none absolute inset-0">
+        <FloatingOrb
+          color="bg-green-100"
+          delay={0}
+          className="top-[-10%] left-[10%]"
+        />
+        <FloatingOrb
+          color="bg-emerald-100"
+          delay={2}
+          className="top-[30%] right-[5%]"
+        />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* HERO */}
-      <motion.section 
+      <motion.section
         style={{ y: yHero, opacity: opacityHero }}
-        className="relative overflow-hidden px-6 pt-40 pb-32 lg:pt-56 lg:pb-48"
+        className="relative overflow-hidden px-6 py-40"
       >
         <div className="relative z-10 mx-auto max-w-5xl text-left">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
             Our Partners
           </motion.div>
 
@@ -190,7 +254,7 @@ export default function PartnersPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-serif text-5xl font-bold leading-[0.95] tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
+            className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
           >
             <span className="text-green-600">Trusted by the teams</span>
             <br />
@@ -203,7 +267,8 @@ export default function PartnersPage() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
           >
-            Banks. Corporates. Technology platforms. <br className="hidden lg:block"/>
+            Banks. Corporates. Technology platforms.{" "}
+            <br className="hidden lg:block" />
             We partner with the people who move money securely and at scale.
           </motion.p>
         </div>
@@ -244,26 +309,27 @@ export default function PartnersPage() {
       />
 
       {/* CTA */}
-      <section className="px-6 py-32 lg:px-8">
+      <section className="px-6 py-40 lg:px-8">
         <div className="mx-auto max-w-5xl">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="group relative overflow-hidden rounded-[3rem] border border-slate-200/60 bg-white p-12 text-center backdrop-blur-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] transition-all duration-500 hover:shadow-green-500/10 lg:p-24"
+            className="group relative overflow-hidden rounded-[3rem] border border-slate-200/60 bg-white p-12 text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-3xl transition-all duration-500 hover:shadow-green-500/10 lg:p-24"
           >
             <div className="absolute inset-0 bg-linear-to-br from-green-50/20 via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-            
+
             <div className="relative z-10">
               <div className="mb-10 flex justify-center">
-                <div className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600">
-                  <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                <div className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
                   Partner With Us
                 </div>
               </div>
 
               <h3 className="mb-8 font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
-                Want to partner with <span className="text-green-600">EaziWage?</span>
+                Want to partner with{" "}
+                <span className="text-green-600">EaziWage?</span>
               </h3>
 
               <p className="mx-auto mb-12 max-w-2xl text-xl text-slate-500">
@@ -272,7 +338,7 @@ export default function PartnersPage() {
 
               <Link
                 href="/partners/onboarding"
-                className="group relative inline-flex items-center gap-3 rounded-2xl bg-slate-900 px-10 py-5 font-bold text-white shadow-2xl transition-all duration-300 hover:bg-green-600 hover:scale-105 hover:shadow-green-500/25"
+                className="group relative inline-flex items-center gap-3 rounded-2xl bg-slate-900 px-10 py-5 font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-green-600 hover:shadow-green-500/25"
               >
                 <span>Apply for Partnership</span>
                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />

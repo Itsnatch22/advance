@@ -12,19 +12,45 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn }       from '@/lib/utils';
 import { useWizaPublicChat, type PublicSession } from '@/hooks/useWizaPublicChat';
 
+type PublicChatPart = {
+  type: string;
+  text?: string;
+};
+
+type PublicChatMessage = {
+  id: string;
+  role: string;
+  content?: string;
+  parts?: PublicChatPart[];
+  createdAt?: string;
+  created_at?: string;
+};
+
 // ── helpers ───────────────────────────────────────────────────────────────
 
-function getMessageText(m: any): string {
-  if (m.parts) return m.parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('');
+function getMessageText(m: PublicChatMessage): string {
+  if (m.parts) return m.parts.filter((p) => p.type === 'text').map((p) => p.text ?? '').join('');
   return m.content ?? '';
 }
 
-function timeAgo(iso: string): string {
-  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (diff < 60)   return 'just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
+function getMessageTimestamp(message: PublicChatMessage): string | null {
+  return message.createdAt ?? message.created_at ?? null;
+}
+
+function formatMessageTimestamp(iso: string): string {
+  return new Intl.DateTimeFormat('en-KE', {
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(iso));
+}
+
+function formatConversationTimestamp(iso: string): string {
+  return new Intl.DateTimeFormat('en-KE', {
+    day: 'numeric',
+    month: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(iso));
 }
 
 // ── TypingDots ────────────────────────────────────────────────────────────
@@ -77,7 +103,7 @@ function SessionItem({
         </p>
         <div className="flex items-center gap-1.5 mt-0.5">
           <Clock className="w-2.5 h-2.5 text-slate-400" />
-          <span className="text-[10px] text-slate-400">{timeAgo(session.updated_at)}</span>
+          <span className="text-[10px] text-slate-400">{formatConversationTimestamp(session.created_at)}</span>
           <span className="text-[10px] text-slate-300 dark:text-slate-600">·</span>
           <span className="text-[10px] text-slate-400">{session.message_count} msgs</span>
         </div>
@@ -122,7 +148,7 @@ export default function WizaChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const {
-    messages, sendMessage, status, error, regenerate, setMessages,
+    messages, sendMessage, status, error, regenerate,
     isLoading, sessionId, sessions, loadingHistory,
     loadSession, deleteSession, startNewSession, refreshSessions,
   } = useWizaPublicChat();
@@ -304,6 +330,7 @@ export default function WizaChat() {
                   >
                     {messages.map((m) => {
                       const text = getMessageText(m);
+                      const timestamp = getMessageTimestamp(m);
                       const isUser = m.role === 'user';
                       return (
                         <motion.div
@@ -329,6 +356,16 @@ export default function WizaChat() {
                                 : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-sm border border-slate-200 dark:border-slate-700',
                             )}>
                               <p className="whitespace-pre-wrap">{text}</p>
+                              {timestamp && (
+                                <p
+                                  className={cn(
+                                    'mt-2 text-[10px] font-medium',
+                                    isUser ? 'text-emerald-50/80' : 'text-slate-400 dark:text-slate-500',
+                                  )}
+                                >
+                                  {formatMessageTimestamp(timestamp)}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </motion.div>

@@ -8,7 +8,7 @@ const duplicated = [...partners, ...partners];
 
 export default function Marquee() {
   return (
-    <section className="relative overflow-hidden bg-linear-to-b from-white via-slate-50 to-white py-32">
+    <section className="relative overflow-hidden bg-linear-to-b from-white via-slate-50 to-white py-40">
       {/* ambient glow */}
       <div className="absolute inset-0 -z-10">
         <div className="bg-primary/10 absolute top-0 left-1/2 h-125 w-125 -translate-x-1/2 rounded-full blur-[140px]" />
@@ -21,7 +21,7 @@ export default function Marquee() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="mb-20 font-bold text-center text-xs tracking-[0.35em] text-slate-500 uppercase"
+          className="mb-28 text-center text-xs font-bold tracking-[0.35em] text-slate-500 uppercase"
         >
           Powering payroll for the region&apos;s most trusted institutions
         </motion.p>

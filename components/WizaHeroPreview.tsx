@@ -44,6 +44,22 @@ function TypingCursor() {
   );
 }
 
+function formatMessageTimestamp(iso: string) {
+  return new Intl.DateTimeFormat('en-KE', {
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(iso));
+}
+
+function formatConversationTimestamp(iso: string) {
+  return new Intl.DateTimeFormat('en-KE', {
+    day: 'numeric',
+    month: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(iso));
+}
+
 // ── Summary modal ─────────────────────────────────────────────────────────
 function SummaryModal({
   onConfirm, onCancel,
@@ -126,6 +142,7 @@ export default function WizaHeroPreview() {
   };
 
   const isEmpty = messages.length === 0;
+  const conversationStartedAt = messages[0]?.createdAt ?? null;
 
   return (
     <section className="py-24 relative overflow-hidden bg-white dark:bg-slate-950">
@@ -182,7 +199,7 @@ export default function WizaHeroPreview() {
             >
               {[
                 { label: 'Instant Calculations', desc: 'Daily earning rate, mid-month cash availability, advance limits — all in milliseconds.' },
-                { label: 'Playful Commentary', desc: "Future You might have opinions about this latte budget. Let's run the numbers." },
+                { label: 'Playful Commentary', desc: "Future you might have opinions about this latte budget. Let's run the numbers." },
                 { label: 'No Auth Required', desc: 'Anyone can try Wiza, no auth required.' },
               ].map(({ label, desc }, i) => (
                 <motion.div
@@ -242,6 +259,14 @@ export default function WizaHeroPreview() {
                       animate={{ opacity: streaming ? [1, 0.4, 1] : 1 }}
                       transition={{ repeat: Infinity, duration: 1 }}
                     />
+                    {conversationStartedAt && (
+                      <>
+                        <span className="text-[10px] text-slate-300 dark:text-slate-600">·</span>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                          Started {formatConversationTimestamp(conversationStartedAt)}
+                        </p>
+                      </>
+                    )}
                     <p className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                       {streaming ? 'Thinking…' : 'Ready'}
                     </p>
@@ -352,6 +377,13 @@ export default function WizaHeroPreview() {
                               </>
                             )
                           }
+                          <p className={`mt-2 text-[10px] font-medium ${
+                            msg.role === 'user'
+                              ? 'text-emerald-50/80'
+                              : 'text-slate-400 dark:text-slate-500'
+                          }`}>
+                            {formatMessageTimestamp(msg.createdAt)}
+                          </p>
                         </div>
                       </div>
                     </motion.div>

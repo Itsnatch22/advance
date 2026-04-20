@@ -29,7 +29,7 @@ const FloatingOrb = ({
       delay,
       ease: "easeInOut",
     }}
-    className={`absolute h-125 w-125 rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
   />
 );
 
@@ -68,11 +68,7 @@ export default function SchedulePage() {
   // Listen for Calendly post-message events
   useEffect(() => {
     const handleCalendlyEvent = (e: MessageEvent) => {
-      if (
-        e.origin !== "https://calendly.com" ||
-        !e.data?.event
-      )
-        return;
+      if (e.origin !== "https://calendly.com" || !e.data?.event) return;
 
       if (e.data.event === "calendly.event_scheduled") {
         handleMeetingScheduled(e.data.payload);
@@ -81,7 +77,7 @@ export default function SchedulePage() {
 
     window.addEventListener("message", handleCalendlyEvent);
     return () => window.removeEventListener("message", handleCalendlyEvent);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meetingType]);
 
   const handleMeetingScheduled = async (payload: any) => {
@@ -116,7 +112,7 @@ export default function SchedulePage() {
       className="relative min-h-screen overflow-hidden bg-white"
     >
       {/* Background */}
-      <div className="fixed inset-0 pointer-events-none">
+      <div className="pointer-events-none fixed inset-0">
         <FloatingOrb
           color="bg-green-100"
           delay={0}
@@ -125,18 +121,18 @@ export default function SchedulePage() {
         <FloatingOrb
           color="bg-emerald-100"
           delay={2}
-          className="bottom-[10%] right-[10%]"
+          className="right-[10%] bottom-[10%]"
         />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
-      <section className="relative z-10 mx-auto max-w-7xl px-6 pt-32 pb-24 lg:pt-48 lg:pb-40">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-40">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="mb-16 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
           >
             <Calendar size={14} className="animate-pulse" />
             <span>Meeting Scheduler</span>
@@ -146,7 +142,7 @@ export default function SchedulePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
+            className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
           >
             Let&apos;s Connect and <br />
             <span className="text-green-600">Grow Together</span>
@@ -156,7 +152,7 @@ export default function SchedulePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 1 }}
-            className="mt-8 max-w-2xl mx-auto text-xl text-slate-500"
+            className="mx-auto mt-8 max-w-2xl text-xl text-slate-500"
           >
             Schedule a session with our team to discuss partnerships, support,
             or how EaziWage can transform your workforce.
@@ -165,11 +161,11 @@ export default function SchedulePage() {
 
         {/* Meeting Type Toggle */}
         {!isScheduled && (
-          <div className="flex justify-center mb-12">
-            <div className="flex p-1 bg-slate-100 rounded-2xl">
+          <div className="mb-12 flex justify-center">
+            <div className="flex rounded-2xl bg-slate-100 p-1">
               <button
                 onClick={() => handleMeetingTypeChange("user_to_admin")}
-                className={`px-6 py-3 rounded-xl text-sm font-bold transition-all ${
+                className={`rounded-xl px-6 py-3 text-sm font-bold transition-all ${
                   meetingType === "user_to_admin"
                     ? "bg-white text-slate-900 shadow-sm"
                     : "text-slate-500 hover:text-slate-700"
@@ -179,7 +175,7 @@ export default function SchedulePage() {
               </button>
               <button
                 onClick={() => handleMeetingTypeChange("admin_to_user")}
-                className={`px-6 py-3 rounded-xl text-sm font-bold transition-all ${
+                className={`rounded-xl px-6 py-3 text-sm font-bold transition-all ${
                   meetingType === "admin_to_user"
                     ? "bg-white text-slate-900 shadow-sm"
                     : "text-slate-500 hover:text-slate-700"
@@ -199,21 +195,21 @@ export default function SchedulePage() {
                 key="success"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center justify-center py-20 text-center bg-white/40 backdrop-blur-2xl rounded-[3rem] border border-slate-200 shadow-2xl"
+                className="flex flex-col items-center justify-center rounded-[3rem] border border-slate-200 bg-white/40 py-20 text-center shadow-2xl backdrop-blur-2xl"
               >
                 <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-green-100 text-green-600">
                   <CheckCircle2 size={48} />
                 </div>
-                <h2 className="text-4xl font-serif font-bold text-slate-900 mb-4">
+                <h2 className="mb-4 font-serif text-4xl font-bold text-slate-900">
                   Meeting Scheduled!
                 </h2>
-                <p className="text-xl text-slate-500 max-w-md mx-auto mb-12">
+                <p className="mx-auto mb-12 max-w-md text-xl text-slate-500">
                   We&apos;ve sent a confirmation email to you. We look forward
                   to our conversation.
                 </p>
                 <button
                   onClick={() => setIsScheduled(false)}
-                  className="px-10 py-5 bg-slate-900 text-white font-bold rounded-2xl hover:bg-green-600 transition-all shadow-2xl flex items-center gap-3"
+                  className="flex items-center gap-3 rounded-2xl bg-slate-900 px-10 py-5 font-bold text-white shadow-2xl transition-all hover:bg-green-600"
                 >
                   Schedule Another <ArrowRight size={20} />
                 </button>
@@ -224,14 +220,14 @@ export default function SchedulePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="overflow-hidden rounded-[3rem] border border-slate-200 bg-white/40 backdrop-blur-2xl shadow-2xl"
+                className="overflow-hidden rounded-[3rem] border border-slate-200 bg-white/40 shadow-2xl backdrop-blur-2xl"
               >
                 {/* Loading shimmer shown until script fires onReady */}
                 {!scriptReady && (
-                  <div className="flex items-center justify-center h-[700px]">
+                  <div className="flex h-[700px] items-center justify-center">
                     <div className="flex flex-col items-center gap-4">
-                      <div className="h-10 w-10 rounded-full border-4 border-green-200 border-t-green-600 animate-spin" />
-                      <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+                      <div className="h-10 w-10 animate-spin rounded-full border-4 border-green-200 border-t-green-600" />
+                      <p className="text-sm font-bold tracking-widest text-slate-400 uppercase">
                         Loading scheduler...
                       </p>
                     </div>
@@ -241,8 +237,8 @@ export default function SchedulePage() {
                 {/* Calendly mounts here via initInlineWidget */}
                 <div
                   ref={embedRef}
-                  className={`w-full h-[700px] transition-opacity duration-300 ${
-                    scriptReady ? "opacity-100" : "opacity-0 absolute"
+                  className={`h-[700px] w-full transition-opacity duration-300 ${
+                    scriptReady ? "opacity-100" : "absolute opacity-0"
                   }`}
                 />
               </motion.div>
@@ -252,7 +248,7 @@ export default function SchedulePage() {
       </section>
 
       {/* Benefits */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-3">
           {[
             {
@@ -281,7 +277,7 @@ export default function SchedulePage() {
               <h3 className="mb-3 text-xl font-bold text-slate-900">
                 {item.title}
               </h3>
-              <p className="text-slate-500 leading-relaxed">{item.desc}</p>
+              <p className="leading-relaxed text-slate-500">{item.desc}</p>
             </div>
           ))}
         </div>

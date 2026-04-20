@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,6 +10,7 @@ import {
   Shield,
   DollarSign,
   Calculator,
+  Wallet,
 } from "lucide-react";
 
 const Navbar = () => {
@@ -99,12 +99,10 @@ const Navbar = () => {
             whileHover={{ rotate: 5, scale: 1.1 }}
             className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500/20 to-green-500/20 ring-1 ring-emerald-500/20 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-emerald-500/20"
           >
-            <Image
-              src="/logos/logo.png"
-              alt="EaziWage logo"
-              width={32}
-              height={32}
-              className="h-8 w-8 object-contain"
+            <Wallet
+              className="h-8 w-8 text-emerald-700"
+              strokeWidth={2}
+              aria-hidden="true"
             />
           </motion.div>
           <span className="font-serif text-2xl font-bold text-slate-900 transition-colors group-hover:text-emerald-700 sm:text-3xl">

@@ -50,8 +50,14 @@ const PricingCard = ({ card }: { card: any }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
+    stiffness: 150,
+    damping: 20,
+  });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
+    stiffness: 150,
+    damping: 20,
+  });
 
   function onMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -84,26 +90,25 @@ const PricingCard = ({ card }: { card: any }) => {
           style={{
             background: useTransform(
               [mouseX, mouseY],
-              ([mx, my]) => `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
+              ([mx, my]) =>
+                `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
             ),
           }}
-          className="absolute inset-0 pointer-events-none"
+          className="pointer-events-none absolute inset-0"
         />
 
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="mb-6">
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-green-50 to-emerald-50 ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110 shadow-sm">
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-green-50 to-emerald-50 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
               <card.icon className="h-8 w-8 text-green-600" strokeWidth={1.5} />
-              <div className="absolute inset-0 rounded-2xl bg-green-400/20 blur-xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <div className="absolute inset-0 rounded-2xl bg-green-400/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
             </div>
           </div>
 
-          <h3 className="mb-3 text-xl font-bold text-slate-900 group-hover:text-green-700 transition-colors">
+          <h3 className="mb-3 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-700">
             {card.title}
           </h3>
-          <p className="text-sm leading-relaxed text-slate-500">
-            {card.desc}
-          </p>
+          <p className="text-sm leading-relaxed text-slate-500">{card.desc}</p>
         </div>
 
         <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-green-500 to-emerald-500 transition-all duration-700 group-hover:w-full" />
@@ -114,12 +119,9 @@ const PricingCard = ({ card }: { card: any }) => {
 
 export default function Pricing() {
   return (
-    <section
-      id="pricing"
-      className="relative overflow-hidden bg-white py-32"
-    >
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-green-50/50 blur-[120px]" />
+    <section id="pricing" className="relative overflow-hidden bg-white py-40">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-0 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-green-50/50 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 text-center">
@@ -127,9 +129,9 @@ export default function Pricing() {
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
           Transparent Pricing
         </motion.div>
 
@@ -138,23 +140,22 @@ export default function Pricing() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl"
+          className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl"
         >
-          Fast. Fair.{" "}
-          <span className="text-green-600">Fully Transparent.</span>
+          Fast. Fair. <span className="text-green-600">Fully Transparent.</span>
         </motion.h2>
 
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 text-xl text-slate-500 max-w-3xl mx-auto"
+          className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
         >
           It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan,
           and dream without waiting for payday.
         </motion.p>
 
-        <div className="mt-20 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-28 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {pricing.map((card, i) => (
             <PricingCard key={i} card={card} />
           ))}

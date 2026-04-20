@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useRef, MouseEvent } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionValue,
+} from "framer-motion";
 import {
   User,
   Wallet,
@@ -110,7 +117,15 @@ const complianceItems = [
   { text: "Auto-settlement via payroll" },
 ];
 
-const FloatingOrb = ({ color, delay, className }: { color: string; delay: number; className?: string }) => (
+const FloatingOrb = ({
+  color,
+  delay,
+  className,
+}: {
+  color: string;
+  delay: number;
+  className?: string;
+}) => (
   <motion.div
     animate={{
       y: [0, -40, 0],
@@ -123,18 +138,34 @@ const FloatingOrb = ({ color, delay, className }: { color: string; delay: number
       delay,
       ease: "easeInOut",
     }}
-    className={`absolute h-125 w-125 rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
   />
 );
 
-const TiltFeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title: string; desc: string; index: number }) => {
+const TiltFeatureCard = ({
+  icon: Icon,
+  title,
+  desc,
+  index,
+}: {
+  icon: any;
+  title: string;
+  desc: string;
+  index: number;
+}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
+    stiffness: 150,
+    damping: 20,
+  });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
+    stiffness: 150,
+    damping: 20,
+  });
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -155,7 +186,10 @@ const TiltFeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title:
     >
       <motion.div
         onMouseMove={handleMouseMove}
-        onMouseLeave={() => { x.set(0); y.set(0); }}
+        onMouseLeave={() => {
+          x.set(0);
+          y.set(0);
+        }}
         style={{ rotateX, rotateY }}
         className="group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
       >
@@ -163,22 +197,21 @@ const TiltFeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title:
           style={{
             background: useTransform(
               [mouseX, mouseY],
-              ([mx, my]) => `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
+              ([mx, my]) =>
+                `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
             ),
           }}
-          className="absolute inset-0 pointer-events-none rounded-[2.5rem]"
+          className="pointer-events-none absolute inset-0 rounded-[2.5rem]"
         />
-        
+
         <div className="relative z-10">
           <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
             <Icon className="h-8 w-8" strokeWidth={1.5} />
           </div>
-          <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 group-hover:text-green-700 transition-colors">
+          <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-700">
             {title}
           </h3>
-          <p className="text-lg leading-relaxed text-slate-500">
-            {desc}
-          </p>
+          <p className="text-lg leading-relaxed text-slate-500">{desc}</p>
         </div>
         <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
       </motion.div>
@@ -188,19 +221,27 @@ const TiltFeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title:
 
 export default function Employers() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-white">
       {/* Immersive Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] right-[10%]" />
-        <FloatingOrb color="bg-emerald-100" delay={2} className="bottom-[-10%] left-[10%]" />
+      <div className="pointer-events-none fixed inset-0">
+        <FloatingOrb
+          color="bg-green-100"
+          delay={0}
+          className="top-[-10%] right-[10%]"
+        />
+        <FloatingOrb
+          color="bg-emerald-100"
+          delay={2}
+          className="bottom-[-10%] left-[10%]"
+        />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
       </div>
 
       <section className="relative z-10 py-12 lg:py-20">
         <UI />
-        
+
         <ComplianceStrip
           items={complianceItems}
           className="my-16 border-y border-slate-200/60 bg-white/40 py-8 backdrop-blur-md"
@@ -213,15 +254,16 @@ export default function Employers() {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
             >
               <Sparkles size={14} className="animate-pulse" />
               <span>For Employers</span>
             </motion.div>
             <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-              Why employers <span className="text-green-600">choose</span> EaziWage
+              Why employers <span className="text-green-600">choose</span>{" "}
+              EaziWage
             </h2>
-            <p className="mt-6 mx-auto max-w-3xl text-xl text-slate-500">
+            <p className="mx-auto mt-6 max-w-3xl text-xl text-slate-500">
               A practical well-being lever that pays for itself. Zero cost, zero
               risk, zero hassle.
             </p>
@@ -249,15 +291,15 @@ export default function Employers() {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
               Implementation
             </motion.div>
             <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
               Employer <span className="text-green-600">rollout plan</span>
             </h2>
-            <p className="mt-6 mx-auto max-w-3xl text-xl text-slate-500">
+            <p className="mx-auto mt-6 max-w-3xl text-xl text-slate-500">
               From sandbox to go live in days, not months. We handle the heavy
               lifting.
             </p>
@@ -285,34 +327,36 @@ export default function Employers() {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
               Versatile Solution
             </motion.div>
             <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-              Works across <span className="text-green-600">sectors & sizes</span>
+              Works across{" "}
+              <span className="text-green-600">sectors & sizes</span>
             </h2>
             <p className="mt-6 text-xl text-slate-500">
-              Retail • Hospitality • Manufacturing • Logistics • Banks • Schools • Healthcare
+              Retail • Hospitality • Manufacturing • Logistics • Banks • Schools
+              • Healthcare
             </p>
           </div>
           <AppleCardsCarouselDemo />
         </div>
 
         {/* FAQ Section */}
-        <div className="mx-auto max-w-4xl px-6 py-32 lg:py-40">
+        <div className="mx-auto max-w-4xl px-6 py-40">
           <div className="mb-24 text-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
               Support
             </motion.div>
-            <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+            <h2 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl">
               Frequently Asked <span className="text-green-600">Questions</span>
             </h2>
           </div>
@@ -325,19 +369,29 @@ export default function Employers() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 className={`group relative overflow-hidden rounded-4xl border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-all duration-500 ${
-                  openIndex === index ? "shadow-2xl shadow-green-500/10 ring-1 ring-green-500/20" : "hover:bg-white"
+                  openIndex === index
+                    ? "shadow-2xl ring-1 shadow-green-500/10 ring-green-500/20"
+                    : "hover:bg-white"
                 }`}
               >
                 <button
-                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  onClick={() =>
+                    setOpenIndex(openIndex === index ? null : index)
+                  }
                   className="flex w-full items-center justify-between text-left"
                 >
-                  <span className={`text-xl font-bold tracking-tight transition-colors duration-300 ${openIndex === index ? "text-green-700" : "text-slate-900"}`}>
+                  <span
+                    className={`text-xl font-bold tracking-tight transition-colors duration-300 ${openIndex === index ? "text-green-700" : "text-slate-900"}`}
+                  >
                     {faq.question}
                   </span>
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-500 ${
-                    openIndex === index ? "bg-green-600 text-white rotate-90" : "bg-slate-100 text-slate-500 group-hover:bg-green-500 group-hover:text-white"
-                  }`}>
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-500 ${
+                      openIndex === index
+                        ? "rotate-90 bg-green-600 text-white"
+                        : "bg-slate-100 text-slate-500 group-hover:bg-green-500 group-hover:text-white"
+                    }`}
+                  >
                     <ArrowRight size={20} />
                   </div>
                 </button>
@@ -349,7 +403,7 @@ export default function Employers() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <div className="pt-8 mt-8 border-t border-slate-100">
+                      <div className="mt-8 border-t border-slate-100 pt-8">
                         <p className="text-lg leading-relaxed text-slate-500">
                           {faq.answer}
                         </p>

@@ -1,13 +1,27 @@
 "use client";
 
 import React, { useRef, MouseEvent, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionValue,
+} from "framer-motion";
 import { ShieldCheck, Cpu, Users, Eye, Sparkles } from "lucide-react";
 import { Team } from "@/components/Team";
 import Image from "next/image";
 import Typed from "typed.js";
 
-const FloatingOrb = ({ color, delay, className }: { color: string; delay: number; className?: string }) => (
+const FloatingOrb = ({
+  color,
+  delay,
+  className,
+}: {
+  color: string;
+  delay: number;
+  className?: string;
+}) => (
   <motion.div
     animate={{
       y: [0, -40, 0],
@@ -20,18 +34,30 @@ const FloatingOrb = ({ color, delay, className }: { color: string; delay: number
       delay,
       ease: "easeInOut",
     }}
-    className={`absolute h-125 w-125 rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
   />
 );
 
-const TiltAboutCard = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+const TiltAboutCard = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
+    stiffness: 150,
+    damping: 20,
+  });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
+    stiffness: 150,
+    damping: 20,
+  });
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -45,7 +71,10 @@ const TiltAboutCard = ({ children, className }: { children: React.ReactNode; cla
     <motion.div style={{ perspective: 1000 }} className="h-full">
       <motion.div
         onMouseMove={handleMouseMove}
-        onMouseLeave={() => { x.set(0); y.set(0); }}
+        onMouseLeave={() => {
+          x.set(0);
+          y.set(0);
+        }}
         style={{ rotateX, rotateY }}
         className={`group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-10 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10 ${className}`}
       >
@@ -53,10 +82,11 @@ const TiltAboutCard = ({ children, className }: { children: React.ReactNode; cla
           style={{
             background: useTransform(
               [mouseX, mouseY],
-              ([mx, my]) => `radial-gradient(400px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
+              ([mx, my]) =>
+                `radial-gradient(400px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
             ),
           }}
-          className="absolute inset-0 pointer-events-none rounded-[2.5rem]"
+          className="pointer-events-none absolute inset-0 rounded-[2.5rem]"
         />
         {children}
         <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
@@ -71,7 +101,7 @@ export default function AboutPage() {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
   });
 
   const yHero = useTransform(scrollYProgress, [0, 1], [0, -100]);
@@ -90,25 +120,36 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <main ref={containerRef} className="relative min-h-screen overflow-hidden bg-white">
+    <main
+      ref={containerRef}
+      className="relative min-h-screen overflow-hidden bg-white"
+    >
       {/* Immersive Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
-        <FloatingOrb color="bg-emerald-100" delay={2} className="top-[40%] right-[10%]" />
+      <div className="pointer-events-none absolute inset-0">
+        <FloatingOrb
+          color="bg-green-100"
+          delay={0}
+          className="top-[-10%] left-[10%]"
+        />
+        <FloatingOrb
+          color="bg-emerald-100"
+          delay={2}
+          className="top-[40%] right-[10%]"
+        />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* ===== Hero ===== */}
-      <motion.section 
+      <motion.section
         style={{ y: yHero, opacity: opacityHero }}
-        className="relative overflow-hidden px-6 pt-32 pb-24 lg:pt-48 lg:pb-40"
+        className="relative overflow-hidden px-6 py-40"
       >
         <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-20 lg:grid-cols-2 lg:gap-32">
-          <div className="text-left space-y-8">
+          <div className="space-y-8 text-left">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+              className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
             >
               <Sparkles size={14} className="animate-pulse" />
               <span>Who We Are</span>
@@ -118,18 +159,22 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-serif text-5xl font-bold leading-[0.95] tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
+              className="font-serif text-6xl leading-tight font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
             >
-              The <span ref={typedRef} className="text-green-600 inline-block min-w-50" />
-              <br /> 
+              The{" "}
+              <span
+                ref={typedRef}
+                className="inline-block min-w-50 text-green-600"
+              />
+              <br />
               of Financial Freedom
             </motion.h1>
 
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 1 }}
-              className="max-w-xl text-xl leading-relaxed text-slate-500"
+              className="mt-10 max-w-xl text-xl leading-relaxed text-slate-500"
             >
               Empowering Africa&apos;s workforce to access what they&apos;ve
               earned - fairly, instantly, and securely.
@@ -148,17 +193,19 @@ export default function AboutPage() {
               height={450}
               src="/about/about.png"
               alt="Financial freedom illustration"
-              className="relative w-full max-w-lg rounded-[2.5rem] shadow-2xl shadow-slate-900/10 ring-1 ring-slate-200"
+              className="relative w-full max-w-lg rounded-[2.5rem] shadow-2xl ring-1 shadow-slate-900/10 ring-slate-200"
             />
             {/* Floating accent card */}
             <motion.div
               animate={{ y: [0, -20, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-8 -left-8 rounded-3xl border border-white/20 bg-white/40 p-6 backdrop-blur-2xl shadow-xl hidden sm:block"
+              className="absolute -bottom-8 -left-8 hidden rounded-3xl border border-white/20 bg-white/40 p-6 shadow-xl backdrop-blur-2xl sm:block"
             >
               <div className="flex items-center gap-3">
-                <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
-                <p className="text-sm font-bold text-slate-900">EaziWage ecosystem</p>
+                <div className="h-3 w-3 animate-pulse rounded-full bg-green-500" />
+                <p className="text-sm font-bold text-slate-900">
+                  EaziWage ecosystem
+                </p>
               </div>
             </motion.div>
           </motion.div>
@@ -166,10 +213,10 @@ export default function AboutPage() {
       </motion.section>
 
       {/* Mission & Vision Grid */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           <TiltAboutCard>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
               <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
               Our Mission
             </div>
@@ -185,7 +232,7 @@ export default function AboutPage() {
           </TiltAboutCard>
 
           <TiltAboutCard>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
               <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
               Our Vision
             </div>
@@ -202,16 +249,16 @@ export default function AboutPage() {
       </section>
 
       {/* ===== Our Story ===== */}
-      <section className="relative overflow-hidden py-32">
+      <section className="relative overflow-hidden py-40">
         <div className="mx-auto max-w-5xl px-6">
           <div className="mb-16 text-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
               Our Journey
             </motion.div>
             <h2 className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl">
@@ -219,7 +266,7 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -240,22 +287,22 @@ export default function AboutPage() {
               inclusive system that gives employees control over their earned
               income — backed by trusted banks and mobile money platforms.
             </p>
-            
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-64 w-64 rounded-full bg-green-500/5 blur-3xl" />
+
+            <div className="absolute top-0 right-0 h-64 w-64 translate-x-1/2 -translate-y-1/2 rounded-full bg-green-500/5 blur-3xl" />
           </motion.div>
         </div>
       </section>
 
       {/* ===== Core Values ===== */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-32 lg:px-8">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
         <div className="mb-24 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
             What Drives Us
           </motion.div>
           <h2 className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl">
@@ -286,16 +333,17 @@ export default function AboutPage() {
               text: "Clarity and visibility at every financial touchpoint.",
             },
           ].map(({ icon: Icon, title, text }) => (
-            <TiltAboutCard key={title} className="p-12 text-center items-center flex flex-col">
+            <TiltAboutCard
+              key={title}
+              className="flex flex-col items-center p-12 text-center"
+            >
               <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
                 <Icon className="h-8 w-8" strokeWidth={1.5} />
               </div>
-              <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 group-hover:text-green-700 transition-colors">
+              <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-700">
                 {title}
               </h3>
-              <p className="text-base leading-relaxed text-slate-500">
-                {text}
-              </p>
+              <p className="text-base leading-relaxed text-slate-500">{text}</p>
             </TiltAboutCard>
           ))}
         </div>

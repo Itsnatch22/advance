@@ -1,7 +1,21 @@
 "use client";
 
-import React, { useState, useMemo, useRef, MouseEvent, useEffect, useCallback } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import React, {
+  useState,
+  useMemo,
+  useRef,
+  MouseEvent,
+  useEffect,
+  useCallback,
+} from "react";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionValue,
+} from "framer-motion";
 import {
   Search,
   Download,
@@ -58,13 +72,13 @@ const FloatingOrb = ({
       delay,
       ease: "easeInOut",
     }}
-    className={`absolute h-125 w-125 rounded-full blur-[120px] opacity-20 ${color} ${className}`}
+    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
   />
 );
 
 // Skeleton card for loading state
 const SkeletonCard = () => (
-  <div className="relative flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl animate-pulse">
+  <div className="relative flex h-full animate-pulse flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl">
     <div className="mb-6 flex items-center justify-between">
       <div className="h-5 w-20 rounded-xl bg-slate-100" />
       <div className="h-4 w-24 rounded-lg bg-slate-100" />
@@ -79,7 +93,7 @@ const SkeletonCard = () => (
       <div className="h-4 w-5/6 rounded bg-slate-100" />
       <div className="h-4 w-4/6 rounded bg-slate-100" />
     </div>
-    <div className="mt-auto pt-6 flex items-center justify-between border-t border-slate-100">
+    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-6">
       <div className="flex gap-2">
         <div className="h-3 w-12 rounded bg-slate-100" />
         <div className="h-3 w-16 rounded bg-slate-100" />
@@ -139,13 +153,13 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
                 `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.04), transparent 80%)`
             ),
           }}
-          className="absolute inset-0 pointer-events-none rounded-[2.5rem]"
+          className="pointer-events-none absolute inset-0 rounded-[2.5rem]"
         />
 
         <div className="relative z-10 flex h-full flex-col">
           {/* Article image if available */}
           {resource.image && (
-            <div className="mb-6 -mx-8 -mt-8 h-44 overflow-hidden rounded-t-[2.5rem] relative">
+            <div className="relative -mx-8 -mt-8 mb-6 h-44 overflow-hidden rounded-t-[2.5rem]">
               <Image
                 src={resource.image}
                 alt={resource.title}
@@ -161,13 +175,13 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
 
           <div className="mb-6 flex items-center justify-between">
             <div
-              className={`rounded-xl border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+              className={`rounded-xl border px-3 py-1 text-[10px] font-black tracking-widest uppercase ${
                 categoryColors[resource.category]
               }`}
             >
               {resource.category.replace("-", " ")}
             </div>
-            <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <div className="flex items-center gap-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
               <span className="flex items-center gap-1">
                 <Calendar size={12} />
                 {new Date(resource.date).toLocaleDateString("en-US", {
@@ -184,11 +198,11 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
             </div>
           </div>
 
-          <h3 className="mb-4 font-serif text-xl font-bold leading-tight text-slate-900 group-hover:text-green-700 transition-colors line-clamp-3">
+          <h3 className="mb-4 line-clamp-3 font-serif text-xl leading-tight font-bold text-slate-900 transition-colors group-hover:text-green-700">
             {resource.title}
           </h3>
 
-          <p className="mb-8 text-slate-500 leading-relaxed line-clamp-3 text-sm">
+          <p className="mb-8 line-clamp-3 text-sm leading-relaxed text-slate-500">
             {resource.description}
           </p>
 
@@ -199,7 +213,7 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
                   <div className="text-lg font-black text-green-600">
                     {m.value}
                   </div>
-                  <div className="text-[8px] font-black uppercase tracking-widest text-slate-400">
+                  <div className="text-[8px] font-black tracking-widest text-slate-400 uppercase">
                     {m.label}
                   </div>
                 </div>
@@ -208,15 +222,18 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
           )}
 
           {resource.author && (
-            <p className="mb-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+            <p className="mb-4 text-[11px] font-bold tracking-widest text-slate-400 uppercase">
               By {resource.author}
             </p>
           )}
 
-          <div className="mt-auto pt-6 flex items-center justify-between border-t border-slate-100">
-            <div className="flex gap-2 flex-wrap">
+          <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-6">
+            <div className="flex flex-wrap gap-2">
               {resource.tags.slice(0, 2).map((tag) => (
-                <span key={tag} className="text-[10px] font-bold text-slate-400">
+                <span
+                  key={tag}
+                  className="text-[10px] font-bold text-slate-400"
+                >
                   #{tag}
                 </span>
               ))}
@@ -225,7 +242,7 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
               href={resource.link || "#"}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-green-600 group-hover:gap-3 transition-all"
+              className="inline-flex items-center gap-2 text-sm font-black tracking-widest text-green-600 uppercase transition-all group-hover:gap-3"
             >
               Read
               <ExternalLink size={14} />
@@ -243,9 +260,7 @@ interface BlogsClientProps {
   initialResources: Resource[];
 }
 
-export default function BlogsClient({
-  initialResources,
-}: BlogsClientProps) {
+export default function BlogsClient({ initialResources }: BlogsClientProps) {
   const [resources, setResources] = useState<Resource[]>(initialResources);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -257,7 +272,9 @@ export default function BlogsClient({
   const [email, setEmail] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   const containerRef = useRef<HTMLElement>(null);
@@ -291,7 +308,9 @@ export default function BlogsClient({
         setLastFetched(new Date());
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Something went wrong. Try again."
+          err instanceof Error
+            ? err.message
+            : "Something went wrong. Try again."
         );
       } finally {
         setIsLoading(false);
@@ -359,7 +378,9 @@ export default function BlogsClient({
         setTimeout(() => setSubmitStatus("idle"), 5000);
       } else {
         setSubmitStatus("error");
-        setErrorMessage(result.error || "Failed to subscribe. Please try again.");
+        setErrorMessage(
+          result.error || "Failed to subscribe. Please try again."
+        );
       }
     } catch {
       setSubmitStatus("error");
@@ -370,24 +391,35 @@ export default function BlogsClient({
   };
 
   return (
-    <main ref={containerRef} className="relative min-h-screen overflow-hidden bg-white">
+    <main
+      ref={containerRef}
+      className="relative min-h-screen overflow-hidden bg-white"
+    >
       {/* Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
-        <FloatingOrb color="bg-emerald-100" delay={2} className="top-[30%] right-[10%]" />
+      <div className="pointer-events-none fixed inset-0">
+        <FloatingOrb
+          color="bg-green-100"
+          delay={0}
+          className="top-[-10%] left-[10%]"
+        />
+        <FloatingOrb
+          color="bg-emerald-100"
+          delay={2}
+          className="top-[30%] right-[10%]"
+        />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* Hero */}
       <motion.section
         style={{ y: yHero, opacity: opacityHero }}
-        className="relative pt-40 pb-20 lg:pt-56 lg:pb-32 px-6"
+        className="relative px-6 py-40"
       >
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="mx-auto max-w-5xl text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
           >
             <Newspaper size={14} className="animate-pulse" />
             <span>Live from Africa</span>
@@ -400,14 +432,14 @@ export default function BlogsClient({
             className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
           >
             Resources for <br />
-            <span className="italic text-green-600">Financial Growth</span>
+            <span className="text-green-600 italic">Financial Growth</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 1 }}
-            className="mt-8 max-w-3xl mx-auto text-xl leading-relaxed text-slate-500"
+            className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
           >
             Live news, guides, and insights on Earned Wage Access and financial
             wellness across Africa — updated every hour.
@@ -417,26 +449,29 @@ export default function BlogsClient({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mt-16 max-w-2xl mx-auto group"
+            className="group mx-auto mt-16 max-w-2xl"
           >
             <div className="relative">
-              <Search className="absolute top-1/2 left-6 h-6 w-6 -translate-y-1/2 text-slate-400 group-focus-within:text-green-600 transition-colors" />
+              <Search className="absolute top-1/2 left-6 h-6 w-6 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-green-600" />
               <Input
                 type="text"
                 placeholder="Search Africa fintech news..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-20 rounded-3xl border-slate-200 bg-white/80 pl-16 pr-8 text-xl shadow-2xl backdrop-blur-xl transition-all focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
+                className="h-20 rounded-3xl border-slate-200 bg-white/80 pr-8 pl-16 text-xl shadow-2xl backdrop-blur-xl transition-all focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
               />
               {isLoading && (
                 <div className="absolute top-1/2 right-6 -translate-y-1/2">
-                  <RefreshCw size={20} className="text-green-500 animate-spin" />
+                  <RefreshCw
+                    size={20}
+                    className="animate-spin text-green-500"
+                  />
                 </div>
               )}
             </div>
 
             {lastFetched && (
-              <p className="mt-3 text-xs text-slate-400 font-medium">
+              <p className="mt-3 text-xs font-medium text-slate-400">
                 Last updated{" "}
                 {lastFetched.toLocaleTimeString("en-US", {
                   hour: "2-digit",
@@ -449,18 +484,17 @@ export default function BlogsClient({
       </motion.section>
 
       {/* Filters */}
-      <section className="sticky top-16 z-30 bg-white/40 backdrop-blur-md border-y border-slate-100 py-8">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="sticky top-16 z-30 border-y border-slate-100 bg-white/40 py-8 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-wrap items-center justify-center gap-3">
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 disabled={isLoading}
-                className={`flex items-center gap-3 rounded-2xl px-6 py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 disabled:opacity-50
-                ${
+                className={`flex items-center gap-3 rounded-2xl px-6 py-3 text-sm font-black tracking-widest uppercase transition-all duration-300 disabled:opacity-50 ${
                   selectedCategory === cat.id
-                    ? "bg-slate-900 text-white shadow-xl scale-105"
+                    ? "scale-105 bg-slate-900 text-white shadow-xl"
                     : "border border-slate-200 bg-white text-slate-400 hover:border-green-500 hover:text-green-600"
                 }`}
               >
@@ -473,7 +507,7 @@ export default function BlogsClient({
       </section>
 
       {/* Grid */}
-      <section className="max-w-7xl mx-auto px-6 py-32">
+      <section className="mx-auto max-w-7xl px-6 py-40">
         {/* Error state */}
         {error && (
           <motion.div
@@ -482,10 +516,10 @@ export default function BlogsClient({
             className="mb-12 flex items-center gap-3 rounded-2xl border border-red-100 bg-red-50 px-6 py-4 text-red-600"
           >
             <AlertCircle size={20} />
-            <span className="font-bold text-sm">{error}</span>
+            <span className="text-sm font-bold">{error}</span>
             <button
               onClick={() => fetchResources(selectedCategory, searchQuery)}
-              className="ml-auto text-xs font-black uppercase tracking-widest underline"
+              className="ml-auto text-xs font-black tracking-widest uppercase underline"
             >
               Retry
             </button>
@@ -499,7 +533,7 @@ export default function BlogsClient({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
+              className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3"
             >
               {Array.from({ length: 6 }).map((_, i) => (
                 <SkeletonCard key={i} />
@@ -509,7 +543,7 @@ export default function BlogsClient({
             <motion.div
               key="results"
               layout
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
+              className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3"
             >
               {displayedResources.map((resource, i) => (
                 <motion.div
@@ -528,14 +562,14 @@ export default function BlogsClient({
         </AnimatePresence>
 
         {!isLoading && displayedResources.length === 0 && !error && (
-          <div className="text-center py-40">
-            <div className="inline-flex p-10 rounded-full bg-slate-50 mb-8 ring-1 ring-slate-100">
-              <Search className="w-12 h-12 text-slate-200" />
+          <div className="py-40 text-center">
+            <div className="mb-8 inline-flex rounded-full bg-slate-50 p-10 ring-1 ring-slate-100">
+              <Search className="h-12 w-12 text-slate-200" />
             </div>
-            <h3 className="text-3xl font-serif font-bold text-slate-900">
+            <h3 className="font-serif text-3xl font-bold text-slate-900">
               No results found
             </h3>
-            <p className="text-slate-500 mt-4 text-lg">
+            <p className="mt-4 text-lg text-slate-500">
               Try adjusting your search or switching categories.
             </p>
           </div>
@@ -543,26 +577,26 @@ export default function BlogsClient({
       </section>
 
       {/* Newsletter CTA */}
-      <section className="max-w-7xl mx-auto px-6 py-32 lg:py-48">
+      <section className="mx-auto max-w-7xl px-6 py-40">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="group relative overflow-hidden rounded-[3rem] border border-slate-200/60 bg-white p-12 text-center backdrop-blur-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] transition-all duration-500 hover:shadow-green-500/10 lg:p-24"
+          className="group relative overflow-hidden rounded-[3rem] border border-slate-200/60 bg-white p-12 text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-3xl transition-all duration-500 hover:shadow-green-500/10 lg:p-24"
         >
           <div className="absolute inset-0 bg-linear-to-br from-green-50/20 via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
           <div className="relative z-10">
             <div className="mb-10 flex justify-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
                 Join the Community
               </div>
             </div>
 
             <h2 className="mb-8 font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
               Join 10,000+{" "}
-              <span className="italic text-green-600">HR Professionals</span>
+              <span className="text-green-600 italic">HR Professionals</span>
             </h2>
             <p className="mx-auto mb-16 max-w-2xl text-xl text-slate-500">
               Get the latest financial wellness insights and regulatory updates
@@ -575,7 +609,7 @@ export default function BlogsClient({
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="mb-8 flex items-center justify-center gap-3 text-green-600 font-bold bg-green-50 py-4 px-8 rounded-2xl border border-green-100 mx-auto max-w-md"
+                  className="mx-auto mb-8 flex max-w-md items-center justify-center gap-3 rounded-2xl border border-green-100 bg-green-50 px-8 py-4 font-bold text-green-600"
                 >
                   <CheckCircle2 size={24} />
                   <span>Welcome to the community! Check your inbox.</span>
@@ -583,7 +617,7 @@ export default function BlogsClient({
               ) : (
                 <form
                   onSubmit={handleSubscribe}
-                  className="relative flex flex-col sm:flex-row gap-4 max-w-xl mx-auto"
+                  className="relative mx-auto flex max-w-xl flex-col gap-4 sm:flex-row"
                 >
                   <input
                     type="text"
@@ -604,7 +638,7 @@ export default function BlogsClient({
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="h-16 px-10 bg-slate-900 text-white font-bold rounded-2xl hover:bg-green-600 transition-all shadow-2xl disabled:opacity-50"
+                    className="h-16 rounded-2xl bg-slate-900 px-10 font-bold text-white shadow-2xl transition-all hover:bg-green-600 disabled:opacity-50"
                   >
                     {isSubmitting ? "Subscribing..." : "Subscribe"}
                   </motion.button>
@@ -616,7 +650,7 @@ export default function BlogsClient({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mt-4 flex items-center justify-center gap-2 text-red-500 text-sm font-bold"
+                className="mt-4 flex items-center justify-center gap-2 text-sm font-bold text-red-500"
               >
                 <AlertCircle size={16} />
                 <span>{errorMessage}</span>
