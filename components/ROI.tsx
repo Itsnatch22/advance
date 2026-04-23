@@ -15,6 +15,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
+import Link from "next/link";
 
 /* ---------- FX Config ---------- */
 const FX_CACHE_KEY = "eazi_fx_v1";
@@ -659,9 +660,11 @@ export default function ROI() {
                   <h4 className="text-xl font-serif font-bold text-white mb-6">
                     Be the first to empower your workforce.
                   </h4>
-                  <button className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white py-4 font-black uppercase tracking-widest text-slate-900 transition-all hover:bg-green-500 hover:text-white">
+                  <Link
+                  href="/sales"
+                  className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white py-4 font-black uppercase tracking-widest text-slate-900 transition-all hover:bg-green-500 hover:text-white">
                     Request a Demo <ArrowRight size={18} />
-                  </button>
+                  </Link>
                 </div>
               </motion.div>
             </div>

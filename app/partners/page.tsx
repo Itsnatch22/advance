@@ -277,8 +277,8 @@ export default function PartnersPage() {
       {/* BANKS */}
       <PartnerSection
         eyebrow="Banking"
-        title="Financial institutions we work with"
-        description="Secure rails, regulated infrastructure and trusted partners powering wage access."
+        title="Built for institutions like"
+        description="Designed to plug into the regulated financial infrastructure powering East Africa."
         partners={bankingPartners}
         icon={ShieldCheck}
       />
@@ -289,8 +289,8 @@ export default function PartnersPage() {
       {/* CORPORATES */}
       <PartnerSection
         eyebrow="Enterprise"
-        title="Employers enabling financial wellbeing"
-        description="Organisations using EaziWage to support employees with flexible pay access."
+        title="Built for employers like"
+        description="From retail to manufacturing — EaziWage is designed for the organisations that power East Africa's workforce."
         partners={corporatePartners}
         icon={Building2}
         reverse
