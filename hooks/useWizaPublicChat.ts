@@ -1,7 +1,3 @@
-// hooks/useWizaPublicChat.ts
-// Manages visitor identity, session list, history loading, and delete.
-// No auth required — visitor_id is a UUID stored in localStorage.
-
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';

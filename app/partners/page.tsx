@@ -256,7 +256,7 @@ export default function PartnersPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
           >
-            <span className="text-green-600">Trusted by the teams</span>
+            <span className="text-green-600">Built for the teams</span>
             <br />
             powering Africa&apos;s workforce.
           </motion.h1>
