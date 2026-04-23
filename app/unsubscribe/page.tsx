@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Wallet } from "lucide-react";
 
 type Product = "newsletter" | "partners" | "sales" | "all";
 
@@ -23,7 +24,6 @@ const LEAVE_REASONS = [
 export default function UnsubscribePage() {
   const [email, setEmail] = useState("");
   const [product, setProduct] = useState<Product>("newsletter");
-  const [token, setToken] = useState("");
   const [feedback, setFeedback] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error" | null>(null);
@@ -34,12 +34,10 @@ export default function UnsubscribePage() {
     const params = new URLSearchParams(window.location.search);
     const e = params.get("email");
     const p = params.get("product");
-    const t = params.get("token");
 
     if (e) setEmail(e);
     if (p && ["newsletter", "partners", "sales", "all"].includes(p))
       setProduct(p as Product);
-    if (t) setToken(t);
     setStatus("idle");
     setMounted(true);
   }, []);
@@ -59,7 +57,7 @@ export default function UnsubscribePage() {
       const res = await fetch("/api/unsubscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, product, feedback: combinedFeedback, token }),
+        body: JSON.stringify({ email, product, feedback: combinedFeedback }),
       });
 
       const body = await res.json();
@@ -367,7 +365,11 @@ export default function UnsubscribePage() {
           {/* Header */}
           <div className="card-header">
             <div className="logo-mark">
-              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+              <Wallet
+              className="h-8 w-8 text-emerald-700"
+              strokeWidth={2}
+              aria-hidden="true"
+            />
             </div>
             <span className="logo-text">EaziWage</span>
           </div>
@@ -441,8 +443,6 @@ export default function UnsubscribePage() {
                       placeholder="Anything else we should know? (optional)"
                     />
                   </div>
-
-                  <input type="hidden" value={token} readOnly />
 
                   {status === "error" && (
                     <div className="alert alert-error">

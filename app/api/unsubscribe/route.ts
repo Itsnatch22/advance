@@ -1,4 +1,3 @@
-// app/api/unsubscribe/route.ts
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
@@ -8,15 +7,11 @@ import { checkRateLimit, rateLimiter } from "@/lib/rate-limit";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const UNSUBSCRIBE_SECRET = process.env.UNSUBSCRIBE_SECRET!;
 const RESEND_API_KEY = process.env.RESEND_API_KEY!; // or any email provider
 
-const CONFIRMATION_DELAY_DAYS = parseInt(
-  process.env.UNSUBSCRIBE_CONFIRMATION_DELAY_DAYS ?? "3",
-  10
-);
+const CONFIRMATION_DELAY_DAYS = 0;
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !UNSUBSCRIBE_SECRET) {
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   console.warn(
     "[unsubscribe] Missing env vars. Ensure SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, and UNSUBSCRIBE_SECRET are set."
   );
@@ -32,56 +27,10 @@ type Body = {
   email: string;
   product: string;
   feedback?: string;
-  token?: string;
 };
-
-// ─── HMAC helpers ─────────────────────────────────────────────────────────────
-
-function computeHmac(email: string, product: string, expiry: string): string {
-  return crypto
-    .createHmac("sha256", UNSUBSCRIBE_SECRET)
-    .update(`${email}|${product}|${expiry}`)
-    .digest("hex");
-}
-
-function verifyToken(
-  token: string | undefined,
-  email: string,
-  product: string
-): boolean {
-  if (!token) return false;
-
-  const parts = token.split(":");
-  if (parts.length !== 2) return false;
-
-  const [expiryStr, hmac] = parts;
-  const expiry = parseInt(expiryStr, 10);
-  if (Number.isNaN(expiry)) return false;
-
-  const now = Math.floor(Date.now() / 1000);
-  if (now > expiry) return false;
-
-  const expected = computeHmac(email, product, expiryStr);
-  try {
-    const a = Buffer.from(expected, "utf8");
-    const b = Buffer.from(hmac, "utf8");
-    if (a.length !== b.length) return false;
-    return crypto.timingSafeEqual(a, b);
-  } catch {
-    return false;
-  }
-}
 
 // ─── Email sender ────────────────────────────────────────────────────────────
 
-/**
- * Sends a confirmation email after CONFIRMATION_DELAY_DAYS days.
- * Uses Resend (https://resend.com) — swap the fetch call for your own provider
- * (SendGrid, Postmark, SES, etc.) as needed.
- *
- * If you prefer not to schedule, you can remove the `scheduledAt` field and
- * the email will fire immediately instead.
- */
 async function scheduleConfirmationEmail(
   email: string,
   product: string
@@ -113,8 +62,6 @@ async function scheduleConfirmationEmail(
       from: "EaziWage <noreply@eaziwage.com>",
       to: email,
       subject: `You've been unsubscribed from ${label}`,
-      // scheduled_at is an ISO-8601 string; Resend will deliver at this time.
-      scheduled_at: sendAt.toISOString(),
       html: `
         <!DOCTYPE html>
         <html>
@@ -210,7 +157,7 @@ export async function POST(req: Request) {
 
   try {
     const body: Body = await req.json();
-    const { email, product, feedback, token } = body;
+    const { email, product, feedback } = body;
 
     // ── Basic validation ──
     if (!email || !product) {
@@ -225,14 +172,6 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { message: "Invalid product." },
         { status: 400, headers: rl.headers }
-      );
-    }
-
-    // ── Token verification ──
-    if (!verifyToken(token, email, product)) {
-      return NextResponse.json(
-        { message: "Invalid or expired unsubscribe link. Please request a new one." },
-        { status: 401, headers: rl.headers }
       );
     }
 
@@ -297,7 +236,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message: `You have been unsubscribed from ${product}. A confirmation email will arrive within ${CONFIRMATION_DELAY_DAYS} day${CONFIRMATION_DELAY_DAYS !== 1 ? "s" : ""}.`,
+        message: `You have been unsubscribed from ${product}. A confirmation email will arrive within ${CONFIRMATION_DELAY_DAYS} day${CONFIRMATION_DELAY_DAYS}.`,
       },
       { status: 200, headers: rl.headers }
     );
