@@ -35,14 +35,15 @@ import {
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Resource } from "@/types/resources";
+import { GridSystem } from "@/components/grid";
 
 const categories = [
-  { id: "all", label: "All Content", icon: Layers },
-  { id: "guide", label: "Guides", icon: FileText },
-  { id: "blog", label: "Insights", icon: TrendingUp },
-  { id: "case-study", label: "Case Studies", icon: Users },
-  { id: "webinar", label: "Webinars", icon: Video },
-  { id: "download", label: "Tools", icon: Download },
+  { id: "all", label: "All EWA Content", icon: Layers },
+  { id: "guide", label: "Implementation Guides", icon: FileText },
+  { id: "blog", label: "EWA Insights", icon: TrendingUp },
+  { id: "case-study", label: "Success Stories", icon: Users },
+  { id: "webinar", label: "EWA Events", icon: Video },
+  { id: "download", label: "EWA Tools", icon: Download },
 ];
 
 function getResourceDedupKey(resource: Resource): string {
@@ -391,8 +392,10 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
   };
 
   return (
-    <main
+    <GridSystem
       ref={containerRef}
+      variant="dots"
+      opacity={0.03}
       className="relative min-h-screen overflow-hidden bg-white"
     >
       {/* Background */}
@@ -407,11 +410,11 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
           delay={2}
           className="top-[30%] right-[10%]"
         />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* Hero */}
-      <motion.section
+      <section className="relative bg-white py-40">
+        <motion.section
         style={{ y: yHero, opacity: opacityHero }}
         className="relative px-6 py-40"
       >
@@ -431,8 +434,8 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
           >
-            Resources for <br />
-            <span className="text-green-600 italic">Financial Growth</span>
+            Earned Wage Access <br />
+            <span className="text-green-600">Across Africa</span>
           </motion.h1>
 
           <motion.p
@@ -441,8 +444,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
             transition={{ delay: 0.3, duration: 1 }}
             className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
           >
-            Live news, guides, and insights on Earned Wage Access and financial
-            wellness across Africa — updated every hour.
+            Real-time insights, implementation guides, and success stories on Earned Wage Access (EWA), on-demand pay, and flexible wage solutions across African markets.
           </motion.p>
 
           <motion.div
@@ -482,9 +484,10 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
           </motion.div>
         </div>
       </motion.section>
+      </section>
 
       {/* Filters */}
-      <section className="sticky top-16 z-30 border-y border-slate-100 bg-white/40 py-8 backdrop-blur-md">
+      <section className="sticky top-16 z-30 border-y border-slate-100 bg-white/40 py-8 backdrop-blur-md"> 
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-wrap items-center justify-center gap-3">
             {categories.map((cat) => (
@@ -586,7 +589,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
         >
           <div className="absolute inset-0 bg-linear-to-br from-green-50/20 via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-          <div className="relative z-10">
+        <div className="relative z-10">
             <div className="mb-10 flex justify-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
@@ -595,8 +598,8 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
             </div>
 
             <h2 className="mb-8 font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
-              Join 10,000+{" "}
-              <span className="text-green-600 italic">HR Professionals</span>
+              Join Us{" "}
+              <span className="text-green-600">Today</span>
             </h2>
             <p className="mx-auto mb-16 max-w-2xl text-xl text-slate-500">
               Get the latest financial wellness insights and regulatory updates
@@ -659,6 +662,6 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
           </div>
         </motion.div>
       </section>
-    </main>
+    </GridSystem>
   );
 }

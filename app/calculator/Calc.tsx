@@ -497,7 +497,7 @@ export default function Calculator() {
       <button
         onClick={callBackendCalc}
         disabled={!salary}
-        className="mt-5 w-full rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-2.5 font-semibold text-white shadow transition-transform hover:scale-[1.02] active:scale-[0.99] disabled:opacity-60"
+        className="mt-5 w-full rounded-xl bg-green-600 px-4 py-2.5 font-semibold text-white shadow transition-transform hover:scale-[1.02] active:scale-[0.99] disabled:opacity-60"
       >
         Calculate
       </button>

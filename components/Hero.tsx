@@ -20,6 +20,7 @@ import {
 import React, { useState, useRef, Suspense, MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import HeroStats from "./HeroStats"; // async server component
+import { GridSystem } from "./grid";
 
 export default function Hero() {
   const [email, setEmail] = useState("");
@@ -68,15 +69,16 @@ export default function Hero() {
   };
 
   return (
-    <section
+    <GridSystem
       ref={containerRef}
-      className="relative overflow-hidden bg-white py-40"
+      variant="dots"
+      opacity={0.03}
+      className="bg-white py-40"
     >
       {/* Architectural Background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-0 right-[-10%] h-200 w-200 rounded-full bg-green-50/50 blur-[120px]" />
         <div className="absolute bottom-[-20%] left-[-10%] h-150 w-150 rounded-full bg-emerald-50/50 blur-[120px]" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
@@ -262,7 +264,7 @@ export default function Hero() {
           </motion.div>
         </div>
       </div>
-    </section>
+    </GridSystem>
   );
 }
 

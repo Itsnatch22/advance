@@ -5,16 +5,16 @@ export const runtime = "nodejs";
 
 // Category → NewsAPI keyword mapping
 const CATEGORY_QUERIES: Record<string, string> = {
-  all: '"earned wage access" OR "financial inclusion" OR "fintech" OR "mobile money" Africa',
+  all: '"earned wage access" OR "EWA" OR "earned wages" OR "salary advance" OR "on-demand pay" OR "flexible wages" OR "wage streaming" Africa',
   guide:
-    '"earned wage access" OR "EWA" OR "financial literacy" OR "payroll" Africa',
-  blog: '"fintech Africa" OR "financial wellness" OR "mobile money" OR "neobank" Africa',
+    '"earned wage access guide" OR "EWA implementation" OR "on-demand payroll" OR "flexible pay setup" Africa',
+  blog: '"earned wage access Africa" OR "EWA Africa" OR "salary advance Africa" OR "on-demand pay Africa" OR "flexible wages Africa"',
   "case-study":
-    '"payroll Africa" OR "employer benefits Africa" OR "workforce finance" OR "salary advance" Africa',
+    '"earned wage access case study" OR "EWA success story" OR "salary advance implementation" OR "on-demand payroll Africa"',
   webinar:
-    '"fintech event" OR "financial summit" OR "fintech conference" Africa',
+    '"earned wage access webinar" OR "EWA summit" OR "on-demand pay conference" OR "flexible wages event" Africa',
   download:
-    '"financial tool" OR "salary advance" OR "wage calculator" OR "payslip" Africa',
+    '"earned wage access tool" OR "EWA calculator" OR "salary advance template" OR "on-demand payroll guide" Africa',
 };
 
 // Source name → inferred tags
@@ -22,13 +22,14 @@ function inferTags(sourceName: string, title: string): string[] {
   const tags: string[] = [];
   const combined = `${sourceName} ${title}`.toLowerCase();
 
+  // African countries
   if (combined.includes("kenya") || combined.includes("nairobi"))
     tags.push("Kenya");
   if (combined.includes("nigeria") || combined.includes("lagos"))
     tags.push("Nigeria");
   if (combined.includes("ghana") || combined.includes("accra"))
     tags.push("Ghana");
-  if (combined.includes("south africa") || combined.includes("johannesburg"))
+  if (combined.includes("south africa") || combined.includes("johannesburg") || combined.includes("capetown"))
     tags.push("South Africa");
   if (combined.includes("uganda") || combined.includes("kampala"))
     tags.push("Uganda");
@@ -38,20 +39,70 @@ function inferTags(sourceName: string, title: string): string[] {
     tags.push("Rwanda");
   if (combined.includes("ethiopia") || combined.includes("addis"))
     tags.push("Ethiopia");
+  if (combined.includes("zambia") || combined.includes("lusaka"))
+    tags.push("Zambia");
+  if (combined.includes("zimbabwe") || combined.includes("harare"))
+    tags.push("Zimbabwe");
+  if (combined.includes("botswana") || combined.includes("gaborone"))
+    tags.push("Botswana");
+  if (combined.includes("senegal") || combined.includes("dakar"))
+    tags.push("Senegal");
+  if (combined.includes("ivory coast") || combined.includes("abidjan"))
+    tags.push("Ivory Coast");
+  if (combined.includes("cameroon") || combined.includes("douala"))
+    tags.push("Cameroon");
+  if (combined.includes("egypt") || combined.includes("cairo"))
+    tags.push("Egypt");
+  if (combined.includes("morocco") || combined.includes("casablanca"))
+    tags.push("Morocco");
+
+  // EWA-specific terminology
+  if (combined.includes("earned wage access") || combined.includes("ewa"))
+    tags.push("EWA");
+  if (combined.includes("salary advance") || combined.includes("salary advance"))
+    tags.push("Salary Advance");
+  if (combined.includes("on-demand pay") || combined.includes("on demand pay"))
+    tags.push("On-Demand Pay");
+  if (combined.includes("flexible wages") || combined.includes("flexible pay"))
+    tags.push("Flexible Wages");
+  if (combined.includes("wage streaming") || combined.includes("wage streaming"))
+    tags.push("Wage Streaming");
+  if (combined.includes("earned wages") || combined.includes("earned wages"))
+    tags.push("Earned Wages");
+  if (combined.includes("payroll innovation") || combined.includes("payroll tech"))
+    tags.push("Payroll Innovation");
+  if (combined.includes("employee benefits") || combined.includes("worker benefits"))
+    tags.push("Employee Benefits");
+  if (combined.includes("financial inclusion") || combined.includes("financial inclusion"))
+    tags.push("Financial Inclusion");
+  if (combined.includes("workforce finance") || combined.includes("workforce finance"))
+    tags.push("Workforce Finance");
+
+  // Supporting technologies
   if (combined.includes("mobile money") || combined.includes("m-pesa"))
     tags.push("Mobile Money");
   if (combined.includes("fintech")) tags.push("Fintech");
   if (combined.includes("payroll")) tags.push("Payroll");
+  if (combined.includes("digital banking") || combined.includes("digital bank"))
+    tags.push("Digital Banking");
+  if (combined.includes("neobank") || combined.includes("neo bank"))
+    tags.push("Neobank");
+
+  // Business context
   if (combined.includes("financial wellness") || combined.includes("wellbeing"))
     tags.push("Wellness");
   if (combined.includes("startup")) tags.push("Startup");
   if (combined.includes("regulation") || combined.includes("central bank"))
     tags.push("Regulation");
+  if (combined.includes("implementation") || combined.includes("deployment"))
+    tags.push("Implementation");
+  if (combined.includes("case study") || combined.includes("success story"))
+    tags.push("Case Study");
 
   // Always tag with source
   if (sourceName) tags.push(sourceName);
 
-  return [...new Set(tags)].slice(0, 4);
+  return [...new Set(tags)].slice(0, 5);
 }
 
 // Estimate read time from description length
@@ -169,9 +220,63 @@ export async function GET(request: NextRequest) {
         a.url
     );
 
+    // Filter for EWA relevance with quality scoring
+    const filteredArticles = articles.filter((article: NewsAPIArticle) => {
+      const text = `${article.title} ${article.description || ""}`.toLowerCase();
+      
+      // EWA relevance scoring
+      let score = 0;
+      
+      // High-value EWA terms (3 points each)
+      const highValueTerms = [
+        "earned wage access", "ewa", "earned wages", "on-demand pay", 
+        "flexible wages", "wage streaming", "salary advance"
+      ];
+      
+      // Medium-value terms (2 points each)
+      const mediumValueTerms = [
+        "payroll innovation", "employee benefits", "workforce finance",
+        "financial inclusion", "payroll tech", "employee financial wellness"
+      ];
+      
+      // Supporting terms (1 point each)
+      const supportingTerms = [
+        "payroll", "fintech", "mobile money", "digital banking",
+        "neobank", "employee benefits", "financial wellness",
+        "wages", "salary", "workers", "employer", "workforce"
+      ];
+      
+      // African countries (2 points each)
+      const africanCountries = [
+        "kenya", "nigeria", "ghana", "south africa", "uganda", "tanzania",
+        "rwanda", "ethiopia", "zambia", "zimbabwe", "botswana", "senegal",
+        "ivory coast", "cameroon", "egypt", "morocco"
+      ];
+      
+      // Calculate score
+      highValueTerms.forEach(term => {
+        if (text.includes(term)) score += 3;
+      });
+      
+      mediumValueTerms.forEach(term => {
+        if (text.includes(term)) score += 2;
+      });
+      
+      supportingTerms.forEach(term => {
+        if (text.includes(term)) score += 1;
+      });
+      
+      africanCountries.forEach(country => {
+        if (text.includes(country)) score += 2;
+      });
+      
+      // Require minimum score of 3 for EWA relevance
+      return score >= 2;
+    });
+
     // Map NewsAPI shape → Resource shape
     const seenArticles = new Set<string>();
-    const resources = articles.flatMap((article) => {
+    const resources = filteredArticles.flatMap((article) => {
       const normalizedUrl = normalizeArticleUrl(article.url);
       const dedupeKey = `${normalizedUrl}::${article.title.trim().toLowerCase()}`;
 
@@ -199,6 +304,13 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    console.log({
+      totalFromAPI: data.articles?.length,
+      afterRemovedFilter: articles.length,
+      afterRelevanceFilter: filteredArticles.length,
+      finalResources: resources.length,
+    });
+
     return NextResponse.json(
       { resources, total: resources.length },
       {
@@ -213,39 +325,64 @@ export async function GET(request: NextRequest) {
       { error: "Failed to fetch news" },
       { status: 500 }
     );
+    
   }
 }
 
 // Infer category from article content when fetching "all"
 function inferCategory(title: string, description: string): string {
   const text = `${title} ${description}`.toLowerCase();
+  
+  // Guides - "how to" content, implementation guides, setup instructions
   if (
     text.includes("how to") ||
     text.includes("guide") ||
     text.includes("setup") ||
-    text.includes("tips")
+    text.includes("tips") ||
+    text.includes("implementation") ||
+    text.includes("step by step") ||
+    text.includes("tutorial") ||
+    text.includes("getting started")
   )
     return "guide";
+  
+  // Case Studies - success stories, implementations with results
   if (
     text.includes("case study") ||
     text.includes("success story") ||
     text.includes("% reduction") ||
-    text.includes("transformed")
+    text.includes("transformed") ||
+    text.includes("results") ||
+    text.includes("implementation") ||
+    text.includes("deployment") ||
+    text.includes("achieved") ||
+    text.includes("improved")
   )
     return "case-study";
+  
+  // Webinars - events, conferences, summits
   if (
     text.includes("webinar") ||
     text.includes("conference") ||
     text.includes("summit") ||
-    text.includes("event")
+    text.includes("event") ||
+    text.includes("workshop") ||
+    text.includes("panel") ||
+    text.includes("discussion")
   )
     return "webinar";
+  
+  // Downloads - tools, calculators, templates
   if (
     text.includes("tool") ||
     text.includes("calculator") ||
     text.includes("template") ||
-    text.includes("download")
+    text.includes("download") ||
+    text.includes("spreadsheet") ||
+    text.includes("checklist") ||
+    text.includes("framework")
   )
     return "download";
-  return "blog"; // default
+  
+  return "blog"; // default for insights, news, analysis
 }

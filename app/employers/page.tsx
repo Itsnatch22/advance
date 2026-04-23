@@ -11,7 +11,7 @@ import {
 } from "framer-motion";
 import {
   User,
-  Wallet,
+  Receipt,
   Cog,
   LineChart,
   Lock,
@@ -27,6 +27,7 @@ import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
 import UI from "./UI";
 import ROI from "@/components/ROI";
 import Integrations from "@/components/Integrations";
+import { GridSystem } from "@/components/grid";
 
 const reasons = [
   {
@@ -35,7 +36,7 @@ const reasons = [
     desc: "Reduce churn by supporting financial wellbeing—especially in hourly & shift roles.",
   },
   {
-    icon: Wallet,
+    icon: Receipt,
     title: "Payroll-integrated",
     desc: "Auto-deduct on payday with configurable limits and employer policies.",
   },
@@ -223,7 +224,7 @@ export default function Employers() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-white">
+    <GridSystem variant="dots" opacity={0.02} className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
       {/* Immersive Background */}
       <div className="pointer-events-none fixed inset-0">
         <FloatingOrb
@@ -236,7 +237,6 @@ export default function Employers() {
           delay={2}
           className="bottom-[-10%] left-[10%]"
         />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
       </div>
 
       <section className="relative z-10 py-12 lg:py-20">
@@ -416,6 +416,6 @@ export default function Employers() {
           </div>
         </div>
       </section>
-    </main>
+    </GridSystem>
   );
 }

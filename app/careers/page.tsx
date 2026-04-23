@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Lottie from "lottie-react";
 import Startup from "@/public/Startup.json";
+import { GridSystem } from "@/components/grid";
 
 const RevealText = ({ text, delay = 0 }: { text: string; delay?: number }) => (
   <motion.span
@@ -127,10 +128,7 @@ export default function CareersPage() {
   const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <main
-      ref={containerRef}
-      className="relative min-h-screen overflow-hidden bg-white"
-    >
+    <GridSystem variant="dots" opacity={0.03} className="min-h-screen bg-white">
       {/* Immersive Background */}
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
@@ -143,7 +141,6 @@ export default function CareersPage() {
           delay={2}
           className="right-[10%] bottom-[10%]"
         />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* Hero Section */}
@@ -248,7 +245,7 @@ export default function CareersPage() {
 
         <PerksGrid />
       </section>
-    </main>
+    </GridSystem>
   );
 }
 

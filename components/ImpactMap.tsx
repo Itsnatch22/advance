@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Users, Zap, TrendingUp } from "lucide-react";
+import { GridSystem } from "./grid";
 
 interface CountryStats {
   name: string;
@@ -52,9 +53,7 @@ export default function ImpactMap() {
   const [hoveredCountry, setHoveredCountry] = useState<CountryStats | null>(null);
 
   return (
-    <div className="relative w-full aspect-square md:aspect-video max-w-5xl mx-auto bg-slate-50/50 rounded-[3rem] border border-slate-200/60 overflow-hidden shadow-inner">
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.05]" />
+    <GridSystem variant="dots" opacity={0.05} className="relative w-full aspect-square md:aspect-video max-w-5xl mx-auto bg-slate-50/50 rounded-[3rem] border border-slate-200/60 overflow-hidden shadow-inner">
       
       {/* Abstract East Africa Map Placeholder (Simplified SVG) */}
       <div className="absolute inset-0 flex items-center justify-center p-12">
@@ -180,6 +179,6 @@ export default function ImpactMap() {
           <p className="text-xs text-slate-400 max-w-[140px]">Real-time infrastructure visualization across East Africa.</p>
         </div>
       </div>
-    </div>
+    </GridSystem>
   );
 }

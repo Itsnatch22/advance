@@ -16,6 +16,7 @@ import {
   Database,
   CheckCircle2,
 } from "lucide-react";
+import { GridSystem } from "@/components/grid";
 
 /* ----------------------------- data ----------------------------- */
 
@@ -188,8 +189,10 @@ export default function SecurityPage() {
   const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <main
+    <GridSystem
       ref={containerRef}
+      variant="dots"
+      opacity={0.03}
       className="relative min-h-screen overflow-hidden bg-white text-slate-900"
     >
       {/* Immersive Background */}
@@ -204,7 +207,6 @@ export default function SecurityPage() {
           delay={2}
           className="bottom-[10%] left-[10%]"
         />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* Hero Section */}
@@ -382,11 +384,22 @@ export default function SecurityPage() {
             viewport={{ once: true }}
             className="relative overflow-hidden rounded-[3rem] bg-slate-900 p-12 text-center shadow-2xl"
           >
-            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.1]" />
             <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-green-500/20 blur-[80px]" />
 
             <div className="relative z-10">
-              <Database size={48} className="mx-auto mb-8 text-green-500" />
+                <Database size={48} className="mx-auto mb-8 text-green-500" />
+                <h2 className="mb-6 font-serif text-3xl font-bold text-white md:text-4xl">
+                  Your Data Stays <span className="text-green-500">Yours</span>
+                </h2>
+                <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400">
+                  We believe in absolute data sovereignty. We do not sell, rent,
+                  or monetize your personal financial data. It is used solely to
+                  facilitate your transactions and improve your experience.
+                </p>
+                <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-6 py-2 text-sm font-bold text-green-400">
+                  <Lock size={16} />
+                  <span>End-to-End Encrypted</span>
+                </div>
               <h2 className="mb-6 font-serif text-3xl font-bold text-white md:text-4xl">
                 Your Data Stays <span className="text-green-500">Yours</span>
               </h2>
@@ -403,6 +416,6 @@ export default function SecurityPage() {
           </motion.div>
         </div>
       </section>
-    </main>
+    </GridSystem>
   );
 }

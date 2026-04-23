@@ -11,6 +11,7 @@ import {
 import { ArrowUpRight, Code2, Coffee, Rocket, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import Typed from "typed.js";
+import { GridSystem } from "@/components/grid";
 
 const FadeInText = ({ text, delay = 0 }: { text: string; delay?: number }) => (
   <motion.span
@@ -77,7 +78,7 @@ export default function CulturePage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-white">
+    <GridSystem variant="dots" opacity={0.02} className="min-h-screen bg-slate-50 bg-white">
       {/* Immersive Background */}
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb color="bg-green-300" delay={0} />
@@ -87,8 +88,7 @@ export default function CulturePage() {
         <div className="absolute bottom-0 left-1/4">
           <FloatingOrb color="bg-green-100" delay={4} />
         </div>
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
-      </div>
+        </div>
 
       <section className="relative z-10 mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-16 px-6 py-40 lg:grid-cols-2 lg:px-8">
         {/* LEFT – Content Section */}
@@ -276,6 +276,6 @@ export default function CulturePage() {
           </motion.div>
         </motion.div>
       </section>
-    </main>
+    </GridSystem>
   );
 }

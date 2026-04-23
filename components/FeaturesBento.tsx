@@ -11,15 +11,15 @@ import {
     ArrowRight
 } from 'lucide-react';
 import React from 'react';
+import { GridSystem } from './grid';
 
 export default function FeaturesBento() {
     return (
-        <section className="py-24 relative overflow-hidden bg-slate-50">
+        <GridSystem variant="dots" opacity={0.02} className="py-24 bg-slate-50">
             {/* Background Decorations */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-green-100/40 rounded-full blur-[120px] opacity-70 translate-x-1/2 -translate-y-1/4" />
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-100/40 rounded-full blur-[100px] opacity-70 -translate-x-1/2 translate-y-1/4" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
             </div>
 
             <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
@@ -218,6 +218,6 @@ export default function FeaturesBento() {
 
                 </div>
             </div>
-        </section>
+        </GridSystem>
     );
 }

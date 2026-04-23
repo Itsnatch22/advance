@@ -4,16 +4,22 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --webpack",
+    "build": "next build --turbo",
+    "build:webpack": "next build --webpack",
+    "build:analyze": "ANALYZE=true next build --turbo",
     "start": "next start",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
     "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
     "gen:json": "ts-node --transpile-only scripts/generate-json-from-xlsx.ts",
     "prepare": "husky install || true",
-    "test": "jest"
+    "test": "jest",
+    "perf:build": "time npm run build",
+    "perf:dev": "time npm run dev",
+    "perf:type-check": "time npm run type-check"
   },
   "dependencies": {
     "@ai-sdk/cohere": "^2.0.17",

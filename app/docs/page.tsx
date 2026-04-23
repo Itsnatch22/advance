@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import Lottie from "lottie-react";
 import EditDocument from "@/public/Edit-document.json"; // swap for a docs-themed Lottie if you have one
+import { GridSystem } from "@/components/grid";
 
 /* ---------- Shared primitives (same as Careers) ---------- */
 
@@ -116,10 +117,7 @@ export default function DocsPage() {
   const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <main
-      ref={containerRef}
-      className="relative min-h-screen overflow-hidden bg-white"
-    >
+    <GridSystem variant="dots" opacity={0.03} className="min-h-screen bg-white">
       {/* Background */}
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
@@ -132,11 +130,11 @@ export default function DocsPage() {
           delay={2}
           className="right-[10%] bottom-[10%]"
         />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* Hero */}
       <motion.section
+        ref={containerRef}
         style={{ y: yHero, opacity: opacityHero }}
         className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-6 pt-32 pb-24 text-center lg:pt-48 lg:pb-40"
       >
@@ -237,7 +235,7 @@ export default function DocsPage() {
 
         <DevPerksGrid />
       </section>
-    </main>
+    </GridSystem>
   );
 }
 

@@ -71,15 +71,7 @@ function extractLatestUserMessage(messages: UIMessage[]): string {
   return m ? extractMessageText(m).toLowerCase() : '';
 }
 
-function buildCohereContents(messages: UIMessage[]) {
-  return messages
-    .filter((m) => m.role === 'user' || m.role === 'assistant')
-    .map((m) => ({
-      role:  m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: extractMessageText(m) }],
-    }))
-    .filter((m) => m.parts[0].text.length > 0);
-}
+
 
 function normalizeWebsiteText(raw: string): string {
   return raw

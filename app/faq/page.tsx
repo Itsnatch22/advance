@@ -5,7 +5,6 @@ import {
   HelpCircle,
   Search,
   ChevronDown,
-  ChevronUp,
   Users,
   Building2,
   CreditCard,
@@ -20,6 +19,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { Input } from "../../components/ui/input";
+import { GridSystem } from "@/components/grid";
 
 type FAQItem = {
   q: string;
@@ -343,7 +343,7 @@ export default function FAQPage() {
   const currentCategory = categories.find((c) => c.id === activeCategory);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-white">
+    <GridSystem variant="dots" opacity={0.03} className="min-h-screen bg-white">
       {/* Immersive Background */}
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
@@ -356,7 +356,6 @@ export default function FAQPage() {
           delay={2}
           className="top-[30%] right-[5%]"
         />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* HERO */}
@@ -378,7 +377,7 @@ export default function FAQPage() {
             className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
           >
             Frequently Asked{" "}
-            <span className="text-green-600 italic">Questions</span>
+            <span className="text-green-600">Questions</span>
           </motion.h1>
 
           <motion.p
@@ -461,6 +460,6 @@ export default function FAQPage() {
           </div>
         </div>
       </section>
-    </main>
+    </GridSystem>
   );
 }

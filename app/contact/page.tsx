@@ -19,6 +19,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { GridSystem } from "@/components/grid";
 
 /* ----------------------------- validation ----------------------------- */
 
@@ -102,7 +103,7 @@ const TiltContactCard = ({
         y.set(0);
       }}
       style={{ rotateX, rotateY }}
-      className="group relative flex items-center gap-6 rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+      className="group relative flex items-center gap-6 rounded-3xl border border-slate-200/60 bg-white/40 p-6 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
     >
       <motion.div
         style={{
@@ -115,15 +116,15 @@ const TiltContactCard = ({
         className="pointer-events-none absolute inset-0 rounded-3xl"
       />
 
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 ring-1 ring-white/30 transition-transform duration-500 group-hover:scale-110 group-hover:bg-white group-hover:text-green-600">
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 ring-1 ring-white/30 transition-transform duration-500 group-hover:scale-110 group-hover:bg-green-600 group-hover:text-white">
         <Icon className="h-6 w-6" strokeWidth={2} />
       </div>
 
       <div className="relative z-10">
-        <p className="text-xs font-black tracking-[0.2em] text-green-100/60 uppercase">
+        <p className="text-xs font-black tracking-[0.2em] text-green-600/60 uppercase">
           {label}
         </p>
-        <p className="text-lg font-bold tracking-tight text-white">{value}</p>
+        <p className="text-lg font-bold tracking-tight text-slate-900">{value}</p>
       </div>
     </motion.div>
   );
@@ -144,15 +145,15 @@ const TiltContactCard = ({
 const StatCard = ({ value, label }: { value: string; label: string }) => (
   <motion.div
     whileHover={{ y: -5, scale: 1.05 }}
-    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+    className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white/40 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:border-slate-300/60 hover:bg-white/60"
   >
-    <div className="text-3xl font-black tracking-tighter text-white sm:text-4xl">
+    <div className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl">
       {value}
     </div>
-    <div className="mt-1 text-[10px] font-black tracking-[0.2em] text-green-100/60 uppercase">
+    <div className="mt-1 text-[10px] font-black tracking-[0.2em] text-green-600/60 uppercase">
       {label}
     </div>
-    <div className="absolute bottom-0 left-0 h-1 w-0 bg-white transition-all duration-500 group-hover:w-full" />
+    <div className="absolute bottom-0 left-0 h-1 w-0 bg-green-600 transition-all duration-500 group-hover:w-full" />
   </motion.div>
 );
 
@@ -212,22 +213,11 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-white">
-      {/* Immersive Green Backdrop */}
-      <div className="pointer-events-none fixed inset-0">
-        <div className="absolute inset-0 bg-green-600" />
-        <div className="absolute inset-0 bg-linear-to-br from-green-500 via-green-600 to-emerald-700 sm:[clip-path:polygon(0_0,65%_0,100%_100%,0%_100%)]" />
-        <FloatingOrb
-          color="bg-green-300"
-          delay={0}
-          className="top-[-10%] left-[10%]"
-        />
-        <FloatingOrb
-          color="bg-emerald-300"
-          delay={2}
-          className="bottom-[-10%] left-[40%]"
-        />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.05]" />
+    <GridSystem variant="dots" opacity={0.05} className="min-h-screen bg-white">
+      {/* Simple Background - consistent with other pages */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute top-0 right-[-10%] h-200 w-200 rounded-full bg-green-50/50 blur-[120px]" />
+        <div className="absolute bottom-[-20%] left-[-10%] h-150 w-150 rounded-full bg-emerald-50/50 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-40">
@@ -243,17 +233,17 @@ export default function ContactPage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-white uppercase backdrop-blur-md"
+                className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
               >
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white"></span>
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
                 Get in Touch
               </motion.div>
 
-              <h1 className="font-serif text-5xl leading-tight font-bold tracking-tight text-white sm:text-7xl">
+              <h1 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-7xl">
                 Ready to Transform Your <span>Workforce?</span>
               </h1>
 
-              <p className="max-w-xl text-xl leading-relaxed text-green-50/80">
+              <p className="max-w-xl text-xl leading-relaxed text-slate-500">
                 Contact us for any queries about earned wage access,
                 partnerships, or support. We&apos;re here to help employers and
                 employees across Africa achieve financial wellbeing.
@@ -417,6 +407,6 @@ export default function ContactPage() {
           </motion.div>
         </div>
       </div>
-    </main>
+    </GridSystem>
   );
 }

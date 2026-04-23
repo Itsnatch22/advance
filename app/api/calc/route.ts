@@ -14,7 +14,7 @@ const CONFIG_PATHS = {
   RW: path.join(process.cwd(), "data", "calcrw.json"),
 } as const;
 
-type AllowedCountry = keyof typeof CONFIG_PATHS;
+
 
 // Read JSON config for a country using only hardcoded paths
 async function readCountryConfig(country: string): Promise<JsonConfig> {

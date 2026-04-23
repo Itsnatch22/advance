@@ -12,6 +12,7 @@ import { ShieldCheck, Cpu, Users, Eye, Sparkles } from "lucide-react";
 import { Team } from "@/components/Team";
 import Image from "next/image";
 import Typed from "typed.js";
+import { GridSystem } from "@/components/grid";
 
 const FloatingOrb = ({
   color,
@@ -120,8 +121,10 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <main
+    <GridSystem
       ref={containerRef}
+      variant="dots"
+      opacity={0.03}
       className="relative min-h-screen overflow-hidden bg-white"
     >
       {/* Immersive Background */}
@@ -136,7 +139,6 @@ export default function AboutPage() {
           delay={2}
           className="top-[40%] right-[10%]"
         />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       {/* ===== Hero ===== */}
@@ -350,6 +352,6 @@ export default function AboutPage() {
       </section>
 
       <Team />
-    </main>
+    </GridSystem>
   );
 }

@@ -11,6 +11,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Script from "next/script";
+import { GridSystem } from "@/components/grid";
 
 const FloatingOrb = ({
   color,
@@ -106,8 +107,9 @@ export default function SchedulePage() {
     if (embedRef.current) embedRef.current.innerHTML = "";
   };
 
-  return (
-    <main
+return (
+    <>
+      <main
       ref={containerRef}
       className="relative min-h-screen overflow-hidden bg-white"
     >
@@ -123,7 +125,6 @@ export default function SchedulePage() {
           delay={2}
           className="right-[10%] bottom-[10%]"
         />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       <section className="relative z-10 mx-auto max-w-7xl px-6 py-40">
@@ -282,17 +283,13 @@ export default function SchedulePage() {
           ))}
         </div>
       </section>
+    </main>
 
-      {/*
-        strategy="afterInteractive" ensures the DOM is ready before Calendly
-        script runs. onReady fires once the script has fully executed,
-        at which point we call initInlineWidget safely.
-      */}
       <Script
         src="https://assets.calendly.com/assets/external/widget.js"
         strategy="afterInteractive"
         onReady={() => setScriptReady(true)}
       />
-    </main>
+    </>
   );
 }

@@ -150,7 +150,7 @@ export default function PartnerOnboardingPage() {
           className="mb-12 text-center"
         >
           <h1 className="mb-4 font-serif text-4xl font-bold text-neutral-900 sm:text-5xl dark:text-white">
-            Partner with <span className="text-emerald-600">EaziWage</span>
+            Partner with <span className="text-green-600">EaziWage</span>
           </h1>
           <p className="text-lg text-neutral-600 dark:text-neutral-400">
             Join us in revolutionizing financial wellbeing for Africa's
@@ -314,7 +314,7 @@ export default function PartnerOnboardingPage() {
               disabled={isSubmitting}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full rounded-xl bg-emerald-600 px-6 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl bg-green-600 px-6 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting
                 ? "Submitting..."

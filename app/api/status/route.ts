@@ -5,7 +5,7 @@ import os from "os";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const start = Date.now();
   
   // Perform health checks in parallel

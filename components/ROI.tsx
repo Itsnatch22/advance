@@ -657,7 +657,7 @@ export default function ROI() {
                     <Sparkles size={14} /> Ready to see the difference?
                   </p>
                   <h4 className="text-xl font-serif font-bold text-white mb-6">
-                    Join 100+ African enterprises empowering their workforce.
+                    Be the first to empower your workforce.
                   </h4>
                   <button className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white py-4 font-black uppercase tracking-widest text-slate-900 transition-all hover:bg-green-500 hover:text-white">
                     Request a Demo <ArrowRight size={18} />

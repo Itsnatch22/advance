@@ -20,7 +20,7 @@ export async function GET() {
       { rates: data.rates ?? null, fetchedAt: Date.now() },
       { status: 200 }
     );
-  } catch (err: unknown) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch FX rates" }, { status: 502 });
   }
 }
