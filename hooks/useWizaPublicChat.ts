@@ -6,7 +6,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
 
 export interface PublicSession {
   id:            string;
@@ -23,7 +22,7 @@ type PublicChatPart = {
 
 type PublicChatMessage = {
   id: string;
-  role: string;
+  role: 'assistant' | 'system' | 'user';
   parts: PublicChatPart[];
   createdAt?: string;
   created_at?: string;
@@ -62,27 +61,55 @@ export function useWizaPublicChat() {
   const sessionIdRef = useRef<string | null>(null);
   sessionIdRef.current = sessionId;
 
+  // ── Custom transport to handle response headers ───────────────────────
+  class CustomChatTransport {
+    async sendMessages({
+      messages,
+      options,
+    }: {
+      messages: any[];
+      options?: any;
+    }) {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages,
+          visitor_id: visitorId,
+          session_id: sessionIdRef.current,
+          ...options,
+        }),
+      });
+
+      // Read session_id back from response headers
+      const sid = response.headers.get('X-Session-Id');
+      const vid = response.headers.get('X-Visitor-Id');
+      if (sid && sid !== sessionIdRef.current) {
+        setSessionId(sid);
+        sessionIdRef.current = sid;
+        // Refresh session list so new session appears in sidebar
+        if (vid) fetchSessions(vid);
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return response.json();
+    }
+
+    async reconnectToStream(): Promise<ReadableStream<any> | null> {
+      // Not implemented for this simple HTTP transport
+      // This method is required by the ChatTransport interface
+      return null;
+    }
+  }
+
   // ── AI SDK useChat — keep all existing transport logic intact ─────────
   const chat = useChat({
-    transport: new DefaultChatTransport({
-      api: '/api/chat',
-      // Inject visitor_id + session_id into every request body
-      body: () => ({
-        visitor_id: visitorId,
-        session_id: sessionIdRef.current,
-      }),
-      // Read session_id back from response headers
-      onResponse: (res: Response) => {
-        const sid = res.headers.get('X-Session-Id');
-        const vid = res.headers.get('X-Visitor-Id');
-        if (sid && sid !== sessionIdRef.current) {
-          setSessionId(sid);
-          sessionIdRef.current = sid;
-          // Refresh session list so new session appears in sidebar
-          if (vid) fetchSessions(vid);
-        }
-      },
-    }),
+    transport: new CustomChatTransport() as any,
     messages: [
       createWelcomeMessage(),
     ],
@@ -140,7 +167,7 @@ export function useWizaPublicChat() {
         createWelcomeMessage(data.messages?.[0]?.created_at ?? new Date().toISOString()),
         ...(data.messages ?? []).map((m: { id: string; role: string; content: string; created_at: string }) => ({
           id:    m.id,
-          role:  m.role,
+          role:  m.role as 'assistant' | 'system' | 'user',
           parts: [{ type: 'text', text: m.content }],
           createdAt: m.created_at,
         })),
