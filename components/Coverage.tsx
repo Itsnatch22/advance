@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, MouseEvent } from "react";
+import React, {useEffect, MouseEvent, useState } from "react";
 import {
   motion,
   useMotionValue,
@@ -11,13 +11,13 @@ import {
 import { Globe } from "lucide-react";
 import Image from "next/image";
 import ImpactMap from "./ImpactMap";
+import { string } from "zod";
 
 const countries = [
   {
     name: "Kenya",
     flag: "/flag/KE.png",
     providers: ["M-PESA", "Airtel Money"],
-    users: "25,000+",
     currency: "KES",
     cap: 60,
   },
@@ -25,7 +25,6 @@ const countries = [
     name: "Uganda",
     flag: "/flag/UG.png",
     providers: ["MTN MoMo", "Airtel Money"],
-    users: "12,000+",
     currency: "UGX",
     cap: 45,
   },
@@ -33,7 +32,6 @@ const countries = [
     name: "Tanzania",
     flag: "/flag/TZ.png",
     providers: ["M-PESA", "Tigo Pesa"],
-    users: "8,000+",
     currency: "TZS",
     cap: 40,
   },
@@ -41,13 +39,12 @@ const countries = [
     name: "Rwanda",
     flag: "/flag/RW.png",
     providers: ["MTN MoMo", "Airtel Money"],
-    users: "5,000+",
     currency: "RWF",
     cap: 50,
   },
 ];
 
-const CountryCard = ({ country }: { country: any }) => {
+const CountryCard = ({ country, count }: { country: any; count: number }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);
@@ -116,7 +113,7 @@ const CountryCard = ({ country }: { country: any }) => {
             {country.name}
           </h3>
 
-          <p className="mb-6 font-bold text-green-600">{country.users} users</p>
+          <p className="mb-6 font-bold text-green-600">{count} registered</p>
 
           <div className="mb-8">
             <div className="mb-2 flex items-center justify-between text-xs font-bold tracking-wider text-slate-500 uppercase">
@@ -166,6 +163,16 @@ const CountryCard = ({ country }: { country: any }) => {
 };
 
 export default function Coverage() {
+
+  const [userCounts, setUserCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    fetch("/api/coverage")
+    .then((r) => r.json())
+    .then(setUserCounts)
+    .catch(() => {});
+  }, []);
+
   return (
     <section className="relative overflow-hidden bg-slate-50/50 py-40">
       <div className="pointer-events-none absolute inset-0">
@@ -213,7 +220,7 @@ export default function Coverage() {
           */}
         <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
           {countries.map((country) => (
-            <CountryCard key={country.name} country={country} />
+            <CountryCard key={country.name} country={country} count={userCounts[country.name] ?? 0} />
           ))}
         </div>
       </div>
