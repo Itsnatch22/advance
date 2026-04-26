@@ -8,7 +8,6 @@ import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
 import Coverage from "@/components/Coverage";
 import Marquee from "@/components/Marquee";
-import WizaHeroPreview from "@/components/WizaHeroPreview";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 export const dynamic = 'force-dynamic';
@@ -24,9 +23,6 @@ export default function HomePage() {
         <StatsCounter />
         <Needs />
         <Pricing />
-        <ErrorBoundary>
-          <WizaHeroPreview/>
-        </ErrorBoundary>
         {/*
         <Testimonials />
         */}

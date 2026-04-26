@@ -77,11 +77,11 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "What documents do I need to sign up?",
-      a: "You'll need: (1) A valid National ID or passport, (2) A phone number registered in your name, (3) Employment verification from your employer. That's it — no pay slips, bank statements, or guarantors required.",
+      a: "You'll need: (1) A valid National ID or passport, (2) A phone number registered in your name, (3) Employment verification from your employer (4) Proof of Bank Account, and (4) Payslips. That's it — no guarantors required.",
     },
     {
       q: "How much can I access?",
-      a: "You can access up to 50% of your earned (but unpaid) wages at any time. This limit helps ensure responsible usage and that you have enough for regular expenses. The exact amount available is shown in your dashboard.",
+      a: "You can access up to 60% of your earned (but unpaid) wages at any time. This limit helps ensure responsible usage and that you have enough for regular expenses. The exact amount available is shown in your dashboard.",
     },
     {
       q: "How fast will I receive my money?",
@@ -93,7 +93,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "Can I take multiple advances?",
-      a: "Yes, you can take multiple advances as long as you stay within your available limit (50% of earned wages). Each advance has its own fee calculated independently — there's no compounding.",
+      a: "Yes, you can take multiple advances as long as you stay within your available limit (up to 60% of earned wages) and frequency caps as set by your Employer. Each advance has its own fee calculated independently — there's no compounding.",
     },
     {
       q: "What if my employer isn't on EaziWage?",
@@ -129,7 +129,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
   fees: [
     {
       q: "What are EaziWage's fees?",
-      a: "Fees range from 3.5% to 6.5% per advance, depending on your employer's plan tier and your personal risk profile. The exact fee is always shown before you confirm any transaction — no surprises.",
+      a: "Fees range from 3.5% to 6.5% per advance, depending on you and your employer's risk profile. The exact fee is always shown before you confirm any transaction — no surprises. We provide nudges to reduce advancement fees so that you're in control.",
     },
     {
       q: "Are there any hidden fees?",
@@ -137,7 +137,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "How is my fee rate determined?",
-      a: "Your fee depends on two factors: (1) Your employer's plan tier (Starter, Business, or Enterprise), and (2) Your personal risk score based on tenure, advance history, and repayment record. Good usage habits can lower your fee over time.",
+      a: "Your fee depends on two factors: (1) Your employer's risk score based on sector, employee retention rate, and compliance, and (2) Your personal risk score based on tenure, advance history, and repayment record. Good usage habits can lower your fee over time.",
     },
     {
       q: "Is there interest on advances?",
@@ -145,7 +145,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "Can my employer subsidize the fees?",
-      a: "Yes! Enterprise customers can negotiate employer-subsidized fees as part of their employee benefits package. Contact our sales team to learn about employer-subsidized pricing options.",
+      a: "Yes! We can negotiate employer-subsidized fees as part of your employee benefits package on EaziWage. Contact our sales team to learn about employer-subsidized pricing options.",
     },
   ],
   security: [
@@ -173,11 +173,11 @@ const faqs: Record<CategoryId, FAQItem[]> = {
   technical: [
     {
       q: "What payment methods are supported?",
-      a: "We support all major Mobile Wallet providers including MTN Mobile Money, Airtel Money, and other local mobile money services across all markets. Bank transfers are also available.",
+      a: "We support most major Mobile Wallet providers including Safaricom Mpesa, MTN Mobile Money, Airtel Money, and other local mobile money services across markets we operate across. Bank transfers are also available.",
     },
     {
       q: "Is there a mobile app?",
-      a: "Yes! EaziWage is available as a mobile app for iOS and Android, as well as a web application. All features are available across all platforms with real-time sync.",
+      a: "Yes! EaziWage is available as a mobile application. All features are available across all platforms with real-time sync. The EaziWage team is developing a mobile app for iOS and Android.",
     },
     {
       q: "What if my Mobile Wallet provider is down?",
