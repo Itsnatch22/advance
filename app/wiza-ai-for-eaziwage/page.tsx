@@ -103,7 +103,7 @@ function SummaryModal({
 }
 
 // ── Main component ────────────────────────────────────────────────────────
-export default function WizaHeroPreview() {
+export default function Wiza() {
   const { messages, streaming, error, sendMessage, requestSummary, newSession } = useWizaChat();
 
   const [input,        setInput]        = useState('');
@@ -115,6 +115,7 @@ export default function WizaHeroPreview() {
 
   // Auto-scroll
   useEffect(() => {
+    if (messages.length === 0) return;
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 

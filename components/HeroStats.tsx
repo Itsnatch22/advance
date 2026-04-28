@@ -1,11 +1,4 @@
 'use client';
-
-// advance — components/HeroStats.tsx
-//
-// Fetches live stats from /api/stats with a 6-hour revalidation cycle.
-// Falls back gracefully to static marketing copy if the fetch fails or
-// the stats row hasn't been seeded yet (pre-launch).
-
 import { useState, useEffect } from 'react';
 import { Users, Banknote, Zap, Star, Building2 } from "lucide-react";
 
@@ -22,7 +15,7 @@ interface PublicStats {
 function formatUsers(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M+`;
   if (n >= 1_000) return `${Math.floor(n / 1_000)}K+`;
-  return `${n}+`;
+  return `${n}`;
 }
 
 function formatDisbursed(n: number): string {
@@ -35,10 +28,8 @@ function formatDisbursed(n: number): string {
   return `$${usd.toFixed(0)}`;
 }
 
-// ── Static fallbacks (shown pre-launch or on fetch failure) ──
-
 const STATIC_STATS = [
-  { value: "50K+",  label: "Active Users",      icon: Users     },
+  { value: "50K",  label: "Active Users",      icon: Users     },
   { value: "$2B+",  label: "Disbursed",          icon: Banknote  },
   { value: "<3s",   label: "Instant Transfer",   icon: Zap       },
   { value: "4.9",   label: "Rating",             icon: Star      },
@@ -68,8 +59,6 @@ export default function HeroStats() {
     fetchStats().then(setStats);
   }, []);
 
-  // If we have live data and total_users > 0, show real numbers.
-  // Keeps <3s and 4.9 as static — these are marketing claims, not DB values.
   const resolvedStats = stats && stats.total_users > 0
     ? [
         {

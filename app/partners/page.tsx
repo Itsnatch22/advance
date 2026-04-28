@@ -150,7 +150,14 @@ function SectionHeader({
       </motion.div>
 
       <h2 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-        {title}
+        {title.split('like').map((part, i, arr) => (
+          <React.Fragment key={i}>
+            {part}
+            {i < arr.length - 1 && (
+              <span className="text-green-600"> like</span>
+            )}
+          </React.Fragment>
+        ))}
       </h2>
 
       <p className="text-xl leading-relaxed text-slate-500">{description}</p>
