@@ -8,6 +8,8 @@ import { Analytics } from "@vercel/analytics/next";
 import CookieBanner from "@/components/CookieBanner";
 import WizaChat from "@/components/WizaChat";
 import { Toaster } from "react-hot-toast";
+import { cookies } from "next/headers";
+import { CurrencyProvider } from "@/components/CurrencyProvider";
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
@@ -27,16 +29,20 @@ export const metadata: Metadata = {
     "A system designed to enable employees to get access to an advance before payday.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("NEXT_LOCALE")?.value || "en-ke";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${ibmPlexMono.variable} ${playfairDisplay.variable} antialiased`}
       >
+        <CurrencyProvider locale={locale}>
           <Toaster position="top-center" />
           <Toploader color="#16a34a" />
           <Navbar />
@@ -45,6 +51,7 @@ export default function RootLayout({
           <Analytics />
           <WizaChat />
           <Footer />
+        </CurrencyProvider>
       </body>
     </html>
   );

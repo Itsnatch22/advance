@@ -21,11 +21,14 @@ import React, { useState, useRef, Suspense, MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import HeroStats from "./HeroStats"; // async server component
 import { GridSystem } from "./grid";
+import { useCurrency } from "./CurrencyProvider";
+import { formatCurrency } from "@/lib/currency";
 
 export default function Hero() {
   const [email, setEmail] = useState("");
   const router = useRouter();
   const containerRef = useRef<HTMLElement>(null);
+  const { locale } = useCurrency();
 
   // Scroll parallax for phone mockup
   const { scrollYProgress } = useScroll({
@@ -176,7 +179,7 @@ export default function Hero() {
                       <p className="mb-1 text-xs font-bold tracking-widest uppercase opacity-60">
                         Available Balance
                       </p>
-                      <p className="text-3xl font-bold">KES 12,450</p>
+                      <p className="text-3xl font-bold">{formatCurrency(12450, locale)}</p>
                     </div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/20 backdrop-blur-md">
                       <Wallet className="h-6 w-6" />
@@ -185,7 +188,7 @@ export default function Hero() {
                   <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-md">
                     <div className="mb-3 flex justify-between text-xs font-bold">
                       <span className="opacity-70">Earned this month</span>
-                      <span>KSH 24,708.66</span>
+                      <span>{formatCurrency(24708.66, locale)}</span>
                     </div>
                     <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
                       <motion.div
@@ -225,7 +228,7 @@ export default function Hero() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-900">
-                        KSH 4,961.34 Sent
+                        {formatCurrency(4961.34, locale)} Sent
                       </p>
                       <p className="text-xs font-bold text-green-600">
                         Transfer Complete · 2s ago

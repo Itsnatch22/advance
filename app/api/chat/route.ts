@@ -87,7 +87,7 @@ async function getWebsiteContext(): Promise<WebsiteContextChunk[]> {
   const chunks = await Promise.all(
     websiteSources.map(async (src) => {
       try {
-        const file    = await fs.readFile(path.join(process.cwd(), src.filePath), 'utf8');
+        const file    = await fs.readFile(path.join(/*turbopackIgnore: true*/ process.cwd(), src.filePath), 'utf8');
         const content = normalizeWebsiteText(file).slice(0, 5000);
         return { title: src.title, route: src.route, content };
       } catch {

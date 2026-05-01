@@ -8,8 +8,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useCurrency } from "@/components/CurrencyProvider";
+import { formatCurrency } from "@/lib/currency";
 
 export default function UI() {
+  const { locale } = useCurrency();
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
@@ -118,7 +121,7 @@ export default function UI() {
 
                   {/* Pricing info */}
                   <p className="text-center text-[11px] leading-relaxed text-white/60">
-                    Flat fee KES 104 • Application fee 5% • No interest
+                    Flat fee {formatCurrency(104, locale)} • Application fee 5% • No interest
                   </p>
                 </div>
               </div>

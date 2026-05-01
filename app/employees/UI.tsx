@@ -7,8 +7,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useCurrency } from "@/components/CurrencyProvider";
+import { formatCurrency } from "@/lib/currency";
 
 export default function UI() {
+  const { locale } = useCurrency();
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
@@ -102,7 +105,7 @@ export default function UI() {
                         Available to withdraw
                       </div>
                       <div className="mt-1 text-3xl font-bold text-white">
-                        KES 12,597
+                        {formatCurrency(12597, locale)}
                       </div>
                     </div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">

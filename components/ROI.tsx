@@ -16,6 +16,7 @@ import {
   useTransform,
 } from "framer-motion";
 import Link from "next/link";
+import { useCurrency } from "./CurrencyProvider";
 
 /* ---------- FX Config ---------- */
 const FX_CACHE_KEY = "eazi_fx_v1";
@@ -202,7 +203,7 @@ const LabeledPercent = ({
         onChange={(e) => onChange(Number(e.target.value))}
         className="w-full h-1.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-green-600"
       />
-      <span className="min-w-[3rem] text-right font-mono text-sm font-black text-slate-900">
+      <span className="min-w-12 text-right font-mono text-sm font-black text-slate-900">
         {Math.round(value * 100)}%
       </span>
     </div>
@@ -222,7 +223,7 @@ const MetricCard = ({
 }) => (
   <motion.div
     layout
-    className={`relative overflow-hidden rounded-[2rem] border p-6 transition-all duration-500 ${
+    className={`relative overflow-hidden rounded-4xl border p-6 transition-all duration-500 ${
       accent
         ? "border-green-500/20 bg-green-500/5 shadow-lg shadow-green-500/5 ring-1 ring-green-500/20"
         : "border-slate-100 bg-white shadow-sm"
@@ -322,7 +323,17 @@ export default function ROI() {
   const [turnoverReduction, setTurnoverReduction] = useState(0.05);
   const [advancesPerMonth, setAdvancesPerMonth] = useState(1.2);
 
-  const [selectedCountry, setSelectedCountry] = useState<CountryKey>("KE");
+  const { locale } = useCurrency();
+  const initialCountry = (() => {
+    switch(locale) {
+      case 'en-tz': return 'TZ';
+      case 'en-ug': return 'UG';
+      case 'en-rw': return 'RW';
+      default: return 'KE';
+    }
+  })();
+
+  const [selectedCountry, setSelectedCountry] = useState<CountryKey>(initialCountry);
   const [rates, setRates] = useState<Record<string, number> | null>(null);
   const [fxLoading, setFxLoading] = useState(false);
   const [fxError, setFxError] = useState<string | null>(null);
