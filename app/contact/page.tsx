@@ -147,9 +147,7 @@ const StatCard = ({ value, label }: { value: string; label: string }) => (
     whileHover={{ y: -5, scale: 1.05 }}
     className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white/40 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:border-slate-300/60 hover:bg-white/60"
   >
-    <div className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl">
-      {value}
-    </div>
+    <div className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl" dangerouslySetInnerHTML={{ __html: value }} />
     <div className="mt-1 text-[10px] font-black tracking-[0.2em] text-green-600/60 uppercase">
       {label}
     </div>
@@ -282,7 +280,7 @@ export default function ContactPage() {
             <div className="grid max-w-md grid-cols-3 gap-4">
               <StatCard value="100+" label="Companies" />
               <StatCard value="0%" label="Interest" />
-              <StatCard value="Instant" label="Disbursement" />
+              <StatCard value="24/7" label="Instant Disbursement" />
             </div>
           </motion.div>
 
