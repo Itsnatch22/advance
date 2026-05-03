@@ -213,11 +213,20 @@ export default function ContactPage() {
   };
 
   return (
-    <GridSystem variant="dots" opacity={0.05} className="min-h-screen bg-white">
-      {/* Simple Background - consistent with other pages */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute top-0 right-[-10%] h-200 w-200 rounded-full bg-green-50/50 blur-[120px]" />
-        <div className="absolute bottom-[-20%] left-[-10%] h-150 w-150 rounded-full bg-emerald-50/50 blur-[120px]" />
+    <main className="relative min-h-screen bg-white text-slate-900">
+      {/* Immersive Background - consistent with other pages */}
+      <div className="pointer-events-none absolute inset-0">
+        <FloatingOrb
+          color="bg-green-100"
+          delay={0}
+          className="top-[-10%] left-[10%]"
+        />
+        <FloatingOrb
+          color="bg-emerald-100"
+          delay={2}
+          className="top-[30%] right-[5%]"
+        />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-40">
@@ -407,6 +416,6 @@ export default function ContactPage() {
           </motion.div>
         </div>
       </div>
-    </GridSystem>
+    </main>
   );
 }

@@ -6,11 +6,11 @@ import Calculator from "./Calc";
 
 export default function CalculatorPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center bg-linear-to-b from-slate-50 via-white to-slate-50/30 px-4 py-40">
-      <div className="flex w-full max-w-7xl flex-col items-center justify-between gap-10 sm:gap-14 lg:flex-row lg:items-start lg:gap-16">
+    <main className="flex min-h-screen flex-col items-center bg-linear-to-b from-slate-50 via-white to-slate-50/30 px-4 py-20 sm:py-32 lg:py-40">
+      <div className="flex w-full max-w-7xl flex-col items-center justify-between gap-8 sm:gap-12 lg:flex-row lg:items-start lg:gap-16">
         {/* LEFT SIDE – Enhanced text + image section */}
-        <div className="flex w-full flex-col gap-8 sm:gap-10 lg:sticky lg:top-24 lg:w-3/5 lg:gap-12">
-          <div className="flex flex-col items-center gap-6 sm:flex-col sm:gap-8 lg:flex-row lg:items-start lg:gap-10">
+        <div className="flex w-full flex-col gap-6 sm:gap-8 lg:sticky lg:top-24 lg:w-3/5 lg:gap-12">
+          <div className="flex flex-col items-center gap-4 sm:flex-col sm:gap-6 lg:flex-row lg:items-start lg:gap-10">
             {/* IMAGE – Enhanced with refined animation and styling */}
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -31,7 +31,7 @@ export default function CalculatorPage() {
                   ease: [0.16, 1, 0.3, 1],
                 },
               }}
-              className="relative order-first mt-0 h-32 w-32 shrink-0 sm:h-40 sm:w-40 md:h-52 md:w-52 lg:order-0 lg:h-64 lg:w-64"
+              className="relative order-first mt-0 h-24 w-24 shrink-0 sm:h-32 sm:w-32 md:h-40 md:w-40 lg:order-0 lg:h-64 lg:w-64"
             >
               {/* Ambient glow behind image */}
               <div className="absolute -inset-4 rounded-full bg-linear-to-br from-emerald-100/40 via-green-100/30 to-transparent blur-2xl"></div>
@@ -46,7 +46,7 @@ export default function CalculatorPage() {
             </motion.div>
 
             {/* TEXT – Enhanced typography and styling */}
-            <div className="flex-1 space-y-4 text-center sm:space-y-5 lg:text-left">
+            <div className="flex-1 space-y-3 text-center sm:space-y-4 lg:text-left">
               {/* Enhanced eyebrow badge */}
               <div className="flex justify-center lg:justify-start">
                 <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold tracking-wider text-emerald-700 uppercase ring-1 ring-emerald-500/10">
@@ -56,7 +56,7 @@ export default function CalculatorPage() {
               </div>
 
               {/* Enhanced heading with gradient accent */}
-              <h1 className="font-serif text-3xl leading-[1.1] font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              <h1 className="font-serif text-2xl leading-[1.1] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
                 Precision Wage. <br />
                 <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
                   Effortless Compliance.
@@ -64,7 +64,7 @@ export default function CalculatorPage() {
               </h1>
 
               {/* Enhanced description with better contrast */}
-              <p className="mx-auto max-w-prose text-base leading-relaxed text-slate-600 sm:text-lg lg:mx-0 lg:text-xl lg:leading-relaxed">
+              <p className="mx-auto max-w-prose text-sm leading-relaxed text-slate-600 sm:text-base lg:mx-0 lg:text-lg lg:leading-relaxed">
                 The{" "}
                 <span className="font-semibold text-emerald-700">
                   EaziWage Access Calculator
@@ -75,7 +75,7 @@ export default function CalculatorPage() {
               </p>
 
               {/* Enhanced disclaimer card */}
-              <div className="rounded-xl border border-emerald-100 bg-linear-to-br from-emerald-50/50 to-green-50/30 p-4 shadow-sm ring-1 ring-emerald-500/5">
+              <div className="rounded-xl border border-emerald-100 bg-linear-to-br from-emerald-50/50 to-green-50/30 p-3 shadow-sm ring-1 ring-emerald-500/5 sm:p-4">
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 ring-1 ring-emerald-500/10">
                     <svg
@@ -90,7 +90,7 @@ export default function CalculatorPage() {
                       />
                     </svg>
                   </div>
-                  <p className="flex-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                  <p className="flex-1 text-xs leading-relaxed text-slate-600">
                     The calculated figure is an estimate for informational
                     purposes only. Actual amounts depend on payroll
                     verification, residency and the EaziWage eligibility
@@ -100,7 +100,7 @@ export default function CalculatorPage() {
               </div>
 
               {/* Enhanced trust statement */}
-              <p className="text-sm font-semibold text-slate-700 sm:text-base">
+              <p className="text-xs font-semibold text-slate-700 sm:text-sm">
                 Precision builds trust. Trust drives growth.
               </p>
             </div>
@@ -108,7 +108,7 @@ export default function CalculatorPage() {
         </div>
 
         {/* RIGHT SIDE – Enhanced calculator card */}
-        <div className="order-last mt-8 flex w-full justify-center lg:order-0 lg:mt-0 lg:w-2/5">
+        <div className="order-last mt-6 flex w-full justify-center lg:order-0 lg:mt-0 lg:w-2/5">
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -120,7 +120,7 @@ export default function CalculatorPage() {
               {/* Subtle glow effect */}
               <div className="absolute -inset-1 rounded-3xl bg-linear-to-br from-emerald-100/50 via-green-100/30 to-transparent blur-xl"></div>
 
-              <div className="relative rounded-3xl border border-slate-200/60 bg-white p-6 shadow-2xl ring-1 shadow-slate-900/10 ring-slate-900/5 transition-all duration-300 hover:shadow-emerald-500/10 sm:p-8 lg:p-10">
+              <div className="relative rounded-2xl border border-slate-200/60 bg-white p-4 shadow-2xl ring-1 shadow-slate-900/10 ring-slate-900/5 transition-all duration-300 hover:shadow-emerald-500/10 sm:rounded-3xl sm:p-6 lg:p-10">
                 <Calculator />
               </div>
             </div>

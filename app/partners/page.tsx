@@ -149,7 +149,7 @@ function SectionHeader({
         <span>{eyebrow}</span>
       </motion.div>
 
-      <h2 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+      <h2 className="font-serif text-2xl leading-tight font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
         {title.split('like').map((part, i, arr) => (
           <React.Fragment key={i}>
             {part}
@@ -160,7 +160,7 @@ function SectionHeader({
         ))}
       </h2>
 
-      <p className="text-xl leading-relaxed text-slate-500">{description}</p>
+      <p className="text-lg leading-relaxed text-slate-500 sm:text-xl">{description}</p>
     </div>
   );
 }
@@ -181,9 +181,9 @@ function PartnerSection({
   reverse?: boolean;
 }) {
   return (
-    <section className="relative overflow-hidden py-40">
+    <section className="relative overflow-hidden py-20 sm:py-32 lg:py-40">
       <div
-        className={`mx-auto grid max-w-7xl gap-16 px-6 lg:grid-cols-2 lg:items-center lg:px-8 ${reverse ? "lg:grid-flow-dense" : ""}`}
+        className={`mx-auto grid max-w-7xl gap-8 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 ${reverse ? "lg:grid-flow-dense" : ""}`}
       >
         <div className={reverse ? "lg:col-start-2" : ""}>
           <SectionHeader
@@ -199,7 +199,7 @@ function PartnerSection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className={`grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 ${reverse ? "lg:col-start-1" : ""}`}
+          className={`grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-6 ${reverse ? "lg:col-start-1" : ""}`}
         >
           {partners.map((p, i) => (
             <TiltLogoCard key={i} src={p} />
@@ -245,7 +245,7 @@ export default function PartnersPage() {
       {/* HERO */}
       <motion.section
         style={{ y: yHero, opacity: opacityHero }}
-        className="relative overflow-hidden px-6 py-40"
+        className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-32 lg:px-6 lg:py-40"
       >
         <div className="relative z-10 mx-auto max-w-5xl text-left">
           <motion.div
@@ -261,7 +261,7 @@ export default function PartnersPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
+            className="font-serif text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl"
           >
             <span className="text-green-600">Built for the teams</span>
             <br />
@@ -272,7 +272,7 @@ export default function PartnersPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
+            className="mt-6 max-w-3xl text-lg leading-relaxed text-slate-500 sm:text-xl sm:mt-8"
           >
             Banks. Corporates. Technology platforms.{" "}
             <br className="hidden lg:block" />
@@ -316,13 +316,13 @@ export default function PartnersPage() {
       />
 
       {/* CTA */}
-      <section className="px-6 py-40 lg:px-8">
+      <section className="px-4 py-20 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
         <div className="mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="group relative overflow-hidden rounded-[3rem] border border-slate-200/60 bg-white p-12 text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-3xl transition-all duration-500 hover:shadow-green-500/10 lg:p-24"
+            className="group relative overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white p-8 text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-3xl transition-all duration-500 hover:shadow-green-500/10 sm:p-12 lg:rounded-[3rem] lg:p-24"
           >
             <div className="absolute inset-0 bg-linear-to-br from-green-50/20 via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
@@ -334,18 +334,18 @@ export default function PartnersPage() {
                 </div>
               </div>
 
-              <h3 className="mb-8 font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
+              <h3 className="mb-6 font-serif text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl sm:mb-8 md:text-5xl lg:text-6xl xl:text-7xl">
                 Want to partner with{" "}
                 <span className="text-green-600">EaziWage?</span>
               </h3>
 
-              <p className="mx-auto mb-12 max-w-2xl text-xl text-slate-500">
+              <p className="mx-auto mb-8 max-w-2xl text-lg text-slate-500 sm:text-xl sm:mb-12">
                 We&apos;re always open to working with forward-thinking teams.
               </p>
 
               <Link
                 href="/partners/onboarding"
-                className="group relative inline-flex items-center gap-3 rounded-2xl bg-slate-900 px-10 py-5 font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-green-600 hover:shadow-green-500/25"
+                className="group relative inline-flex items-center gap-3 rounded-2xl bg-slate-900 px-8 py-4 text-base font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-green-600 hover:shadow-green-500/25 sm:px-10 sm:py-5 sm:text-lg"
               >
                 <span>Apply for Partnership</span>
                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
