@@ -224,19 +224,20 @@ export default function Employers() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <GridSystem variant="dots" opacity={0.02} className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      {/* Immersive Background */}
-      <div className="pointer-events-none fixed inset-0">
+    <main className="relative min-h-screen bg-white text-slate-900">
+      {/* Immersive Background - consistent with other pages */}
+      <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
           delay={0}
-          className="top-[-10%] right-[10%]"
+          className="top-[-10%] left-[10%]"
         />
         <FloatingOrb
           color="bg-emerald-100"
           delay={2}
-          className="bottom-[-10%] left-[10%]"
+          className="top-[30%] right-[5%]"
         />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       <section className="relative z-10 py-12 lg:py-20">
@@ -416,6 +417,6 @@ export default function Employers() {
           </div>
         </div>
       </section>
-    </GridSystem>
+    </main>
   );
 }
