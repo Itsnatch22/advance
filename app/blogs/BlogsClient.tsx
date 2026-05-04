@@ -399,15 +399,23 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
   };
 
   return (
-    <GridSystem
+    <main
       ref={containerRef}
-      variant="dots"
-      opacity={0.03}
-      className="relative min-h-screen overflow-hidden bg-white"
+      className="relative min-h-screen bg-white text-slate-900 overflow-hidden"
     >
-      <div className="pointer-events-none fixed inset-0">
-        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
-        <FloatingOrb color="bg-emerald-100" delay={2} className="top-[30%] right-[10%]" />
+      {/* Immersive Background - consistent with other pages */}
+      <div className="pointer-events-none absolute inset-0">
+        <FloatingOrb
+          color="bg-green-100"
+          delay={0}
+          className="top-[-10%] left-[10%]"
+        />
+        <FloatingOrb
+          color="bg-emerald-100"
+          delay={2}
+          className="top-[30%] right-[5%]"
+        />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
       <section className="relative bg-white py-40">
@@ -657,6 +665,6 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
           </div>
         </motion.div>
       </section>
-    </GridSystem>
+    </main>
   );
 }
