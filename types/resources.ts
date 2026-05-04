@@ -1,16 +1,24 @@
+export type ResourceCategory =
+  | "guide"
+  | "blog"
+  | "case-study"
+  | "webinar"
+  | "download";
+
+export interface ResourceMetric {
+  value: string;
+  label: string;
+}
+
 export interface Resource {
-  id: string;
+  link?: string | null;
   title: string;
-  description: string;
-  category: "guide" | "blog" | "case-study" | "webinar" | "download";
-  image?: string;
-  author?: string;
   date: string;
+  category: ResourceCategory;
+  image?: string | null;
   readTime?: string;
+  description: string;
+  metrics?: ResourceMetric[];
+  author?: string;
   tags: string[];
-  link?: string;
-  metrics?: {
-    label: string;
-    value: string;
-  }[];
 }

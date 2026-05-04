@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import ResourcesClient from "./BlogsClient";
+import BlogsClient from "./BlogsClient";
 import { Resource } from "@/types/resources";
 
 // ISR: revalidate every hour
@@ -13,8 +13,7 @@ export const metadata = {
 
 async function fetchResources(category = "all"): Promise<Resource[]> {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://eaziwage.com";
 
     const res = await fetch(
       `${baseUrl}/api/resources?category=${category}`,
@@ -25,7 +24,7 @@ async function fetchResources(category = "all"): Promise<Resource[]> {
 
     if (!res.ok) return [];
 
-    const data = await res.json();
+    const data = (await res.json()) as { resources?: Resource[] };
     return data.resources ?? [];
   } catch (err) {
     console.error("Failed to prefetch resources:", err);
@@ -39,7 +38,7 @@ export default async function ResourcesPage() {
 
   return (
     <Suspense fallback={null}>
-      <ResourcesClient initialResources={initialResources} />
+      <BlogsClient initialResources={initialResources} />
     </Suspense>
   );
 }

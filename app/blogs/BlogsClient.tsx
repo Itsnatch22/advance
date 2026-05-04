@@ -4,9 +4,9 @@ import React, {
   useState,
   useMemo,
   useRef,
-  MouseEvent,
   useEffect,
   useCallback,
+  MouseEvent,
 } from "react";
 import {
   motion,
@@ -34,10 +34,16 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
-import { Resource } from "@/types/resources";
+import { Resource, ResourceCategory } from "@/types/resources";
 import { GridSystem } from "@/components/grid";
 
-const categories = [
+interface CategoryOption {
+  id: "all" | ResourceCategory;
+  label: string;
+  icon: React.ElementType;
+}
+
+const categories: CategoryOption[] = [
   { id: "all", label: "All EWA Content", icon: Layers },
   { id: "guide", label: "Implementation Guides", icon: FileText },
   { id: "blog", label: "EWA Insights", icon: TrendingUp },
@@ -45,6 +51,14 @@ const categories = [
   { id: "webinar", label: "EWA Events", icon: Video },
   { id: "download", label: "EWA Tools", icon: Download },
 ];
+
+const categoryColors: Record<ResourceCategory, string> = {
+  guide: "bg-blue-50 text-blue-600 border-blue-100",
+  blog: "bg-purple-50 text-purple-600 border-purple-100",
+  "case-study": "bg-emerald-50 text-emerald-600 border-emerald-100",
+  webinar: "bg-orange-50 text-orange-600 border-orange-100",
+  download: "bg-indigo-50 text-indigo-600 border-indigo-100",
+};
 
 function getResourceDedupKey(resource: Resource): string {
   return [
@@ -56,15 +70,13 @@ function getResourceDedupKey(resource: Resource): string {
     .join("::");
 }
 
-const FloatingOrb = ({
-  color,
-  delay,
-  className,
-}: {
+interface FloatingOrbProps {
   color: string;
   delay: number;
   className?: string;
-}) => (
+}
+
+const FloatingOrb = ({ color, delay, className }: FloatingOrbProps) => (
   <motion.div
     animate={{ y: [0, -40, 0], x: [0, 20, 0], scale: [1, 1.1, 1] }}
     transition={{
@@ -73,11 +85,10 @@ const FloatingOrb = ({
       delay,
       ease: "easeInOut",
     }}
-    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
+    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className ?? ""}`}
   />
 );
 
-// Skeleton card for loading state
 const SkeletonCard = () => (
   <div className="relative flex h-full animate-pulse flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl">
     <div className="mb-6 flex items-center justify-between">
@@ -104,7 +115,11 @@ const SkeletonCard = () => (
   </div>
 );
 
-const TiltResourceCard = ({ resource }: { resource: Resource }) => {
+interface TiltResourceCardProps {
+  resource: Resource;
+}
+
+const TiltResourceCard = ({ resource }: TiltResourceCardProps) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);
@@ -119,38 +134,33 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
     damping: 20,
   });
 
-  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
+  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     x.set((event.clientX - rect.left) / rect.width - 0.5);
     y.set((event.clientY - rect.top) / rect.height - 0.5);
     mouseX.set(event.clientX - rect.left);
     mouseY.set(event.clientY - rect.top);
-  }
+  };
 
-  const categoryColors = {
-    guide: "bg-blue-50 text-blue-600 border-blue-100",
-    blog: "bg-purple-50 text-purple-600 border-purple-100",
-    "case-study": "bg-emerald-50 text-emerald-600 border-emerald-100",
-    webinar: "bg-orange-50 text-orange-600 border-orange-100",
-    download: "bg-indigo-50 text-indigo-600 border-indigo-100",
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
   };
 
   return (
     <motion.div style={{ perspective: 1000 }} className="h-full">
       <motion.div
         onMouseMove={handleMouseMove}
-        onMouseLeave={() => {
-          x.set(0);
-          y.set(0);
-        }}
+        onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY }}
         className="group relative flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
       >
+        {/* Radial glow that follows the cursor */}
         <motion.div
           style={{
             background: useTransform(
               [mouseX, mouseY],
-              ([mx, my]) =>
+              ([mx, my]: number[]) =>
                 `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.04), transparent 80%)`
             ),
           }}
@@ -158,7 +168,7 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
         />
 
         <div className="relative z-10 flex h-full flex-col">
-          {/* Article image if available */}
+          {/* Cover image */}
           {resource.image && (
             <div className="relative -mx-8 -mt-8 mb-6 h-44 overflow-hidden rounded-t-[2.5rem]">
               <Image
@@ -174,6 +184,7 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
             </div>
           )}
 
+          {/* Category badge + date/read-time */}
           <div className="mb-6 flex items-center justify-between">
             <div
               className={`rounded-xl border px-3 py-1 text-[10px] font-black tracking-widest uppercase ${
@@ -193,7 +204,8 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
               </span>
               {resource.readTime && (
                 <span className="flex items-center gap-1">
-                  <Clock size={12} /> {resource.readTime}
+                  <Clock size={12} />
+                  {resource.readTime}
                 </span>
               )}
             </div>
@@ -207,7 +219,8 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
             {resource.description}
           </p>
 
-          {resource.metrics && (
+          {/* Optional metrics grid */}
+          {resource.metrics && resource.metrics.length > 0 && (
             <div className="mb-8 grid grid-cols-3 gap-3 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
               {resource.metrics.map((m, i) => (
                 <div key={i} className="text-center">
@@ -228,6 +241,7 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
             </p>
           )}
 
+          {/* Footer: tags + read link */}
           <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-6">
             <div className="flex flex-wrap gap-2">
               {resource.tags.slice(0, 2).map((tag) => (
@@ -240,7 +254,7 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
               ))}
             </div>
             <a
-              href={resource.link || "#"}
+              href={resource.link ?? "#"}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-black tracking-widest text-green-600 uppercase transition-all group-hover:gap-3"
@@ -251,6 +265,7 @@ const TiltResourceCard = ({ resource }: { resource: Resource }) => {
           </div>
         </div>
 
+        {/* Bottom progress bar on hover */}
         <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
       </motion.div>
     </motion.div>
@@ -263,20 +278,19 @@ interface BlogsClientProps {
 
 export default function BlogsClient({ initialResources }: BlogsClientProps) {
   const [resources, setResources] = useState<Resource[]>(initialResources);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<
+    "all" | ResourceCategory
+  >("all");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [lastFetched, setLastFetched] = useState<Date | null>(new Date());
 
-  // Newsletter state
-  const [email, setEmail] = useState("");
-  const [honeypot, setHoneypot] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [honeypot, setHoneypot] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const containerRef = useRef<HTMLElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -285,7 +299,6 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
     target: containerRef,
     offset: ["start start", "end start"],
   });
-
   const yHero = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
@@ -300,18 +313,16 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
 
         const res = await fetch(`/api/resources?${params.toString()}`);
         if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || "Failed to fetch");
+          const err = (await res.json()) as { error?: string };
+          throw new Error(err.error ?? "Failed to fetch");
         }
 
-        const data = await res.json();
+        const data = (await res.json()) as { resources?: Resource[] };
         setResources(data.resources ?? []);
         setLastFetched(new Date());
       } catch (err) {
         setError(
-          err instanceof Error
-            ? err.message
-            : "Something went wrong. Try again."
+          err instanceof Error ? err.message : "Something went wrong. Try again."
         );
       } finally {
         setIsLoading(false);
@@ -325,7 +336,6 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
-  // Debounce search
   useEffect(() => {
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     searchTimeoutRef.current = setTimeout(() => {
@@ -337,8 +347,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
-  // Client-side filter for instant feel while API fetches
-  const displayedResources = useMemo(() => {
+  const displayedResources = useMemo<Resource[]>(() => {
     const filtered = !searchQuery.trim()
       ? resources
       : resources.filter(
@@ -349,14 +358,14 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
 
     const seen = new Set<string>();
     return filtered.filter((resource) => {
-      const dedupeKey = getResourceDedupKey(resource);
-      if (seen.has(dedupeKey)) return false;
-      seen.add(dedupeKey);
+      const key = getResourceDedupKey(resource);
+      if (seen.has(key)) return false;
+      seen.add(key);
       return true;
     });
   }, [resources, searchQuery]);
 
-  const handleSubscribe = async (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (honeypot || !email) return;
 
@@ -371,7 +380,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
         body: JSON.stringify({ email, honeypot }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (response.ok) {
         setSubmitStatus("success");
@@ -379,9 +388,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
         setTimeout(() => setSubmitStatus("idle"), 5000);
       } else {
         setSubmitStatus("error");
-        setErrorMessage(
-          result.error || "Failed to subscribe. Please try again."
-        );
+        setErrorMessage(result.error ?? "Failed to subscribe. Please try again.");
       }
     } catch {
       setSubmitStatus("error");
@@ -398,96 +405,85 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
       opacity={0.03}
       className="relative min-h-screen overflow-hidden bg-white"
     >
-      {/* Background */}
       <div className="pointer-events-none fixed inset-0">
-        <FloatingOrb
-          color="bg-green-100"
-          delay={0}
-          className="top-[-10%] left-[10%]"
-        />
-        <FloatingOrb
-          color="bg-emerald-100"
-          delay={2}
-          className="top-[30%] right-[10%]"
-        />
+        <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
+        <FloatingOrb color="bg-emerald-100" delay={2} className="top-[30%] right-[10%]" />
       </div>
 
-      {/* Hero */}
       <section className="relative bg-white py-40">
         <motion.section
-        style={{ y: yHero, opacity: opacityHero }}
-        className="relative px-6 py-40"
-      >
-        <div className="mx-auto max-w-5xl text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
-          >
-            <Newspaper size={14} className="animate-pulse" />
-            <span>Live from Africa</span>
-          </motion.div>
+          style={{ y: yHero, opacity: opacityHero }}
+          className="relative px-6 py-40"
+        >
+          <div className="mx-auto max-w-5xl text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
+            >
+              <Newspaper size={14} className="animate-pulse" />
+              <span>Live from Africa</span>
+            </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
-          >
-            Earned Wage Access <br />
-            <span className="text-green-600">Across Africa</span>
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
+            >
+              Earned Wage Access <br />
+              <span className="text-green-600">Across Africa</span>
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 1 }}
-            className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
-          >
-            Real-time insights, implementation guides, and success stories on Earned Wage Access (EWA), on-demand pay, and flexible wage solutions across African markets.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 1 }}
+              className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
+            >
+              Real-time insights, implementation guides, and success stories on
+              Earned Wage Access (EWA), on-demand pay, and flexible wage
+              solutions across African markets.
+            </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="group mx-auto mt-16 max-w-2xl"
-          >
-            <div className="relative">
-              <Search className="absolute top-1/2 left-6 h-6 w-6 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-green-600" />
-              <Input
-                type="text"
-                placeholder="Search Africa fintech news..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-20 rounded-3xl border-slate-200 bg-white/80 pr-8 pl-16 text-xl shadow-2xl backdrop-blur-xl transition-all focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
-              />
-              {isLoading && (
-                <div className="absolute top-1/2 right-6 -translate-y-1/2">
-                  <RefreshCw
-                    size={20}
-                    className="animate-spin text-green-500"
-                  />
-                </div>
+            {/* Search */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="group mx-auto mt-16 max-w-2xl"
+            >
+              <div className="relative">
+                <Search className="absolute top-1/2 left-6 h-6 w-6 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-green-600" />
+                <Input
+                  type="text"
+                  placeholder="Search Africa fintech news..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="h-20 rounded-3xl border-slate-200 bg-white/80 pr-8 pl-16 text-xl shadow-2xl backdrop-blur-xl transition-all focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
+                />
+                {isLoading && (
+                  <div className="absolute top-1/2 right-6 -translate-y-1/2">
+                    <RefreshCw size={20} className="animate-spin text-green-500" />
+                  </div>
+                )}
+              </div>
+
+              {lastFetched && (
+                <p className="mt-3 text-xs font-medium text-slate-400">
+                  Last updated{" "}
+                  {lastFetched.toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
               )}
-            </div>
-
-            {lastFetched && (
-              <p className="mt-3 text-xs font-medium text-slate-400">
-                Last updated{" "}
-                {lastFetched.toLocaleTimeString("en-US", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-            )}
-          </motion.div>
-        </div>
-      </motion.section>
+            </motion.div>
+          </div>
+        </motion.section>
       </section>
 
-      {/* Filters */}
-      <section className="sticky top-16 z-30 border-y border-slate-100 bg-white/40 py-8 backdrop-blur-md"> 
+      <section className="sticky top-16 z-30 border-y border-slate-100 bg-white/40 py-8 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-wrap items-center justify-center gap-3">
             {categories.map((cat) => (
@@ -509,9 +505,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
         </div>
       </section>
 
-      {/* Grid */}
       <section className="mx-auto max-w-7xl px-6 py-40">
-        {/* Error state */}
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -579,7 +573,6 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
         )}
       </section>
 
-      {/* Newsletter CTA */}
       <section className="mx-auto max-w-7xl px-6 py-40">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -589,7 +582,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
         >
           <div className="absolute inset-0 bg-linear-to-br from-green-50/20 via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-        <div className="relative z-10">
+          <div className="relative z-10">
             <div className="mb-10 flex justify-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
@@ -624,6 +617,8 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
                 >
                   <input
                     type="text"
+                    aria-hidden="true"
+                    tabIndex={-1}
                     className="sr-only"
                     value={honeypot}
                     onChange={(e) => setHoneypot(e.target.value)}
