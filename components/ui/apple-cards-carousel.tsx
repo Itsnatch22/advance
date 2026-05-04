@@ -14,6 +14,8 @@ type Card = {
   src: string;
   title: string;
   category: string;
+  story?: string[];
+  stats?: { value: string; label: string }[];
 };
 
 export const CarouselContext = createContext<{
@@ -143,15 +145,19 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
 export const Card = ({
   card,
   layout = false,
+  onClick,
 }: {
   card: Card;
   layout?: boolean;
+  onClick?: () => void;
 }) => {
-  // Simplified card: only show image and text, remove modal/open state
   return (
     <motion.div
       layoutId={layout ? `card-${card.title}` : undefined}
-      className="relative z-10 flex h-80 w-56 flex-col items-end justify-end overflow-hidden rounded-3xl bg-gray-100 md:h-128 md:w-96 dark:bg-neutral-900"
+      className="relative z-10 flex h-80 w-56 cursor-pointer flex-col items-end justify-end overflow-hidden rounded-3xl bg-gray-100 transition-transform hover:scale-105 md:h-128 md:w-96 dark:bg-neutral-900"
+      onClick={onClick}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
     >
       <div className="pointer-events-none absolute inset-0 z-10" />
       <BlurImage
@@ -163,6 +169,7 @@ export const Card = ({
         <p className="text-xs opacity-90 md:text-sm">{card.category}</p>
         <p className="text-lg font-semibold md:text-2xl">{card.title}</p>
       </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity hover:opacity-100" />
     </motion.div>
   );
 };

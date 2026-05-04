@@ -25,7 +25,6 @@ import {
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
 import UI from "./UI";
-import { GridSystem } from "@/components/grid";
 
 const reasons = [
   {
