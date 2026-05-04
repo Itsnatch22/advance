@@ -36,9 +36,9 @@ const FloatingOrb = ({
 
 const CALENDLY_LINKS: Record<"user_to_admin" | "admin_to_user", string> = {
   user_to_admin:
-    "https://calendly.com/eaziwage/user-consultation?hide_landing_page_details=1&hide_gdpr_banner=1&primary_color=16a34a",
+    process.env.NEXT_PUBLIC_CALENDLY_USER_URL || "https://calendly.com/eaziwage/user-consultation?hide_landing_page_details=1&hide_gdpr_banner=1&primary_color=16a34a",
   admin_to_user:
-    "https://calendly.com/eaziwage/admin-call?hide_landing_page_details=1&hide_gdpr_banner=1&primary_color=16a34a",
+    process.env.NEXT_PUBLIC_CALENDLY_ADMIN_URL || "https://calendly.com/eaziwage/admin-call?hide_landing_page_details=1&hide_gdpr_banner=1&primary_color=16a34a",
 };
 
 export default function SchedulePage() {
@@ -47,6 +47,7 @@ export default function SchedulePage() {
   >("user_to_admin");
   const [isScheduled, setIsScheduled] = useState(false);
   const [scriptReady, setScriptReady] = useState(false);
+  const [calendlyError, setCalendlyError] = useState(false);
   const containerRef = useRef<HTMLElement>(null);
   const embedRef = useRef<HTMLDivElement>(null);
 
@@ -57,13 +58,19 @@ export default function SchedulePage() {
     // Clear previous widget instance before re-mounting
     embedRef.current.innerHTML = "";
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).Calendly.initInlineWidget({
-      url: CALENDLY_LINKS[meetingType],
-      parentElement: embedRef.current,
-      prefill: {},
-      utm: {},
-    });
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).Calendly.initInlineWidget({
+        url: CALENDLY_LINKS[meetingType],
+        parentElement: embedRef.current,
+        prefill: {},
+        utm: {},
+      });
+      setCalendlyError(false);
+    } catch (error) {
+      console.error("Calendly initialization error:", error);
+      setCalendlyError(true);
+    }
   }, [scriptReady, meetingType, isScheduled]);
 
   // Listen for Calendly post-message events
@@ -242,6 +249,29 @@ return (
                     scriptReady ? "opacity-100" : "absolute opacity-0"
                   }`}
                 />
+                
+                {/* Error state */}
+                {calendlyError && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center rounded-[3rem] border border-slate-200 bg-white/40 p-8 text-center backdrop-blur-2xl">
+                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600">
+                      <Calendar size={32} />
+                    </div>
+                    <h3 className="mb-4 text-2xl font-bold text-slate-900">
+                      Scheduler Unavailable
+                    </h3>
+                    <p className="mb-6 max-w-md text-slate-500">
+                      The Calendly integration is not configured. Please contact support or email us directly at <a href="mailto:support@eaziwage.com" className="text-green-600 hover:text-green-700">support@eaziwage.com</a> to schedule a meeting.
+                    </p>
+                    <div className="rounded-lg bg-slate-100 p-4 text-left">
+                      <p className="mb-2 text-sm font-semibold text-slate-700">To fix this issue:</p>
+                      <ol className="list-decimal list-inside text-sm text-slate-600">
+                        <li>Create Calendly event types in your account</li>
+                        <li>Update environment variables with correct URLs</li>
+                        <li>Ensure your Calendly account is properly configured</li>
+                      </ol>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -288,7 +318,20 @@ return (
       <Script
         src="https://assets.calendly.com/assets/external/widget.js"
         strategy="afterInteractive"
+        onLoad={() => {
+          // Add error handling for script loading
+          setTimeout(() => {
+            if (!(window as any).Calendly) {
+              console.error("Calendly script failed to load properly");
+              setCalendlyError(true);
+            }
+          }, 3000);
+        }}
         onReady={() => setScriptReady(true)}
+        onError={() => {
+          console.error("Failed to load Calendly script");
+          setCalendlyError(true);
+        }}
       />
     </>
   );
