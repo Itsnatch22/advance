@@ -108,83 +108,87 @@ export function AppleCardsCarouselDemo() {
   );
 }
 
+// Sources:
+//   - DailyPay / ADP / PwC / Visa / Jem HR / Shortlister / Afridigest / Finmark Trust
+//   Stats are industry benchmarks; projections are clearly framed as such.
+
 const data = [
   {
     category: "School",
     title: "In schooling, every day is a new adventure.",
     src: "/eaziwage/school.png",
     story: [
-      "St. Mary's Academy in Nairobi implemented EaziWage for their teaching and administrative staff. The results were remarkable - teachers could access their earned wages before payday for unexpected expenses, reducing financial stress and improving focus in the classroom.",
-      "The school reported a 40% reduction in emergency loan requests from staff and a significant improvement in employee satisfaction scores. 'Our teachers can now focus on what matters most - educating our students,' says the school principal."
+      "Teaching and administrative staff in East African schools face a familiar pressure: a single monthly paycheck stretched across rent, school fees, and household emergencies. When an unexpected expense hits mid-month, many turn to high-interest loans — a cycle that chips away at focus and morale in the classroom.",
+      "Industry research shows that financial stress is among the leading causes of absenteeism and reduced performance at work. EWA gives school staff access to wages they have already earned, reducing the need for costly borrowing before payday. Employers across similar sectors report meaningful improvements in staff satisfaction and attendance after introducing earned wage access as a benefit.",
     ],
     stats: [
-      { value: "40%", label: "Reduction in emergency loans" },
-      { value: "85%", label: "Employee satisfaction" }
-    ]
+      { value: "82%", label: "of employers say EWA positively impacts absenteeism (DailyPay, 2024)" },
+      { value: "93%", label: "of employers offering EWA report improved retention (ADP Research)" },
+    ],
   },
   {
     category: "Retailing",
     title: "In retail, every customer counts.",
     src: "/eaziwage/retail.png",
     story: [
-      "A leading supermarket chain in Kenya adopted EaziWage for their 500+ employees across multiple locations. Retail workers, who often face irregular schedules, could now access their earned wages based on hours worked.",
-      "The implementation led to improved employee retention and reduced absenteeism. 'Our staff feel more financially secure, which translates directly to better customer service,' notes the HR Director."
+      "Retail workers across East Africa deal with irregular schedules, variable hours, and the constant pressure of a fixed monthly payday. When wages don't align with when bills are due, many workers borrow — often at steep interest — just to stay afloat between pay cycles.",
+      "Globally, employers in retail who offer EWA report significantly lower turnover and better customer service outcomes. In high-churn environments like retail, the cost of replacing a single employee often exceeds several months of their salary. Financial flexibility is proving to be a low-cost lever for retention.",
     ],
     stats: [
-      { value: "25%", label: "Reduced absenteeism" },
-      { value: "30%", label: "Improved retention" }
-    ]
+      { value: "Up to 29%", label: "reduction in employee turnover with EWA (Shortlister / industry data)" },
+      { value: "96%", label: "of employers say EWA helps attract talent (DailyPay, 2024)" },
+    ],
   },
   {
     category: "Banking",
     title: "In banking, trust is everything.",
     src: "/eaziwage/banking.png",
     story: [
-      "A regional bank partnered with EaziWage to offer earned wage access to their own employees and as a service to their corporate clients. The integration was seamless, leveraging existing payroll systems.",
-      "Bank employees reported greater financial wellness, and the bank successfully positioned EaziWage as an innovative employee benefit for their business clients."
+      "Financial institutions understand better than most how damaging financial stress is to productivity and decision-making. Yet many bank employees across Africa face the same paycheck-to-paycheck pressures as the customers they serve — a tension that affects morale and professional performance.",
+      "EWA positions progressive banks both as better employers and as innovators in the employee benefits space. Offering on-demand pay signals institutional commitment to staff financial wellness, and creates an opportunity to extend the same benefit to corporate clients as a value-added HR product.",
     ],
     stats: [
-      { value: "60%", label: "Employee adoption rate" },
-      { value: "15+", label: "Corporate clients onboarded" }
-    ]
+      { value: "80%", label: "of employable Africans live paycheck to paycheck (Afridigest / industry data)" },
+      { value: "75%", label: "of adults who borrowed last year did so just to cover essentials (Finmark Trust, 2024)" },
+    ],
   },
   {
     category: "Manufacturing",
     title: "Manufacturing the future, one product at a time.",
     src: "/eaziwage/factory.png",
     story: [
-      "A large manufacturing facility in Mombasa implemented EaziWage for their factory workers. The shift-based nature of manufacturing work made EaziWage particularly valuable for workers needing access to wages between pay periods.",
-      "The company saw improved productivity and reduced turnover. Workers appreciated the flexibility to manage their finances according to their work schedules."
+      "Factory and production workers often work in shifts, yet receive wages on a fixed monthly cycle that bears no relationship to the hours already worked. For workers managing transport costs, meals, and family obligations week to week, this gap creates real and recurring financial strain.",
+      "In comparable markets, EWA adoption in manufacturing settings has been linked to measurable drops in absenteeism — particularly around end-of-month periods when financial pressure peaks. Workers who are not preoccupied with money problems show up more consistently and perform better on the floor.",
     ],
     stats: [
-      { value: "35%", label: "Reduced turnover" },
-      { value: "20%", label: "Productivity increase" }
-    ]
+      { value: "47%", label: "of African workers can only cover bills with little left over (PwC Africa Workforce Survey, 2025)" },
+      { value: "35%", label: "average reduction in turnover reported by EWA-adopting employers (Jem HR Research, 2025)" },
+    ],
   },
   {
     category: "Hospitality",
     title: "Hospitality is the art of making strangers feel like friends.",
     src: "/eaziwage/hotel.png",
     story: [
-      "A luxury hotel chain in East Africa implemented EaziWage for their hospitality staff. The irregular hours and tip-based compensation in hospitality made earned wage access particularly valuable.",
-      "The hotel experienced improved staff morale and reduced financial stress among employees. 'Happy staff create better guest experiences,' says the General Manager."
+      "Hospitality staff work some of the most demanding and irregular schedules in any industry — split shifts, weekend work, and tip-dependent income that fluctuates week to week. The mismatch between money earned and money available causes disproportionate stress for hotel and restaurant workers.",
+      "When employees feel financially supported, the quality of guest experience follows. EWA gives hospitality workers real-time access to earnings they have already worked for, reducing dependence on informal lending and letting staff bring their full attention to the job.",
     ],
     stats: [
-      { value: "50%", label: "Staff using EaziWage" },
-      { value: "4.5★", label: "Guest satisfaction rating" }
-    ]
+      { value: "2×", label: "more likely to job-hunt: financially stressed vs. financially stable employees (DailyPay / industry data)" },
+      { value: "56%", label: "of workers globally say financial worries affect sleep and relationships (PwC Financial Wellness Survey)" },
+    ],
   },
   {
     category: "Logistics",
     title: "Logistics: moving the world, one mile at a time.",
     src: "/eaziwage/warehouse.png",
     story: [
-      "A major logistics company implemented EaziWage for their delivery drivers and warehouse staff. The on-the-go nature of logistics work made instant access to earned wages crucial for drivers needing fuel or emergency expenses.",
-      "The company reported improved driver retention and better operational efficiency. Drivers appreciated the financial flexibility that matched their mobile work lifestyle."
+      "Delivery drivers and warehouse staff operate in a cash-flow-intensive environment — fuel, vehicle maintenance, and daily expenses don't wait for payday. Drivers who can't cover operational costs mid-month face real disruptions to their routes and reliability, affecting the entire supply chain.",
+      "EWA is particularly well-suited to logistics, where the work is physical, continuous, and already measurable by the day or shift. Giving drivers and warehouse teams access to earned wages on demand has the potential to improve driver retention and operational consistency — outcomes that translate directly to better service delivery.",
     ],
     stats: [
-      { value: "45%", label: "Driver retention improvement" },
-      { value: "24/7", label: "Wage access availability" }
-    ]
+      { value: "50%", label: "reduction in turnover projected for EWA-adopting logistics employers (Visa / industry research)" },
+      { value: "74%", label: "decrease in absenteeism projected in companies offering EWA (Visa / industry research)" },
+    ],
   },
 ];
