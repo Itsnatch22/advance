@@ -38,12 +38,11 @@ export default function ProblemStatement() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-20 lg:grid-cols-2 lg:gap-32">
-          {/* Image Side with reveal effect */}
           <motion.div
             style={{ y, opacity, scale }}
             className="relative order-2 lg:order-1"
           >
-            <div className="group relative aspect-4/3 overflow-hidden rounded-[2.5rem] border border-slate-200 shadow-2xl">
+            <div className="group relative aspect-[24/22] overflow-hidden rounded-[2.5rem] border border-slate-200 shadow-2xl">
               <Image
                 src="/problem/problem.png"
                 alt="Problem Statement Illustration"
@@ -53,7 +52,6 @@ export default function ProblemStatement() {
               <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
             </div>
 
-            {/* Floating decorative card */}
             <motion.div
               animate={{ y: [0, -20, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
