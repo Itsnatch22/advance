@@ -10,7 +10,6 @@ interface PublicStats {
   updated_at: string;
 }
 
-// ── Formatters ──────────────────────────────────────────────
 
 function formatUsers(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M+`;
@@ -19,8 +18,6 @@ function formatUsers(n: number): string {
 }
 
 function formatDisbursed(n: number): string {
-  // Convert KES to USD for display (rough 1 USD = 129 KES)
-  // Swap this for a real FX value if needed
   const usd = n / 129;
   if (usd >= 1_000_000_000) return `$${(usd / 1_000_000_000).toFixed(1)}B+`;
   if (usd >= 1_000_000) return `$${(usd / 1_000_000).toFixed(1)}M+`;
@@ -32,10 +29,9 @@ const STATIC_STATS = [
   { value: "50K",  label: "Active Users",      icon: Users     },
   { value: "$2B+",  label: "Disbursed",          icon: Banknote  },
   { value: "<3s",   label: "Instant Transfer",   icon: Zap       },
-  { value: "4.9",   label: "Rating",             icon: Star      },
+ // { value: "4.9",   label: "Rating",             icon: Star      },
 ];
 
-// ── Data fetching (client component) ────────────────────────
 
 async function fetchStats(): Promise<PublicStats | null> {
   try {
@@ -50,7 +46,6 @@ async function fetchStats(): Promise<PublicStats | null> {
   }
 }
 
-// ── Component ────────────────────────────────────────────────
 
 export default function HeroStats() {
   const [stats, setStats] = useState<PublicStats | null>(null);
@@ -76,11 +71,11 @@ export default function HeroStats() {
           label: "Instant Transfer",
           icon: Zap,
         },
-        {
-          value: "4.9",
-          label: "Rating",
-          icon: Star,
-        },
+       // {
+       //   value: "4.9",
+       //   label: "Rating",
+       //   icon: Star,
+       // },
       ]
     : STATIC_STATS;
 
