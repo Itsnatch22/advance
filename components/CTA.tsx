@@ -108,7 +108,7 @@ export default function CTA() {
           </Link>
 
           {/* Secondary CTA */}
-          <Link href="/contact/sales">
+          <Link href="/sales">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

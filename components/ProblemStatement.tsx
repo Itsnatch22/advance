@@ -66,7 +66,6 @@ export default function ProblemStatement() {
             </motion.div>
           </motion.div>
 
-          {/* Text Side */}
           <div className="order-1 space-y-8 lg:order-2">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
