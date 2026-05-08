@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Users, Banknote, Zap, Star, Building2 } from "lucide-react";
+import { Users, Banknote, Zap, Star} from "lucide-react";
 
 interface PublicStats {
   total_users: number;
