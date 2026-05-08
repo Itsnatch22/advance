@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Users, Banknote, Zap, Star} from "lucide-react";
+import { Users, Banknote, Zap, Star, Building2 } from "lucide-react";
 
 interface PublicStats {
   total_users: number;
@@ -29,9 +29,10 @@ const STATIC_STATS = [
   { value: "50K",  label: "Active Users",      icon: Users     },
   { value: "$2B+",  label: "Disbursed",          icon: Banknote  },
   { value: "<3s",   label: "Instant Transfer",   icon: Zap       },
- // { value: "4.9",   label: "Rating",             icon: Star      },
+  { value: "4.9",   label: "Rating",             icon: Star      },
 ];
 
+// ── Data fetching (client component) ────────────────────────
 
 async function fetchStats(): Promise<PublicStats | null> {
   try {
@@ -46,6 +47,7 @@ async function fetchStats(): Promise<PublicStats | null> {
   }
 }
 
+// ── Component ────────────────────────────────────────────────
 
 export default function HeroStats() {
   const [stats, setStats] = useState<PublicStats | null>(null);
@@ -71,11 +73,11 @@ export default function HeroStats() {
           label: "Instant Transfer",
           icon: Zap,
         },
-       // {
-       //   value: "4.9",
-       //   label: "Rating",
-       //   icon: Star,
-       // },
+        {
+          value: "4.9",
+          label: "Rating",
+          icon: Star,
+        },
       ]
     : STATIC_STATS;
 
