@@ -1,5 +1,3 @@
-// types/wiza.ts
-
 export interface WizaSession {
   id: string;
   employee_id: string;
@@ -18,13 +16,11 @@ export interface WizaMessage {
   created_at: string;
 }
 
-// Shape sent from the client to start / continue a session
 export interface SendMessageInput {
-  session_id: string | null; // null = start a new session
+  session_id: string | null;
   content: string;
 }
 
-// Shape of each SSE event
 export type StreamEvent =
   | { type: 'session_id'; session_id: string }
   | { type: 'chunk';      text: string }

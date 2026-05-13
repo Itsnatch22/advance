@@ -1,10 +1,10 @@
-// trigger/wiza-summarize.ts
-// Background job: fetch transcript → Gemini summary → save + notify
-
 import { task, logger } from '@trigger.dev/sdk/v3';
 import { createClient } from '@supabase/supabase-js';
 import { generateSummary } from '@/lib/gemini';
 import type { SummarizeJobPayload } from '@/types/wiza';
+
+// Helper function to wait for specified milliseconds
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,28 +20,48 @@ export const summarizeWizaSession = task({
 
     logger.info('Starting Wiza summary', { session_id, employee_id });
 
-    // ── 1. Load all messages ──────────────────────────────────────────────
-    const { data: messages, error } = await supabase
-      .from('wiza_messages')
-      .select('role, content, created_at')
-      .eq('session_id', session_id)
-      .order('created_at', { ascending: true });
-
-    if (error || !messages?.length) {
-      throw new Error(`No messages found for session ${session_id}`);
+    // Polling loop to wait for both user and model messages
+    let messages = null;
+    let attempts = 0;
+    const maxAttempts = 6;
+    
+    while (attempts < maxAttempts) {
+      const { data: msgs, error } = await supabase
+        .from('wiza_messages')
+        .select('role, content, created_at')
+        .eq('session_id', session_id)
+        .order('created_at', { ascending: true });
+      
+      if (!error && msgs) {
+        const hasUserMessage = msgs.some(m => m.role === 'user');
+        const hasModelMessage = msgs.some(m => m.role === 'model');
+        
+        if (hasUserMessage && hasModelMessage) {
+          messages = msgs;
+          logger.info('Found both user and model messages', { messageCount: messages.length, attempts: attempts + 1 });
+          break;
+        }
+      }
+      
+      attempts++;
+      if (attempts < maxAttempts) {
+        logger.info('Waiting for messages, polling again...', { attempt: attempts, maxAttempts });
+        await wait(5000); // Wait 5 seconds between attempts
+      }
+    }
+    
+    if (!messages) {
+      throw new Error(`No complete conversation found for session ${session_id} after ${maxAttempts} attempts`);
     }
 
-    // ── 2. Build plain-text transcript ────────────────────────────────────
     const transcript = messages
       .map(m => `${m.role === 'user' ? 'Employee' : 'Wiza'}: ${m.content}`)
       .join('\n\n');
 
-    // ── 3. Generate summary via Gemini ────────────────────────────────────
     logger.info('Calling Gemini for summary', { messageCount: messages.length });
     const summary = await generateSummary(transcript);
     logger.info('Summary generated', { charCount: summary.length });
 
-    // ── 4. Persist summary + mark sent ───────────────────────────────────
     const { error: updateError } = await supabase
       .from('wiza_sessions')
       .update({ summary, summary_sent: true })
@@ -49,12 +69,9 @@ export const summarizeWizaSession = task({
 
     if (updateError) throw new Error('Failed to save summary');
 
-    // ── 5. Send email if opted in ─────────────────────────────────────────
     if (send_to_email) {
       logger.info('Sending summary email', { to: send_to_email });
 
-      // Using Supabase Edge Function or your preferred email provider.
-      // Example with Resend (swap for your provider):
       await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -82,30 +99,40 @@ ${summary}
       });
     }
 
-    // ── 6. Send SMS if opted in ───────────────────────────────────────────
     if (send_to_phone) {
       logger.info('Sending summary SMS', { to: send_to_phone });
 
-      // Truncate summary to ~300 chars for SMS
       const smsText = `Wiza summary:\n${summary.slice(0, 280)}${summary.length > 280 ? '…' : ''}`;
 
-      // Example with Africa's Talking (common in East Africa):
       const atParams = new URLSearchParams({
         username: process.env.AT_USERNAME!,
         to:       send_to_phone,
         message:  smsText,
-        from:     process.env.AT_SENDER_ID ?? '',
       });
-
-      await fetch('https://api.africastalking.com/version1/messaging', {
-        method:  'POST',
-        headers: {
-          apiKey:         process.env.AT_API_KEY!,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept:         'application/json',
-        },
-        body: atParams,
-      });
+      
+      // Only add 'from' parameter if AT_SENDER_ID is actually set
+      if (process.env.AT_SENDER_ID) {
+        atParams.set('from', process.env.AT_SENDER_ID);
+      }
+      
+      // Check for required credentials
+      if (!process.env.AT_USERNAME || !process.env.AT_API_KEY) {
+        logger.warn('Africa\'s Talking credentials missing, skipping SMS', { 
+          hasUsername: !!process.env.AT_USERNAME,
+          hasApiKey: !!process.env.AT_API_KEY,
+          hasSenderId: !!process.env.AT_SENDER_ID
+        });
+      } else {
+        await fetch('https://api.africastalking.com/version1/messaging', {
+          method:  'POST',
+          headers: {
+            apiKey:         process.env.AT_API_KEY!,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept:         'application/json',
+          },
+          body: atParams,
+        });
+      }
     }
 
     logger.info('Wiza summary job complete', { session_id });

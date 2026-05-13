@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import { useWizaChat } from '@/hooks/useWizaChat';
 
-// ── Markdown renderer — handles **bold** and tables in AI responses ───────
 function RichText({ text }: { text: string }) {
   return (
     <>
@@ -28,7 +27,6 @@ function RichText({ text }: { text: string }) {
   );
 }
 
-// ── Animated typing cursor ────────────────────────────────────────────────
 function TypingCursor() {
   return (
     <span className="inline-flex gap-1 ml-1 translate-y-0.5">
@@ -60,7 +58,6 @@ function formatConversationTimestamp(iso: string) {
   }).format(new Date(iso));
 }
 
-// ── Summary modal ─────────────────────────────────────────────────────────
 function SummaryModal({
   onConfirm, onCancel,
 }: {
@@ -102,7 +99,6 @@ function SummaryModal({
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────
 export default function Wiza() {
   const { messages, streaming, error, sendMessage, requestSummary, newSession } = useWizaChat();
 
@@ -201,7 +197,7 @@ export default function Wiza() {
               {[
                 { label: 'Instant Calculations', desc: 'Daily earning rate, mid-month cash availability, advance limits — all in milliseconds.' },
                 { label: 'Playful Commentary', desc: "Future you might have opinions about this latte budget. Let's run the numbers." },
-                { label: 'No Auth Required', desc: 'Anyone can try Wiza, no auth required.' },
+                { label: 'No Auth Required', desc: 'Anyone can try Wiza, no authentication required.' },
               ].map(({ label, desc }, i) => (
                 <motion.div
                   key={label}
@@ -326,9 +322,9 @@ export default function Wiza() {
                   {/* Quick-start prompts */}
                   <div className="w-full space-y-2">
                     {[
-                      'I earn 60k KES monthly',
-                      'How can I budget better?',
-                      'Is a KES 5,000 advance safe right now?',
+                      'How much of my salary can I access right now?',
+                      'Help me survive till payday',
+                      'Is it safe to request an advance today?',
                     ].map(prompt => (
                       <button
                         key={prompt}

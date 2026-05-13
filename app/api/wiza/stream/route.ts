@@ -1,16 +1,9 @@
-// app/api/wiza/stream/route.ts
-// SSE endpoint: POST { session_id, content }
-// → streams Gemini reply with enhanced financial coaching capabilities
-// → guest mode enabled by default (no auth required)
-// → optionally saves to DB if user is authenticated
-
 import { NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { streamWizaReply, buildSystemPrompt } from '@/lib/gemini';
 import type { StreamEvent } from '@/types/wiza';
 import type { Content } from '@google/generative-ai';
 
-// Service-role client — bypasses RLS for server writes
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -19,7 +12,11 @@ const supabase = createClient(
 const HISTORY_LIMIT = 20; // last N messages fed to Gemini
 
 export async function POST(req: NextRequest) {
-  // ── 1. Optional auth check (guest mode allowed) ────────────────────────────
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    console.error('[wiza/stream] GOOGLE_GENERATIVE_AI_API_KEY is not configured');
+    return new Response('AI service is not configured', { status: 503 });
+  }
+
   const authHeader = req.headers.get('Authorization');
   let employeeId: string | null = null;
   let isAuthenticated = false;
@@ -37,8 +34,17 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ── 2. Parse body ──────────────────────────────────────────────────────────
-  const body = await req.json();
+  let body;
+  try {
+    const text = await req.text();
+    console.log('Raw request body:', text);
+    body = JSON.parse(text);
+    console.log('Parsed body:', body);
+  } catch (error) {
+    console.error('JSON parse error:', error);
+    return new Response(`Invalid JSON: ${error}`, { status: 400 });
+  }
+  
   const { session_id: incomingSessionId, content } = body as {
     session_id: string | null;
     content: string;
@@ -48,13 +54,12 @@ export async function POST(req: NextRequest) {
     return new Response('content is required', { status: 400 });
   }
 
-  // ── 3. Load employee context for system prompt ─────────────────────────────
   let systemPrompt: string;
 
   if (isAuthenticated && employeeId) {
     const { data: profile } = await supabase
       .from('employee_onboarding')
-      .select('first_name, last_name, financial_health_score')
+      .select('first_name, last_name, financial_health_score, country_code')
       .eq('id', employeeId)
       .single();
 
@@ -94,18 +99,20 @@ export async function POST(req: NextRequest) {
       advanceLimit,
       upcomingBills,
       financialScore: profile?.financial_health_score ?? 75,
+      countryCode: profile?.country_code ?? 'KE',
     });
   } else {
-    // ── GUEST MODE: Interactive demo with sample data ───────────────────────
+    // Guest user — no personal financial data available.
+    // Use a general-purpose prompt so Wiza can coach based on
+    // whatever the visitor shares in the conversation.
     systemPrompt = buildSystemPrompt({
       employeeName: 'there',
-      earnedWages: 50000,
-      advanceLimit: 30000,
-      upcomingBills: [
-        { label: 'Rent', amount: 15000, dueInDays: 5 },
-        { label: 'Electricity', amount: 2000, dueInDays: 12 },
-      ],
-      financialScore: 82,
+      earnedWages: 0,
+      advanceLimit: 0,
+      upcomingBills: [],
+      financialScore: 0,
+      countryCode: 'KE',
+      isGuest: true,
     });
   }
 
@@ -129,7 +136,6 @@ export async function POST(req: NextRequest) {
       sessionId = newSession.id;
     }
 
-    // ── 5. Save user message (authenticated only) ───────────────────────────
     await supabase.from('wiza_messages').insert({
       session_id: sessionId,
       role: 'user',
@@ -137,7 +143,6 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // ── 6. Load conversation history (authenticated only) ──────────────────────
   let geminiHistory: Content[] = [];
 
   if (isAuthenticated && employeeId && sessionId) {
@@ -148,16 +153,14 @@ export async function POST(req: NextRequest) {
       .order('created_at', { ascending: true })
       .limit(HISTORY_LIMIT);
 
-    // Convert to Gemini Content format (exclude the last user message — sent separately)
     geminiHistory = (history ?? [])
-      .slice(0, -1) // all except the message we just inserted
+      .slice(0, -1)
       .map(m => ({
         role: m.role === 'user' ? 'user' : 'model',
         parts: [{ text: m.content }],
       }));
   }
 
-  // ── 7. Stream SSE response ─────────────────────────────────────────────────
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
@@ -185,7 +188,6 @@ export async function POST(req: NextRequest) {
           send({ type: 'chunk', text: chunk });
         }
 
-        // ── 8. Persist completed AI message (authenticated only) ────────────
         if (isAuthenticated && employeeId && sessionId) {
           await supabase.from('wiza_messages').insert({
             session_id: sessionId,
