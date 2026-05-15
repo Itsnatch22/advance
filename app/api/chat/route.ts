@@ -203,6 +203,14 @@ async function getCohereReply(messages: UIMessage[], apiKey: string): Promise<st
 
 // ── Supabase helpers ──────────────────────────────────────────────────────
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function getUuidString(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return UUID_PATTERN.test(trimmed) ? trimmed : null;
+}
+
 async function getOrCreateSession(
   visitorId: string,
   sessionId: string | null,
@@ -227,7 +235,14 @@ async function getOrCreateSession(
     .select('id')
     .single();
 
-  if (error || !data) throw new Error('Failed to create session');
+  if (error) {
+    throw new Error(`Failed to create session: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error('Failed to create session: Supabase returned no session row');
+  }
+
   return data.id;
 }
 
@@ -236,13 +251,21 @@ async function saveMessages(
   userContent: string,
   assistantContent: string,
 ) {
-  await supabaseServer.from('wiza_public_messages').insert([
+  const { error: insertError } = await supabaseServer.from('wiza_public_messages').insert([
     { session_id: sessionId, role: 'user',      content: userContent },
     { session_id: sessionId, role: 'assistant', content: assistantContent },
   ]);
 
+  if (insertError) {
+    throw new Error(`Failed to save messages: ${insertError.message}`);
+  }
+
   // Bump updated_at + message_count
-  await supabaseServer.rpc('increment_message_count', { sid: sessionId });
+  const { error: countError } = await supabaseServer.rpc('increment_message_count', { sid: sessionId });
+
+  if (countError) {
+    throw new Error(`Failed to update session message count: ${countError.message}`);
+  }
 }
 
 // ── Main handler ──────────────────────────────────────────────────────────
@@ -251,8 +274,8 @@ export async function POST(req: NextRequest): Promise<Response> {
   try {
     const body = await req.json();
     const safeMessages: UIMessage[] = Array.isArray(body.messages) ? body.messages : [];
-    const visitorId:  string        = body.visitor_id  ?? crypto.randomUUID();
-    const sessionId:  string | null = body.session_id  ?? null;
+    const visitorId = getUuidString(body.visitor_id) ?? crypto.randomUUID();
+    const sessionId = getUuidString(body.session_id);
 
     const latestUserQuery = extractLatestUserMessage(safeMessages);
 
@@ -317,7 +340,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
 /** GET /api/chat?visitor_id=xxx — list all sessions for a visitor */
 export async function GET(req: NextRequest): Promise<Response> {
-  const visitorId = req.nextUrl.searchParams.get('visitor_id');
+  const visitorId = getUuidString(req.nextUrl.searchParams.get('visitor_id'));
   if (!visitorId) return Response.json({ sessions: [] });
 
   const { data } = await supabaseServer
@@ -332,8 +355,8 @@ export async function GET(req: NextRequest): Promise<Response> {
 
 /** DELETE /api/chat?session_id=xxx&visitor_id=xxx — delete one session */
 export async function DELETE(req: NextRequest): Promise<Response> {
-  const sessionId = req.nextUrl.searchParams.get('session_id');
-  const visitorId = req.nextUrl.searchParams.get('visitor_id');
+  const sessionId = getUuidString(req.nextUrl.searchParams.get('session_id'));
+  const visitorId = getUuidString(req.nextUrl.searchParams.get('visitor_id'));
   if (!sessionId || !visitorId) return Response.json({ error: 'Missing params' }, { status: 400 });
 
   const { error } = await supabaseServer

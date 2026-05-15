@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useChat } from '@ai-sdk/react';
+import type { ChatTransport, UIMessage } from 'ai';
 
 export interface PublicSession {
   id:            string;
@@ -24,6 +25,8 @@ type PublicChatMessage = {
   created_at?: string;
 };
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 function createWelcomeMessage(createdAt = new Date().toISOString()): PublicChatMessage {
   return {
     id: 'welcome',
@@ -33,12 +36,11 @@ function createWelcomeMessage(createdAt = new Date().toISOString()): PublicChatM
   };
 }
 
-// ── Visitor ID — create once, persist forever ─────────────────────────────
 function getOrCreateVisitorId(): string {
   if (typeof window === 'undefined') return '';
   const key = 'wiza_visitor_id';
   let id = localStorage.getItem(key);
-  if (!id) {
+  if (!id || !UUID_PATTERN.test(id)) {
     id = crypto.randomUUID();
     localStorage.setItem(key, id);
   }
@@ -52,30 +54,36 @@ export function useWizaPublicChat() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyLoaded,  setHistoryLoaded]  = useState(false);
   const messageTimestampsRef = useRef<Record<string, string>>({});
+  const visitorIdRef = useRef<string>('');
 
-  // Track current session so we can send it with each message
   const sessionIdRef = useRef<string | null>(null);
+  visitorIdRef.current = visitorId;
   sessionIdRef.current = sessionId;
 
-  // ── Custom transport to handle response headers ───────────────────────
   class CustomChatTransport {
     async sendMessages({
       messages,
       options,
     }: {
-      messages: any[];
-      options?: any;
+      messages: unknown[];
+      options?: Record<string, unknown>;
     }) {
+      const effectiveVisitorId = visitorIdRef.current || getOrCreateVisitorId();
+      if (effectiveVisitorId !== visitorIdRef.current) {
+        visitorIdRef.current = effectiveVisitorId;
+        setVisitorId(effectiveVisitorId);
+      }
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages,
-          visitor_id: visitorId,
-          session_id: sessionIdRef.current,
           ...options,
+          messages,
+          visitor_id: effectiveVisitorId,
+          session_id: sessionIdRef.current,
         }),
       });
 
@@ -93,19 +101,18 @@ export function useWizaPublicChat() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return response.json();
+      return response.body as ReadableStream<unknown>;
     }
 
-    async reconnectToStream(): Promise<ReadableStream<any> | null> {
+    async reconnectToStream(): Promise<ReadableStream<unknown> | null> {
       // Not implemented for this simple HTTP transport
       // This method is required by the ChatTransport interface
       return null;
     }
   }
 
-  // ── AI SDK useChat — keep all existing transport logic intact ─────────
   const chat = useChat({
-    transport: new CustomChatTransport() as any,
+    transport: new CustomChatTransport() as unknown as ChatTransport<UIMessage>,
     messages: [
       createWelcomeMessage(),
     ],
@@ -133,14 +140,13 @@ export function useWizaPublicChat() {
     }
   }, [chat.messages, chat.setMessages]);
 
-  // ── Init visitor ID on mount ─────────────────────────────────────────
   useEffect(() => {
     const vid = getOrCreateVisitorId();
+    visitorIdRef.current = vid;
     setVisitorId(vid);
     fetchSessions(vid);
   }, []);
 
-  // ── Fetch session list ───────────────────────────────────────────────
   const fetchSessions = useCallback(async (vid?: string) => {
     const id = vid ?? visitorId;
     if (!id) return;
@@ -151,7 +157,6 @@ export function useWizaPublicChat() {
     } catch { /* silent */ }
   }, [visitorId]);
 
-  // ── Load a past session's messages ──────────────────────────────────
   const loadSession = useCallback(async (sid: string) => {
     setLoadingHistory(true);
     setHistoryLoaded(false);
@@ -177,7 +182,6 @@ export function useWizaPublicChat() {
     }
   }, [visitorId, chat]);
 
-  // ── Delete a session ─────────────────────────────────────────────────
   const deleteSession = useCallback(async (sid: string) => {
     await fetch(`/api/chat?session_id=${sid}&visitor_id=${visitorId}`, { method: 'DELETE' });
     setSessions(prev => prev.filter(s => s.id !== sid));
