@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import crypto from "crypto";
 import { checkRateLimit, rateLimiter } from "@/lib/rate-limit";
 
 // ─── Env validation ──────────────────────────────────────────────────────────
@@ -39,10 +38,6 @@ async function scheduleConfirmationEmail(
     console.warn("[unsubscribe] RESEND_API_KEY not set — skipping confirmation email.");
     return;
   }
-
-  const sendAt = new Date(
-    Date.now() + CONFIRMATION_DELAY_DAYS * 24 * 60 * 60 * 1000
-  );
 
   const productLabel: Record<string, string> = {
     newsletter: "Newsletter",

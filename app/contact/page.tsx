@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, MouseEvent } from "react";
+import React, { useState, MouseEvent } from "react";
 import {
   motion,
   AnimatePresence,
@@ -14,12 +14,10 @@ import {
   MapPin,
   Send,
   CheckCircle2,
-  AlertCircle,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { GridSystem } from "@/components/grid";
 
 /* ----------------------------- validation ----------------------------- */
 
@@ -66,7 +64,7 @@ const TiltContactCard = ({
   value,
   href,
 }: {
-  icon: any;
+  icon: React.ElementType;
   label: string;
   value: string;
   href?: string;
@@ -162,7 +160,6 @@ export default function ContactPage() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
-  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const {
     register,
@@ -177,7 +174,6 @@ export default function ContactPage() {
     if (data.honeypot) return;
     setIsSubmitting(true);
     setSubmitStatus("idle");
-    setErrorMessage("");
 
     try {
       const response = await fetch("/api/contact", {
@@ -186,25 +182,15 @@ export default function ContactPage() {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
-
       if (response.ok) {
         setSubmitStatus("success");
         reset();
         setTimeout(() => setSubmitStatus("idle"), 5000);
       } else {
         setSubmitStatus("error");
-        setErrorMessage(
-          result.error ||
-            result.message ||
-            "Failed to send message. Please try again."
-        );
       }
-    } catch (error) {
+    } catch {
       setSubmitStatus("error");
-      setErrorMessage(
-        "Network error. Please check your connection and try again."
-      );
     } finally {
       setIsSubmitting(false);
     }

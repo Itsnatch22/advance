@@ -45,7 +45,7 @@ const FAQCard = ({
   isOpen,
   onClick,
 }: {
-  faq: any;
+  faq: { question: string; answer: string };
   isOpen: boolean;
   onClick: () => void;
 }) => {

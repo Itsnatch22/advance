@@ -17,23 +17,10 @@ import {
   TrendingUp,
   Users,
   Zap,
-  ChevronRight,
 } from "lucide-react";
 import Lottie from "lottie-react";
 import Startup from "@/public/Startup.json";
 import { GridSystem } from "@/components/grid";
-
-const RevealText = ({ text, delay = 0 }: { text: string; delay?: number }) => (
-  <motion.span
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8, delay, ease: [0.21, 0.45, 0.32, 0.9] }}
-    viewport={{ once: true }}
-    className="inline-block"
-  >
-    {text}
-  </motion.span>
-);
 
 const FloatingOrb = ({
   color,
@@ -283,7 +270,7 @@ function OpenRolesGrid() {
 
   return (
     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:gap-10">
-      {roles.map((role, index) => (
+      {roles.map((role, _index) => (
         <TiltCard key={role.title}>
           <div className="relative z-10">
             <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
@@ -339,7 +326,7 @@ function PerksGrid() {
 
   return (
     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-      {perks.map((perk, index) => (
+      {perks.map((perk, _index) => (
         <TiltCard key={perk.title} className="p-10">
           <div className="relative z-10 flex flex-col items-center text-center">
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600 transition-transform duration-500 group-hover:scale-110">

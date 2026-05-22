@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight } from "lucide-react";
+import Image from "next/image";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 
 export function AppleCardsCarouselDemo() {
@@ -49,9 +50,10 @@ export function AppleCardsCarouselDemo() {
               <div className="flex flex-col lg:flex-row">
                 {/* Image */}
                 <div className="relative h-64 lg:h-auto lg:w-1/2">
-                  <img
+                  <Image
                     src={selectedCard.src}
                     alt={selectedCard.title}
+                    fill
                     className="h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

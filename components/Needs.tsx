@@ -51,7 +51,15 @@ const steps = [
   },
 ];
 
-const FeatureCard = ({ feature }: { feature: any }) => {
+const FeatureCard = ({
+  feature,
+}: {
+  feature: {
+    icon: React.ElementType;
+    title: string;
+    description: string;
+  };
+}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);

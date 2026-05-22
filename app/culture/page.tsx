@@ -6,7 +6,6 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
-  AnimatePresence,
 } from "framer-motion";
 import { ArrowUpRight, Code2, Coffee, Rocket, Lightbulb } from "lucide-react";
 import Link from "next/link";

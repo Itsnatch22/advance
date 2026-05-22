@@ -35,7 +35,6 @@ import {
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Resource, ResourceCategory } from "@/types/resources";
-import { GridSystem } from "@/components/grid";
 
 interface CategoryOption {
   id: "all" | ResourceCategory;

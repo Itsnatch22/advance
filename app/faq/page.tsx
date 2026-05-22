@@ -37,7 +37,7 @@ type CategoryId =
 const categories: {
   id: CategoryId;
   label: string;
-  icon: any;
+  icon: React.ElementType;
 }[] = [
   { id: "general", label: "General", icon: HelpCircle },
   { id: "employees", label: "For Employees", icon: Users },
@@ -449,7 +449,7 @@ export default function FAQPage() {
           )}
 
           <div className="space-y-6">
-            {filteredFaqs.map((faq, i) => (
+            {filteredFaqs.map((faq, _i) => (
               <FAQItemCard
                 key={faq.q}
                 faq={faq}

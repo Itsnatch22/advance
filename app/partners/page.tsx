@@ -135,7 +135,7 @@ function SectionHeader({
   eyebrow: string;
   title: string;
   description: string;
-  icon: any;
+  icon: React.ElementType;
 }) {
   return (
     <div className="max-w-xl space-y-6">
@@ -177,7 +177,7 @@ function PartnerSection({
   title: string;
   description: string;
   partners: string[];
-  icon: any;
+  icon: React.ElementType;
   reverse?: boolean;
 }) {
   return (

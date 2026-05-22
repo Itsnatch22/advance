@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useRef, MouseEvent } from "react";
+import React, { useState, MouseEvent } from "react";
 import {
   motion,
   AnimatePresence,
-  useScroll,
   useTransform,
   useSpring,
   useMotionValue,
@@ -27,7 +26,6 @@ import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
 import UI from "./UI";
 import ROI from "@/components/ROI";
 import Integrations from "@/components/Integrations";
-import { GridSystem } from "@/components/grid";
 
 const reasons = [
   {
@@ -149,7 +147,7 @@ const TiltFeatureCard = ({
   desc,
   index,
 }: {
-  icon: any;
+  icon: React.ElementType;
   title: string;
   desc: string;
   index: number;

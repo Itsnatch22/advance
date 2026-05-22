@@ -9,7 +9,7 @@ export interface ChatMessage {
   createdAt: string;
 }
 
-export function useWizaChat() {
+export function useWizaCoachChat() {
   const [messages,   setMessages]   = useState<ChatMessage[]>([]);
   const [sessionId,  setSessionId]  = useState<string | null>(null);
   const [streaming,  setStreaming]  = useState(false);
@@ -165,4 +165,3 @@ export function useWizaChat() {
 
   return { messages, sessionId, streaming, error, sendMessage, requestSummary, newSession };
 }
-

@@ -1,11 +1,8 @@
 "use client";
-import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 const TestimonialSection = () => {
-  const vdRef = useRef<HTMLVideoElement[]>([]);
-
   useGSAP(() => {
     gsap.set(".testimonials-section", {
       marginTop: "-140vh",
@@ -54,20 +51,6 @@ const TestimonialSection = () => {
       ease: "power1.inOut",
     });
   });
-
-  const handlePlay = (index: number) => {
-    const video = vdRef.current[index];
-    if (video) {
-      video.play();
-    }
-  };
-
-  const handlePause = (index: number) => {
-    const video = vdRef.current[index];
-    if (video) {
-      video.pause();
-    }
-  };
 
   return (
     <section className="testimonials-section">

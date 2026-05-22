@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { supabaseUser } from "@/lib/supabase/server";
 import { redis } from "@/lib/rate-limit";
 import os from "os";

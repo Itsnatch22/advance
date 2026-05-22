@@ -1,10 +1,21 @@
 "use client";
-import React, { useRef, useState, MouseEvent } from "react";
+import React, { MouseEvent } from "react";
 import { Icons } from "@/constants";
 import { testimonials } from "@/constants/data";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
-const TestimonialCard = ({ testimonial }: { testimonial: any }) => {
+const TestimonialCard = ({
+  testimonial,
+}: {
+  testimonial: {
+    rating: number;
+    quote: string;
+    avatar: string;
+    author: string;
+    role: string;
+    location: string;
+  };
+}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 

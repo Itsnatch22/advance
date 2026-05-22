@@ -10,7 +10,7 @@ import {
 import { Input }    from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn }       from '@/lib/utils';
-import { useWizaPublicChat, type PublicSession } from '@/hooks/useWizaPublicChat';
+import { useWizaWidgetChat, type PublicSession } from '@/hooks/useWizaWidgetChat';
 
 type PublicChatPart = {
   type: string;
@@ -151,7 +151,7 @@ export default function WizaChat() {
     messages, sendMessage, status, error, regenerate,
     isLoading, sessionId, sessions, loadingHistory,
     loadSession, deleteSession, startNewSession, refreshSessions,
-  } = useWizaPublicChat();
+  } = useWizaWidgetChat();
 
   // Auto-scroll
   useEffect(() => {
@@ -163,7 +163,7 @@ export default function WizaChat() {
   // Refresh session list whenever chat opens
   useEffect(() => {
     if (isOpen) refreshSessions();
-  }, [isOpen]);
+  }, [isOpen, refreshSessions]);
 
   const toggleChat = () => { setIsOpen(!isOpen); setIsMinimized(false); };
 

@@ -44,7 +44,15 @@ const pricing = [
   },
 ];
 
-const PricingCard = ({ card }: { card: any }) => {
+const PricingCard = ({
+  card,
+}: {
+  card: {
+    icon: React.ElementType;
+    title: string;
+    desc: string;
+  };
+}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);

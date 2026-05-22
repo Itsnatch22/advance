@@ -1,6 +1,5 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { gridConfig, Breakpoint } from './grid.config';
 
 interface GridItemProps {
   span?: number;

@@ -65,9 +65,10 @@ export default function UnsubscribePage() {
 
       setStatus("success");
       setMessage(body.message ?? "You have been unsubscribed.");
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as Error;
       setStatus("error");
-      setMessage(err?.message ?? "Unsubscribe failed. Please try again.");
+      setMessage(error?.message ?? "Unsubscribe failed. Please try again.");
     }
   }
 

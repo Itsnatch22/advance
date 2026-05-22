@@ -7,11 +7,7 @@ import {
   useMotionValue,
 } from "framer-motion";
 import {
-  Zap,
-  Users,
   Sparkles,
-  Banknote,
-  Star,
   Check,
   Wallet,
   TrendingUp,

@@ -51,7 +51,7 @@ export default function Marquee() {
                   alt={partner.name}
                   width={160}
                   height={70}
-                  className="scale-95 object-contain opacity-70 grayscale transition duration-500 group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0"
+                  className="h-auto w-auto scale-95 object-contain opacity-70 grayscale transition duration-500 group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0"
                 />
               </motion.div>
             ))}

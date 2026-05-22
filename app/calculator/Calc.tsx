@@ -218,7 +218,7 @@ export default function Calculator() {
 
   // → Clamp if month changes
   useEffect(() => {
-    if (daysWorked > maxDays) setDaysWorked(maxDays);
+    setDaysWorked((prev) => (prev > maxDays ? maxDays : prev));
   }, [maxDays]);
 
   // → Kill results reactively

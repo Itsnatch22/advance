@@ -27,10 +27,6 @@ export default function MeetingConfirmation({
   meetingType,
   scheduledAt,
 }: MeetingConfirmationProps) {
-  const isUserToAdmin = meetingType === "user_to_admin";
-  const recipientEmail = isUserToAdmin ? adminEmail : userEmail;
-  const participantName = isUserToAdmin ? "User" : "Admin";
-
   return (
     <Html>
       <Head />
@@ -186,11 +182,6 @@ const button = {
   display: "block",
   padding: "16px 24px",
   margin: "32px 0",
-};
-
-const link = {
-  color: "#16a34a",
-  textDecoration: "underline",
 };
 
 const footer = {

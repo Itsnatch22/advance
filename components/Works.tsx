@@ -40,7 +40,16 @@ const steps = [
   },
 ];
 
-const WorkStepCard = ({ step }: { step: any }) => {
+const WorkStepCard = ({
+  step,
+}: {
+  step: {
+    icon: React.ElementType;
+    step: number;
+    title: string;
+    description: string;
+  };
+}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);

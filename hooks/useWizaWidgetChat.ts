@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useChat } from '@ai-sdk/react';
-import type { ChatTransport, UIMessage } from 'ai';
+import { DefaultChatTransport, type ChatTransport, type UIMessage } from 'ai';
 
 export interface PublicSession {
   id:            string;
@@ -47,106 +47,19 @@ function getOrCreateVisitorId(): string {
   return id;
 }
 
-export function useWizaPublicChat() {
+export function useWizaWidgetChat() {
   const [visitorId,      setVisitorId]      = useState<string>('');
   const [sessionId,      setSessionId]      = useState<string | null>(null);
   const [sessions,       setSessions]       = useState<PublicSession[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyLoaded,  setHistoryLoaded]  = useState(false);
-  const messageTimestampsRef = useRef<Record<string, string>>({});
-  const visitorIdRef = useRef<string>('');
 
-  const sessionIdRef = useRef<string | null>(null);
-  visitorIdRef.current = visitorId;
-  sessionIdRef.current = sessionId;
+  const visitorIdRef  = useRef<string>('');
+  const sessionIdRef  = useRef<string | null>(null);
+  visitorIdRef.current  = visitorId;
+  sessionIdRef.current  = sessionId;
 
-  class CustomChatTransport {
-    async sendMessages({
-      messages,
-      options,
-    }: {
-      messages: unknown[];
-      options?: Record<string, unknown>;
-    }) {
-      const effectiveVisitorId = visitorIdRef.current || getOrCreateVisitorId();
-      if (effectiveVisitorId !== visitorIdRef.current) {
-        visitorIdRef.current = effectiveVisitorId;
-        setVisitorId(effectiveVisitorId);
-      }
-
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...options,
-          messages,
-          visitor_id: effectiveVisitorId,
-          session_id: sessionIdRef.current,
-        }),
-      });
-
-      // Read session_id back from response headers
-      const sid = response.headers.get('X-Session-Id');
-      const vid = response.headers.get('X-Visitor-Id');
-      if (sid && sid !== sessionIdRef.current) {
-        setSessionId(sid);
-        sessionIdRef.current = sid;
-        // Refresh session list so new session appears in sidebar
-        if (vid) fetchSessions(vid);
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return response.body as ReadableStream<unknown>;
-    }
-
-    async reconnectToStream(): Promise<ReadableStream<unknown> | null> {
-      // Not implemented for this simple HTTP transport
-      // This method is required by the ChatTransport interface
-      return null;
-    }
-  }
-
-  const chat = useChat({
-    transport: new CustomChatTransport() as unknown as ChatTransport<UIMessage>,
-    messages: [
-      createWelcomeMessage(),
-    ],
-  });
-
-  useEffect(() => {
-    const nextMessages = (chat.messages as PublicChatMessage[]).map((message, index) => {
-      const existingTimestamp = message.createdAt ?? message.created_at;
-      if (existingTimestamp) {
-        messageTimestampsRef.current[message.id] = existingTimestamp;
-        return message;
-      }
-
-      const fallbackTimestamp =
-        messageTimestampsRef.current[message.id] ??
-        new Date(Date.now() + index).toISOString();
-
-      messageTimestampsRef.current[message.id] = fallbackTimestamp;
-      return { ...message, createdAt: fallbackTimestamp };
-    });
-
-    const changed = nextMessages.some((message, index) => message !== chat.messages[index]);
-    if (changed) {
-      chat.setMessages(nextMessages);
-    }
-  }, [chat.messages, chat.setMessages]);
-
-  useEffect(() => {
-    const vid = getOrCreateVisitorId();
-    visitorIdRef.current = vid;
-    setVisitorId(vid);
-    fetchSessions(vid);
-  }, []);
-
+  // ── fetchSessions — declared FIRST so it can be referenced everywhere ───
   const fetchSessions = useCallback(async (vid?: string) => {
     const id = vid ?? visitorId;
     if (!id) return;
@@ -157,6 +70,72 @@ export function useWizaPublicChat() {
     } catch { /* silent */ }
   }, [visitorId]);
 
+  // Stable ref so the transport's custom fetch can always call the latest version
+  const fetchSessionsRef = useRef(fetchSessions);
+  fetchSessionsRef.current = fetchSessions;
+
+  // ── Transport — extends DefaultChatTransport to properly parse SSE ──────
+  // DefaultChatTransport inherits HttpChatTransport.sendMessages which calls
+  // processResponseStream(response.body) → parses JSON SSE → UIMessageChunk.
+  // We use `prepareSendMessagesRequest` to inject visitor_id / session_id,
+  // and a custom `fetch` wrapper to read X-Session-Id from response headers.
+  const transport = new DefaultChatTransport<UIMessage>({
+    api: '/api/chat',
+
+    fetch: async (url, init) => {
+      // Ensure a visitor ID exists before the request
+      const effectiveVisitorId = visitorIdRef.current || getOrCreateVisitorId();
+      if (effectiveVisitorId !== visitorIdRef.current) {
+        visitorIdRef.current = effectiveVisitorId;
+        setVisitorId(effectiveVisitorId);
+      }
+
+      const response = await globalThis.fetch(url as string, init);
+
+      // Extract session info the API sets via response headers
+      const sid = response.headers.get('X-Session-Id');
+      const vid = response.headers.get('X-Visitor-Id');
+      if (sid && sid !== sessionIdRef.current) {
+        setSessionId(sid);
+        sessionIdRef.current = sid;
+        if (vid) fetchSessionsRef.current(vid);
+      }
+
+      return response;
+    },
+
+    prepareSendMessagesRequest: ({ messages }) => ({
+      body: {
+        messages,
+        visitor_id: visitorIdRef.current || getOrCreateVisitorId(),
+        session_id: sessionIdRef.current,
+      },
+    }),
+  });
+
+  const chat = useChat({
+    transport: transport as ChatTransport<UIMessage>,
+    messages: [createWelcomeMessage() as unknown as UIMessage],
+  });
+
+  // ── startNewSession — declared BEFORE deleteSession which depends on it ─
+  const startNewSession = useCallback(() => {
+    setSessionId(null);
+    sessionIdRef.current = null;
+    setHistoryLoaded(false);
+    chat.setMessages([createWelcomeMessage() as unknown as UIMessage]);
+  }, [chat]);
+
+  // ── Initialise visitor ID (runs once on mount) ──────────────────────────
+  useEffect(() => {
+    const vid = getOrCreateVisitorId();
+    visitorIdRef.current = vid;
+    setVisitorId(vid);
+    fetchSessionsRef.current(vid);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Session helpers ─────────────────────────────────────────────────────
   const loadSession = useCallback(async (sid: string) => {
     setLoadingHistory(true);
     setHistoryLoaded(false);
@@ -169,7 +148,7 @@ export function useWizaPublicChat() {
         ...(data.messages ?? []).map((m: { id: string; role: string; content: string; created_at: string }) => ({
           id:    m.id,
           role:  m.role as 'assistant' | 'system' | 'user',
-          parts: [{ type: 'text', text: m.content }],
+          parts: [{ type: 'text' as const, text: m.content }],
           createdAt: m.created_at,
         })),
       ];
@@ -190,15 +169,7 @@ export function useWizaPublicChat() {
     if (sid === sessionId) {
       startNewSession();
     }
-  }, [sessionId, visitorId]);
-
-  // ── Start a brand-new conversation ──────────────────────────────────
-  const startNewSession = useCallback(() => {
-    setSessionId(null);
-    sessionIdRef.current = null;
-    setHistoryLoaded(false);
-    chat.setMessages([createWelcomeMessage()]);
-  }, [chat]);
+  }, [sessionId, visitorId, startNewSession]);
 
   const isLoading = chat.status === 'submitted' || chat.status === 'streaming';
 

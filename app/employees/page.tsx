@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useRef, MouseEvent } from "react";
+import React, { useState, MouseEvent } from "react";
 import {
   motion,
   AnimatePresence,
-  useScroll,
   useTransform,
   useSpring,
   useMotionValue,
@@ -149,7 +148,7 @@ const TiltFeatureCard = ({
   desc,
   index,
 }: {
-  icon: any;
+  icon: React.ElementType;
   title: string;
   desc: string;
   index: number;

@@ -6,12 +6,9 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
-  easeOut,
 } from "framer-motion";
 import { Globe } from "lucide-react";
 import Image from "next/image";
-import ImpactMap from "./ImpactMap";
-import { string } from "zod";
 
 const countries = [
   {
@@ -44,7 +41,19 @@ const countries = [
   },
 ];
 
-const CountryCard = ({ country, count }: { country: any; count: number }) => {
+const CountryCard = ({
+  country,
+  count,
+}: {
+  country: {
+    flag: string;
+    name: string;
+    cap: number;
+    providers: string[];
+    currency: string;
+  };
+  count: number;
+}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useMotionValue(0);

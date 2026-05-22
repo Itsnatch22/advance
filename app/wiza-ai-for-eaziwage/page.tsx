@@ -6,7 +6,7 @@ import {
   Bot, User, Send, RefreshCcw, FileText,
   CheckCircle2, AlertTriangle, Sparkles,
 } from 'lucide-react';
-import { useWizaChat } from '@/hooks/useWizaChat';
+import { useWizaCoachChat } from '@/hooks/useWizaCoachChat';
 
 function RichText({ text }: { text: string }) {
   return (
@@ -100,7 +100,7 @@ function SummaryModal({
 }
 
 export default function Wiza() {
-  const { messages, streaming, error, sendMessage, requestSummary, newSession } = useWizaChat();
+  const { messages, streaming, error, sendMessage, requestSummary, newSession } = useWizaCoachChat();
 
   const [input,        setInput]        = useState('');
   const [showSummaryModal, setShowSummaryModal] = useState(false);

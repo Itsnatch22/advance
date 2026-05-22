@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, MouseEvent } from "react";
+import React, { useState, MouseEvent } from "react";
 import {
   motion,
   AnimatePresence,
@@ -13,14 +13,12 @@ import {
   MapPin,
   Send,
   CheckCircle2,
-  AlertCircle,
   Briefcase,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Script from "next/script";
-import { GridSystem } from "@/components/grid";
 
 /* ----------------------------- validation ----------------------------- */
 
@@ -36,38 +34,13 @@ type SalesFormData = z.infer<typeof salesSchema>;
 
 /* ----------------------------- components ----------------------------- */
 
-const FloatingOrb = ({
-  color,
-  delay,
-  className,
-}: {
-  color: string;
-  delay: number;
-  className?: string;
-}) => (
-  <motion.div
-    animate={{
-      y: [0, -40, 0],
-      x: [0, 20, 0],
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      duration: 10 + Math.random() * 5,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
-  />
-);
-
 const TiltInfoCard = ({
   icon: Icon,
   label,
   value,
   href,
 }: {
-  icon: any;
+  icon: React.ElementType;
   label: string;
   value: string;
   href?: string;
@@ -163,7 +136,6 @@ export default function SalesPage() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
-  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const {
     register,
@@ -178,17 +150,22 @@ export default function SalesPage() {
     if (data.honeypot) return;
     setIsSubmitting(true);
     setSubmitStatus("idle");
-    setErrorMessage("");
 
     try {
       // reCAPTCHA logic preserved from original
       const recaptchaToken = await new Promise<string>((resolve, reject) => {
-        if (typeof window === "undefined" || !(window as any).grecaptcha) {
+        const windowWithRecaptcha = window as unknown as {
+          grecaptcha: {
+            ready: (cb: () => void) => void;
+            execute: (siteKey: string, options: { action: string }) => Promise<string>;
+          };
+        };
+        if (typeof window === "undefined" || !windowWithRecaptcha.grecaptcha) {
           reject("reCAPTCHA not loaded");
           return;
         }
-        (window as any).grecaptcha.ready(() => {
-          (window as any).grecaptcha
+        windowWithRecaptcha.grecaptcha.ready(() => {
+          windowWithRecaptcha.grecaptcha
             .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!, {
               action: "sales_demo",
             })
@@ -203,25 +180,15 @@ export default function SalesPage() {
         body: JSON.stringify({ ...data, recaptchaToken }),
       });
 
-      const result = await response.json();
-
       if (response.ok) {
         setSubmitStatus("success");
         reset();
         setTimeout(() => setSubmitStatus("idle"), 5000);
       } else {
         setSubmitStatus("error");
-        setErrorMessage(
-          result.error ||
-            result.message ||
-            "Failed to submit request. Please try again."
-        );
       }
-    } catch (error) {
+    } catch {
       setSubmitStatus("error");
-      setErrorMessage(
-        "Network error. Please check your connection and try again."
-      );
     } finally {
       setIsSubmitting(false);
     }

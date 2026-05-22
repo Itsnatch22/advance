@@ -44,7 +44,7 @@ export function proxy(request: NextRequest) {
   if (country === 'UG') defaultLocale = 'en-ug'
   if (country === 'RW') defaultLocale = 'en-rw'
   const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value
-  const targetLocale = LOCALES.includes(cookieLocale as any) ? cookieLocale : defaultLocale
+  const targetLocale = LOCALES.includes(cookieLocale as Locale) ? cookieLocale : defaultLocale
 
   return NextResponse.redirect(new URL(`/${targetLocale}${pathname}${search}`, request.url))
 }
