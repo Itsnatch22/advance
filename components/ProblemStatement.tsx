@@ -42,7 +42,7 @@ export default function ProblemStatement() {
             style={{ y, opacity, scale }}
             className="relative order-2 lg:order-1"
           >
-            <div className="group relative aspect-[24/22] overflow-hidden rounded-[2.5rem] border border-slate-200 shadow-2xl">
+            <div className="group relative aspect-24/22 overflow-hidden rounded-[2.5rem] border border-slate-200 shadow-2xl">
               <Image
                 src="/problem/problem.png"
                 alt="Problem Statement Illustration"

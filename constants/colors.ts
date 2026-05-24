@@ -1,4 +1,3 @@
-// Brand colors - use CSS variables for theme compatibility
 export const BRAND_COLORS = {
   primary: "#15803D", // green-700
   secondary: "#3b82f6", // blue-500

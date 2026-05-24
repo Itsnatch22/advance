@@ -263,7 +263,7 @@ export default function Calculator() {
 
   const callBackendCalc = async () => {
     if (!salary) {
-      alert("Fill in salary fam");
+      alert("Please fill in your salary");
       setResult(null);
       return;
     }

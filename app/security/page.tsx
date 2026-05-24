@@ -400,18 +400,6 @@ export default function SecurityPage() {
                   <Lock size={16} />
                   <span>End-to-End Encrypted</span>
                 </div>
-              <h2 className="mb-6 font-serif text-3xl font-bold text-white md:text-4xl">
-                Your Data Stays <span className="text-green-500">Yours</span>
-              </h2>
-              <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400">
-                We believe in absolute data sovereignty. We do not sell, rent,
-                or monetize your personal financial data. It is used solely to
-                facilitate your transactions and improve your experience.
-              </p>
-              <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-6 py-2 text-sm font-bold text-green-400">
-                <Lock size={16} />
-                <span>End-to-End Encrypted</span>
-              </div>
             </div>
           </motion.div>
         </div>

@@ -1,4 +1,3 @@
-// server/utils/unsubscribeToken.ts
 import crypto from "crypto";
 
 const UNSUBSCRIBE_SECRET = process.env.UNSUBSCRIBE_SECRET!;
