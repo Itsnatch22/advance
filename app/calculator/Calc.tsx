@@ -3,7 +3,10 @@ import React, { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
-import { getCurrencyFromCountry, type CountryCode } from "@/lib/currency/currency";
+import {
+  getCurrencyFromCountry,
+  type CountryCode,
+} from "@/lib/currency/currency";
 
 // 📊 GRAPH IMPORTS
 import {
@@ -388,6 +391,7 @@ export default function Calculator() {
           <button
             key={f.code}
             onClick={() => handleCountryChange(f.code as Country)}
+            aria-label={`Select ${f.code}`}
             className={`h-11 w-11 overflow-hidden rounded-full border-2 transition-all duration-300 ${
               country === f.code
                 ? "scale-110 border-emerald-600 shadow-md"
@@ -406,10 +410,14 @@ export default function Calculator() {
       </div>
 
       {/* 💰 Salary Input */}
-      <label className="text-sm text-gray-600 dark:text-gray-300">
+      <label
+        htmlFor="salary-input"
+        className="text-sm text-gray-600 dark:text-gray-300"
+      >
         Gross Monthly Salary ({currencySymbol})
       </label>
       <input
+        id="salary-input"
         type="text"
         placeholder="e.g. 60,000"
         className="mt-1 w-full rounded-lg border border-gray-300 bg-white p-2 text-sm text-gray-900 focus:ring-emerald-500/60 sm:text-base dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
@@ -453,7 +461,10 @@ export default function Calculator() {
                 <span className="text-sm">{a.label}</span>
               </label>
               <input
+                id={`allowance-${a.key}`}
                 type="text"
+                placeholder="Amount"
+                aria-label={`Enter amount for ${a.label}`}
                 className="mt-1 w-full rounded-lg border p-2 text-sm focus:ring-emerald-500/60 sm:text-base"
                 value={
                   allowancesAmount[a.key]
@@ -475,8 +486,11 @@ export default function Calculator() {
 
       {/* 🗓 Days Slider */}
       <div className="mt-5">
-        <label className="text-sm text-gray-600">Days worked (drag)</label>
+        <label htmlFor="days-worked-input" className="text-sm text-gray-600">
+          Days worked (drag)
+        </label>
         <input
+          id="days-worked-input"
           type="range"
           min={0}
           max={maxDays}
@@ -510,7 +524,7 @@ export default function Calculator() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.45 }}
-            className="mt-6 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-green-50 to-white p-5 shadow-lg dark:border-green-700 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800"
+            className="mt-6 rounded-2xl border border-emerald-200 bg-linear-to-br from-emerald-50 via-green-50 to-white p-5 shadow-lg dark:border-green-700 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800"
           >
             <h3 className="mb-3 text-lg font-extrabold text-green-800">
               Wage Summary

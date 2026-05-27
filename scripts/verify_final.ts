@@ -1,4 +1,4 @@
-import { calc, readCountryConfig } from "../lib/calc.js";
+import { calc, readCountryConfig } from "../lib/finance/calc";
 
 async function verifyFinal() {
   const cases = [
@@ -10,7 +10,7 @@ async function verifyFinal() {
 
   for (const c of cases) {
     console.log(`\n--- Verification for ${c.country} ---`);
-    const cfg = readCountryConfig(c.country);
+    const cfg = await readCountryConfig(c.country);
     const result = calc(c, cfg);
     console.log(`Cap: ${cfg.accessCapPercent * 100}%`);
     console.log(`Earned So Far: ${result.accruedGross}`);

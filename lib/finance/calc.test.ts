@@ -4,8 +4,8 @@ import { readCountryConfig } from "./calc";
 
 describe("Calculator Logic", () => {
   // Test case for Rwanda from user
-  test("Rwanda: 80,000 salary for 30 days", () => {
-    const rwConfig = readCountryConfig("RW");
+  test("Rwanda: 80,000 salary for 30 days", async () => {
+    const rwConfig = await readCountryConfig("RW");
     const result = calc(
       {
         salary: 80000,
@@ -22,8 +22,8 @@ describe("Calculator Logic", () => {
   });
 
   // Test case for Uganda from user
-  test("Uganda: 10,000,000 salary for 30 days", () => {
-    const ugConfig = readCountryConfig("UG");
+  test("Uganda: 10,000,000 salary for 30 days", async () => {
+    const ugConfig = await readCountryConfig("UG");
     const result = calc(
       {
         salary: 10000000,
@@ -40,8 +40,8 @@ describe("Calculator Logic", () => {
   });
 
   // Test case for Kenya to ensure no changes
-  test("Kenya: 100,000 salary for 30 days", () => {
-    const keConfig = readCountryConfig("KE");
+  test("Kenya: 100,000 salary for 30 days", async () => {
+    const keConfig = await readCountryConfig("KE");
     const result = calc(
       {
         salary: 100000,
@@ -58,8 +58,8 @@ describe("Calculator Logic", () => {
   });
 
   // Test case for Tanzania to ensure no changes
-  test("Tanzania: 500,000 salary for 30 days", () => {
-    const tzConfig = readCountryConfig("TZ");
+  test("Tanzania: 500,000 salary for 30 days", async () => {
+    const tzConfig = await readCountryConfig("TZ");
     const result = calc(
       {
         salary: 500000,

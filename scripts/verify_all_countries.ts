@@ -1,4 +1,4 @@
-import { calc, readCountryConfig } from "../lib/calc.js";
+import { calc, readCountryConfig } from "../lib/finance/calc";
 
 async function verifyAll() {
   const countries = [
@@ -10,7 +10,7 @@ async function verifyAll() {
 
   for (const c of countries) {
     console.log(`\n--- ${c.country} Verification ---`);
-    const cfg = readCountryConfig(c.country);
+    const cfg = await readCountryConfig(c.country);
     const result = calc(c, cfg);
     console.log(`Cap%: ${cfg.accessCapPercent * 100}%`);
     console.log(`AppFee%: ${cfg.platformFeePercent * 100}%`);

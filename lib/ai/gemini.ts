@@ -1,8 +1,8 @@
 export type StreamEvent =
-  | { type: 'session_id'; session_id: string }
-  | { type: 'chunk'; text: string }
-  | { type: 'done' }
-  | { type: 'error'; message: string };
+  | { type: "session_id"; session_id: string }
+  | { type: "chunk"; text: string }
+  | { type: "done" }
+  | { type: "error"; message: string };
 
 export type SummarizeJobPayload = {
   session_id: string;
@@ -11,7 +11,7 @@ export type SummarizeJobPayload = {
   send_to_phone?: string | null;
 };
 
-import { getCurrencyFromCountry, type CountryCode } from './currency';
+import { getCurrencyFromCountry, type CountryCode } from "../currency/currency";
 
 // Helper functions for currency formatting
 function formatMoney(amount: number, countryCode: CountryCode): string {
@@ -24,24 +24,37 @@ import {
   HarmCategory,
   HarmBlockThreshold,
   type Content,
-} from '@google/generative-ai';
+} from "@google/generative-ai";
 
 if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-  console.error('[gemini] GOOGLE_GENERATIVE_AI_API_KEY is not configured — AI features will be unavailable');
+  console.error(
+    "[gemini] GOOGLE_GENERATIVE_AI_API_KEY is not configured — AI features will be unavailable"
+  );
 }
 
 const genAI = process.env.GOOGLE_GENERATIVE_AI_API_KEY
   ? new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY)
   : null;
 
-
-const MODEL = 'gemini-2.5-flash';
+const MODEL = "gemini-2.5-flash";
 
 const SAFETY_SETTINGS = [
-  { category: HarmCategory.HARM_CATEGORY_HARASSMENT,        threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,       threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  {
+    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
 ];
 
 /**
@@ -53,10 +66,10 @@ export function buildSystemPrompt(ctx: {
   advanceLimit: number;
   upcomingBills: { label: string; amount: number; dueInDays: number }[];
   financialScore: number;
-  countryCode?: string;
+  countryCode?: CountryCode;
   isGuest?: boolean;
 }) {
-  const countryCode = ctx.countryCode || 'KE';
+  const countryCode = (ctx.countryCode || "KE") as CountryCode;
 
   // ── Guest visitor prompt — no fabricated data ──────────────────────────
   if (ctx.isGuest) {
@@ -117,8 +130,11 @@ If a visitor asks about EaziWage, explain how it works and encourage them to sig
 
   // ── Authenticated employee prompt — real data from their profile ────────
   const billsSummary = ctx.upcomingBills
-    .map(b => `  • ${b.label}: ${formatMoney(b.amount, countryCode)} due in ${b.dueInDays} days`)
-    .join('\n');
+    .map(
+      (b) =>
+        `  • ${b.label}: ${formatMoney(b.amount, countryCode)} due in ${b.dueInDays} days`
+    )
+    .join("\n");
 
   return `You are Wiza, EaziWage's AI financial wellness coach — warm, playful, and fiercely committed to the financial wellbeing of the people you serve.
 
@@ -128,7 +144,7 @@ If a visitor asks about EaziWage, explain how it works and encourage them to sig
 - Maximum safe advance (60% limit): ${formatMoney(ctx.advanceLimit, countryCode)}
 - Financial health score: ${ctx.financialScore}/100
 - Upcoming obligations:
-${billsSummary || '  (none recorded)'}
+${billsSummary || "  (none recorded)"}
 
 ## Your superpowers
 1. **Instant calculations** — When someone mentions their salary or spending, immediately calculate:
@@ -215,10 +231,10 @@ Once I know this, I'll build you a realistic budget that doesn't feel like punis
  */
 export async function* streamWizaReply(
   systemPrompt: string,
-  history: Content[],       // previous turns: [{role, parts}]
-  userMessage: string,
+  history: Content[], // previous turns: [{role, parts}]
+  userMessage: string
 ): AsyncGenerator<string> {
-  if (!genAI) throw new Error('AI service is not configured');
+  if (!genAI) throw new Error("AI service is not configured");
 
   const model = genAI.getGenerativeModel({
     model: MODEL,
@@ -244,7 +260,7 @@ export async function* streamWizaReply(
  * Non-streaming call used by the summary Trigger.dev job.
  */
 export async function generateSummary(transcript: string): Promise<string> {
-  if (!genAI) throw new Error('AI service is not configured');
+  if (!genAI) throw new Error("AI service is not configured");
 
   const model = genAI.getGenerativeModel({ model: MODEL });
 
@@ -264,11 +280,11 @@ ${transcript}`
  * Pass the full in-memory message array; returns a plain-text bullet summary.
  */
 export async function generateClientSummary(
-  messages: { role: 'user' | 'model'; content: string }[],
+  messages: { role: "user" | "model"; content: string }[]
 ): Promise<string> {
   const transcript = messages
-    .map(m => `${m.role === 'user' ? 'User' : 'Wiza'}: ${m.content}`)
-    .join('\n\n');
+    .map((m) => `${m.role === "user" ? "User" : "Wiza"}: ${m.content}`)
+    .join("\n\n");
 
   return generateSummary(transcript);
 }

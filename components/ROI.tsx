@@ -14,6 +14,7 @@ import {
 } from "framer-motion";
 import Link from "next/link";
 import { useCurrency } from "./CurrencyProvider";
+import { useParallax } from "@/hooks/use-parallax";
 
 /* ---------- FX Config ---------- */
 const FX_CACHE_KEY = "eazi_fx_v1";

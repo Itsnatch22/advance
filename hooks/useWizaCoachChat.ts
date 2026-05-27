@@ -87,8 +87,8 @@ export function useWizaCoachChat() {
         index === visibleMessages.length - 1 &&
         message.role === "assistant";
       const createdAt =
-        typeof (message as { createdAt?: unknown }).createdAt === "string"
-          ? (message as { createdAt: string }).createdAt
+        typeof (message as any).createdAt === "string"
+          ? (message as any).createdAt
           : new Date().toISOString();
 
       return {
@@ -104,7 +104,10 @@ export function useWizaCoachChat() {
   const sendMessage = useCallback(
     async (content: string) => {
       if (!content.trim() || chat.status === "streaming") return;
-      await chat.sendMessage(content);
+      await chat.sendMessage({
+        role: "user",
+        parts: [{ type: "text", text: content }],
+      } as any);
     },
     [chat]
   );
