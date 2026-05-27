@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+const supabase = supabaseUrl && supabaseAnonKey
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 const CODE_TO_NAME: Record<string, string> = {
   KE: "Kenya",
@@ -14,30 +16,41 @@ const CODE_TO_NAME: Record<string, string> = {
 };
 
 export async function GET() {
-    const { data, error } = await supabase
-    .from("employee_onboarding")
-    .select("country")
-    .eq("status", "approved")
-
-    if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Supabase is not configured for public read access." },
+        { status: 503 }
+      );
     }
 
-    const counts: Record<string, number> = {
-        Kenya: 0,
-        Uganda: 0,
-        Tanzania: 0,
-        Rwanda: 0,
-    };
+    const countries = ["KE", "UG", "TZ", "RW"];
+    
+    try {
+        const results = await Promise.all(
+            countries.map((code) =>
+                supabase
+                    .from("employee_onboarding")
+                    .select("*", { count: "exact", head: true })
+                    .eq("status", "approved")
+                    .eq("country", code)
+            )
+        );
 
-    data?.forEach((row) => {
-        const name = CODE_TO_NAME[row.country?.trim().toUpperCase()];
-        if (name) counts[name]++;
-    });
+        const counts: Record<string, number> = {};
+        countries.forEach((code, i) => {
+            const name = CODE_TO_NAME[code];
+            counts[name] = results[i].count ?? 0;
+        });
 
-    return NextResponse.json(counts, {
-        headers: {
-            "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
-        },
-    });
+        return NextResponse.json(counts, {
+            headers: {
+                "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+            },
+        });
+    } catch (error: unknown) {
+        return NextResponse.json(
+            { error: error instanceof Error ? error.message : "Internal Server Error" },
+            { status: 500 }
+        );
+    }
 }

@@ -1,6 +1,3 @@
-// app/api/chat/history/route.ts
-// GET /api/chat/history?session_id=xxx&visitor_id=xxx
-
 import { NextRequest } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/supabase-server';
 
@@ -20,7 +17,6 @@ export async function GET(req: NextRequest): Promise<Response> {
     return Response.json({ error: 'Missing params' }, { status: 400 });
   }
 
-  // Verify session belongs to this visitor
   const { data: session } = await supabaseServer
     .from('wiza_public_sessions')
     .select('id')

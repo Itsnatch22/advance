@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import SalesNotification from "@/emails/SalesNotification";
-import { checkRateLimit, rateLimiter } from "@/lib/rate-limit"; // ← Using provided file
+import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit"; // ← Using provided file
 
 const salesSchema = z.object({
   name: z.string().min(2),

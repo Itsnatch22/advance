@@ -3,8 +3,8 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-import { calc, type Payload, type JsonConfig } from "@/lib/calc";
-import { supabaseAdmin } from "@/lib/supabase";
+import { calc, type Payload, type JsonConfig } from "@/lib/finance/calc";
+import { supabaseAdmin } from "@/lib/supabase/supabase";
 
 // Hardcoded config file paths to prevent path traversal
 const CONFIG_PATHS = {
@@ -13,8 +13,6 @@ const CONFIG_PATHS = {
   TZ: path.join(process.cwd(), "data", "calctz.json"),
   RW: path.join(process.cwd(), "data", "calcrw.json"),
 } as const;
-
-
 
 // Read JSON config for a country using only hardcoded paths
 async function readCountryConfig(country: string): Promise<JsonConfig> {
@@ -51,15 +49,31 @@ async function readCountryConfig(country: string): Promise<JsonConfig> {
 }
 
 // ✅ STEP 5 — get location from IP (backend-only, clean)
+const locationCache = new Map<
+  string,
+  { expires: number; value: { country: string | null; city: string | null } }
+>();
+const LOCATION_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 async function getLocationFromIP(ip: string) {
   if (!ip || ip === "unknown" || ip.startsWith("127.")) {
     return { country: null, city: null };
   }
 
+  const cached = locationCache.get(ip);
+  if (cached && Date.now() < cached.expires) {
+    return cached.value;
+  }
+
+  const controller = new AbortController();
+  const timeoutMs = 5000;
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
   try {
     const res = await fetch(`https://ipapi.co/${ip}/json/`, {
       headers: { "User-Agent": "eaziwage-backend" },
       cache: "no-store",
+      signal: controller.signal,
     });
 
     if (!res.ok) {
@@ -67,13 +81,21 @@ async function getLocationFromIP(ip: string) {
     }
 
     const data = await res.json();
-
-    return {
+    const value = {
       country: data.country_code ?? null,
       city: data.city ?? null,
     };
+
+    locationCache.set(ip, {
+      expires: Date.now() + LOCATION_CACHE_TTL,
+      value,
+    });
+
+    return value;
   } catch {
     return { country: null, city: null };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 // ✅ END STEP 5
@@ -90,8 +112,14 @@ export async function POST(req: Request) {
     const device = req.headers.get("user-agent") ?? "unknown";
     // ✅ END STEP 4
 
+    // Check for cookie consent
+    const cookieHeader = req.headers.get("cookie") || "";
+    const hasConsent = cookieHeader.includes("cookie-consent=accepted");
+
     // ✅ STEP 5 — resolve location from IP
-    const location = await getLocationFromIP(ip);
+    const location = hasConsent
+      ? await getLocationFromIP(ip)
+      : { country: null, city: null };
     // ✅ END STEP 5
 
     const { searchParams } = new URL(req.url);
@@ -124,8 +152,8 @@ export async function POST(req: Request) {
         deductions: deductions,
         country: location.country,
         city: location.city,
-        ip_address: ip,
-        device: device,
+        ip_address: hasConsent ? ip : "anonymous",
+        device: hasConsent ? device : "anonymous",
         created_at: new Date().toISOString(),
       });
 

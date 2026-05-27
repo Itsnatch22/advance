@@ -1,6 +1,6 @@
 import { task, logger } from '@trigger.dev/sdk/v3';
 import { createClient } from '@supabase/supabase-js';
-import { generateSummary } from '@/lib/gemini';
+import { generateSummary } from '@/lib/ai/gemini';
 import type { SummarizeJobPayload } from '@/types/wiza';
 
 // Helper function to wait for specified milliseconds
@@ -45,8 +45,9 @@ export const summarizeWizaSession = task({
       
       attempts++;
       if (attempts < maxAttempts) {
-        logger.info('Waiting for messages, polling again...', { attempt: attempts, maxAttempts });
-        await wait(5000); // Wait 5 seconds between attempts
+        const delay = Math.pow(2, attempts) * 1000; // Exponential backoff: 2s, 4s, 8s, 16s, 32s
+        logger.info('Waiting for messages, polling again...', { attempt: attempts, delay, maxAttempts });
+        await wait(delay);
       }
     }
     

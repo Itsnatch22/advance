@@ -2,6 +2,8 @@
 import React, { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-hot-toast";
+import { getCurrencyFromCountry, type CountryCode } from "@/lib/currency/currency";
 
 // 📊 GRAPH IMPORTS
 import {
@@ -59,14 +61,11 @@ type CalcResult = {
   payee: number;
 };
 
-const currencyMap: Record<
-  Country,
-  { symbol: string; locale: string; accessCapPercent: number }
-> = {
-  KE: { symbol: "KES", locale: "en-KE", accessCapPercent: 60 },
-  UG: { symbol: "UGX", locale: "en-UG", accessCapPercent: 60 },
-  TZ: { symbol: "TZS", locale: "en-TZ", accessCapPercent: 30 },
-  RW: { symbol: "RWF", locale: "en-RW", accessCapPercent: 45 },
+const currencyAccessConfig: Record<Country, { accessCapPercent: number }> = {
+  KE: { accessCapPercent: 60 },
+  UG: { accessCapPercent: 60 },
+  TZ: { accessCapPercent: 30 },
+  RW: { accessCapPercent: 45 },
 };
 
 const fmt = (n: number, locale = "en-KE") =>
@@ -263,7 +262,7 @@ export default function Calculator() {
 
   const callBackendCalc = async () => {
     if (!salary) {
-      alert("Please fill in your salary");
+      toast.error("Please fill in your salary");
       setResult(null);
       return;
     }
@@ -279,7 +278,7 @@ export default function Calculator() {
 
       const data = await res.json();
       if (!data.success) {
-        alert("Backend calculation failed!");
+        toast.error("Backend calculation failed!");
         return;
       }
 
@@ -330,7 +329,7 @@ export default function Calculator() {
           };
       }
 
-      const accessCapPercent = currencyMap[country].accessCapPercent;
+      const accessCapPercent = currencyAccessConfig[country].accessCapPercent;
       const gross = Number(data.gross ?? data.totalIncome ?? 0);
       const net = Number(data.netPay ?? data.net ?? 0);
 
@@ -352,7 +351,7 @@ export default function Calculator() {
 
       setResult(mapped);
     } catch {
-      alert("Failed to connect to backend");
+      toast.error("Failed to connect to backend");
     }
   };
 
@@ -368,9 +367,9 @@ export default function Calculator() {
     setDaysWorked(today.getDate());
   };
 
-  const currency = currencyMap[country];
-  const currencySymbol = currency.symbol;
-  const locale = currency.locale;
+  const currencyDetails = getCurrencyFromCountry(country as CountryCode);
+  const currencySymbol = currencyDetails.symbol;
+  const locale = currencyDetails.localeStr;
 
   return (
     <div className="mx-auto mt-6 w-full max-w-sm rounded-2xl border border-green-100 bg-white p-6 shadow-2xl sm:max-w-md md:max-w-lg dark:border-green-800 dark:bg-gray-900">

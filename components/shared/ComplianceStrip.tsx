@@ -1,5 +1,5 @@
 import { ShieldCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 
 interface ComplianceItem {
   text: string;

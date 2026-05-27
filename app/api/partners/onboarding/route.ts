@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import PartnerOnboardingEmail from "@/emails/Partner-onboarding";
+import PartnerNotificationEmail from "@/emails/PartnerNotification";
 
 /* ----------------------------- validation ----------------------------- */
 
@@ -65,9 +66,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send confirmation email to partner
-    try {
-      await resend.emails.send({
+    // Send emails in parallel
+    const emailPromises = [
+      // 1. Confirmation email to partner
+      resend.emails.send({
         from: "EaziWage Partnerships <partnerships@eaziwage.com>",
         to: validatedData.email,
         subject: "Partnership Application Received - EaziWage",
@@ -75,34 +77,32 @@ export async function POST(request: NextRequest) {
           contactName: validatedData.contactName,
           companyName: validatedData.companyName,
         }),
-      });
-    } catch (emailError) {
-      console.error("Email error:", emailError);
-      // Don't fail the request if email fails
-    }
-
-    // Send notification to internal team
-    try {
-      await resend.emails.send({
+      }),
+      // 2. Notification to internal team
+      resend.emails.send({
         from: "EaziWage System <noreply@eaziwage.com>",
         to: "partnerships@eaziwage.com",
         subject: `New ${validatedData.partnerType} Partnership Application`,
-        html: `
-          <h2>New Partnership Application</h2>
-          <p><strong>Partner Type:</strong> ${validatedData.partnerType}</p>
-          <p><strong>Company:</strong> ${validatedData.companyName}</p>
-          <p><strong>Industry:</strong> ${validatedData.industry}</p>
-          <p><strong>Contact:</strong> ${validatedData.contactName} (${validatedData.jobTitle})</p>
-          <p><strong>Email:</strong> ${validatedData.email}</p>
-          <p><strong>Phone:</strong> ${validatedData.phone}</p>
-          <p><strong>Company Size:</strong> ${validatedData.companySize}</p>
-          <p><strong>Message:</strong></p>
-          <p>${validatedData.message}</p>
-        `,
-      });
-    } catch (emailError) {
-      console.error("Internal notification error:", emailError);
-    }
+        react: PartnerNotificationEmail({
+          partnerType: validatedData.partnerType,
+          companyName: validatedData.companyName,
+          industry: validatedData.industry,
+          contactName: validatedData.contactName,
+          jobTitle: validatedData.jobTitle,
+          email: validatedData.email,
+          phone: validatedData.phone,
+          companySize: validatedData.companySize,
+          message: validatedData.message,
+        }),
+      })
+    ];
+
+    const emailResults = await Promise.allSettled(emailPromises);
+    emailResults.forEach((result, idx) => {
+      if (result.status === 'rejected') {
+        console.error(`Email ${idx === 0 ? 'partner' : 'internal'} failed:`, result.reason);
+      }
+    });
 
     return NextResponse.json(
       {

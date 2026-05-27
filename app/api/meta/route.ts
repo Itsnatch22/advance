@@ -7,12 +7,15 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const country = (searchParams.get("country") || "KE").toUpperCase();
+    const allowedFiles: Record<string, string> = {
+      KE: "ke.json",
+      UG: "ug.json",
+      TZ: "tz.json",
+      RW: "rw.json",
+    };
 
-    const filePath = path.join(
-      process.cwd(),
-      "data",
-      `${country.toLowerCase()}.json`
-    );
+    const fileName = allowedFiles[country] || allowedFiles.KE;
+    const filePath = path.join(process.cwd(), "data", fileName);
     const raw = await fs.readFile(filePath, "utf8");
     const cfg = JSON.parse(raw);
 

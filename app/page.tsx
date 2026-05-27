@@ -10,8 +10,6 @@ import Coverage from "@/components/Coverage";
 import Marquee from "@/components/Marquee";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
-export const dynamic = 'force-dynamic';
-
 export default function HomePage() {
   return (
     <ErrorBoundary>
@@ -23,9 +21,6 @@ export default function HomePage() {
         <StatsCounter />
         <Needs />
         <Pricing />
-        {/*
-        <Testimonials />
-        */}
         <Coverage />
         <FAQ />
         <CTA />

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { tasks } from '@trigger.dev/sdk';
-import { generateSummary } from '@/lib/gemini';
+import { generateSummary } from '@/lib/ai/gemini';
 import type { summarizeWizaSession } from '@/trigger/wiza-summarize';
 
 const supabase = createClient(

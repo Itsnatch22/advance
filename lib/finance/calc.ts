@@ -1,5 +1,5 @@
 // /lib/calc.ts
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
 
 export interface Payload {
@@ -212,7 +212,7 @@ function calcLST(gross: number, bands: { upTo: number; tax: number }[]) {
   return bands[bands.length - 1].tax;
 }
 
-export function readCountryConfig(countryCode: string) {
+export async function readCountryConfig(countryCode: string) {
   const fileMap: Record<string, string> = {
     KE: "calcke.json",
     UG: "calcug.json",
@@ -224,11 +224,13 @@ export function readCountryConfig(countryCode: string) {
   const fileName = fileMap[code] || fileMap["KE"];
   const filePath = path.join(process.cwd(), "data", fileName);
 
-  if (!fs.existsSync(filePath)) {
+  try {
+    await fs.access(filePath);
+  } catch {
     throw new Error(`Config file not found: ${filePath}`);
   }
 
-  const raw = fs.readFileSync(filePath, "utf8");
+  const raw = await fs.readFile(filePath, "utf8");
   const parsed = JSON.parse(raw);
 
   const meta = {

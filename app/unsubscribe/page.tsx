@@ -3,6 +3,19 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Wallet } from "lucide-react";
+import { DM_Sans, DM_Serif_Display } from "next/font/google";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
+});
+
+const dmSerifDisplay = DM_Serif_Display({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 
 type Product = "newsletter" | "partners" | "sales" | "all";
 
@@ -73,13 +86,13 @@ export default function UnsubscribePage() {
   }
 
   return (
-    <>
+    <div className={`${dmSans.className} ${dmSerifDisplay.className}`}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
-
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
+          --font-dm-sans: ${dmSans.style.fontFamily};
+          --font-dm-serif: ${dmSerifDisplay.style.fontFamily};
           --ink: #1a1a2e;
           --ink-soft: #4a4a6a;
           --ink-muted: #8888aa;
@@ -98,7 +111,7 @@ export default function UnsubscribePage() {
         }
 
         body {
-          font-family: 'DM Sans', sans-serif;
+          font-family: var(--font-dm-sans), sans-serif;
           background: var(--surface);
           color: var(--ink);
           min-height: 100vh;
@@ -148,7 +161,7 @@ export default function UnsubscribePage() {
         }
         .logo-mark svg { width: 18px; height: 18px; fill: white; }
         .logo-text {
-          font-family: 'DM Serif Display', serif;
+          font-family: var(--font-dm-serif), serif;
           font-size: 20px;
           color: var(--ink);
           letter-spacing: -0.3px;
@@ -158,7 +171,7 @@ export default function UnsubscribePage() {
         .card-body { padding: 32px; }
 
         .heading {
-          font-family: 'DM Serif Display', serif;
+          font-family: var(--font-dm-serif), serif;
           font-size: 26px;
           color: var(--ink);
           line-height: 1.2;
@@ -194,7 +207,7 @@ export default function UnsubscribePage() {
         }
 
         input[type="email"], select, textarea {
-          font-family: 'DM Sans', sans-serif;
+          font-family: var(--font-dm-sans), sans-serif;
           font-size: 15px;
           color: var(--ink);
           background: var(--surface);
@@ -255,7 +268,7 @@ export default function UnsubscribePage() {
         }
 
         .btn-primary {
-          font-family: 'DM Sans', sans-serif;
+          font-family: var(--font-dm-sans), sans-serif;
           font-size: 15px;
           font-weight: 600;
           background: var(--ink);
@@ -325,7 +338,7 @@ export default function UnsubscribePage() {
         }
         .success-icon svg { width: 28px; height: 28px; stroke: var(--accent); }
         .success-heading {
-          font-family: 'DM Serif Display', serif;
+          font-family: var(--font-dm-serif), serif;
           font-size: 22px;
           color: var(--ink);
         }
@@ -488,6 +501,6 @@ export default function UnsubscribePage() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

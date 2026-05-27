@@ -1,6 +1,6 @@
 // app/api/excel-data/route.ts
 import { NextResponse } from "next/server";
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
 
 let cache: { ts: number; data: unknown } | null = null;
@@ -12,10 +12,13 @@ export async function GET() {
     return NextResponse.json(cache.data);
   }
 
-  if (!fs.existsSync(file)) {
+  try {
+    await fs.access(file);
+  } catch {
     return NextResponse.json({ error: "excel.json missing" }, { status: 500 });
   }
-  const raw = fs.readFileSync(file, "utf8");
+
+  const raw = await fs.readFile(file, "utf8");
   const data = JSON.parse(raw);
   cache = { ts: Date.now(), data };
   return NextResponse.json(data);

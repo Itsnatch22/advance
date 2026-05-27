@@ -8,7 +8,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { useCurrency } from "@/components/CurrencyProvider";
-import { formatCurrency } from "@/lib/currency";
+import { formatCurrency } from "@/lib/currency/currency";
 
 export default function UI() {
   const { locale } = useCurrency();

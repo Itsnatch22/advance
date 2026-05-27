@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseUser } from "@/lib/supabase/server";
-import { redis } from "@/lib/rate-limit";
+import { redis } from "@/lib/security/rate-limit";
 import os from "os";
 
 export const dynamic = "force-dynamic";

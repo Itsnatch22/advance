@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useState, MouseEvent } from "react";
+import React, { useState } from "react";
 import {
   motion,
   AnimatePresence,
-  useTransform,
-  useSpring,
-  useMotionValue,
 } from "framer-motion";
 import {
   Clock3,
@@ -24,6 +21,8 @@ import {
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
 import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
 import UI from "./UI";
+import { FloatingOrb } from "@/components/shared/FloatingOrb";
+import { TiltCard } from "@/components/shared/TiltCard";
 
 const reasons = [
   {
@@ -117,108 +116,6 @@ const faqs = [
   },
 ];
 
-const FloatingOrb = ({
-  color,
-  delay,
-  className,
-}: {
-  color: string;
-  delay: number;
-  className?: string;
-}) => (
-  <motion.div
-    animate={{
-      y: [0, -40, 0],
-      x: [0, 20, 0],
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      duration: 10 + Math.random() * 5,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
-  />
-);
-
-const TiltFeatureCard = ({
-  icon: Icon,
-  title,
-  desc,
-  index,
-}: {
-  icon: React.ElementType;
-  title: string;
-  desc: string;
-  index: number;
-}) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
-    stiffness: 150,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      style={{ perspective: 1000 }}
-      className="h-full"
-    >
-      <motion.div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={() => {
-          x.set(0);
-          y.set(0);
-        }}
-        style={{ rotateX, rotateY }}
-        className="group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
-      >
-        <motion.div
-          style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([mx, my]) =>
-                `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
-            ),
-          }}
-          className="pointer-events-none absolute inset-0 rounded-[2.5rem]"
-        />
-
-        <div className="relative z-10">
-          <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
-            <Icon className="h-8 w-8" strokeWidth={1.5} />
-          </div>
-          <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-700">
-            {title}
-          </h3>
-          <p className="text-lg leading-relaxed text-slate-500">{desc}</p>
-        </div>
-        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
-      </motion.div>
-    </motion.div>
-  );
-};
-
 export default function Employees() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -270,13 +167,27 @@ export default function Employees() {
 
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {reasons.map((item, i) => (
-              <TiltFeatureCard
+              <motion.div
                 key={i}
-                icon={item.icon}
-                title={item.title}
-                desc={item.desc}
-                index={i}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                className="h-full"
+              >
+                <TiltCard className="group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10">
+                  <div className="relative z-10">
+                    <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
+                      <item.icon className="h-8 w-8" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-700">
+                      {item.title}
+                    </h3>
+                    <p className="text-lg leading-relaxed text-slate-500">{item.desc}</p>
+                  </div>
+                  <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
+                </TiltCard>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -305,13 +216,27 @@ export default function Employees() {
 
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {rolloutPlans.map((item, j) => (
-              <TiltFeatureCard
+              <motion.div
                 key={j}
-                icon={item.icon}
-                title={item.title}
-                desc={item.desc}
-                index={j}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: j * 0.1 }}
+                className="h-full"
+              >
+                <TiltCard className="group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10">
+                  <div className="relative z-10">
+                    <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
+                      <item.icon className="h-8 w-8" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-700">
+                      {item.title}
+                    </h3>
+                    <p className="text-lg leading-relaxed text-slate-500">{item.desc}</p>
+                  </div>
+                  <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
+                </TiltCard>
+              </motion.div>
             ))}
           </div>
         </div>

@@ -1,8 +1,9 @@
 "use client";
-import React, { MouseEvent } from "react";
+import React from "react";
 import { Icons } from "@/constants";
 import { testimonials } from "@/constants/data";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
+import { useParallax } from "@/hooks/use-parallax";
 
 const TestimonialCard = ({
   testimonial,
@@ -16,33 +17,7 @@ const TestimonialCard = ({
     location: string;
   };
 }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
-
-  function onMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseXPos = event.clientX - rect.left;
-    const mouseYPos = event.clientY - rect.top;
-
-    x.set(mouseXPos / width - 0.5);
-    y.set(mouseYPos / height - 0.5);
-
-    mouseX.set(mouseXPos);
-    mouseY.set(mouseYPos);
-  }
-
-  function onMouseLeave() {
-    x.set(0);
-    y.set(0);
-  }
+  const { rotateX, rotateY, spotlightBackground, handleMouseMove, handleMouseLeave } = useParallax();
 
   return (
     <motion.div
@@ -55,8 +30,8 @@ const TestimonialCard = ({
       className="h-full"
     >
       <motion.div
-        onMouseMove={onMouseMove}
-        onMouseLeave={onMouseLeave}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         style={{
           rotateX,
           rotateY,
@@ -66,10 +41,7 @@ const TestimonialCard = ({
         {/* spotlight effect */}
         <motion.div
           style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([mx, my]) => `radial-gradient(450px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.08), transparent 80%)`
-            ),
+            background: spotlightBackground,
           }}
           className="absolute inset-0 pointer-events-none"
         />

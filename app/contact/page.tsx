@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useState, MouseEvent } from "react";
+import React, { useState } from "react";
 import {
   motion,
   AnimatePresence,
-  useMotionValue,
-  useSpring,
-  useTransform,
 } from "framer-motion";
 import {
   Mail,
@@ -18,6 +15,8 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { FloatingOrb } from "@/components/shared/FloatingOrb";
+import { useParallax } from "@/hooks/use-parallax";
 
 /* ----------------------------- validation ----------------------------- */
 
@@ -33,31 +32,6 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 /* ----------------------------- components ----------------------------- */
 
-const FloatingOrb = ({
-  color,
-  delay,
-  className,
-}: {
-  color: string;
-  delay: number;
-  className?: string;
-}) => (
-  <motion.div
-    animate={{
-      y: [0, -40, 0],
-      x: [0, 20, 0],
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      duration: 10 + Math.random() * 5,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
-  />
-);
-
 const TiltContactCard = ({
   icon: Icon,
   label,
@@ -69,47 +43,24 @@ const TiltContactCard = ({
   value: string;
   href?: string;
 }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
-    stiffness: 150,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  function handleMouseMove(
-    event: MouseEvent<HTMLDivElement | HTMLAnchorElement>
-  ) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  }
+  const {
+    rotateX,
+    rotateY,
+    spotlightBackground,
+    handleMouseMove,
+    handleMouseLeave,
+  } = useParallax();
 
   const Content = (
     <motion.div
       onMouseMove={handleMouseMove}
-      onMouseLeave={() => {
-        x.set(0);
-        y.set(0);
-      }}
+      onMouseLeave={handleMouseLeave}
       style={{ rotateX, rotateY }}
       className="group relative flex items-center gap-6 rounded-3xl border border-slate-200/60 bg-white/40 p-6 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
     >
       <motion.div
         style={{
-          background: useTransform(
-            [mouseX, mouseY],
-            ([mx, my]) =>
-              `radial-gradient(300px circle at ${mx}px ${my}px, rgba(255, 255, 255, 0.1), transparent 80%)`
-          ),
+          background: spotlightBackground,
         }}
         className="pointer-events-none absolute inset-0 rounded-3xl"
       />

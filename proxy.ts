@@ -1,4 +1,4 @@
-import { proxy as proxyHandler } from "@/lib/proxy";
+import { proxy as proxyHandler } from "@/lib/network/proxy";
 import type { NextRequest } from 'next/server';
 
 export default function proxy(request: NextRequest) {

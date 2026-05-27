@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState, MouseEvent } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2,
   RefreshCcw,
@@ -11,9 +11,6 @@ import {
 import {
   motion,
   AnimatePresence,
-  useMotionValue,
-  useSpring,
-  useTransform,
 } from "framer-motion";
 import Link from "next/link";
 import { useCurrency } from "./CurrencyProvider";
@@ -262,46 +259,19 @@ const TiltROICard = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), {
-    stiffness: 150,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  }
+  const { rotateX, rotateY, spotlightBackground, handleMouseMove, handleMouseLeave } = useParallax();
 
   return (
     <motion.div style={{ perspective: 1000 }} className="h-full">
       <motion.div
         onMouseMove={handleMouseMove}
-        onMouseLeave={() => {
-          x.set(0);
-          y.set(0);
-        }}
+        onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY }}
         className={`group relative h-full overflow-hidden rounded-[3rem] border border-slate-200/60 bg-white/40 p-8 md:p-12 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10 ${className}`}
       >
         <motion.div
           style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([mx, my]) =>
-                `radial-gradient(400px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
-            ),
+            background: spotlightBackground,
           }}
           className="absolute inset-0 pointer-events-none rounded-[3rem]"
         />

@@ -36,6 +36,8 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const locale = cookieStore.get("NEXT_LOCALE")?.value || "en-ke";
+  const analyticsConsent =
+    cookieStore.get("cookie-consent")?.value === "accepted";
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -48,7 +50,7 @@ export default async function RootLayout({
           <Navbar />
           {children}
           <CookieBanner />
-          <Analytics />
+          {analyticsConsent ? <Analytics /> : null}
           <WizaChat />
           <Footer />
         </CurrencyProvider>

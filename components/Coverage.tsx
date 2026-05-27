@@ -1,14 +1,14 @@
 "use client";
 
-import React, {useEffect, MouseEvent, useState } from "react";
+import React, { useEffect, useState, MouseEvent } from "react";
 import {
   motion,
   useMotionValue,
   useSpring,
   useTransform,
 } from "framer-motion";
-import { Globe } from "lucide-react";
 import Image from "next/image";
+import { Globe } from "lucide-react";
 
 const countries = [
   {
@@ -222,12 +222,7 @@ export default function Coverage() {
           </motion.p>
         </div>
 
-        {/*
-        <div className="mb-20">
-          <ImpactMap />
-        </div>
-          */}
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {countries.map((country) => (
             <CountryCard key={country.name} country={country} count={userCounts[country.name] ?? 0} />
           ))}

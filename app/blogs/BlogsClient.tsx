@@ -6,15 +6,12 @@ import React, {
   useRef,
   useEffect,
   useCallback,
-  MouseEvent,
 } from "react";
 import {
   motion,
   AnimatePresence,
   useScroll,
   useTransform,
-  useSpring,
-  useMotionValue,
 } from "framer-motion";
 import {
   Search,
@@ -35,6 +32,8 @@ import {
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Resource, ResourceCategory } from "@/types/resources";
+import { FloatingOrb } from "@/components/shared/FloatingOrb";
+import { useParallax } from "@/hooks/use-parallax";
 
 interface CategoryOption {
   id: "all" | ResourceCategory;
@@ -69,25 +68,6 @@ function getResourceDedupKey(resource: Resource): string {
     .join("::");
 }
 
-interface FloatingOrbProps {
-  color: string;
-  delay: number;
-  className?: string;
-}
-
-const FloatingOrb = ({ color, delay, className }: FloatingOrbProps) => (
-  <motion.div
-    animate={{ y: [0, -40, 0], x: [0, 20, 0], scale: [1, 1.1, 1] }}
-    transition={{
-      duration: 10 + Math.random() * 5,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className ?? ""}`}
-  />
-);
-
 const SkeletonCard = () => (
   <div className="relative flex h-full animate-pulse flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl">
     <div className="mb-6 flex items-center justify-between">
@@ -119,32 +99,13 @@ interface TiltResourceCardProps {
 }
 
 const TiltResourceCard = ({ resource }: TiltResourceCardProps) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), {
-    stiffness: 150,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  const {
+    rotateX,
+    rotateY,
+    spotlightBackground,
+    handleMouseMove,
+    handleMouseLeave,
+  } = useParallax();
 
   return (
     <motion.div style={{ perspective: 1000 }} className="h-full">
@@ -157,11 +118,7 @@ const TiltResourceCard = ({ resource }: TiltResourceCardProps) => {
         {/* Radial glow that follows the cursor */}
         <motion.div
           style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([mx, my]: number[]) =>
-                `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.04), transparent 80%)`
-            ),
+            background: spotlightBackground,
           }}
           className="pointer-events-none absolute inset-0 rounded-[2.5rem]"
         />

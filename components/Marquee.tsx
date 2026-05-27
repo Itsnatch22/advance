@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useMemo } from "react";
 import { partners } from "@/constants/data";
 
-const duplicated = [...partners, ...partners];
-
 export default function Marquee() {
+  const duplicated = useMemo(() => [...partners, ...partners], []);
+
   return (
     <section className="relative overflow-hidden bg-linear-to-b from-white via-slate-50 to-white py-40">
       {/* ambient glow */}

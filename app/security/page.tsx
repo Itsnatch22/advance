@@ -85,31 +85,7 @@ const certifications = [
 /* ----------------------------- components ----------------------------- */
 
 import { CreditCard } from "lucide-react"; // Import missing icon
-
-const FloatingOrb = ({
-  color,
-  delay,
-  className,
-}: {
-  color: string;
-  delay: number;
-  className?: string;
-}) => (
-  <motion.div
-    animate={{
-      y: [0, -40, 0],
-      x: [0, 20, 0],
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      duration: 10 + Math.random() * 5,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
-  />
-);
+import FloatingOrb from "@/components/shared/FloatingOrb";
 
 const VaultDoor = ({
   isOpen,

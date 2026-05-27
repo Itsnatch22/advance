@@ -1,6 +1,6 @@
 // app/api/cookie-consent/route.ts
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/supabase";
 
 export async function POST(req: Request) {
   try {

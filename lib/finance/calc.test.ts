@@ -18,7 +18,7 @@ describe("Calculator Logic", () => {
     // Expected available wage: 76,068
     // Let's see what the current logic produces
     console.log("Rwanda result:", result.youCanAccessNow);
-    // expect(result.youCanAccessNow).toBe(76068);
+    expect(result.youCanAccessNow).toBe(76068);
   });
 
   // Test case for Uganda from user
@@ -36,7 +36,7 @@ describe("Calculator Logic", () => {
     // Expected available wage: 3,916,800
     // Let's see what the current logic produces
     console.log("Uganda result:", result.youCanAccessNow);
-    // expect(result.youCanAccessNow).toBe(3916800);
+    expect(result.youCanAccessNow).toBe(3916800);
   });
 
   // Test case for Kenya to ensure no changes

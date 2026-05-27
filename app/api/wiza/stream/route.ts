@@ -1,8 +1,7 @@
 import { NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { streamWizaReply, buildSystemPrompt } from '@/lib/gemini';
-import type { StreamEvent } from '@/types/wiza';
-import type { Content } from '@google/generative-ai';
+import { createUIMessageStream, createUIMessageStreamResponse } from 'ai';
+import { streamWizaReply, buildSystemPrompt } from '@/lib/ai/gemini';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,6 +9,21 @@ const supabase = createClient(
 );
 
 const HISTORY_LIMIT = 20; // last N messages fed to Gemini
+
+function extractLatestUserMessage(messages: unknown): string {
+  if (!Array.isArray(messages)) return '';
+  for (let i = messages.length - 1; i >= 0; i -= 1) {
+    const message = messages[i] as { role?: string; parts?: Array<{ type?: string; text?: string }> };
+    if (message?.role !== 'user') continue;
+    if (!Array.isArray(message.parts)) continue;
+    return message.parts
+      .filter(part => part?.type === 'text' && typeof part.text === 'string')
+      .map(part => part.text)
+      .join(' ')
+      .trim();
+  }
+  return '';
+}
 
 export async function POST(req: NextRequest) {
   if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
@@ -34,23 +48,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  let body;
+  let body: Record<string, unknown>;
   try {
-    const text = await req.text();
-    console.log('Raw request body:', text);
-    body = JSON.parse(text);
-    console.log('Parsed body:', body);
+    body = await req.json();
   } catch (error) {
     console.error('JSON parse error:', error);
     return new Response(`Invalid JSON: ${error}`, { status: 400 });
   }
-  
-  const { session_id: incomingSessionId, content } = body as {
-    session_id: string | null;
-    content: string;
-  };
 
-  if (!content?.trim()) {
+  const incomingSessionId = body.session_id as string | null;
+  const content = typeof body.content === 'string' && body.content.trim()
+    ? body.content.trim()
+    : extractLatestUserMessage(body.messages).trim();
+
+  if (!content) {
     return new Response('content is required', { status: 400 });
   }
 
@@ -63,7 +74,6 @@ export async function POST(req: NextRequest) {
       .eq('id', employeeId)
       .single();
 
-    // Earned wages — read from latest payroll record
     const { data: payroll } = await supabase
       .from('payroll_records')
       .select('net_pay, earned_wages')
@@ -72,7 +82,6 @@ export async function POST(req: NextRequest) {
       .limit(1)
       .single();
 
-    // Upcoming bills
     const { data: bills } = await supabase
       .from('employee_bills')
       .select('label, amount, due_date')
@@ -86,9 +95,7 @@ export async function POST(req: NextRequest) {
     const upcomingBills = (bills ?? []).map(b => ({
       label: b.label,
       amount: b.amount,
-      dueInDays: Math.ceil(
-        (new Date(b.due_date).getTime() - Date.now()) / 86_400_000,
-      ),
+      dueInDays: Math.ceil((new Date(b.due_date).getTime() - Date.now()) / 86_400_000),
     }));
 
     systemPrompt = buildSystemPrompt({
@@ -102,9 +109,6 @@ export async function POST(req: NextRequest) {
       countryCode: profile?.country_code ?? 'KE',
     });
   } else {
-    // Guest user — no personal financial data available.
-    // Use a general-purpose prompt so Wiza can coach based on
-    // whatever the visitor shares in the conversation.
     systemPrompt = buildSystemPrompt({
       employeeName: 'there',
       earnedWages: 0,
@@ -116,7 +120,6 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // ── 4. Get or create session (only if authenticated) ───────────────────────
   let sessionId = incomingSessionId;
 
   if (isAuthenticated && employeeId) {
@@ -139,11 +142,11 @@ export async function POST(req: NextRequest) {
     await supabase.from('wiza_messages').insert({
       session_id: sessionId,
       role: 'user',
-      content: content.trim(),
+      content,
     });
   }
 
-  let geminiHistory: Content[] = [];
+  let geminiHistory: Array<{ role: string; parts: Array<{ text: string }> }> = [];
 
   if (isAuthenticated && employeeId && sessionId) {
     const { data: history } = await supabase
@@ -161,32 +164,20 @@ export async function POST(req: NextRequest) {
       }));
   }
 
-  const encoder = new TextEncoder();
-
-  const stream = new ReadableStream({
-    async start(controller) {
-      const send = (event: StreamEvent) => {
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify(event)}\n\n`),
-        );
-      };
-
+  const stream = createUIMessageStream({
+    execute: async ({ writer }) => {
       try {
-        // First event — tell client which session this is (if authenticated)
-        if (sessionId && isAuthenticated) {
-          send({ type: 'session_id', session_id: sessionId });
-        }
+        writer.write({ type: 'start' });
+        writer.write({ type: 'text-start', id: 'assistant-text' });
 
         let fullReply = '';
-
-        for await (const chunk of streamWizaReply(
-          systemPrompt,
-          geminiHistory,
-          content.trim(),
-        )) {
+        for await (const chunk of streamWizaReply(systemPrompt, geminiHistory, content)) {
           fullReply += chunk;
-          send({ type: 'chunk', text: chunk });
+          writer.write({ type: 'text-delta', id: 'assistant-text', delta: chunk });
         }
+
+        writer.write({ type: 'text-end', id: 'assistant-text' });
+        writer.write({ type: 'finish' });
 
         if (isAuthenticated && employeeId && sessionId) {
           await supabase.from('wiza_messages').insert({
@@ -195,29 +186,30 @@ export async function POST(req: NextRequest) {
             content: fullReply,
           });
 
-          // Update session updated_at
           await supabase
             .from('wiza_sessions')
             .update({ updated_at: new Date().toISOString() })
             .eq('id', sessionId);
         }
-
-        send({ type: 'done' });
       } catch (err) {
         console.error('[wiza/stream] error', err);
-        send({ type: 'error', message: 'Something went wrong. Please try again.' });
-      } finally {
-        controller.close();
+        writer.write({ type: 'text-start', id: 'assistant-text' });
+        writer.write({ type: 'text-delta', id: 'assistant-text', delta: 'Something went wrong. Please try again.' });
+        writer.write({ type: 'text-end', id: 'assistant-text' });
+        writer.write({ type: 'finish' });
       }
     },
   });
 
-  return new Response(stream, {
-    headers: {
-      'Content-Type':  'text/event-stream',
-      'Cache-Control': 'no-cache, no-transform',
-      Connection:      'keep-alive',
-      'X-Accel-Buffering': 'no', // disable Nginx proxy buffering
-    },
-  });
+  const response = createUIMessageStreamResponse({ stream });
+  response.headers.set('Content-Type', 'text/event-stream');
+  response.headers.set('Cache-Control', 'no-cache, no-transform');
+  response.headers.set('Connection', 'keep-alive');
+  response.headers.set('X-Accel-Buffering', 'no');
+
+  if (sessionId && isAuthenticated) {
+    response.headers.set('X-Session-Id', sessionId);
+  }
+
+  return response;
 }

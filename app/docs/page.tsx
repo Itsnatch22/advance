@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useRef, MouseEvent } from "react";
+import React, { useRef } from "react";
 import {
   motion,
   useScroll,
   useTransform,
-  useSpring,
-  useMotionValue,
 } from "framer-motion";
 import Link from "next/link";
 import {
@@ -23,29 +21,10 @@ import {
 import Lottie from "lottie-react";
 import EditDocument from "@/public/Edit-document.json"; // swap for a docs-themed Lottie if you have one
 import { GridSystem } from "@/components/grid";
+import { FloatingOrb } from "@/components/shared/FloatingOrb";
+import { useParallax } from "@/hooks/use-parallax";
 
 /* ---------- Shared primitives (same as Careers) ---------- */
-
-const FloatingOrb = ({
-  color,
-  delay,
-  className,
-}: {
-  color: string;
-  delay: number;
-  className?: string;
-}) => (
-  <motion.div
-    animate={{ y: [0, -40, 0], x: [0, 20, 0], scale: [1, 1.1, 1] }}
-    transition={{
-      duration: 10 + Math.random() * 5,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
-  />
-);
 
 const TiltCard = ({
   children,
@@ -54,46 +33,25 @@ const TiltCard = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
-    stiffness: 150,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  }
+  const {
+    rotateX,
+    rotateY,
+    spotlightBackground,
+    handleMouseMove,
+    handleMouseLeave,
+  } = useParallax();
 
   return (
     <motion.div style={{ perspective: 1000 }} className="h-full">
       <motion.div
         onMouseMove={handleMouseMove}
-        onMouseLeave={() => {
-          x.set(0);
-          y.set(0);
-        }}
+        onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY }}
         className={`group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10 ${className}`}
       >
         <motion.div
           style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([mx, my]) =>
-                `radial-gradient(400px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.06), transparent 80%)`
-            ),
+            background: spotlightBackground,
           }}
           className="pointer-events-none absolute inset-0"
         />

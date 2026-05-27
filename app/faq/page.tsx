@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, MouseEvent } from "react";
+import React, { useState } from "react";
 import {
   HelpCircle,
   Search,
@@ -14,12 +14,11 @@ import {
 import {
   motion,
   AnimatePresence,
-  useMotionValue,
-  useSpring,
-  useTransform,
 } from "framer-motion";
 import { Input } from "../../components/ui/input";
 import { GridSystem } from "@/components/grid";
+import { FloatingOrb } from "@/components/shared/FloatingOrb";
+import { TiltCard } from "@/components/shared/TiltCard";
 
 type FAQItem = {
   q: string;
@@ -194,31 +193,6 @@ const faqs: Record<CategoryId, FAQItem[]> = {
   ],
 };
 
-const FloatingOrb = ({
-  color,
-  delay,
-  className,
-}: {
-  color: string;
-  delay: number;
-  className?: string;
-}) => (
-  <motion.div
-    animate={{
-      y: [0, -40, 0],
-      x: [0, 20, 0],
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      duration: 10 + Math.random() * 5,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-[500px] w-[500px] rounded-full opacity-20 blur-[120px] ${color} ${className}`}
-  />
-);
-
 const FAQItemCard = ({
   faq,
   isOpen,
@@ -228,54 +202,15 @@ const FAQItemCard = ({
   isOpen: boolean;
   toggle: () => void;
 }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), {
-    stiffness: 150,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  }
-
   return (
     <motion.div style={{ perspective: 1000 }} className="w-full">
-      <motion.div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={() => {
-          x.set(0);
-          y.set(0);
-        }}
-        style={{ rotateX, rotateY }}
+      <TiltCard
         className={`group relative overflow-hidden rounded-[2rem] border border-slate-200/60 transition-all duration-500 ${
           isOpen
             ? "bg-white shadow-2xl ring-1 shadow-green-500/10 ring-green-500/20"
             : "bg-white/40 backdrop-blur-2xl hover:bg-white"
         }`}
       >
-        <motion.div
-          style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([mx, my]) =>
-                `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.04), transparent 80%)`
-            ),
-          }}
-          className="pointer-events-none absolute inset-0"
-        />
-
         <button
           onClick={toggle}
           className="relative z-10 flex w-full items-center justify-between p-8 text-left"
@@ -316,7 +251,7 @@ const FAQItemCard = ({
         <div
           className={`absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 ${isOpen ? "w-full" : "group-hover:w-full"}`}
         />
-      </motion.div>
+      </TiltCard>
     </motion.div>
   );
 };

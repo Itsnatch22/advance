@@ -1,4 +1,4 @@
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
 
 export type Band = { lower: number; upper: number | null; rate: number };
@@ -16,9 +16,9 @@ export type RateRow = {
   [key: string]: unknown;
 };
 
-export function loadCalcJson() {
+export async function loadCalcJson() {
   const JSON_PATH = path.join(process.cwd(), "data", "calc.json");
-  const raw = fs.readFileSync(JSON_PATH, "utf8");
+  const raw = await fs.readFile(JSON_PATH, "utf8");
   return JSON.parse(raw);
 }
 

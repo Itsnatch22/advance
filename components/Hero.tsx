@@ -3,8 +3,6 @@ import {
   motion,
   useScroll,
   useTransform,
-  useSpring,
-  useMotionValue,
 } from "framer-motion";
 import {
   Sparkles,
@@ -13,12 +11,13 @@ import {
   TrendingUp,
   ChevronRight,
 } from "lucide-react";
-import React, { useState, useRef, Suspense, MouseEvent } from "react";
+import React, { useState, useRef, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import HeroStats from "./HeroStats"; // async server component
 import { GridSystem } from "./grid";
 import { useCurrency } from "./CurrencyProvider";
-import { formatCurrency } from "@/lib/currency";
+import { formatCurrency } from "@/lib/currency/currency";
+import { useParallax } from "@/hooks/use-parallax";
 
 export default function Hero() {
   const [email, setEmail] = useState("");
@@ -37,27 +36,7 @@ export default function Hero() {
   const opacityPhone = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   // Mouse parallax for the mockup
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), {
-    stiffness: 100,
-    damping: 30,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), {
-    stiffness: 100,
-    damping: 30,
-  });
-
-  function onMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  }
+  const { rotateX, rotateY, handleMouseMove, handleMouseLeave } = useParallax();
 
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,11 +133,8 @@ export default function Hero() {
 
           {/* Visual Column */}
           <motion.div
-            onMouseMove={onMouseMove}
-            onMouseLeave={() => {
-              x.set(0);
-              y.set(0);
-            }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
             style={{ y: yPhone, rotate: rotatePhone, opacity: opacityPhone }}
             className="perspective-1000 relative hidden lg:block"
           >

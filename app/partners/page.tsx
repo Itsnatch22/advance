@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useRef, MouseEvent } from "react";
+import React, { useRef } from "react";
 import {
   motion,
   useScroll,
   useTransform,
-  useSpring,
-  useMotionValue,
 } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Building2, Cpu } from "lucide-react";
+import { FloatingOrb } from "@/components/shared/FloatingOrb";
+import { TiltCard } from "@/components/shared/TiltCard";
 
 /* ----------------------------- data ----------------------------- */
 
@@ -43,76 +43,10 @@ const techPartners = [
 
 /* -------------------------- components -------------------------- */
 
-const FloatingOrb = ({
-  color,
-  delay,
-  className,
-}: {
-  color: string;
-  delay: number;
-  className?: string;
-}) => (
-  <motion.div
-    animate={{
-      y: [0, -40, 0],
-      x: [0, 20, 0],
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      duration: 10 + Math.random() * 5,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-125 w-125 rounded-full opacity-20 blur-[120px] ${color} ${className}`}
-  />
-);
-
 const TiltLogoCard = ({ src }: { src: string }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
-    stiffness: 150,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  }
-
   return (
     <motion.div style={{ perspective: 1000 }} className="h-28">
-      <motion.div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={() => {
-          x.set(0);
-          y.set(0);
-        }}
-        style={{ rotateX, rotateY }}
-        className="group relative flex h-full items-center justify-center rounded-2xl border border-slate-200/60 bg-white/50 p-6 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
-      >
-        <motion.div
-          style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([mx, my]) =>
-                `radial-gradient(200px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.08), transparent 80%)`
-            ),
-          }}
-          className="pointer-events-none absolute inset-0"
-        />
-
+      <TiltCard className="group relative flex h-full items-center justify-center rounded-2xl border border-slate-200/60 bg-white/50 p-6 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10">
         <Image
           src={src}
           alt="partner logo"
@@ -121,7 +55,7 @@ const TiltLogoCard = ({ src }: { src: string }) => {
           className="relative z-10 h-10 w-auto object-contain opacity-40 grayscale transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0"
         />
         <div className="absolute bottom-0 left-0 h-1 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
-      </motion.div>
+      </TiltCard>
     </motion.div>
   );
 };

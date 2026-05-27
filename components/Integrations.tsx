@@ -7,7 +7,6 @@ import {
   ShieldCheck,
   FileCheck2,
 } from "lucide-react";
-const BRAND = "#15803D";
 export default function Integrations() {
   return (
     <section
@@ -20,32 +19,32 @@ export default function Integrations() {
             <h3 className="text-lg font-semibold text-gray-900">
               Integrations & employer controls
             </h3>
-            <Settings className="h-6 w-6" style={{ color: BRAND }} />
+            <Settings className="h-6 w-6 text-green-700" />
           </div>
           <ul className="mt-4 space-y-3 text-gray-700">
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-5 w-5" style={{ color: BRAND }} />
+              <CheckCircle2 className="h-5 w-5 text-green-700" />
               <span>
                 Payroll mapping (earnings, days worked, cut-off dates) with
                 auto-reconciliation at payday.
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-5 w-5" style={{ color: BRAND }} />
+              <CheckCircle2 className="h-5 w-5 text-green-700" />
               <span>
                 Limit policies: % of earned wages, per-request caps, pay-period
                 buffers, cooling-off windows.
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-5 w-5" style={{ color: BRAND }} />
+              <CheckCircle2 className="h-5 w-5 text-green-700" />
               <span>
                 Approvals by role or amount, audit logs, and CSV exports for
                 Finance.
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-5 w-5" style={{ color: BRAND }} />
+              <CheckCircle2 className="h-5 w-5 text-green-700" />
               <span>
                 Data privacy by design (ODPC principles) and granular access
                 control.
@@ -105,7 +104,7 @@ const SmallCard = ({
         <p className="text-xs text-gray-600">{title}</p>
         <p className="text-2xl font-semibold text-gray-900">{value}</p>
       </div>
-      <div style={{ color: BRAND }}>{icon}</div>
+      <div className="text-green-700">{icon}</div>
     </div>
   </div>
 );

@@ -45,6 +45,17 @@ export const unsubscribeLimiter = new Ratelimit({
 });
 
 /**
+ * Rate limiter for the public contact form.
+ * Uses Upstash-backed Redis so it survives restarts and scales across processes.
+ */
+export const contactLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "1 h"),
+  analytics: true,
+  prefix: "ratelimit:contact",
+});
+
+/**
  * Rate limiter for general API endpoints
  * Limits to 100 requests per minute per IP
  */

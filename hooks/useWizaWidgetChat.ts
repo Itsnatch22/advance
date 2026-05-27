@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, type ChatTransport, type UIMessage } from 'ai';
 
@@ -54,11 +54,6 @@ export function useWizaWidgetChat() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyLoaded,  setHistoryLoaded]  = useState(false);
 
-  const visitorIdRef  = useRef<string>('');
-  const sessionIdRef  = useRef<string | null>(null);
-  visitorIdRef.current  = visitorId;
-  sessionIdRef.current  = sessionId;
-
   // ── fetchSessions — declared FIRST so it can be referenced everywhere ───
   const fetchSessions = useCallback(async (vid?: string) => {
     const id = vid ?? visitorId;
@@ -70,23 +65,33 @@ export function useWizaWidgetChat() {
     } catch { /* silent */ }
   }, [visitorId]);
 
-  // Stable ref so the transport's custom fetch can always call the latest version
-  const fetchSessionsRef = useRef(fetchSessions);
-  fetchSessionsRef.current = fetchSessions;
+  // Stable container to hold the latest values for the transport's async callbacks
+  // This avoids accessing refs during render and keeps the transport identity stable.
+  const stateContainer = useMemo(() => ({
+    visitorId: '',
+    sessionId: null as string | null,
+    fetchSessions: (_vid?: string) => { return Promise.resolve(); }
+  }), []);
+
+  useEffect(() => {
+    stateContainer.visitorId = visitorId;
+    stateContainer.sessionId = sessionId;
+    stateContainer.fetchSessions = fetchSessions;
+  }, [visitorId, sessionId, fetchSessions, stateContainer]);
 
   // ── Transport — extends DefaultChatTransport to properly parse SSE ──────
   // DefaultChatTransport inherits HttpChatTransport.sendMessages which calls
   // processResponseStream(response.body) → parses JSON SSE → UIMessageChunk.
   // We use `prepareSendMessagesRequest` to inject visitor_id / session_id,
   // and a custom `fetch` wrapper to read X-Session-Id from response headers.
-  const transport = new DefaultChatTransport<UIMessage>({
+  const transport = useMemo(() => new DefaultChatTransport<UIMessage>({
     api: '/api/chat',
 
     fetch: async (url, init) => {
       // Ensure a visitor ID exists before the request
-      const effectiveVisitorId = visitorIdRef.current || getOrCreateVisitorId();
-      if (effectiveVisitorId !== visitorIdRef.current) {
-        visitorIdRef.current = effectiveVisitorId;
+      const effectiveVisitorId = stateContainer.visitorId || getOrCreateVisitorId();
+      if (effectiveVisitorId !== stateContainer.visitorId) {
+        stateContainer.visitorId = effectiveVisitorId;
         setVisitorId(effectiveVisitorId);
       }
 
@@ -95,10 +100,10 @@ export function useWizaWidgetChat() {
       // Extract session info the API sets via response headers
       const sid = response.headers.get('X-Session-Id');
       const vid = response.headers.get('X-Visitor-Id');
-      if (sid && sid !== sessionIdRef.current) {
+      if (sid && sid !== stateContainer.sessionId) {
         setSessionId(sid);
-        sessionIdRef.current = sid;
-        if (vid) fetchSessionsRef.current(vid);
+        stateContainer.sessionId = sid;
+        if (vid) stateContainer.fetchSessions(vid);
       }
 
       return response;
@@ -107,11 +112,11 @@ export function useWizaWidgetChat() {
     prepareSendMessagesRequest: ({ messages }) => ({
       body: {
         messages,
-        visitor_id: visitorIdRef.current || getOrCreateVisitorId(),
-        session_id: sessionIdRef.current,
+        visitor_id: stateContainer.visitorId || getOrCreateVisitorId(),
+        session_id: stateContainer.sessionId,
       },
     }),
-  });
+  }), [stateContainer]);
 
   const chat = useChat({
     transport: transport as ChatTransport<UIMessage>,
@@ -121,17 +126,17 @@ export function useWizaWidgetChat() {
   // ── startNewSession — declared BEFORE deleteSession which depends on it ─
   const startNewSession = useCallback(() => {
     setSessionId(null);
-    sessionIdRef.current = null;
+    stateContainer.sessionId = null;
     setHistoryLoaded(false);
     chat.setMessages([createWelcomeMessage() as unknown as UIMessage]);
-  }, [chat]);
+  }, [chat, stateContainer]);
 
   // ── Initialise visitor ID (runs once on mount) ──────────────────────────
   useEffect(() => {
     const vid = getOrCreateVisitorId();
-    visitorIdRef.current = vid;
+    stateContainer.visitorId = vid;
     setVisitorId(vid);
-    fetchSessionsRef.current(vid);
+    fetchSessions(vid);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

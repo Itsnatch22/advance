@@ -11,33 +11,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Script from "next/script";
-
-const FloatingOrb = ({
-  color,
-  delay,
-  className,
-}: {
-  color: string;
-  delay: number;
-  className?: string;
-}) => (
-  <motion.div
-    initial={{ opacity: 0, scale: 0 }}
-    animate={{
-      opacity: [0.2, 0.4, 0.2],
-      scale: [1, 1.2, 1],
-      x: [0, 50, 0],
-      y: [0, 30, 0],
-    }}
-    transition={{
-      duration: 10,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-96 w-96 rounded-full blur-[100px] ${color} ${className}`}
-  />
-);
+import FloatingOrb from "@/components/shared/FloatingOrb";
 
 const CALENDLY_LINKS = {
   user_to_admin: "https://calendly.com/eaziwage/meeting",

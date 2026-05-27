@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useEffect, useState } from "react";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { motion } from "framer-motion";
 import Image from "next/image";
 

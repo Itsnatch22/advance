@@ -11,7 +11,7 @@ import {
   DollarSign,
   Calculator,
   Wallet,
-  CogIcon
+  CogIcon,
 } from "lucide-react";
 
 const Navbar = () => {
@@ -19,6 +19,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const scrollTicking = useRef(false);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -28,7 +29,12 @@ const Navbar = () => {
     }
 
     function handleScroll() {
-      setScrolled(window.scrollY > 20);
+      if (scrollTicking.current) return;
+      scrollTicking.current = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 20);
+        scrollTicking.current = false;
+      });
     }
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -47,13 +53,17 @@ const Navbar = () => {
       drawer: [
         {
           title: "For Employers",
-          icon: <UserCheck className="h-5 w-5 text-emerald-600" strokeWidth={2} />,
+          icon: (
+            <UserCheck className="h-5 w-5 text-emerald-600" strokeWidth={2} />
+          ),
           desc: "Simplify payroll & empower employees with instant advances.",
           href: "/employers",
         },
         {
           title: "For Employees",
-          icon: <DollarSign className="h-5 w-5 text-emerald-600" strokeWidth={2} />,
+          icon: (
+            <DollarSign className="h-5 w-5 text-emerald-600" strokeWidth={2} />
+          ),
           desc: "Access part of your salary anytime before payday.",
           href: "/employees",
         },
@@ -71,37 +81,38 @@ const Navbar = () => {
         },
         {
           title: "Calculator",
-          icon: <Calculator className="h-5 w-5 text-emerald-600" strokeWidth={2} />,
+          icon: (
+            <Calculator className="h-5 w-5 text-emerald-600" strokeWidth={2} />
+          ),
           desc: "See how you can access an advance using our calculator.",
           href: "/calculator",
         },
         {
           title: "Documentation",
-          icon: <CogIcon className="h-5 w-5 text-emerald-600" strokeWidth={2} />,
+          icon: (
+            <CogIcon className="h-5 w-5 text-emerald-600" strokeWidth={2} />
+          ),
           desc: "Learn how to integrate EaziWage into your system.",
           href: "/docs",
         },
       ],
     },
-    { name: "Wiza AI", href: "/wiza-ai-for-eaziwage" }
+    { name: "Wiza AI", href: "/wiza-ai-for-eaziwage" },
   ];
 
   return (
     <nav
       ref={navRef}
-      className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 ${
+      className={`fixed top-0 left-0 z-50 w-full transition-all duration-300 ${
         scrolled
           ? "border-b border-slate-200/60 bg-white/95 shadow-lg shadow-slate-900/5 backdrop-blur-md"
-          : "bg-white/80 backdrop-blur-sm shadow-sm"
+          : "bg-white/80 shadow-sm backdrop-blur-sm"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-18 sm:px-6 lg:px-8">
         {/* Logo - Enhanced */}
-        <Link
-          href="/"
-          className="group flex items-center gap-2.5"
-        >
-          <motion.div 
+        <Link href="/" className="group flex items-center gap-2.5">
+          <motion.div
             whileHover={{ rotate: 5, scale: 1.1 }}
             className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500/20 to-green-500/20 ring-1 ring-emerald-500/20 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-emerald-500/20"
           >
@@ -148,7 +159,7 @@ const Navbar = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    className="absolute left-0 top-12 w-96 overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-2 shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5"
+                    className="absolute top-12 left-0 w-96 overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-2 shadow-2xl ring-1 shadow-slate-900/10 ring-slate-900/5"
                   >
                     <div className="grid gap-1">
                       {link.drawer.map((item, j) => (
@@ -180,8 +191,12 @@ const Navbar = () => {
         </div>
 
         {/* Right side buttons - Enhanced */}
-        <div className="hidden items-center gap-3 lg:flex"> 
-          <Link href="https://app.eaziwage.com" target="_blank" rel="noopener noreferrer">
+        <div className="hidden items-center gap-3 lg:flex">
+          <Link
+            href="https://app.eaziwage.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -222,7 +237,7 @@ const Navbar = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-16 flex h-[calc(100vh-4rem)] w-full flex-col gap-6 overflow-y-auto border-l border-slate-200/60 bg-white p-6 shadow-2xl sm:top-18 sm:h-[calc(100vh-4.5rem)] sm:w-96 lg:hidden"
+            className="fixed top-16 right-0 flex h-[calc(100vh-4rem)] w-full flex-col gap-6 overflow-y-auto border-l border-slate-200/60 bg-white p-6 shadow-2xl sm:top-18 sm:h-[calc(100vh-4.5rem)] sm:w-96 lg:hidden"
           >
             {links.map((link, i) => (
               <div key={i} className="flex flex-col gap-2">

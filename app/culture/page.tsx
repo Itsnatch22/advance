@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useEffect, useRef, MouseEvent } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
 } from "framer-motion";
 import { ArrowUpRight, Code2, Coffee, Rocket, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import Typed from "typed.js";
 import { GridSystem } from "@/components/grid";
+import { FloatingOrb } from "@/components/shared/FloatingOrb";
+import { useParallax } from "@/hooks/use-parallax";
 
 const FadeInText = ({ text, delay = 0 }: { text: string; delay?: number }) => (
   <motion.span
@@ -24,38 +23,15 @@ const FadeInText = ({ text, delay = 0 }: { text: string; delay?: number }) => (
   </motion.span>
 );
 
-const FloatingOrb = ({ color, delay }: { color: string; delay: number }) => (
-  <motion.div
-    animate={{
-      y: [0, -40, 0],
-      x: [0, 20, 0],
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      duration: 10 + Math.random() * 5,
-      repeat: Infinity,
-      delay,
-      ease: "easeInOut",
-    }}
-    className={`absolute h-96 w-96 rounded-full opacity-20 blur-[120px] ${color}`}
-  />
-);
-
 export default function CulturePage() {
   const typedRef = useRef<HTMLSpanElement | null>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), {
-    stiffness: 150,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), {
-    stiffness: 150,
-    damping: 20,
-  });
+  const {
+    rotateX,
+    rotateY,
+    spotlightBackground,
+    handleMouseMove,
+    handleMouseLeave,
+  } = useParallax();
 
   useEffect(() => {
     const typed = new Typed(typedRef.current!, {
@@ -67,14 +43,6 @@ export default function CulturePage() {
     });
     return () => typed.destroy();
   }, []);
-
-  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  }
 
   return (
     <GridSystem variant="dots" opacity={0.02} className="min-h-screen bg-slate-50 bg-white">
@@ -196,21 +164,14 @@ export default function CulturePage() {
         >
           <motion.div
             onMouseMove={handleMouseMove}
-            onMouseLeave={() => {
-              x.set(0);
-              y.set(0);
-            }}
+            onMouseLeave={handleMouseLeave}
             style={{ rotateX, rotateY }}
             className="group relative overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-2xl transition-shadow duration-500 hover:shadow-green-500/10"
           >
             {/* Spotlight Gradient */}
             <motion.div
               style={{
-                background: useTransform(
-                  [mouseX, mouseY],
-                  ([mx, my]) =>
-                    `radial-gradient(400px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.05), transparent 80%)`
-                ),
+                background: spotlightBackground,
               }}
               className="pointer-events-none absolute inset-0"
             />

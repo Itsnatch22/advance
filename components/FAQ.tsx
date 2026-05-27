@@ -4,13 +4,11 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import {
   motion,
   AnimatePresence,
-  useMotionValue,
-  useSpring,
-  useTransform,
 } from "framer-motion";
-import React, { useState, MouseEvent } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { useParallax } from "@/hooks/use-parallax";
 
 const faqs = [
   {
@@ -49,27 +47,7 @@ const FAQCard = ({
   isOpen: boolean;
   onClick: () => void;
 }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), {
-    stiffness: 150,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  function onMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left) / rect.width - 0.5);
-    y.set((event.clientY - rect.top) / rect.height - 0.5);
-    mouseX.set(event.clientX - rect.left);
-    mouseY.set(event.clientY - rect.top);
-  }
+  const { rotateX, rotateY, spotlightBackground, handleMouseMove, handleMouseLeave } = useParallax();
 
   return (
     <motion.div
@@ -80,11 +58,8 @@ const FAQCard = ({
       className="w-full"
     >
       <motion.div
-        onMouseMove={onMouseMove}
-        onMouseLeave={() => {
-          x.set(0);
-          y.set(0);
-        }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY }}
         className={`group relative overflow-hidden rounded-3xl border border-slate-200/60 transition-all duration-500 ${
           isOpen
@@ -94,11 +69,7 @@ const FAQCard = ({
       >
         <motion.div
           style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([mx, my]) =>
-                `radial-gradient(350px circle at ${mx}px ${my}px, rgba(34, 197, 94, 0.04), transparent 80%)`
-            ),
+            background: spotlightBackground,
           }}
           className="pointer-events-none absolute inset-0"
         />

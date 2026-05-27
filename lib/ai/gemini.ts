@@ -11,26 +11,12 @@ export type SummarizeJobPayload = {
   send_to_phone?: string | null;
 };
 
-// Currency mapping for African countries
-const CURRENCY_MAP = {
-  KE: 'KES',
-  UG: 'UGX', 
-  TZ: 'TZS',
-  RW: 'RWF',
-} as const;
+import { getCurrencyFromCountry, type CountryCode } from './currency';
 
 // Helper functions for currency formatting
-function getCurrency(countryCode: string): string {
-  return CURRENCY_MAP[countryCode as keyof typeof CURRENCY_MAP] || 'KES';
-}
-
-function formatMoney(amount: number, countryCode: string): string {
-  const currency = getCurrency(countryCode);
+function formatMoney(amount: number, countryCode: CountryCode): string {
+  const currency = getCurrencyFromCountry(countryCode)?.code;
   return `${currency} ${amount.toLocaleString()}`;
-}
-
-function fmt(amount: number, countryCode: string): string {
-  return formatMoney(amount, countryCode);
 }
 
 import {
@@ -131,15 +117,15 @@ If a visitor asks about EaziWage, explain how it works and encourage them to sig
 
   // ── Authenticated employee prompt — real data from their profile ────────
   const billsSummary = ctx.upcomingBills
-    .map(b => `  • ${b.label}: ${fmt(b.amount, countryCode)} due in ${b.dueInDays} days`)
+    .map(b => `  • ${b.label}: ${formatMoney(b.amount, countryCode)} due in ${b.dueInDays} days`)
     .join('\n');
 
   return `You are Wiza, EaziWage's AI financial wellness coach — warm, playful, and fiercely committed to the financial wellbeing of the people you serve.
 
 ## Employee context (updated each session)
 - Name: ${ctx.employeeName}
-- Earned wages available: ${fmt(ctx.earnedWages, countryCode)}
-- Maximum safe advance (60% limit): ${fmt(ctx.advanceLimit, countryCode)}
+- Earned wages available: ${formatMoney(ctx.earnedWages, countryCode)}
+- Maximum safe advance (60% limit): ${formatMoney(ctx.advanceLimit, countryCode)}
 - Financial health score: ${ctx.financialScore}/100
 - Upcoming obligations:
 ${billsSummary || '  (none recorded)'}
@@ -152,15 +138,15 @@ ${billsSummary || '  (none recorded)'}
    - Future projections
    
 2. **Interactive insights** — Turn every number into a story:
-   - "At ${fmt(60000, countryCode)}/month, you're earning **${fmt(2000, countryCode)}/day** — that's 25 days to pay rent, not counting expenses."
+   - "At ${formatMoney(60000, countryCode)}/month, you're earning **${formatMoney(2000, countryCode)}/day** — that's 25 days to pay rent, not counting expenses."
    - "If you keep spending at this rate, Future You will send a strongly worded email by the 20th 😂."
    
 3. **Structured outputs** — Present calculations as markdown tables when numbers are involved:
 
 | Metric | Value | Note |
 |--------|-------|------|
-| Daily rate | ${fmt(2000, countryCode)} | Based on 30-day month |
-| Mid-month available | ${fmt(30000, countryCode)} | Assuming bills due end-month |
+| Daily rate | ${formatMoney(2000, countryCode)} | Based on 30-day month |
+| Mid-month available | ${formatMoney(30000, countryCode)} | Assuming bills due end-month |
 
 4. **Micro diagnostics** — Ask 2–3 quick questions to generate personalized advice:
    - "Where does most of your salary disappear? (Rent, food, entertainment?)"
@@ -199,13 +185,13 @@ Nice! Let's break that down:
 
 | Metric | Amount | Details |
 |--------|--------|---------|
-| **Monthly salary** | ${fmt(60000, countryCode)} | Your full paycheck |
-| **Daily rate** | ${fmt(2000, countryCode)} | 60k ÷ 30 days |
-| **Weekly earning** | ${fmt(14000, countryCode)} | ~2 weeks to hit 30k |
-| **Mid-month available** | ${fmt(30000, countryCode)} | If bills hit at month-end |
-| **Safe advance limit** | ${fmt(18000, countryCode)} | 60% of earned wages (our max) |
+| **Monthly salary** | ${formatMoney(60000, countryCode)} | Your full paycheck |
+| **Daily rate** | ${formatMoney(2000, countryCode)} | 60k ÷ 30 days |
+| **Weekly earning** | ${formatMoney(14000, countryCode)} | ~2 weeks to hit 30k |
+| **Mid-month available** | ${formatMoney(30000, countryCode)} | If bills hit at month-end |
+| **Safe advance limit** | ${formatMoney(18000, countryCode)} | 60% of earned wages (our max) |
 
-At ${fmt(2000, countryCode)}/day, you're basically earning a "lunch budget" every hour of your 8-hour workday. 💰
+At ${formatMoney(2000, countryCode)}/day, you're basically earning a "lunch budget" every hour of your 8-hour workday. 💰
 
 Future You might send a strongly worded email if spending continues unchecked 😂. Want me to map out where this should actually go?
 
