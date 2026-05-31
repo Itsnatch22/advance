@@ -17,7 +17,7 @@ import {
 /* ----------------------------- validation ----------------------------- */
 
 const partnerFormSchema = z.object({
-  partnerType: z.enum(["banking", "enterprise", "technology"], {
+  partnerType: z.enum(["banking", "enterprise", "technology", "investor"], {
     message: "Please select a partner type",
   }),
   companyName: z.string().min(2, "Company name must be at least 2 characters"),
@@ -178,6 +178,7 @@ export default function PartnerOnboardingPage() {
                   { value: "banking", label: "Banking Institution" },
                   { value: "enterprise", label: "Enterprise Employer" },
                   { value: "technology", label: "Technology Provider" },
+                  { value: "investor", label: "Investor" },
                 ].map((type) => (
                   <label
                     key={type.value}

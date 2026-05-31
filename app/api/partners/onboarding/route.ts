@@ -5,8 +5,6 @@ import { Resend } from "resend";
 import PartnerOnboardingEmail from "@/emails/Partner-onboarding";
 import PartnerNotificationEmail from "@/emails/PartnerNotification";
 
-/* ----------------------------- validation ----------------------------- */
-
 const partnerFormSchema = z.object({
   partnerType: z.enum(["banking", "enterprise", "technology"]),
   companyName: z.string().min(2),
@@ -19,16 +17,12 @@ const partnerFormSchema = z.object({
   message: z.string().min(20),
 });
 
-/* ----------------------------- clients ----------------------------- */
-
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
-
-/* ----------------------------- handler ----------------------------- */
 
 export async function POST(request: NextRequest) {
   try {
