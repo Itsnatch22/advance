@@ -27,13 +27,13 @@ export async function GET() {
     
     try {
         const results = await Promise.all(
-            countries.map((code) =>
-                supabase
-                    .from("employee_onboarding")
-                    .select("*", { count: "exact", head: true })
-                    .eq("status", "approved")
-                    .eq("country", code)
-            )
+        countries.map((code) =>
+            supabase
+            .from("employees")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "active")
+            .eq("country", code)
+        )
         );
 
         const counts: Record<string, number> = {};
