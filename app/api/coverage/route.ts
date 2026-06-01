@@ -31,7 +31,7 @@ export async function GET() {
             supabase
             .from("employees")
             .select("*", { count: "exact", head: true })
-            .eq("status", "active")
+            .eq("status", "Active")
             .eq("country", code)
         )
         );
