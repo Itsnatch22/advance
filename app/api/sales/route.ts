@@ -21,6 +21,23 @@ const supabaseAdmin = createClient(
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
+export async function GET() {
+  if (!supabaseAdmin) {
+    return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
+  }
+
+  const { count, error } = await supabaseAdmin
+    .from("employers")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "approved");
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ count: count ?? 0 });
+}
+
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "anonymous";
 

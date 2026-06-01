@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   motion,
   AnimatePresence,
@@ -28,8 +28,6 @@ const salesSchema = z.object({
 });
 
 type SalesFormData = z.infer<typeof salesSchema>;
-
-/* ----------------------------- components ----------------------------- */
 
 import { useParallax } from "@/hooks/use-parallax";
 
@@ -106,6 +104,15 @@ export default function SalesPage() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+
+  const [employerCount, setEmployerCount] = useState<number | null>(null);
+
+    useEffect(() => {
+      fetch("/api/contact")
+        .then(r => r.json())
+        .then(d => setEmployerCount(d.count))
+        .catch(() => {});
+    }, []);
 
   const {
     register,
@@ -227,7 +234,7 @@ export default function SalesPage() {
               </div>
 
               <div className="grid max-w-md grid-cols-3 gap-4">
-                <StatCard value="100+" label="Companies" />
+                <StatCard value={`${employerCount ?? "..."}+`} label="Companies" />
                 <StatCard value="0%" label="Interest" />
                 <StatCard value="24/7" label="Instant Disbursement" />
               </div>
