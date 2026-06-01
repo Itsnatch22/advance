@@ -31,11 +31,25 @@ const supabase =
 
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@eaziwage.com";
 
-/* ----------------------------- handler ----------------------------- */
+export async function GET() {
+  if (!supabase) {
+    return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
+  }
+
+  const { count, error } = await supabase
+    .from("employers")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "approved");
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ count: count ?? 0 });
+}
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       request.headers.get("x-real-ip") ||
@@ -58,7 +72,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Parse and validate request body
     const body = await request.json();
 
     const parsed = contactSchema.safeParse(body);
@@ -76,10 +89,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Bot detection (honeypot)
     if (parsed.data.honeypot) {
       console.log(`Bot detected from IP: ${ip}`);
-      // Return success to not alert the bot
       return NextResponse.json(
         { message: "Message sent successfully" },
         { status: 200 }
@@ -88,7 +99,6 @@ export async function POST(request: NextRequest) {
 
     const { name, email, subject, message } = parsed.data;
 
-    // Validate email service is configured
     if (!resend) {
       console.error("Resend API key not configured");
       return NextResponse.json(
@@ -97,7 +107,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Store in Supabase (non-blocking, continue even if it fails)
     if (supabase) {
       const { error: dbError } = await supabase.from("contacts").insert([
         {
@@ -119,7 +128,6 @@ export async function POST(request: NextRequest) {
 
     const submittedAt = new Date();
 
-    // Send notification to support team
     try {
       await resend.emails.send({
         from: `EaziWage Contact <${SUPPORT_EMAIL}>`,
@@ -142,7 +150,6 @@ export async function POST(request: NextRequest) {
       // Continue to send auto-reply even if notification fails
     }
 
-    // Send auto-reply to user
     try {
       await resend.emails.send({
         from: `EaziWage Support <${SUPPORT_EMAIL}>`,
@@ -174,7 +181,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Unexpected error in contact form:", error);
 
-    // Don't expose internal errors to the client
     return NextResponse.json(
       {
         error: "An unexpected error occurred. Please try again later.",
@@ -185,7 +191,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Handle OPTIONS for CORS
 export async function OPTIONS() {
   return NextResponse.json(
     {},

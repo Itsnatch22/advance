@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   motion,
   AnimatePresence,
@@ -111,6 +111,14 @@ export default function ContactPage() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+  const [employerCount, setEmployerCount] = useState<number | null>(null);
+
+    useEffect(() => {
+      fetch("/api/contact")
+        .then(r => r.json())
+        .then(d => setEmployerCount(d.count))
+        .catch(() => {});
+    }, []);
 
   const {
     register,
@@ -215,7 +223,7 @@ export default function ContactPage() {
             </div>
 
             <div className="grid max-w-md grid-cols-3 gap-4">
-              <StatCard value="100+" label="Companies" />
+              <StatCard value={`${employerCount ?? "..."}+`} label="Companies" />
               <StatCard value="0%" label="Interest" />
               <StatCard value="24/7" label="Instant Disbursement" />
             </div>
