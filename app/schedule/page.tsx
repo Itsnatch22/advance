@@ -28,35 +28,52 @@ export default function SchedulePage() {
   const [calendlyError, setCalendlyError] = useState(false);
   const embedRef = useRef<HTMLDivElement>(null);
 
-  // Re-initialize Calendly when meeting type changes or script is ready
   useEffect(() => {
     if (!scriptReady || !embedRef.current || isScheduled) return;
 
-    // Clear previous widget instance before re-mounting
     embedRef.current.innerHTML = "";
 
-    try {
-      const windowWithCalendly = window as unknown as {
-        Calendly: {
-          initInlineWidget: (options: {
-            url: string;
-            parentElement: HTMLElement;
-            prefill: Record<string, unknown>;
-            utm: Record<string, unknown>;
-          }) => void;
+    // FIX 1: Increased retries (10) and delay (800ms) to handle slow connections
+    const initWidget = (retries = 10) => {
+      if (!embedRef.current) return;
+
+      try {
+        const windowWithCalendly = window as unknown as {
+          Calendly?: {
+            initInlineWidget: (options: {
+              url: string;
+              parentElement: HTMLElement;
+              prefill: Record<string, unknown>;
+              utm: Record<string, unknown>;
+            }) => void;
+          };
         };
-      };
-      windowWithCalendly.Calendly.initInlineWidget({
-        url: CALENDLY_LINKS[meetingType],
-        parentElement: embedRef.current,
-        prefill: {},
-        utm: {},
-      });
-      setCalendlyError(false);
-    } catch (error) {
-      console.error("Calendly initialization failed:", error);
-      setCalendlyError(true);
-    }
+
+        if (!windowWithCalendly.Calendly) {
+          if (retries > 0) {
+            setTimeout(() => initWidget(retries - 1), 800);
+            return;
+          }
+          // FIX 2: Don't throw — set error state silently instead
+          console.warn("Calendly failed to initialize after all retries");
+          setCalendlyError(true);
+          return;
+        }
+
+        windowWithCalendly.Calendly.initInlineWidget({
+          url: CALENDLY_LINKS[meetingType],
+          parentElement: embedRef.current,
+          prefill: {},
+          utm: {},
+        });
+        setCalendlyError(false);
+      } catch (error) {
+        console.error("Calendly initialization failed:", error);
+        setCalendlyError(true);
+      }
+    };
+
+    initWidget();
 
     const handleCalendlyEvent = (e: MessageEvent) => {
       if (e.data.event === "calendly.event_scheduled") {
@@ -179,7 +196,7 @@ export default function SchedulePage() {
                       key="success"
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="flex min-h-[600px] flex-col items-center justify-center p-12 text-center"
+                      className="flex min-h-150 flex-col items-center justify-center p-12 text-center"
                     >
                       <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-green-100 text-green-600">
                         <CheckCircle2 className="h-12 w-12" />
@@ -201,7 +218,7 @@ export default function SchedulePage() {
                       key="embed"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="relative min-h-[600px] w-full overflow-hidden rounded-[2.5rem] bg-white"
+                      className="relative min-h-150 w-full overflow-hidden rounded-[2.5rem] bg-white"
                     >
                       {(!scriptReady || calendlyError) && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50">
@@ -241,20 +258,20 @@ export default function SchedulePage() {
         </div>
       </main>
 
+      <link
+        rel="stylesheet"
+        href="https://assets.calendly.com/assets/external/widget.css"
+      />
+      {/* FIX 3: onLoad + 300ms buffer instead of onReady — gives Calendly time to attach to window */}
       <Script
         src="https://assets.calendly.com/assets/external/widget.js"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         onLoad={() => {
-          // Add error handling for script loading
           setTimeout(() => {
-            const windowWithCalendly = window as unknown as { Calendly?: unknown };
-            if (!windowWithCalendly.Calendly) {
-              console.error("Calendly script failed to load properly");
-              setCalendlyError(true);
-            }
-          }, 3000);
+            setScriptReady(true);
+            setCalendlyError(false);
+          }, 300);
         }}
-        onReady={() => setScriptReady(true)}
         onError={() => {
           console.error("Failed to load Calendly script");
           setCalendlyError(true);

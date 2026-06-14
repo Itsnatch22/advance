@@ -7,7 +7,7 @@ import MeetingConfirmation from "@/emails/MeetingConfirmation";
 const scheduleSchema = z.object({
   userEmail: z.string().email(),
   adminEmail: z.string().email(),
-  meetingType: z.enum(["admin_to_user", "user_to_admin"]),
+  meetingType: z.enum(["user_to_admin", "sales_demo", "partner_onboarding"]),
   calendlyEventId: z.string().optional(),
   scheduledAt: z.string(), // ISO string
 });

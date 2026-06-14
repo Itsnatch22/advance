@@ -1,64 +1,63 @@
 import { NextResponse } from "next/server";
-import { supabaseUser } from "@/lib/supabase/server";
-import { redis } from "@/lib/security/rate-limit";
-import os from "os";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const start = Date.now();
-  
-  // Perform health checks in parallel
-  const [supabaseRes, redisRes] = await Promise.allSettled([
-    // Check Supabase connectivity by querying a small amount of data
-    supabaseUser.from("companies").select("id", { count: "exact", head: true }).limit(1),
-    // Check Redis connectivity
-    redis.ping(),
-  ]);
+  try {
+    // Call internal health route directly — no external round trip
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_DASHBOARD_APP_URL}/api/admin/check-api-health`,
+      { cache: "no-store" }
+    );
 
-  const supabaseStatus = supabaseRes.status === "fulfilled" && !supabaseRes.value.error ? "healthy" : "unhealthy";
-  const redisStatus = redisRes.status === "fulfilled" && redisRes.value === "PONG" ? "healthy" : "unhealthy";
-  
-  const end = Date.now();
-  const latency = end - start;
-
-  const isOperational = supabaseStatus === "healthy" && redisStatus === "healthy";
-
-  return NextResponse.json({
-    status: isOperational ? "operational" : "degraded",
-    timestamp: new Date().toISOString(),
-    latency: `${latency}ms`,
-    services: {
-      database: {
-        name: "Supabase (PostgreSQL)",
-        status: supabaseStatus,
-        message: supabaseRes.status === "rejected" ? "Connection failed" : (supabaseRes.value.error ? supabaseRes.value.error.message : "Connected"),
-      },
-      cache: {
-        name: "Upstash Redis",
-        status: redisStatus,
-        message: redisRes.status === "fulfilled" ? "Connected" : "Ping failed",
-      },
-      email: {
-        name: "Resend",
-        status: process.env.RESEND_API_KEY ? "healthy" : "not-configured",
-        message: process.env.RESEND_API_KEY ? "API Key present" : "Missing API Key",
-      },
-      ai: {
-        name: "OpenAI",
-        status: process.env.OPENAI_API_KEY ? "healthy" : "not-configured",
-        message: process.env.OPENAI_API_KEY ? "API Key present" : "Missing API Key",
-      }
-    },
-    system: {
-      memory: {
-        free: Math.round(os.freemem() / 1024 / 1024) + "MB",
-        total: Math.round(os.totalmem() / 1024 / 1024) + "MB",
-        usage: `${Math.round((1 - os.freemem() / os.totalmem()) * 100)}%`,
-      },
-      uptime: `${Math.floor(os.uptime() / 3600)}h ${Math.floor((os.uptime() % 3600) / 60)}m`,
-      platform: os.platform(),
-      cpus: os.cpus().length,
+    if (!res.ok) {
+      return NextResponse.json(
+        { status: "error", message: "Health check unavailable" },
+        { status: 502 }
+      );
     }
-  });
+
+    const raw = await res.json();
+
+    // Reshape integrations[] → services{} that page.tsx expects
+    // Filter out internal noise rows that aren't user-facing services
+    const HIDDEN = new Set(["System Health", "System Metrics"]);
+
+    const services: Record<string, { name: string; status: string; message: string }> = {};
+
+    for (const integration of raw.integrations ?? []) {
+      if (HIDDEN.has(integration.name)) continue;
+
+      // Derive a safe key from the name
+      const key = integration.name.toLowerCase().replace(/\s+/g, "_");
+
+      services[key] = {
+        name: integration.name,
+        status: integration.status,         // healthy | degraded | down
+        message:
+          integration.status === "healthy"  ? "Operational" :
+          integration.status === "degraded" ? "Experiencing issues" :
+                                              "Service unavailable",
+      };
+    }
+
+    return NextResponse.json({
+      status: raw.overall_status,
+      timestamp: raw.last_updated,
+      latency: `${raw.integrations?.[0]?.latency_ms ?? 0}ms`,
+      services,
+      // System block — hide real infra details from public
+      system: {
+        memory: { free: "–", total: "–", usage: "0%" },
+        uptime: "–",
+        platform: "Cloud",
+        cpus: 0,
+      },
+    });
+  } catch {
+    return NextResponse.json(
+      { status: "down", message: "Failed to reach app server" },
+      { status: 503 }
+    );
+  }
 }
