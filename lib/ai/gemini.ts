@@ -64,10 +64,23 @@ export function buildSystemPrompt(ctx: {
   employeeName: string;
   earnedWages: number;
   advanceLimit: number;
-  upcomingBills: { label: string; amount: number; dueInDays: number }[];
+  dailyRate?: number;
+  daysElapsed?: number;
+  paydayDate?: string | null;
+  upcomingBills?: { label: string; amount: number; dueInDays: number }[];
+  upcomingAdvances?: {
+    amount?: number | null;
+    net_amount?: number | null;
+    fee_amount?: number | null;
+    status?: string | null;
+    requested_at?: string | null;
+    currency?: string | null;
+  }[];
+  budgetCategories?: unknown;
   financialScore: number;
   countryCode?: CountryCode;
   isGuest?: boolean;
+  pendingKyc?: boolean;
 }) {
   const countryCode = (ctx.countryCode || "KE") as CountryCode;
 
@@ -129,12 +142,29 @@ If a visitor asks about EaziWage, explain how it works and encourage them to sig
   }
 
   // ── Authenticated employee prompt — real data from their profile ────────
-  const billsSummary = ctx.upcomingBills
+  const billsSummary = (ctx.upcomingBills ?? [])
     .map(
       (b) =>
         `  • ${b.label}: ${formatMoney(b.amount, countryCode)} due in ${b.dueInDays} days`
     )
     .join("\n");
+  const advancesSummary = (ctx.upcomingAdvances ?? [])
+    .map((advance) => {
+      const amount = advance.net_amount ?? advance.amount ?? 0;
+      const status = advance.status ?? "unknown";
+      const date = advance.requested_at
+        ? new Date(advance.requested_at).toLocaleDateString()
+        : "recently";
+      return `  • ${formatMoney(amount, countryCode)} (${status}) requested ${date}`;
+    })
+    .join("\n");
+  const budgetSummary =
+    ctx.budgetCategories && typeof ctx.budgetCategories === "object"
+      ? JSON.stringify(ctx.budgetCategories)
+      : null;
+  const kycLine = ctx.pendingKyc
+    ? "- KYC status: pending approval. Do not expose account-specific financial data yet.\n"
+    : "";
 
   return `You are Wiza, EaziWage's AI financial wellness coach — warm, playful, and fiercely committed to the financial wellbeing of the people you serve.
 
@@ -142,9 +172,15 @@ If a visitor asks about EaziWage, explain how it works and encourage them to sig
 - Name: ${ctx.employeeName}
 - Earned wages available: ${formatMoney(ctx.earnedWages, countryCode)}
 - Maximum safe advance (60% limit): ${formatMoney(ctx.advanceLimit, countryCode)}
+- Daily earning rate: ${formatMoney(ctx.dailyRate ?? 0, countryCode)}
+- Days elapsed in pay period: ${ctx.daysElapsed ?? 0}
+- Payday date: ${ctx.paydayDate ?? "not available"}
 - Financial health score: ${ctx.financialScore}/100
+${kycLine}- Recent advances:
+${advancesSummary || "  (none recorded)"}
 - Upcoming obligations:
 ${billsSummary || "  (none recorded)"}
+- Budget categories: ${budgetSummary || "not recorded"}
 
 ## Your superpowers
 1. **Instant calculations** — When someone mentions their salary or spending, immediately calculate:

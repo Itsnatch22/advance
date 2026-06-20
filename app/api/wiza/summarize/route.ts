@@ -12,20 +12,25 @@ const supabase = createClient(
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get('Authorization');
 
-  // ── GUEST PATH: no auth header → summarise from provided messages ──────────
+  // ── GUEST PATH ──────────────────────────────────────────────────────────────
+  // No bearer token — summarise from provided in-memory messages directly.
+  // No DB reads, no session writes.
   if (!authHeader?.startsWith('Bearer ')) {
-    const { messages } = await req.json() as {
-      messages?: { role: string; content: string }[];
-    };
+    let body: { messages?: { role: string; content: string }[] };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
 
-    if (!messages?.length) {
+    if (!body.messages?.length) {
       return NextResponse.json(
         { error: 'messages[] required for guest summary' },
         { status: 400 },
       );
     }
 
-    const transcript = messages
+    const transcript = body.messages
       .map(m => `${m.role === 'user' ? 'User' : 'Wiza'}: ${m.content}`)
       .join('\n\n');
 
@@ -33,25 +38,35 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ summary });
   }
 
-  // ── AUTHENTICATED PATH ─────────────────────────────────────────────────────
+  // ── AUTHENTICATED PATH ──────────────────────────────────────────────────────
+
+  // 1. Verify JWT — user client with caller's own token, never service role
   const userClient = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     { global: { headers: { Authorization: authHeader } } },
   );
   const { data: { user } } = await userClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-  const { session_id } = await req.json();
-  if (!session_id) {
+  let body: { session_id?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  if (!body.session_id) {
     return NextResponse.json({ error: 'session_id required' }, { status: 400 });
   }
 
-  // Confirm session belongs to this user
+  // 2. Confirm session belongs to this user — wiza_sessions.employee_id = auth user id
   const { data: session } = await supabase
     .from('wiza_sessions')
     .select('id, employee_id, summary_sent')
-    .eq('id', session_id)
+    .eq('id', body.session_id)
     .eq('employee_id', user.id)
     .single();
 
@@ -63,19 +78,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Summary already sent' });
   }
 
-  // Load notification preferences
-  const { data: prefs } = await supabase
-    .from('employee_onboarding')
-    .select('email, phone, notify_summary_email, notify_summary_sms')
+  // 3. Load notification preferences from profiles
+  // profiles.id = auth user id (direct 1-to-1 with auth.users)
+  // notification_preferences is a jsonb column: { summary_email: bool, summary_sms: bool }
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('email, phone, notification_preferences')
     .eq('id', user.id)
     .single();
 
-  // Dispatch Trigger.dev job
+  if (!profile) {
+    // Profile missing — dispatch job without notification targets rather than failing
+    console.warn(`[wiza/summarize] No profile found for user ${user.id} — queuing without notifications`);
+  }
+
+  const notifPrefs = (profile?.notification_preferences ?? {}) as Record<string, boolean>;
+  const sendToEmail = notifPrefs.summary_email ? (profile?.email ?? null) : null;
+  const sendToPhone = notifPrefs.summary_sms   ? (profile?.phone ?? null) : null;
+
+  // 4. Dispatch Trigger.dev job
   await tasks.trigger<typeof summarizeWizaSession>('summarize-wiza-session', {
-    session_id,
-    employee_id: user.id,
-    send_to_email: prefs?.notify_summary_email ? (prefs.email ?? null) : null,
-    send_to_phone: prefs?.notify_summary_sms   ? (prefs.phone ?? null) : null,
+    session_id:    body.session_id,
+    employee_id:   user.id,
+    send_to_email: sendToEmail,
+    send_to_phone: sendToPhone,
   });
 
   return NextResponse.json({ message: 'Summary job queued' });
