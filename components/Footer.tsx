@@ -93,18 +93,21 @@ export default function Footer() {
             {/* Status Messages */}
             <AnimatePresence mode="wait">
               {status === 'success' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mb-4 flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-400"
-                >
-                  <CheckCircle2 className="h-5 w-5 shrink-0" strokeWidth={2} />
-                  <p className="text-sm font-medium">
-                    Successfully subscribed! Check your email for confirmation.
-                  </p>
-                </motion.div>
-              )}
+  <motion.div
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    className="mb-4 flex items-start gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-400"
+  >
+    <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" strokeWidth={2} />
+    <div>
+      <p className="text-sm font-medium">Check your inbox!</p>
+      <p className="text-xs text-emerald-400/70 mt-0.5">
+        We sent a confirmation link to your email. Click it to complete your subscription.
+      </p>
+    </div>
+  </motion.div>
+)}
 
               {status === 'error' && (
                 <motion.div

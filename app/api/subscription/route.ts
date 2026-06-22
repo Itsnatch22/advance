@@ -1,13 +1,14 @@
-// app/api/subscription/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
-import SubscriptionNotification from "@/emails/SubscriptionNotification";
+import { randomBytes } from "crypto";
+import NewsletterConfirmation from "@/emails/NewsletterConfirmation";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 
 function getSupabaseClient() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
@@ -49,10 +50,7 @@ export async function POST(request: NextRequest) {
     const validationResult = subscriptionSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        {
-          error: "Validation failed",
-          issues: validationResult.error.issues,
-        },
+        { error: "Validation failed", issues: validationResult.error.issues },
         { status: 400 }
       );
     }
@@ -64,7 +62,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Subscription successful" }, { status: 200 });
     }
 
-    // Case-insensitive lookup protects against legacy mixed-case rows.
+    // Generate a secure confirmation token
+    const confirmationToken = randomBytes(32).toString("hex");
+    const confirmUrl = `${APP_URL}/api/subscription/confirm?token=${confirmationToken}`;
+
+    // Case-insensitive lookup
     const { data: existingRows, error: checkError } = await supabase
       .from("newsletter_subscriptions")
       .select("email, status")
@@ -86,30 +88,35 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Reactivation — resend confirmation
       const { error: updateError } = await supabase
         .from("newsletter_subscriptions")
         .update({
-          status: "active",
-          subscribed_at: new Date().toISOString(),
+          status: "pending",
+          confirmation_token: confirmationToken,
           unsubscribed_at: null,
+          updated_at: new Date().toISOString(),
         })
         .ilike("email", email);
 
       if (updateError) {
-        console.error("Error reactivating subscription:", updateError);
-        throw new Error("Failed to reactivate subscription");
+        console.error("Error updating subscription:", updateError);
+        throw new Error("Failed to update subscription");
       }
     } else {
-      const { error: insertError } = await supabase.from("newsletter_subscriptions").insert({
-        email,
-        status: "active",
-        subscribed_at: new Date().toISOString(),
-        source: "website_footer",
-      });
+      // New subscription — pending until confirmed
+      const { error: insertError } = await supabase
+        .from("newsletter_subscriptions")
+        .insert({
+          email,
+          status: "pending",
+          confirmation_token: confirmationToken,
+          subscribed_at: new Date().toISOString(),
+          source: "website_footer",
+        });
 
       if (insertError) {
         if (insertError.code === "23505") {
-          // Unique-constraint race from concurrent requests.
           return NextResponse.json(
             { error: "This email is already subscribed to our newsletter" },
             { status: 400 }
@@ -120,34 +127,30 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Send confirmation email
     if (resend) {
       try {
         await resend.emails.send({
           from: "EaziWage <newsletter@eaziwage.com>",
           to: email,
-          subject: "Welcome to EaziWage Newsletter!",
-          react: SubscriptionNotification({ email }),
+          subject: "Confirm your EaziWage subscription",
+          react: NewsletterConfirmation({ email, confirmUrl }),
         });
       } catch (emailError) {
-        console.error("Error sending welcome email:", emailError);
+        console.error("Error sending confirmation email:", emailError);
       }
     } else {
-      console.warn("RESEND_API_KEY is missing; welcome email not sent.");
+      console.warn("RESEND_API_KEY is missing; confirmation email not sent.");
     }
 
     return NextResponse.json(
-      {
-        message: "Successfully subscribed to newsletter",
-        email,
-      },
+      { message: "Please check your email to confirm your subscription.", email },
       { status: 200 }
     );
   } catch (error) {
     console.error("Subscription error:", error);
     return NextResponse.json(
-      {
-        error: "An unexpected error occurred. Please try again later.",
-      },
+      { error: "An unexpected error occurred. Please try again later." },
       { status: 500 }
     );
   }

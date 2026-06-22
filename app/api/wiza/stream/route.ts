@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         countryCode: 'KE',
         isGuest: true,
       });
-    } else if (employee.kyc_status !== 'approved') {
+} else if (employee.kyc_status !== 'approved') {
       // KYC not approved — serve guest prompt, never expose financial data
       systemPrompt = buildSystemPrompt({
         employeeName: employee.full_name ?? 'there',
@@ -114,8 +114,8 @@ export async function POST(req: NextRequest) {
         isGuest: true,
         pendingKyc: true,
       });
-} else {
-      // 2. Current earnings snapshot — single source of truth for earned wages & daily rate
+    } else {
+       // 2. Current earnings snapshot — single source of truth for earned wages & daily rate
       const { data: snapshot } = await supabase
         .from('earnings_snapshots')
         .select(

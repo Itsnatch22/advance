@@ -11,13 +11,15 @@ import {
   TrendingUp,
   ChevronRight,
 } from "lucide-react";
-import React, { useState, useRef, Suspense } from "react";
+import React, { useState, useRef, Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import HeroStats from "./HeroStats"; // async server component
 import { GridSystem } from "./grid";
 import { useCurrency } from "./CurrencyProvider";
 import { formatCurrency } from "@/lib/currency/currency";
 import { useParallax } from "@/hooks/use-parallax";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Hero() {
   const [email, setEmail] = useState("");
@@ -45,6 +47,35 @@ export default function Hero() {
       `https://app.eaziwage.com/register?email=${encodeURIComponent(email)}`
     );
   };
+
+  const searchParams = useSearchParams();
+
+useEffect(() => {
+  const subscribed = searchParams.get("subscribed");
+  if (!subscribed) return;
+
+  if (subscribed === "confirmed") {
+    toast.success("Subscription confirmed!", {
+      description: "Welcome to EaziWage updates. You're all set. 🎉",
+      duration: 6000,
+    });
+  } else if (subscribed === "expired") {
+    toast.error("Confirmation link expired", {
+      description: "Your link was valid for 24 hours. Please subscribe again.",
+      duration: 6000,
+    });
+  } else if (subscribed === "invalid") {
+    toast.error("Invalid confirmation link", {
+      description: "This link doesn't look right. Please try subscribing again.",
+      duration: 6000,
+    });
+  }
+
+  // Clean the query param from the URL without re-render
+  const url = new URL(window.location.href);
+  url.searchParams.delete("subscribed");
+  window.history.replaceState({}, "", url.toString());
+}, [searchParams]);
 
   return (
     <GridSystem
