@@ -30,7 +30,9 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = getSupabaseClient();
     if (!supabase) {
-      console.error("Subscription route misconfigured: missing Supabase env vars");
+      console.error(
+        "Subscription route misconfigured: missing Supabase env vars"
+      );
       return NextResponse.json(
         { error: "Subscription service is temporarily unavailable." },
         { status: 500 }
@@ -59,14 +61,15 @@ export async function POST(request: NextRequest) {
 
     if (honeypot) {
       console.log("Bot detected, ignoring submission");
-      return NextResponse.json({ message: "Subscription successful" }, { status: 200 });
+      return NextResponse.json(
+        { message: "Subscription successful" },
+        { status: 200 }
+      );
     }
 
-    // Generate a secure confirmation token
     const confirmationToken = randomBytes(32).toString("hex");
     const confirmUrl = `${APP_URL}/api/subscription/confirm?token=${confirmationToken}`;
 
-    // Case-insensitive lookup
     const { data: existingRows, error: checkError } = await supabase
       .from("newsletter_subscriptions")
       .select("email, status")
@@ -88,7 +91,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Reactivation — resend confirmation
       const { error: updateError } = await supabase
         .from("newsletter_subscriptions")
         .update({
@@ -104,7 +106,6 @@ export async function POST(request: NextRequest) {
         throw new Error("Failed to update subscription");
       }
     } else {
-      // New subscription — pending until confirmed
       const { error: insertError } = await supabase
         .from("newsletter_subscriptions")
         .insert({
@@ -127,7 +128,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Send confirmation email
     if (resend) {
       try {
         await resend.emails.send({
@@ -144,7 +144,10 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { message: "Please check your email to confirm your subscription.", email },
+      {
+        message: "Please check your email to confirm your subscription.",
+        email,
+      },
       { status: 200 }
     );
   } catch (error) {

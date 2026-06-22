@@ -245,7 +245,9 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
   const [email, setEmail] = useState<string>("");
   const [honeypot, setHoneypot] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const containerRef = useRef<HTMLElement>(null);
@@ -278,7 +280,9 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
         setLastFetched(new Date());
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Something went wrong. Try again."
+          err instanceof Error
+            ? err.message
+            : "Something went wrong. Try again."
         );
       } finally {
         setIsLoading(false);
@@ -289,7 +293,6 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
 
   useEffect(() => {
     fetchResources(selectedCategory, searchQuery);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -300,7 +303,6 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
     return () => {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const displayedResources = useMemo<Resource[]>(() => {
@@ -344,7 +346,9 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
         setTimeout(() => setSubmitStatus("idle"), 5000);
       } else {
         setSubmitStatus("error");
-        setErrorMessage(result.error ?? "Failed to subscribe. Please try again.");
+        setErrorMessage(
+          result.error ?? "Failed to subscribe. Please try again."
+        );
       }
     } catch {
       setSubmitStatus("error");
@@ -357,7 +361,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
   return (
     <main
       ref={containerRef}
-      className="relative min-h-screen bg-white text-slate-900 overflow-hidden"
+      className="relative min-h-screen overflow-hidden bg-white text-slate-900"
     >
       {/* Immersive Background - consistent with other pages */}
       <div className="pointer-events-none absolute inset-0">
@@ -428,7 +432,10 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
                 />
                 {isLoading && (
                   <div className="absolute top-1/2 right-6 -translate-y-1/2">
-                    <RefreshCw size={20} className="animate-spin text-green-500" />
+                    <RefreshCw
+                      size={20}
+                      className="animate-spin text-green-500"
+                    />
                   </div>
                 )}
               </div>
@@ -555,8 +562,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
             </div>
 
             <h2 className="mb-8 font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
-              Join Us{" "}
-              <span className="text-green-600">Today</span>
+              Join Us <span className="text-green-600">Today</span>
             </h2>
             <p className="mx-auto mb-16 max-w-2xl text-xl text-slate-500">
               Get the latest financial wellness insights and regulatory updates

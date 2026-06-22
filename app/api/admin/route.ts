@@ -14,15 +14,17 @@ const sendSchema = z.object({
   subject: z.string().min(3, "Subject too short"),
   previewText: z.string().optional(),
   htmlContent: z.string().min(10, "Content too short"),
-  // Optional — send to a specific batch of emails instead of all active
+
   recipients: z.array(z.string().email()).optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
-    // Auth — admin only
     const supabase = await createRouteHandlerClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -36,10 +38,12 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (adminError || !adminRecord) {
-      return NextResponse.json({ error: "Forbidden — admins only" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Forbidden — admins only" },
+        { status: 403 }
+      );
     }
 
-    // Validate body
     const body = await request.json();
     const parsed = sendSchema.safeParse(body);
     if (!parsed.success) {
@@ -52,10 +56,12 @@ export async function POST(request: NextRequest) {
     const { subject, previewText, htmlContent, recipients } = parsed.data;
 
     if (!resend) {
-      return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Email service not configured" },
+        { status: 500 }
+      );
     }
 
-    // Fetch recipients — either provided list or all active subscribers
     let emails: string[] = [];
 
     if (recipients && recipients.length > 0) {
@@ -71,10 +77,13 @@ export async function POST(request: NextRequest) {
     }
 
     if (emails.length === 0) {
-      return NextResponse.json({ success: true, sent: 0, message: "No active subscribers" });
+      return NextResponse.json({
+        success: true,
+        sent: 0,
+        message: "No active subscribers",
+      });
     }
 
-    // Resend supports batch sending up to 100 per call
     const BATCH_SIZE = 100;
     let sent = 0;
     let failed = 0;
@@ -88,24 +97,29 @@ export async function POST(request: NextRequest) {
             from: "EaziWage <newsletter@eaziwage.com>",
             to,
             subject,
-            html: `<!DOCTYPE html><html><head><meta name="x-apple-disable-message-reformatting"/>${previewText ? `<meta name="description" content="${previewText}"/>` : ''}</head><body>${htmlContent}</body></html>`,
+            html: `<!DOCTYPE html><html><head><meta name="x-apple-disable-message-reformatting"/>${previewText ? `<meta name="description" content="${previewText}"/>` : ""}</head><body>${htmlContent}</body></html>`,
           }))
         );
         sent += batch.length;
       } catch (batchError) {
-        console.error(`[newsletter][send] batch ${i / BATCH_SIZE + 1} failed:`, batchError);
+        console.error(
+          `[newsletter][send] batch ${i / BATCH_SIZE + 1} failed:`,
+          batchError
+        );
         failed += batch.length;
       }
     }
 
-    // Log the send in admin_notifications for audit trail
-    await admin.from("admin_notifications").insert({
-      type: "system_alert",
-      title: `Newsletter sent: ${subject}`,
-      message: `Delivered to ${sent} subscribers. ${failed > 0 ? `${failed} failed.` : ""}`,
-      metadata: { sent, failed, total: emails.length, subject },
-      read: false,
-    }).match(() => {}); // non-blocking
+    await admin
+      .from("admin_notifications")
+      .insert({
+        type: "system_alert",
+        title: `Newsletter sent: ${subject}`,
+        message: `Delivered to ${sent} subscribers. ${failed > 0 ? `${failed} failed.` : ""}`,
+        metadata: { sent, failed, total: emails.length, subject },
+        read: false,
+      })
+      .match(() => {});
 
     return NextResponse.json({
       success: true,

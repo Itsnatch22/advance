@@ -7,8 +7,6 @@ interface CalcData {
   Rates?: unknown[];
 }
 
-// Row shape coming from the spreadsheet-like JSON
-// Keys include a trailing space in "General " based on the source data
 export type RateRow = {
   "General "?: string | number;
   "Amount/Threshold"?: number | string | null;
@@ -28,7 +26,6 @@ export function parseRatesSheet(data: unknown) {
     ? (ratesSheet as RateRow[]).filter(Boolean)
     : [];
 
-  // Extract named rates from rows where "General " is a string label
   const rates: Record<string, number> = {};
   for (const row of rows) {
     const general = row["General "];
@@ -49,7 +46,6 @@ export function parseRatesSheet(data: unknown) {
     }
   }
 
-  // Extract bands where both lower and rate are numeric
   const bands: Band[] = [];
   for (const row of rows) {
     const general = row["General "];

@@ -1,9 +1,9 @@
 export const BRAND_COLORS = {
-  primary: "#15803D", // green-700
-  secondary: "#3b82f6", // blue-500
-  accent: "#10b981", // emerald-500
-  neutral: "#64748b", // slate-500
-  background: "#f8fafc", // slate-50
+  primary: "#15803D",
+  secondary: "#3b82f6",
+  accent: "#10b981",
+  neutral: "#64748b",
+  background: "#f8fafc",
   white: "#ffffff",
 } as const;
 

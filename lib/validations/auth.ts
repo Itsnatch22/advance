@@ -1,4 +1,3 @@
-// lib/validations/auth.ts
 import { z } from "zod";
 
 export const registerSchema = z
@@ -14,16 +13,13 @@ export const registerSchema = z
     confirmPassword: z.string(),
     role: z.enum(["employer", "employee"]),
 
-    // Employer-specific fields
     companyName: z.string().optional(),
     companySize: z.number().int().positive().optional(),
 
-    // Employee-specific fields
     inviteToken: z.string().optional(),
     companyId: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    // Password confirmation validation
     if (data.password !== data.confirmPassword) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -32,7 +28,6 @@ export const registerSchema = z
       });
     }
 
-    // Role-based validation
     if (data.role === "employer") {
       if (!data.companyName || data.companyName.length < 2) {
         ctx.addIssue({
@@ -52,7 +47,6 @@ export const registerSchema = z
     }
 
     if (data.role === "employee") {
-      // Ensure employee doesn't provide company data
       if (data.companyName) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

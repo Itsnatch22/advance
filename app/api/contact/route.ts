@@ -33,7 +33,10 @@ const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@eaziwage.com";
 
 export async function GET() {
   if (!supabase) {
-    return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
+    return NextResponse.json(
+      { error: "Supabase not configured" },
+      { status: 503 }
+    );
   }
 
   const { count, error } = await supabase
@@ -122,7 +125,6 @@ export async function POST(request: NextRequest) {
 
       if (dbError) {
         console.error("Database error:", dbError);
-        // Don't fail the request, just log it
       }
     }
 
@@ -147,7 +149,6 @@ export async function POST(request: NextRequest) {
       });
     } catch (emailError) {
       console.error("Failed to send notification email:", emailError);
-      // Continue to send auto-reply even if notification fails
     }
 
     try {
@@ -162,7 +163,6 @@ export async function POST(request: NextRequest) {
       });
     } catch (emailError) {
       console.error("Failed to send auto-reply:", emailError);
-      // Don't fail the request
     }
 
     return NextResponse.json(

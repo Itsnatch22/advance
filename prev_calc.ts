@@ -1,4 +1,3 @@
-// /lib/calc.ts
 import fs from "fs";
 import path from "path";
 
@@ -8,7 +7,6 @@ export interface Payload {
   cycleDays: number;
   country: string;
 
-  // 🔥 NEW: allowances with + / - values
   allowances?: Record<string, number>;
 }
 
@@ -50,31 +48,26 @@ export interface JsonConfig {
 export function calc(payload: Payload, cfg: JsonConfig) {
   const { salary, daysWorked, cycleDays, allowances = {} } = payload;
 
-  // 🔥🔥🔥 NEW: Sum ALL allowances (+ or -)
   const totalAllowances = Object.values(allowances).reduce(
     (a, b) => a + (b || 0),
     0
   );
 
-  // 🔥 Gross pay (salary + allowances, scaled)
   const base = salary + totalAllowances;
   const gross = (base / cycleDays) * daysWorked;
 
-  // NSSF (Kenya / Uganda / TZ)
   let nssfEmployee = 0;
   let nssfEmployer = 0;
   let nssf1 = 0;
   let nssf2 = 0;
 
   if (cfg.nssf?.employeeRate) {
-    // % based (Uganda / Tanzania)
     nssfEmployee = gross * (cfg.nssf.employeeRate ?? 0);
     nssfEmployer = gross * (cfg.nssf.employerRate ?? 0);
   } else if (payload.country === "KE" && cfg.nssf) {
-    // Tier-based (Kenya)
-    const tier1Ceiling = 7000; // KRA/NSSF guidelines, should be in config
-    const tier1Rate = 0.06; // Standard NSSF rate, should be in config
-    const tier2Ceiling = cfg.nssf.tier2Cap ?? 36000; // Fallback to old cap
+    const tier1Ceiling = 7000;
+    const tier1Rate = 0.06;
+    const tier2Ceiling = cfg.nssf.tier2Cap ?? 36000;
     const tier2Rate = cfg.nssf.tier2Rate ?? 0;
 
     nssf1 = Math.min(gross, tier1Ceiling) * tier1Rate;
@@ -82,18 +75,15 @@ export function calc(payload: Payload, cfg: JsonConfig) {
       Math.max(0, Math.min(gross, tier2Ceiling) - tier1Ceiling) * tier2Rate;
 
     nssfEmployee = nssf1 + nssf2;
-    nssfEmployer = nssfEmployee; // Employer matches in Kenya
+    nssfEmployer = nssfEmployee;
   }
 
   const totalNSSF = nssfEmployee + nssfEmployer;
 
-  // SHIF / NHIF (flat or percent)
   const shif = cfg.shif ? (cfg.shif.flat ?? gross * (cfg.shif.rate ?? 0)) : 0;
 
-  // Housing Levy
   const housingLevy = (cfg.housing?.rate ?? 0) * gross;
 
-  // RSSB (Rwanda)
   const rssb = cfg.rssb
     ? {
         pensionEmployee: gross * (cfg.rssb.pension?.employeeRate ?? 0),
@@ -120,37 +110,30 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     rssb.maternityEmployee +
     rssb.maternityEmployer;
 
-  // Employer-only levies (Tanzania)
   const sdl = (cfg.sdl?.employerRate ?? 0) * gross;
   const wcf = (cfg.wcf?.employerRate ?? 0) * gross;
 
-  // Taxable income = gross - employee social security
   const employeeDeductions =
     nssfEmployee +
     rssb.pensionEmployee +
     rssb.medicalEmployee +
     rssb.maternityEmployee;
 
-  // Per spreadsheet logic, KE taxable income also deducts SHIF and Housing
   const keTaxDeductibles = payload.country === "KE" ? shif + housingLevy : 0;
   const taxableIncome = gross - employeeDeductions - keTaxDeductibles;
 
-  // PAYE
   const payeBeforeRelief = calcPAYE(taxableIncome, cfg.paye?.brackets ?? []);
   const personalRelief = cfg.personalRelief ?? 0;
   const payeAfterRelief = Math.max(payeBeforeRelief - personalRelief, 0);
 
-  // Local Service Tax (Uganda LST)
   const lst =
     payload.country === "UG" && cfg.lst?.bands
       ? calcLST(gross, cfg.lst.bands)
       : 0;
 
-  // Net Pay (employee)
   const netPay =
     gross - (employeeDeductions + shif + housingLevy + payeAfterRelief + lst);
 
-  // Earned wage and access
   const earnedWage = (netPay / cycleDays) * daysWorked;
   const accessCap = earnedWage * (cfg.accessCapPercent ?? 0.6);
   const platformFee = accessCap * (cfg.platformFeePercent ?? 0.05);
@@ -160,7 +143,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     success: true,
     country: payload.country,
     gross,
-    totalAllowances, // 🔥 NEW
+    totalAllowances,
     taxableIncome,
     nssfEmployee,
     nssfEmployer,
@@ -193,7 +176,6 @@ export function calc(payload: Payload, cfg: JsonConfig) {
   };
 }
 
-// PAYE helper
 function calcPAYE(
   taxable: number,
   brackets: {
@@ -205,12 +187,10 @@ function calcPAYE(
 ) {
   if (!brackets || !brackets.length) return 0;
 
-  // Check if we are using base/minus system (Uganda, Rwanda) or marginal (Kenya)
   const isBracketSystem =
     brackets[0].base !== undefined && brackets[0].minus !== undefined;
 
   if (isBracketSystem) {
-    // Bracket system with base and minus
     let tax = 0;
     let bracketFound = false;
     for (const b of brackets) {
@@ -220,7 +200,7 @@ function calcPAYE(
         break;
       }
     }
-    // Handle income exceeding the highest bracket
+
     if (!bracketFound) {
       const lastBracket = brackets[brackets.length - 1];
       tax =
@@ -229,7 +209,6 @@ function calcPAYE(
     }
     return Math.max(0, Math.round(tax * 100) / 100);
   } else {
-    // Marginal system (Kenya)
     let tax = 0;
     let last = 0;
     for (const b of brackets) {
@@ -245,7 +224,6 @@ function calcPAYE(
   }
 }
 
-// LST helper (Uganda)
 function calcLST(gross: number, bands: { upTo: number; tax: number }[]) {
   for (const b of bands) {
     if (gross <= b.upTo) return b.tax;

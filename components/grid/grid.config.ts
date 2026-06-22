@@ -1,8 +1,8 @@
 export const gridConfig = {
-  baseUnit: 24, // 24px
+  baseUnit: 24,
   columns: 12,
-  gap: 24, // 24px
-  maxWidth: 1280, // 1280px
+  gap: 24,
+  maxWidth: 1280,
   breakpoints: {
     sm: 640,
     md: 768,
@@ -12,4 +12,4 @@ export const gridConfig = {
 } as const;
 
 export type Breakpoint = keyof typeof gridConfig.breakpoints;
-export type GridVariant = 'dots' | 'lines' | 'cross';
+export type GridVariant = "dots" | "lines" | "cross";

@@ -9,7 +9,7 @@ const scheduleSchema = z.object({
   adminEmail: z.string().email(),
   meetingType: z.enum(["user_to_admin", "sales_demo", "partner_onboarding"]),
   calendlyEventId: z.string().optional(),
-  scheduledAt: z.string(), // ISO string
+  scheduledAt: z.string(),
 });
 
 const supabaseAdmin = createClient(
@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = scheduleSchema.parse(body);
 
-    // 1. Log to Supabase
     const { error: dbError } = await supabaseAdmin.from("meeting_logs").insert({
       user_email: validatedData.userEmail,
       admin_email: validatedData.adminEmail,
@@ -38,7 +37,6 @@ export async function POST(request: NextRequest) {
       throw new Error("Failed to log meeting");
     }
 
-    // 2. Send confirmation emails
     const scheduledDate = new Date(validatedData.scheduledAt).toLocaleString(
       "en-US",
       {
@@ -47,7 +45,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    // Email to User
     await resend.emails.send({
       from: "EaziWage <meetings@eaziwage.com>",
       to: validatedData.userEmail,
@@ -60,7 +57,6 @@ export async function POST(request: NextRequest) {
       }),
     });
 
-    // Email to Admin
     await resend.emails.send({
       from: "EaziWage <meetings@eaziwage.com>",
       to: validatedData.adminEmail,

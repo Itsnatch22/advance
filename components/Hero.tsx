@@ -1,9 +1,5 @@
 "use client";
-import {
-  motion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   Sparkles,
   Check,
@@ -13,7 +9,7 @@ import {
 } from "lucide-react";
 import React, { useState, useRef, Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import HeroStats from "./HeroStats"; // async server component
+import HeroStats from "./HeroStats";
 import { GridSystem } from "./grid";
 import { useCurrency } from "./CurrencyProvider";
 import { formatCurrency } from "@/lib/currency/currency";
@@ -27,7 +23,6 @@ export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
   const { locale } = useCurrency();
 
-  // Scroll parallax for phone mockup
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -37,7 +32,6 @@ export default function Hero() {
   const rotatePhone = useTransform(scrollYProgress, [0, 1], [0, -5]);
   const opacityPhone = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  // Mouse parallax for the mockup
   const { rotateX, rotateY, handleMouseMove, handleMouseLeave } = useParallax();
 
   const handleContinue = (e: React.FormEvent) => {
@@ -50,32 +44,33 @@ export default function Hero() {
 
   const searchParams = useSearchParams();
 
-useEffect(() => {
-  const subscribed = searchParams.get("subscribed");
-  if (!subscribed) return;
+  useEffect(() => {
+    const subscribed = searchParams.get("subscribed");
+    if (!subscribed) return;
 
-  if (subscribed === "confirmed") {
-    toast.success("Subscription confirmed!", {
-      description: "Welcome to EaziWage updates. You're all set. 🎉",
-      duration: 6000,
-    });
-  } else if (subscribed === "expired") {
-    toast.error("Confirmation link expired", {
-      description: "Your link was valid for 24 hours. Please subscribe again.",
-      duration: 6000,
-    });
-  } else if (subscribed === "invalid") {
-    toast.error("Invalid confirmation link", {
-      description: "This link doesn't look right. Please try subscribing again.",
-      duration: 6000,
-    });
-  }
+    if (subscribed === "confirmed") {
+      toast.success("Subscription confirmed!", {
+        description: "Welcome to EaziWage updates. You're all set. 🎉",
+        duration: 6000,
+      });
+    } else if (subscribed === "expired") {
+      toast.error("Confirmation link expired", {
+        description:
+          "Your link was valid for 24 hours. Please subscribe again.",
+        duration: 6000,
+      });
+    } else if (subscribed === "invalid") {
+      toast.error("Invalid confirmation link", {
+        description:
+          "This link doesn't look right. Please try subscribing again.",
+        duration: 6000,
+      });
+    }
 
-  // Clean the query param from the URL without re-render
-  const url = new URL(window.location.href);
-  url.searchParams.delete("subscribed");
-  window.history.replaceState({}, "", url.toString());
-}, [searchParams]);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("subscribed");
+    window.history.replaceState({}, "", url.toString());
+  }, [searchParams]);
 
   return (
     <GridSystem
@@ -182,7 +177,9 @@ useEffect(() => {
                       <p className="mb-1 text-xs font-bold tracking-widest uppercase opacity-60">
                         Available Balance
                       </p>
-                      <p className="text-3xl font-bold">{formatCurrency(12450, locale)}</p>
+                      <p className="text-3xl font-bold">
+                        {formatCurrency(12450, locale)}
+                      </p>
                     </div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/20 backdrop-blur-md">
                       <Wallet className="h-6 w-6" />
@@ -274,7 +271,6 @@ useEffect(() => {
   );
 }
 
-// Shown while HeroStats is streaming in — matches the stats grid layout
 function StatsFallback() {
   return (
     <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">

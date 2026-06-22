@@ -5,7 +5,7 @@ const UNSUBSCRIBE_SECRET = process.env.UNSUBSCRIBE_SECRET!;
 export function makeUnsubscribeToken(
   email: string,
   product: "newsletter" | "partners" | "sales" | "all",
-  ttlSeconds = 60 * 60 * 24 * 7 // default 7 days
+  ttlSeconds = 60 * 60 * 24 * 7
 ) {
   const expiry = Math.floor(Date.now() / 1000) + ttlSeconds;
   const hmac = crypto

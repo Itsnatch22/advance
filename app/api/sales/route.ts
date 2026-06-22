@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import SalesNotification from "@/emails/SalesNotification";
-import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit"; // ← Using provided file
+import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit"; 
 
 const salesSchema = z.object({
   name: z.string().min(2),
@@ -41,7 +41,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "anonymous";
 
-  // Rate limiting from provided file
+  
   const rateLimitResult = await checkRateLimit(rateLimiter, `sales:${ip}`);
   if (!rateLimitResult.success) {
     return NextResponse.json(
@@ -58,8 +58,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    // reCAPTCHA verification
-    const recaptchaResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+    
+    const recaptchaResponse = await fetch("https:
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Insert into Supabase
+    
     const { error: dbError } = await supabaseAdmin
       .from("sales_leads")
       .insert({
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       throw new Error(dbError.message);
     }
 
-    // Send email notification
+    
     await resend.emails.send({
       from: "sales@eaziwage.com",
       to: "admin@eaziwage.com",

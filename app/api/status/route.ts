@@ -1,62 +1,84 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+const HIDDEN = new Set(['System Health', 'System Metrics']);
+
+type APIStatus = 'healthy' | 'degraded' | 'down';
 
 export async function GET() {
   try {
-    // Call internal health route directly — no external round trip
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_DASHBOARD_APP_URL}/api/admin/check-api-health`,
-      { cache: "no-store" }
-    );
+    const { data, error } = await supabase
+      .from('api_health')
+      .select('name, status, latency_ms, updated_at')
+      .order('name', { ascending: true });
 
-    if (!res.ok) {
+    if (error || !data) {
+      console.error('[status] api_health query failed:', error?.message);
       return NextResponse.json(
-        { status: "error", message: "Health check unavailable" },
-        { status: 502 }
+        { status: 'down', message: 'Failed to retrieve service status.' },
+        { status: 503 }
       );
     }
 
-    const raw = await res.json();
-
-    // Reshape integrations[] → services{} that page.tsx expects
-    // Filter out internal noise rows that aren't user-facing services
-    const HIDDEN = new Set(["System Health", "System Metrics"]);
+    const visible = data.filter((r) => !HIDDEN.has(r.name));
 
     const services: Record<string, { name: string; status: string; message: string }> = {};
-
-    for (const integration of raw.integrations ?? []) {
-      if (HIDDEN.has(integration.name)) continue;
-
-      // Derive a safe key from the name
-      const key = integration.name.toLowerCase().replace(/\s+/g, "_");
-
+    for (const row of visible) {
+      const key = row.name.toLowerCase().replace(/\s+/g, '_');
       services[key] = {
-        name: integration.name,
-        status: integration.status,         // healthy | degraded | down
+        name: row.name,
+        status: row.status ?? 'down',
         message:
-          integration.status === "healthy"  ? "Operational" :
-          integration.status === "degraded" ? "Experiencing issues" :
-                                              "Service unavailable",
+          row.status === 'healthy'
+            ? 'Operational'
+            : row.status === 'degraded'
+            ? 'Experiencing issues'
+            : 'Service unavailable',
       };
     }
 
+    const statuses = visible.map((r) => r.status as APIStatus);
+    const overall_status: APIStatus = statuses.includes('down')
+      ? 'down'
+      : statuses.includes('degraded')
+      ? 'degraded'
+      : 'healthy';
+
+    const avg_latency =
+      visible.length > 0
+        ? Math.round(
+            visible.reduce((sum, r) => sum + (r.latency_ms ?? 0), 0) / visible.length
+          )
+        : 0;
+
+    const last_updated =
+      visible.reduce((latest, r) => {
+        return !latest || r.updated_at > latest ? r.updated_at : latest;
+      }, null as string | null) ?? new Date().toISOString();
+
     return NextResponse.json({
-      status: raw.overall_status,
-      timestamp: raw.last_updated,
-      latency: `${raw.integrations?.[0]?.latency_ms ?? 0}ms`,
+      status: overall_status,
+      timestamp: last_updated,
+      latency: `${avg_latency}ms`,
       services,
-      // System block — hide real infra details from public
       system: {
-        memory: { free: "–", total: "–", usage: "0%" },
-        uptime: "–",
-        platform: "Cloud",
+        memory: { free: '–', total: '–', usage: '0%' },
+        uptime: '–',
+        platform: 'Cloud',
         cpus: 0,
       },
     });
-  } catch {
+  } catch (err) {
+    console.error('[status] Unexpected error:', err);
     return NextResponse.json(
-      { status: "down", message: "Failed to reach app server" },
+      { status: 'down', message: 'Failed to retrieve service status.' },
       { status: 503 }
     );
   }

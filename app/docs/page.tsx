@@ -1,11 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -19,7 +15,7 @@ import {
   Globe,
 } from "lucide-react";
 import Lottie from "lottie-react";
-import EditDocument from "@/public/Edit-document.json"; // swap for a docs-themed Lottie if you have one
+import EditDocument from "@/public/Edit-document.json";
 import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";

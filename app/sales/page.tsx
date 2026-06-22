@@ -1,17 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  motion,
-  AnimatePresence,
-} from "framer-motion";
-import {
-  Phone,
-  MapPin,
-  Send,
-  CheckCircle2,
-  Briefcase,
-} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Phone, MapPin, Send, CheckCircle2, Briefcase } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -42,7 +33,13 @@ const TiltInfoCard = ({
   value: string;
   href?: string;
 }) => {
-  const { rotateX, rotateY, spotlightBackground, handleMouseMove, handleMouseLeave } = useParallax();
+  const {
+    rotateX,
+    rotateY,
+    spotlightBackground,
+    handleMouseMove,
+    handleMouseLeave,
+  } = useParallax();
 
   const Content = (
     <motion.div
@@ -66,7 +63,9 @@ const TiltInfoCard = ({
         <p className="text-[10px] font-black tracking-[0.2em] text-green-600/60 uppercase">
           {label}
         </p>
-        <p className="text-lg font-bold tracking-tight text-slate-900">{value}</p>
+        <p className="text-lg font-bold tracking-tight text-slate-900">
+          {value}
+        </p>
       </div>
     </motion.div>
   );
@@ -89,7 +88,10 @@ const StatCard = ({ value, label }: { value: string; label: string }) => (
     whileHover={{ y: -5, scale: 1.05 }}
     className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white/40 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:border-slate-300/60 hover:bg-white/60"
   >
-    <div className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl" dangerouslySetInnerHTML={{ __html: value }} />
+    <div
+      className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl"
+      dangerouslySetInnerHTML={{ __html: value }}
+    />
     <div className="mt-1 text-[10px] font-black tracking-[0.2em] text-green-600/60 uppercase">
       {label}
     </div>
@@ -107,12 +109,12 @@ export default function SalesPage() {
 
   const [employerCount, setEmployerCount] = useState<number | null>(null);
 
-    useEffect(() => {
-      fetch("/api/contact")
-        .then(r => r.json())
-        .then(d => setEmployerCount(d.count))
-        .catch(() => {});
-    }, []);
+  useEffect(() => {
+    fetch("/api/contact")
+      .then((r) => r.json())
+      .then((d) => setEmployerCount(d.count))
+      .catch(() => {});
+  }, []);
 
   const {
     register,
@@ -129,12 +131,14 @@ export default function SalesPage() {
     setSubmitStatus("idle");
 
     try {
-      // reCAPTCHA logic preserved from original
       const recaptchaToken = await new Promise<string>((resolve, reject) => {
         const windowWithRecaptcha = window as unknown as {
           grecaptcha: {
             ready: (cb: () => void) => void;
-            execute: (siteKey: string, options: { action: string }) => Promise<string>;
+            execute: (
+              siteKey: string,
+              options: { action: string }
+            ) => Promise<string>;
           };
         };
         if (typeof window === "undefined" || !windowWithRecaptcha.grecaptcha) {
@@ -234,7 +238,10 @@ export default function SalesPage() {
               </div>
 
               <div className="grid max-w-md grid-cols-3 gap-4">
-                <StatCard value={`${employerCount ?? "..."}+`} label="Companies" />
+                <StatCard
+                  value={`${employerCount ?? "..."}+`}
+                  label="Companies"
+                />
                 <StatCard value="0%" label="Interest" />
                 <StatCard value="24/7" label="Instant Disbursement" />
               </div>
@@ -245,7 +252,7 @@ export default function SalesPage() {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-8 rounded-[3rem] bg-white/40 p-12 backdrop-blur-3xl shadow-2xl lg:p-16"
+              className="space-y-8 rounded-[3rem] bg-white/40 p-12 shadow-2xl backdrop-blur-3xl lg:p-16"
             >
               <div className="space-y-6">
                 <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
@@ -256,118 +263,117 @@ export default function SalesPage() {
                 </p>
               </div>
 
-                <AnimatePresence mode="wait">
-                  {submitStatus === "success" && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="mb-8 overflow-hidden rounded-2xl border border-green-100 bg-green-50 p-5 text-green-700"
-                    >
-                      <div className="flex items-center gap-3">
-                        <CheckCircle2 size={20} className="shrink-0" />
-                        <p className="text-sm font-bold">
-                          Thank you! Your request has been submitted
-                          successfully.
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <input
-                    type="text"
-                    className="sr-only"
-                    {...register("honeypot")}
-                  />
-
-                  <div className="space-y-2">
-                    <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
-                      Full Name
-                    </label>
-                    <input
-                      placeholder="Your name"
-                      {...register("name")}
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
-                    />
-                    {errors.name && (
-                      <p className="ml-1 text-xs font-bold text-red-500">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="you@company.com"
-                      {...register("email")}
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
-                    />
-                    {errors.email && (
-                      <p className="ml-1 text-xs font-bold text-red-500">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
-                      Company Name
-                    </label>
-                    <input
-                      placeholder="Your Company"
-                      {...register("company")}
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
-                    />
-                    {errors.company && (
-                      <p className="ml-1 text-xs font-bold text-red-500">
-                        {errors.company.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
-                      Message
-                    </label>
-                    <textarea
-                      rows={4}
-                      placeholder="Tell us about your business needs..."
-                      {...register("message")}
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
-                    />
-                    {errors.message && (
-                      <p className="ml-1 text-xs font-bold text-red-500">
-                        {errors.message.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <motion.button
-                    type="submit"
-                    disabled={isSubmitting}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex w-full items-center justify-center gap-3 rounded-2xl bg-slate-900 py-5 text-lg font-bold text-white shadow-2xl transition-all hover:bg-green-600 disabled:opacity-50"
+              <AnimatePresence mode="wait">
+                {submitStatus === "success" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-8 overflow-hidden rounded-2xl border border-green-100 bg-green-50 p-5 text-green-700"
                   >
-                    {isSubmitting ? (
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    ) : (
-                      <>
-                        <Send size={20} />
-                        <span>Request Demo</span>
-                      </>
-                    )}
-                  </motion.button>
-                </form>
-              </motion.div>
-            </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 size={20} className="shrink-0" />
+                      <p className="text-sm font-bold">
+                        Thank you! Your request has been submitted successfully.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <input
+                  type="text"
+                  className="sr-only"
+                  {...register("honeypot")}
+                />
+
+                <div className="space-y-2">
+                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                    Full Name
+                  </label>
+                  <input
+                    placeholder="Your name"
+                    {...register("name")}
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                  />
+                  {errors.name && (
+                    <p className="ml-1 text-xs font-bold text-red-500">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="you@company.com"
+                    {...register("email")}
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                  />
+                  {errors.email && (
+                    <p className="ml-1 text-xs font-bold text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                    Company Name
+                  </label>
+                  <input
+                    placeholder="Your Company"
+                    {...register("company")}
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                  />
+                  {errors.company && (
+                    <p className="ml-1 text-xs font-bold text-red-500">
+                      {errors.company.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                    Message
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder="Tell us about your business needs..."
+                    {...register("message")}
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                  />
+                  {errors.message && (
+                    <p className="ml-1 text-xs font-bold text-red-500">
+                      {errors.message.message}
+                    </p>
+                  )}
+                </div>
+
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex w-full items-center justify-center gap-3 rounded-2xl bg-slate-900 py-5 text-lg font-bold text-white shadow-2xl transition-all hover:bg-green-600 disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  ) : (
+                    <>
+                      <Send size={20} />
+                      <span>Request Demo</span>
+                    </>
+                  )}
+                </motion.button>
+              </form>
+            </motion.div>
           </div>
+        </div>
       </main>
     </>
   );

@@ -1,6 +1,5 @@
 import React from "react";
 
-// --- Card Components ---
 export const Card: React.FC<{
   children: React.ReactNode;
   className?: string;
@@ -32,7 +31,6 @@ export const CardContent: React.FC<{
   <div className={`p-6 ${className}`}>{children}</div>
 );
 
-// --- Button Component ---
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?:
     | "primary"
@@ -84,7 +82,6 @@ export const Button: React.FC<ButtonProps> = ({
   );
 };
 
-// --- Badge Component ---
 export const Badge: React.FC<{
   children: React.ReactNode;
   variant?: "default" | "success" | "warning" | "danger";
@@ -104,7 +101,6 @@ export const Badge: React.FC<{
   );
 };
 
-// --- Input Component ---
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
@@ -130,7 +126,6 @@ export const Input: React.FC<InputProps> = ({
   </div>
 );
 
-// --- Table Components ---
 export const Table: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (

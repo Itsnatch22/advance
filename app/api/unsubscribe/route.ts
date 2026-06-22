@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
 
-// ─── Env validation ──────────────────────────────────────────────────────────
+
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const RESEND_API_KEY = process.env.RESEND_API_KEY!; // or any email provider
+const RESEND_API_KEY = process.env.RESEND_API_KEY!; 
 
 const CONFIRMATION_DELAY_DAYS = 0;
 
@@ -16,11 +16,11 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   );
 }
 
-// ─── Supabase ─────────────────────────────────────────────────────────────────
+
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+
 
 type Body = {
   email: string;
@@ -28,7 +28,7 @@ type Body = {
   feedback?: string;
 };
 
-// ─── Email sender ────────────────────────────────────────────────────────────
+
 
 async function scheduleConfirmationEmail(
   email: string,
@@ -47,7 +47,7 @@ async function scheduleConfirmationEmail(
   };
   const label = productLabel[product] ?? product;
 
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https:
     method: "POST",
     headers: {
       Authorization: `Bearer ${RESEND_API_KEY}`,
@@ -89,7 +89,7 @@ async function scheduleConfirmationEmail(
                   <p style="font-size:15px;color:#4a4a6a;line-height:1.6;margin:0 0 24px">
                     Changed your mind? You can always re-subscribe from our website.
                   </p>
-                  <a href="https://eaziwage.com"
+                  <a href="https:
                     style="display:inline-block;background:#16a34a;color:#fff;padding:11px 22px;
                       border-radius:8px;font-size:15px;font-weight:600;text-decoration:none">
                     Visit EaziWage
@@ -99,8 +99,8 @@ async function scheduleConfirmationEmail(
               <tr>
                 <td style="padding:16px 32px;border-top:1px solid #e8e8f0;font-size:12px;color:#8888aa;">
                   © ${new Date().getFullYear()} EaziWage ·
-                  <a href="https://eaziwage.com/data.pdf" style="color:#8888aa">Privacy</a> ·
-                  <a href="https://eaziwage.com/terms.pdf" style="color:#8888aa">Terms</a>
+                  <a href="https:
+                  <a href="https:
                 </td>
               </tr>
             </table>
@@ -112,7 +112,7 @@ You've been unsubscribed from ${label}.
 
 This confirms that ${email} has been removed from ${label}. You won't receive any more of these emails.
 
-Changed your mind? Visit https://eaziwage.com to re-subscribe.
+Changed your mind? Visit https:
 
 © ${new Date().getFullYear()} EaziWage
       `.trim(),
@@ -125,11 +125,11 @@ Changed your mind? Visit https://eaziwage.com to re-subscribe.
   }
 }
 
-// ─── Route handler ────────────────────────────────────────────────────────────
+
 
 export async function POST(req: Request) {
-  // ── Rate limiting ──
-  // Use the requester's IP as the rate-limit key.
+  
+  
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
     req.headers.get("x-real-ip") ??
@@ -154,7 +154,7 @@ export async function POST(req: Request) {
     const body: Body = await req.json();
     const { email, product, feedback } = body;
 
-    // ── Basic validation ──
+    
     if (!email || !product) {
       return NextResponse.json(
         { message: "Missing email or product." },
@@ -173,7 +173,7 @@ export async function POST(req: Request) {
     const normalizedEmail = email.trim().toLowerCase();
     const now = new Date().toISOString();
 
-    // Keep newsletter table in sync with subscribe endpoint.
+    
     if (product === "newsletter" || product === "all") {
       const { error: newsletterError } = await supabase
         .from("newsletter_subscriptions")
@@ -196,7 +196,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // ── Upsert subscription row ──
+    
     const { error } = await supabase
       .from("subscriptions")
       .upsert(
@@ -211,7 +211,7 @@ export async function POST(req: Request) {
       )
       .select();
 
-    // 42P01 = undefined_table; keep compatibility when this table is absent.
+    
     if (error && error.code !== "42P01") {
       console.error("[unsubscribe] Supabase error:", error);
       return NextResponse.json(
@@ -223,8 +223,8 @@ export async function POST(req: Request) {
       console.warn('[unsubscribe] "subscriptions" table not found; skipped legacy preference upsert.');
     }
 
-    // ── Schedule confirmation email ──
-    // Fire-and-forget — don't block the response on email delivery.
+    
+    
     scheduleConfirmationEmail(normalizedEmail, product).catch((err) =>
       console.error("[unsubscribe] scheduleConfirmationEmail threw:", err)
     );

@@ -1,4 +1,3 @@
-// app/api/cookie-consent/route.ts
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/supabase";
 
@@ -28,12 +27,18 @@ export async function POST(req: Request) {
 
     if (insertError) {
       console.error("❌ Supabase insert error:", insertError);
-      return NextResponse.json({ error: "Failed to save consent" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to save consent" },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     console.error("❌ /api/cookie-consent failed:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

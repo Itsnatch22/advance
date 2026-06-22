@@ -11,7 +11,11 @@ import {
   Shield,
   ShieldCheck,
   Send,
-  Globe2, CheckCircle2, AlertCircle, Loader2, Wallet,
+  Globe2,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Wallet,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,16 +27,16 @@ export default function Footer() {
   const [email, setEmail] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) return;
 
     setIsSubmitting(true);
-    setStatus('idle');
+    setStatus("idle");
     setErrorMessage("");
 
     try {
@@ -45,17 +49,16 @@ export default function Footer() {
       const data = await response.json();
 
       if (response.ok) {
-        setStatus('success');
+        setStatus("success");
         setEmail("");
-        
-        // Reset success message after 5 seconds
-        setTimeout(() => setStatus('idle'), 5000);
+
+        setTimeout(() => setStatus("idle"), 5000);
       } else {
-        setStatus('error');
+        setStatus("error");
         setErrorMessage(data.error || "Failed to subscribe. Please try again.");
       }
     } catch (error) {
-      setStatus('error');
+      setStatus("error");
       setErrorMessage("Network error. Please check your connection.");
       console.error("Subscription error:", error);
     } finally {
@@ -70,15 +73,15 @@ export default function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-slate-800/60 bg-linear-to-b from-slate-900 via-slate-950 to-slate-900">
       {/* Enhanced ambient glow effects */}
-      <div className="absolute left-0 top-0 h-96 w-96 rounded-full bg-emerald-600/5 blur-3xl"></div>
-      <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-green-500/5 blur-3xl"></div>
+      <div className="absolute top-0 left-0 h-96 w-96 rounded-full bg-emerald-600/5 blur-3xl"></div>
+      <div className="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-green-500/5 blur-3xl"></div>
 
       {/* Newsletter section - enhanced card treatment */}
       <div className="relative border-b border-slate-800/60 pt-12 sm:pt-16">
         <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8">
           <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
             <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-400 ring-1 ring-emerald-500/20">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold tracking-wider text-emerald-400 uppercase ring-1 ring-emerald-500/20">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
                 Newsletter
               </div>
@@ -86,92 +89,109 @@ export default function Footer() {
                 Stay updated with EaziWage.
               </h3>
               <p className="text-base leading-relaxed text-slate-400 sm:text-lg">
-                Get the latest news, product updates, and financial tips delivered to your inbox.
+                Get the latest news, product updates, and financial tips
+                delivered to your inbox.
               </p>
             </div>
             <div>
-            {/* Status Messages */}
-            <AnimatePresence mode="wait">
-              {status === 'success' && (
-  <motion.div
-    initial={{ opacity: 0, y: -10 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -10 }}
-    className="mb-4 flex items-start gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-400"
-  >
-    <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" strokeWidth={2} />
-    <div>
-      <p className="text-sm font-medium">Check your inbox!</p>
-      <p className="text-xs text-emerald-400/70 mt-0.5">
-        We sent a confirmation link to your email. Click it to complete your subscription.
-      </p>
-    </div>
-  </motion.div>
-)}
-
-              {status === 'error' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mb-4 flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-400"
-                >
-                  <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" strokeWidth={2} />
-                  <div>
-                    <p className="text-sm font-medium">Subscription failed</p>
-                    {errorMessage && (
-                      <p className="mt-1 text-xs text-red-400/80">
-                        {errorMessage}
+              {/* Status Messages */}
+              <AnimatePresence mode="wait">
+                {status === "success" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mb-4 flex items-start gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-400"
+                  >
+                    <CheckCircle2
+                      className="mt-0.5 h-5 w-5 shrink-0"
+                      strokeWidth={2}
+                    />
+                    <div>
+                      <p className="text-sm font-medium">Check your inbox!</p>
+                      <p className="mt-0.5 text-xs text-emerald-400/70">
+                        We sent a confirmation link to your email. Click it to
+                        complete your subscription.
                       </p>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-              {/* Honeypot field */}
-              <input
-                type="text"
-                value={honeypot}
-                onChange={(e) => setHoneypot(e.target.value)}
-                autoComplete="off"
-                tabIndex={-1}
-                aria-hidden="true"
-                className="sr-only"
-              />
-
-              <Input 
-                type="email" 
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={isSubmitting}
-                className="h-12 flex-1 rounded-xl border-slate-700/60 bg-slate-800/50 px-5 text-white placeholder:text-slate-500 backdrop-blur-sm transition-all duration-300 focus:border-emerald-500/50 focus:bg-slate-800 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:px-6"
-              />
-              
-              <motion.button
-                type="submit"
-                disabled={isSubmitting}
-                whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
-                whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
-                className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-6 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 sm:h-14 sm:px-8"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" strokeWidth={2} />
-                    <span>Subscribing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 sm:h-5 sm:w-5" strokeWidth={2} />
-                    <span>Subscribe</span>
-                  </>
+                    </div>
+                  </motion.div>
                 )}
-              </motion.button>
-            </form>
-          </div>
+
+                {status === "error" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mb-4 flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-400"
+                  >
+                    <AlertCircle
+                      className="mt-0.5 h-5 w-5 shrink-0"
+                      strokeWidth={2}
+                    />
+                    <div>
+                      <p className="text-sm font-medium">Subscription failed</p>
+                      {errorMessage && (
+                        <p className="mt-1 text-xs text-red-400/80">
+                          {errorMessage}
+                        </p>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-3 sm:flex-row sm:gap-4"
+              >
+                {/* Honeypot field */}
+                <input
+                  type="text"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  autoComplete="off"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="sr-only"
+                />
+
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  className="h-12 flex-1 rounded-xl border-slate-700/60 bg-slate-800/50 px-5 text-white backdrop-blur-sm transition-all duration-300 placeholder:text-slate-500 focus:border-emerald-500/50 focus:bg-slate-800 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:px-6"
+                />
+
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
+                  whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
+                  className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-6 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 sm:h-14 sm:px-8"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2
+                        className="h-4 w-4 animate-spin sm:h-5 sm:w-5"
+                        strokeWidth={2}
+                      />
+                      <span>Subscribing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send
+                        className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 sm:h-5 sm:w-5"
+                        strokeWidth={2}
+                      />
+                      <span>Subscribe</span>
+                    </>
+                  )}
+                </motion.button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -182,21 +202,27 @@ export default function Footer() {
           <div className="grid gap-4 rounded-2xl border border-emerald-500/15 bg-linear-to-r from-slate-900 via-slate-900 to-emerald-950/40 p-5 shadow-[0_0_0_1px_rgba(16,185,129,0.04)] sm:gap-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 ring-1 ring-emerald-500/20 sm:h-16 sm:w-16">
-                <ShieldCheck className="h-7 w-7 text-emerald-400 sm:h-8 sm:w-8" strokeWidth={2} />
+                <ShieldCheck
+                  className="h-7 w-7 text-emerald-400 sm:h-8 sm:w-8"
+                  strokeWidth={2}
+                />
               </div>
 
               <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-300 ring-1 ring-emerald-500/20">
+                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold tracking-[0.22em] text-emerald-300 uppercase ring-1 ring-emerald-500/20">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
                   Government Compliance
                 </div>
 
                 <div>
                   <p className="text-sm font-semibold text-white sm:text-base">
-                    Built to work within Kenya&apos;s regulated payment environment.
+                    Built to work within Kenya&apos;s regulated payment
+                    environment.
                   </p>
                   <p className="mt-1 max-w-3xl text-xs leading-relaxed text-slate-400 sm:text-sm">
-                    EaziWage operates with compliance-first controls and works through licensed financial infrastructure so employers and workers can trust every payout flow.
+                    EaziWage operates with compliance-first controls and works
+                    through licensed financial infrastructure so employers and
+                    workers can trust every payout flow.
                   </p>
                 </div>
               </div>
@@ -215,7 +241,7 @@ export default function Footer() {
                 </div>
                 <div className="h-10 w-px bg-slate-200" />
                 <div className="space-y-1">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  <p className="text-[11px] font-semibold tracking-[0.18em] text-slate-500 uppercase">
                     Compliance Signal
                   </p>
                   <p className="text-sm font-semibold text-slate-900">
@@ -234,11 +260,10 @@ export default function Footer() {
       {/* Main footer content - enhanced spacing and typography */}
       <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-12 md:grid-cols-5 lg:gap-16">
-          
           {/* Brand - enhanced styling */}
           <div className="space-y-5 sm:col-span-2 md:col-span-1">
             <Link href="/" className="group inline-flex items-center gap-2.5">
-              <motion.div 
+              <motion.div
                 whileHover={{ rotate: 5, scale: 1.1 }}
                 className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500/20 to-green-500/20 ring-1 ring-emerald-500/20"
               >
@@ -424,24 +449,29 @@ export default function Footer() {
           <p className="text-center text-xs text-slate-500 sm:text-sm md:text-left">
             &copy; 2025 - {currentYear ?? ""} EaziWage. All Rights Reserved
           </p>
-          
+
           <div className="flex items-center gap-2 text-xs text-slate-500 sm:text-sm">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-slate-800/50 ring-1 ring-slate-700/50">
-              <Globe2 className="h-3 w-3 text-emerald-400 sm:h-3.5 sm:w-3.5" strokeWidth={2} />
+              <Globe2
+                className="h-3 w-3 text-emerald-400 sm:h-3.5 sm:w-3.5"
+                strokeWidth={2}
+              />
             </div>
             <span>Kenya · Uganda · Tanzania · Rwanda</span>
           </div>
-          
+
           <Link
             href="/status"
             className="group flex items-center gap-2 rounded-lg bg-slate-800/30 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700/50 transition-all duration-300 hover:bg-emerald-500/10 hover:text-emerald-400 hover:ring-emerald-500/30 sm:text-sm"
           >
-            <Shield className="h-3 w-3 animate-pulse text-emerald-500 sm:h-3.5 sm:w-3.5" strokeWidth={2} />
+            <Shield
+              className="h-3 w-3 animate-pulse text-emerald-500 sm:h-3.5 sm:w-3.5"
+              strokeWidth={2}
+            />
             <span>Eaziwage Status</span>
           </Link>
         </div>
       </div>
-
     </footer>
   );
 }

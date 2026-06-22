@@ -1,24 +1,34 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Bot, User, Send, RefreshCcw, FileText,
-  CheckCircle2, AlertTriangle, Sparkles,
-} from 'lucide-react';
-import { useWizaCoachChat } from '@/hooks/useWizaCoachChat';
+  Bot,
+  User,
+  Send,
+  RefreshCcw,
+  FileText,
+  CheckCircle2,
+  AlertTriangle,
+  Sparkles,
+} from "lucide-react";
+import { useWizaCoachChat } from "@/hooks/useWizaCoachChat";
 
 function RichText({ text }: { text: string }) {
   return (
     <>
-      {text.split('\n').map((line, i) => {
+      {text.split("\n").map((line, i) => {
         const parts = line.split(/(\*\*.*?\*\*)/g);
         return (
-          <span key={i} className="block last:mb-0 mb-1.5">
+          <span key={i} className="mb-1.5 block last:mb-0">
             {parts.map((p, j) =>
-              p.startsWith('**') && p.endsWith('**')
-                ? <strong key={j} className="font-semibold">{p.slice(2, -2)}</strong>
-                : p
+              p.startsWith("**") && p.endsWith("**") ? (
+                <strong key={j} className="font-semibold">
+                  {p.slice(2, -2)}
+                </strong>
+              ) : (
+                p
+              )
             )}
           </span>
         );
@@ -29,11 +39,11 @@ function RichText({ text }: { text: string }) {
 
 function TypingCursor() {
   return (
-    <span className="inline-flex gap-1 ml-1 translate-y-0.5">
-      {[0, 0.15, 0.3].map(delay => (
+    <span className="ml-1 inline-flex translate-y-0.5 gap-1">
+      {[0, 0.15, 0.3].map((delay) => (
         <motion.span
           key={delay}
-          className="block w-1 h-1 rounded-full bg-current opacity-50"
+          className="block h-1 w-1 rounded-full bg-current opacity-50"
           animate={{ opacity: [0.3, 1, 0.3] }}
           transition={{ repeat: Infinity, duration: 1, delay }}
         />
@@ -43,53 +53,55 @@ function TypingCursor() {
 }
 
 function formatMessageTimestamp(iso: string) {
-  return new Intl.DateTimeFormat('en-KE', {
-    hour: 'numeric',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("en-KE", {
+    hour: "numeric",
+    minute: "2-digit",
   }).format(new Date(iso));
 }
 
 function formatConversationTimestamp(iso: string) {
-  return new Intl.DateTimeFormat('en-KE', {
-    day: 'numeric',
-    month: 'short',
-    hour: 'numeric',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("en-KE", {
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
   }).format(new Date(iso));
 }
 
 function SummaryModal({
-  onConfirm, onCancel,
+  onConfirm,
+  onCancel,
 }: {
   onConfirm: () => void;
-  onCancel:  () => void;
+  onCancel: () => void;
 }) {
   return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm rounded-[2.5rem]">
+    <div className="absolute inset-0 z-30 flex items-center justify-center rounded-[2.5rem] bg-white/80 backdrop-blur-sm dark:bg-slate-950/80">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1,   opacity: 1 }}
-        className="mx-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl"
+        animate={{ scale: 1, opacity: 1 }}
+        className="mx-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900"
       >
-        <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center mb-4">
-          <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950">
+          <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
         </div>
-        <h3 className="font-semibold text-slate-900 dark:text-white mb-1">
+        <h3 className="mb-1 font-semibold text-slate-900 dark:text-white">
           Send session summary?
         </h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-5 leading-relaxed">
-          Wiza will generate a summary of this conversation with key advice, numbers, and next steps — then send it to your preferred channel.
+        <p className="mb-5 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+          Wiza will generate a summary of this conversation with key advice,
+          numbers, and next steps — then send it to your preferred channel.
         </p>
         <div className="flex gap-2">
           <button
             onClick={onConfirm}
-            className="flex-1 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-medium hover:opacity-90 transition-opacity"
+            className="flex-1 rounded-xl bg-slate-900 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-white dark:text-slate-900"
           >
             Yes, send it
           </button>
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
           >
             Cancel
           </button>
@@ -100,32 +112,38 @@ function SummaryModal({
 }
 
 export default function Wiza() {
-  const { messages, streaming, error, sendMessage, requestSummary, newSession } = useWizaCoachChat();
+  const {
+    messages,
+    streaming,
+    error,
+    sendMessage,
+    requestSummary,
+    newSession,
+  } = useWizaCoachChat();
 
-  const [input,        setInput]        = useState('');
+  const [input, setInput] = useState("");
   const [showSummaryModal, setShowSummaryModal] = useState(false);
-  const [summaryStatus,    setSummaryStatus]    = useState<string | null>(null);
+  const [summaryStatus, setSummaryStatus] = useState<string | null>(null);
 
-  const chatEndRef   = useRef<HTMLDivElement>(null);
-  const inputRef     = useRef<HTMLInputElement>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll
   useEffect(() => {
     if (messages.length === 0) return;
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!input.trim() || streaming) return;
     const text = input;
-    setInput('');
+    setInput("");
     await sendMessage(text);
     inputRef.current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
@@ -142,38 +160,37 @@ export default function Wiza() {
   const conversationStartedAt = messages[0]?.createdAt ?? null;
 
   return (
-    <section className="py-24 relative overflow-hidden bg-white dark:bg-slate-950">
-
+    <section className="relative overflow-hidden bg-white py-24 dark:bg-slate-950">
       {/* Subtle background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-125 h-125 bg-emerald-50/60 dark:bg-emerald-950/30 rounded-full blur-[140px]" />
-        <div className="absolute bottom-0 left-0 w-100 h-100 bg-teal-50/60 dark:bg-teal-950/20 rounded-full blur-[120px]" />
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-0 right-0 h-125 w-125 rounded-full bg-emerald-50/60 blur-[140px] dark:bg-emerald-950/30" />
+        <div className="absolute bottom-0 left-0 h-100 w-100 rounded-full bg-teal-50/60 blur-[120px] dark:bg-teal-950/20" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid items-start gap-16 lg:grid-cols-2 lg:gap-24">
           {/* ── Left: copy ─────────────────────────────────────────────── */}
           <div className="relative z-10 lg:sticky lg:top-24">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="w-14 h-14 rounded-2xl bg-slate-900 dark:bg-white flex items-center justify-center mb-8"
+              className="mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-900 dark:bg-white"
             >
-              <Sparkles className="w-7 h-7 text-emerald-400 dark:text-emerald-600" />
+              <Sparkles className="h-7 w-7 text-emerald-400 dark:text-emerald-600" />
             </motion.div>
 
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-serif text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-5"
+              className="mb-5 font-serif text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl dark:text-white"
             >
-              Meet Wiza.{' '}
-              <br />
-              Your AI Financial{' '}
-              <span className="text-emerald-600 dark:text-emerald-400">Coach.</span>
+              Meet Wiza. <br />
+              Your AI Financial{" "}
+              <span className="text-emerald-600 dark:text-emerald-400">
+                Coach.
+              </span>
             </motion.h2>
 
             <motion.p
@@ -181,10 +198,11 @@ export default function Wiza() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.08 }}
-              className="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-lg leading-relaxed"
+              className="mb-10 max-w-lg text-lg leading-relaxed text-slate-600 dark:text-slate-400"
             >
-              Instant calculations. Playful insights. Real talk about your money.
-              Wiza turns salary questions into interactive financial stories — no lecture required.
+              Instant calculations. Playful insights. Real talk about your
+              money. Wiza turns salary questions into interactive financial
+              stories — no lecture required.
             </motion.p>
 
             <motion.div
@@ -195,9 +213,18 @@ export default function Wiza() {
               className="grid gap-4"
             >
               {[
-                { label: 'Instant Calculations', desc: 'Daily earning rate, mid-month cash availability, advance limits — all in milliseconds.' },
-                { label: 'Playful Commentary', desc: "Future you might have opinions about this latte budget. Let's run the numbers." },
-                { label: 'No Auth Required', desc: 'Anyone can try Wiza, no authentication required.' },
+                {
+                  label: "Instant Calculations",
+                  desc: "Daily earning rate, mid-month cash availability, advance limits — all in milliseconds.",
+                },
+                {
+                  label: "Playful Commentary",
+                  desc: "Future you might have opinions about this latte budget. Let's run the numbers.",
+                },
+                {
+                  label: "No Auth Required",
+                  desc: "Anyone can try Wiza, no authentication required.",
+                },
               ].map(({ label, desc }, i) => (
                 <motion.div
                   key={label}
@@ -207,12 +234,12 @@ export default function Wiza() {
                   transition={{ delay: 0.24 + i * 0.08 }}
                   className="flex gap-3"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-2" />
+                  <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
                   <div>
-                    <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-0.5">
+                    <h4 className="mb-0.5 text-sm font-semibold text-slate-900 dark:text-white">
                       {label}
                     </h4>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                    <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
                       {desc}
                     </p>
                   </div>
@@ -227,7 +254,7 @@ export default function Wiza() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.32 }}
-            className="relative h-168 flex flex-col bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 shadow-2xl overflow-hidden"
+            className="relative flex h-168 flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900"
           >
             {/* Summary modal overlay */}
             {showSummaryModal && (
@@ -238,34 +265,37 @@ export default function Wiza() {
             )}
 
             {/* Header */}
-            <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-emerald-400 dark:text-emerald-600" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 dark:bg-white">
+                    <Bot className="h-5 w-5 text-emerald-400 dark:text-emerald-600" />
                   </div>
-                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900" />
+                  <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-900" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white leading-none mb-0.5">
+                  <p className="mb-0.5 text-sm leading-none font-semibold text-slate-900 dark:text-white">
                     Wiza
                   </p>
                   <div className="flex items-center gap-1.5">
                     <motion.span
-                      className="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                      className="h-1.5 w-1.5 rounded-full bg-emerald-500"
                       animate={{ opacity: streaming ? [1, 0.4, 1] : 1 }}
                       transition={{ repeat: Infinity, duration: 1 }}
                     />
                     {conversationStartedAt && (
                       <>
-                        <span className="text-[10px] text-slate-300 dark:text-slate-600">·</span>
+                        <span className="text-[10px] text-slate-300 dark:text-slate-600">
+                          ·
+                        </span>
                         <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                          Started {formatConversationTimestamp(conversationStartedAt)}
+                          Started{" "}
+                          {formatConversationTimestamp(conversationStartedAt)}
                         </p>
                       </>
                     )}
-                    <p className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
-                      {streaming ? 'Thinking…' : 'Ready'}
+                    <p className="text-[10px] font-semibold tracking-widest text-emerald-600 uppercase dark:text-emerald-400">
+                      {streaming ? "Thinking…" : "Ready"}
                     </p>
                   </div>
                 </div>
@@ -276,7 +306,7 @@ export default function Wiza() {
                   <button
                     onClick={() => setShowSummaryModal(true)}
                     title="Get session summary"
-                    className="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors text-slate-400 hover:text-emerald-600"
+                    className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-50 hover:text-emerald-600 dark:hover:bg-slate-800"
                   >
                     <FileText size={16} />
                   </button>
@@ -284,7 +314,7 @@ export default function Wiza() {
                 <button
                   onClick={newSession}
                   title="New conversation"
-                  className="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors text-slate-400"
+                  className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   <RefreshCcw size={16} />
                 </button>
@@ -298,38 +328,41 @@ export default function Wiza() {
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  className="mx-4 mt-3 px-4 py-2.5 bg-emerald-50 dark:bg-emerald-950 rounded-xl flex items-center gap-2"
+                  className="mx-4 mt-3 flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-2.5 dark:bg-emerald-950"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <p className="text-sm text-emerald-700 dark:text-emerald-300">{summaryStatus}</p>
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                    {summaryStatus}
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4 scroll-smooth">
+            <div className="flex-1 space-y-4 overflow-y-auto scroll-smooth px-5 py-5">
               {isEmpty ? (
-                <div className="h-full min-h-80 flex flex-col items-center justify-center text-center px-8">
-                  <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-5">
-                    <Bot className="w-8 h-8 text-slate-300 dark:text-slate-600" />
+                <div className="flex h-full min-h-80 flex-col items-center justify-center px-8 text-center">
+                  <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800">
+                    <Bot className="h-8 w-8 text-slate-300 dark:text-slate-600" />
                   </div>
-                  <h4 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                  <h4 className="mb-2 text-base font-semibold text-slate-800 dark:text-slate-200">
                     How can Wiza help you today?
                   </h4>
-                  <p className="text-sm text-slate-400 dark:text-slate-500 leading-relaxed mb-6">
-                    Try me! Ask about salary breakdowns, budget tips, or spending habits.
+                  <p className="mb-6 text-sm leading-relaxed text-slate-400 dark:text-slate-500">
+                    Try me! Ask about salary breakdowns, budget tips, or
+                    spending habits.
                   </p>
                   {/* Quick-start prompts */}
                   <div className="w-full space-y-2">
                     {[
-                      'How much of my salary can I access right now?',
-                      'Help me survive till payday',
-                      'Is it safe to request an advance today?',
-                    ].map(prompt => (
+                      "How much of my salary can I access right now?",
+                      "Help me survive till payday",
+                      "Is it safe to request an advance today?",
+                    ].map((prompt) => (
                       <button
                         key={prompt}
                         onClick={() => sendMessage(prompt)}
-                        className="w-full text-left px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 hover:border-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 transition-all"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-left text-sm text-slate-600 transition-all hover:border-emerald-400 hover:bg-emerald-50/50 hover:text-emerald-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-400"
                       >
                         {prompt}
                       </button>
@@ -338,47 +371,55 @@ export default function Wiza() {
                 </div>
               ) : (
                 <AnimatePresence initial={false}>
-                  {messages.map(msg => (
+                  {messages.map((msg) => (
                     <motion.div
                       key={msg.id}
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2 }}
-                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                     >
-                      <div className={`flex items-end gap-2.5 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                      <div
+                        className={`flex max-w-[85%] items-end gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+                      >
                         {/* Avatar */}
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                          msg.role === 'user'
-                            ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400'
-                            : 'bg-slate-900 dark:bg-white text-emerald-400 dark:text-emerald-600'
-                        }`}>
-                          {msg.role === 'user'
-                            ? <User size={14} />
-                            : <Bot size={14} />
-                          }
+                        <div
+                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+                            msg.role === "user"
+                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                              : "bg-slate-900 text-emerald-400 dark:bg-white dark:text-emerald-600"
+                          }`}
+                        >
+                          {msg.role === "user" ? (
+                            <User size={14} />
+                          ) : (
+                            <Bot size={14} />
+                          )}
                         </div>
 
                         {/* Bubble */}
-                        <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                          msg.role === 'user'
-                            ? 'bg-emerald-600 text-white rounded-br-sm'
-                            : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700 rounded-bl-sm'
-                        }`}>
-                          {msg.pending && !msg.content
-                            ? <TypingCursor />
-                            : (
-                              <>
-                                <RichText text={msg.content} />
-                                {msg.pending && <TypingCursor />}
-                              </>
-                            )
-                          }
-                          <p className={`mt-2 text-[10px] font-medium ${
-                            msg.role === 'user'
-                              ? 'text-emerald-50/80'
-                              : 'text-slate-400 dark:text-slate-500'
-                          }`}>
+                        <div
+                          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                            msg.role === "user"
+                              ? "rounded-br-sm bg-emerald-600 text-white"
+                              : "rounded-bl-sm border border-slate-100 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                          }`}
+                        >
+                          {msg.pending && !msg.content ? (
+                            <TypingCursor />
+                          ) : (
+                            <>
+                              <RichText text={msg.content} />
+                              {msg.pending && <TypingCursor />}
+                            </>
+                          )}
+                          <p
+                            className={`mt-2 text-[10px] font-medium ${
+                              msg.role === "user"
+                                ? "text-emerald-50/80"
+                                : "text-slate-400 dark:text-slate-500"
+                            }`}
+                          >
                             {formatMessageTimestamp(msg.createdAt)}
                           </p>
                         </div>
@@ -395,10 +436,12 @@ export default function Wiza() {
                     initial={{ opacity: 0, scale: 0.97 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-950/50 rounded-xl border border-red-100 dark:border-red-900"
+                    className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-2.5 dark:border-red-900 dark:bg-red-950/50"
                   >
-                    <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" />
-                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      {error}
+                    </p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -407,30 +450,28 @@ export default function Wiza() {
             </div>
 
             {/* Input */}
-            <div className="px-4 pb-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div className="border-t border-slate-100 px-4 pt-2 pb-4 dark:border-slate-800">
               <form onSubmit={handleSubmit} className="flex items-center gap-2">
                 <input
                   ref={inputRef}
                   type="text"
                   value={input}
-                  onChange={e => setInput(e.target.value)}
+                  onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask Wiza anything…"
                   disabled={streaming}
-                  className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 border border-transparent focus:border-emerald-400 dark:focus:border-emerald-600 focus:outline-none transition-colors disabled:opacity-50"
+                  className="flex-1 rounded-xl border border-transparent bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none disabled:opacity-50 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-emerald-600"
                 />
                 <button
                   type="submit"
                   disabled={streaming || !input.trim()}
-                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-emerald-600 dark:hover:bg-emerald-500 dark:hover:text-white transition-colors disabled:opacity-30 shrink-0"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors hover:bg-emerald-600 disabled:opacity-30 dark:bg-white dark:text-slate-900 dark:hover:bg-emerald-500 dark:hover:text-white"
                 >
                   <Send size={16} />
                 </button>
               </form>
             </div>
-
           </motion.div>
-
         </div>
       </div>
     </section>

@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { generateSummary } from '@/lib/ai/gemini';
 import type { SummarizeJobPayload } from '@/types/wiza';
 
-// Helper function to wait for specified milliseconds
+
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const supabase = createClient(
@@ -13,14 +13,14 @@ const supabase = createClient(
 
 export const summarizeWizaSession = task({
   id: 'summarize-wiza-session',
-  maxDuration: 120, // seconds
+  maxDuration: 120, 
 
   run: async (payload: SummarizeJobPayload) => {
     const { session_id, employee_id, send_to_email, send_to_phone } = payload;
 
     logger.info('Starting Wiza summary', { session_id, employee_id });
 
-    // Polling loop to wait for both user and model messages
+    
     let messages = null;
     let attempts = 0;
     const maxAttempts = 6;
@@ -45,7 +45,7 @@ export const summarizeWizaSession = task({
       
       attempts++;
       if (attempts < maxAttempts) {
-        const delay = Math.pow(2, attempts) * 1000; // Exponential backoff: 2s, 4s, 8s, 16s, 32s
+        const delay = Math.pow(2, attempts) * 1000; 
         logger.info('Waiting for messages, polling again...', { attempt: attempts, delay, maxAttempts });
         await wait(delay);
       }
@@ -73,7 +73,7 @@ export const summarizeWizaSession = task({
     if (send_to_email) {
       logger.info('Sending summary email', { to: send_to_email });
 
-      await fetch('https://api.resend.com/emails', {
+      await fetch('https:
         method: 'POST',
         headers: {
           Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -111,12 +111,12 @@ ${summary}
         message:  smsText,
       });
       
-      // Only add 'from' parameter if AT_SENDER_ID is actually set
+      
       if (process.env.AT_SENDER_ID) {
         atParams.set('from', process.env.AT_SENDER_ID);
       }
       
-      // Check for required credentials
+      
       if (!process.env.AT_USERNAME || !process.env.AT_API_KEY) {
         logger.warn('Africa\'s Talking credentials missing, skipping SMS', { 
           hasUsername: !!process.env.AT_USERNAME,
@@ -124,7 +124,7 @@ ${summary}
           hasSenderId: !!process.env.AT_SENDER_ID
         });
       } else {
-        await fetch('https://api.africastalking.com/version1/messaging', {
+        await fetch('https:
           method:  'POST',
           headers: {
             apiKey:         process.env.AT_API_KEY!,

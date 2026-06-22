@@ -1,16 +1,30 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect, FormEvent } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect, FormEvent } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  MessageSquare, X, Send, Loader2, Minimize2, Maximize2,
-  RefreshCcw, Bot, User, Sparkles, History, Trash2,
-  Plus, Clock,
-} from 'lucide-react';
-import { Input }    from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { cn }       from '@/lib/utils/utils';
-import { useWizaWidgetChat, type PublicSession } from '@/hooks/useWizaWidgetChat';
+  MessageSquare,
+  X,
+  Send,
+  Loader2,
+  Minimize2,
+  Maximize2,
+  RefreshCcw,
+  Bot,
+  User,
+  Sparkles,
+  History,
+  Trash2,
+  Plus,
+  Clock,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils/utils";
+import {
+  useWizaWidgetChat,
+  type PublicSession,
+} from "@/hooks/useWizaWidgetChat";
 
 type PublicChatPart = {
   type: string;
@@ -26,11 +40,13 @@ type PublicChatMessage = {
   created_at?: string;
 };
 
-// ── helpers ───────────────────────────────────────────────────────────────
-
 function getMessageText(m: PublicChatMessage): string {
-  if (m.parts) return m.parts.filter((p) => p.type === 'text').map((p) => p.text ?? '').join('');
-  return m.content ?? '';
+  if (m.parts)
+    return m.parts
+      .filter((p) => p.type === "text")
+      .map((p) => p.text ?? "")
+      .join("");
+  return m.content ?? "";
 }
 
 function getMessageTimestamp(message: PublicChatMessage): string | null {
@@ -38,30 +54,28 @@ function getMessageTimestamp(message: PublicChatMessage): string | null {
 }
 
 function formatMessageTimestamp(iso: string): string {
-  return new Intl.DateTimeFormat('en-KE', {
-    hour: 'numeric',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("en-KE", {
+    hour: "numeric",
+    minute: "2-digit",
   }).format(new Date(iso));
 }
 
 function formatConversationTimestamp(iso: string): string {
-  return new Intl.DateTimeFormat('en-KE', {
-    day: 'numeric',
-    month: 'short',
-    hour: 'numeric',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("en-KE", {
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
   }).format(new Date(iso));
 }
 
-// ── TypingDots ────────────────────────────────────────────────────────────
-
 function TypingDots() {
   return (
-    <span className="inline-flex gap-0.75 items-center h-4">
+    <span className="inline-flex h-4 items-center gap-0.75">
       {[0, 0.18, 0.36].map((d) => (
         <motion.span
           key={d}
-          className="block w-1.25 h-1.25 rounded-full bg-emerald-500"
+          className="block h-1.25 w-1.25 rounded-full bg-emerald-500"
           animate={{ opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
           transition={{ repeat: Infinity, duration: 1, delay: d }}
         />
@@ -70,114 +84,152 @@ function TypingDots() {
   );
 }
 
-// ── SessionItem ───────────────────────────────────────────────────────────
-
 function SessionItem({
-  session, active, onLoad, onDelete,
+  session,
+  active,
+  onLoad,
+  onDelete,
 }: {
-  session:   PublicSession;
-  active:    boolean;
-  onLoad:    () => void;
-  onDelete:  () => void;
+  session: PublicSession;
+  active: boolean;
+  onLoad: () => void;
+  onDelete: () => void;
 }) {
   const [confirming, setConfirming] = useState(false);
 
   return (
     <div
       className={cn(
-        'group relative flex items-start gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all',
+        "group relative flex cursor-pointer items-start gap-2.5 rounded-xl px-3 py-2.5 transition-all",
         active
-          ? 'bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800'
-          : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-transparent',
+          ? "border border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/50"
+          : "border border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/60"
       )}
       onClick={onLoad}
     >
       <MessageSquare
-        className={cn('w-3.5 h-3.5 mt-0.5 shrink-0 transition-colors',
-          active ? 'text-emerald-600' : 'text-slate-400')}
+        className={cn(
+          "mt-0.5 h-3.5 w-3.5 shrink-0 transition-colors",
+          active ? "text-emerald-600" : "text-slate-400"
+        )}
       />
-      <div className="flex-1 min-w-0">
-        <p className={cn('text-xs font-medium truncate leading-tight',
-          active ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-700 dark:text-slate-300')}>
+      <div className="min-w-0 flex-1">
+        <p
+          className={cn(
+            "truncate text-xs leading-tight font-medium",
+            active
+              ? "text-emerald-700 dark:text-emerald-300"
+              : "text-slate-700 dark:text-slate-300"
+          )}
+        >
           {session.title}
         </p>
-        <div className="flex items-center gap-1.5 mt-0.5">
-          <Clock className="w-2.5 h-2.5 text-slate-400" />
-          <span className="text-[10px] text-slate-400">{formatConversationTimestamp(session.created_at)}</span>
-          <span className="text-[10px] text-slate-300 dark:text-slate-600">·</span>
-          <span className="text-[10px] text-slate-400">{session.message_count} msgs</span>
+        <div className="mt-0.5 flex items-center gap-1.5">
+          <Clock className="h-2.5 w-2.5 text-slate-400" />
+          <span className="text-[10px] text-slate-400">
+            {formatConversationTimestamp(session.created_at)}
+          </span>
+          <span className="text-[10px] text-slate-300 dark:text-slate-600">
+            ·
+          </span>
+          <span className="text-[10px] text-slate-400">
+            {session.message_count} msgs
+          </span>
         </div>
       </div>
 
       {/* Delete */}
       {confirming ? (
-        <div className="flex gap-1 absolute right-2 top-2" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="absolute top-2 right-2 flex gap-1"
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
-            onClick={() => { onDelete(); setConfirming(false); }}
-            className="px-2 py-0.5 rounded text-[10px] bg-red-500 text-white font-medium hover:bg-red-600"
+            onClick={() => {
+              onDelete();
+              setConfirming(false);
+            }}
+            className="rounded bg-red-500 px-2 py-0.5 text-[10px] font-medium text-white hover:bg-red-600"
           >
             Delete
           </button>
           <button
             onClick={() => setConfirming(false)}
-            className="px-2 py-0.5 rounded text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium"
+            className="rounded bg-slate-200 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300"
           >
             No
           </button>
         </div>
       ) : (
         <button
-          onClick={(e) => { e.stopPropagation(); setConfirming(true); }}
-          className="opacity-0 group-hover:opacity-100 absolute right-2 top-2 p-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-500 transition-all"
+          onClick={(e) => {
+            e.stopPropagation();
+            setConfirming(true);
+          }}
+          className="absolute top-2 right-2 rounded-lg p-1 text-slate-400 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"
         >
-          <Trash2 className="w-3 h-3" />
+          <Trash2 className="h-3 w-3" />
         </button>
       )}
     </div>
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────
-
 export default function WizaChat() {
-  const [isOpen,      setIsOpen]      = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  const [inputValue,  setInputValue]  = useState('');
+  const [inputValue, setInputValue] = useState("");
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const {
-    messages, sendMessage, status, error, regenerate,
-    isLoading, sessionId, sessions, loadingHistory,
-    loadSession, deleteSession, startNewSession, refreshSessions,
+    messages,
+    sendMessage,
+    status,
+    error,
+    regenerate,
+    isLoading,
+    sessionId,
+    sessions,
+    loadingHistory,
+    loadSession,
+    deleteSession,
+    startNewSession,
+    refreshSessions,
   } = useWizaWidgetChat();
 
-  // Auto-scroll
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, status, isOpen, isMinimized]);
 
-  // Refresh session list whenever chat opens
   useEffect(() => {
     if (isOpen) refreshSessions();
   }, [isOpen, refreshSessions]);
 
-  const toggleChat = () => { setIsOpen(!isOpen); setIsMinimized(false); };
+  const toggleChat = () => {
+    setIsOpen(!isOpen);
+    setIsMinimized(false);
+  };
 
   const handleSend = async (e?: FormEvent) => {
     e?.preventDefault();
     if (!inputValue.trim() || isLoading) return;
     const text = inputValue;
-    setInputValue('');
+    setInputValue("");
     if (showHistory) setShowHistory(false);
-    try { await sendMessage({ text }); } catch {}
+    try {
+      await sendMessage({ text });
+    } catch {}
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
   const handleLoadSession = async (sid: string) => {
@@ -190,23 +242,24 @@ export default function WizaChat() {
   const totalW = showHistory ? CHAT_W + HIST_W : CHAT_W;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end select-none">
+    <div className="fixed right-6 bottom-6 z-50 flex flex-col items-end select-none">
       <AnimatePresence>
         {isOpen && (
           <motion.div
             key="chat-panel"
             initial={{ opacity: 0, scale: 0.85, y: 24 }}
             animate={{
-              opacity: 1, scale: 1, y: 0,
-              width:  isMinimized ? 260 : totalW,
-              height: isMinimized ? 'auto' : 460,
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              width: isMinimized ? 260 : totalW,
+              height: isMinimized ? "auto" : 460,
             }}
             exit={{ opacity: 0, scale: 0.85, y: 24 }}
-            transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            className="mb-4 overflow-hidden rounded-[22px] shadow-[0_32px_80px_-12px_rgba(0,0,0,0.18)] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex"
+            transition={{ type: "spring", damping: 26, stiffness: 320 }}
+            className="mb-4 flex overflow-hidden rounded-[22px] border border-slate-200 bg-white shadow-[0_32px_80px_-12px_rgba(0,0,0,0.18)] dark:border-slate-800 dark:bg-slate-900"
             style={{ minWidth: isMinimized ? 260 : CHAT_W }}
           >
-
             {/* ── History sidebar ── */}
             <AnimatePresence>
               {showHistory && !isMinimized && (
@@ -215,30 +268,35 @@ export default function WizaChat() {
                   initial={{ width: 0, opacity: 0 }}
                   animate={{ width: HIST_W, opacity: 1 }}
                   exit={{ width: 0, opacity: 0 }}
-                  transition={{ type: 'spring', damping: 28, stiffness: 340 }}
-                  className="overflow-hidden border-r border-slate-100 dark:border-slate-800 flex flex-col bg-slate-50/70 dark:bg-slate-950/50"
+                  transition={{ type: "spring", damping: 28, stiffness: 340 }}
+                  className="flex flex-col overflow-hidden border-r border-slate-100 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-950/50"
                   style={{ width: HIST_W, minWidth: HIST_W }}
                 >
                   {/* Sidebar header */}
-                  <div className="flex items-center justify-between px-3.5 py-3 border-b border-slate-100 dark:border-slate-800">
-                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-widest">
+                  <div className="flex items-center justify-between border-b border-slate-100 px-3.5 py-3 dark:border-slate-800">
+                    <span className="text-xs font-semibold tracking-widest text-slate-600 uppercase dark:text-slate-300">
                       History
                     </span>
                     <button
-                      onClick={() => { startNewSession(); setShowHistory(false); }}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 transition-colors"
+                      onClick={() => {
+                        startNewSession();
+                        setShowHistory(false);
+                      }}
+                      className="flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 transition-colors hover:bg-emerald-700"
                     >
-                      <Plus className="w-3 h-3 text-white" />
-                      <span className="text-[10px] font-bold text-white uppercase tracking-wider">New</span>
+                      <Plus className="h-3 w-3 text-white" />
+                      <span className="text-[10px] font-bold tracking-wider text-white uppercase">
+                        New
+                      </span>
                     </button>
                   </div>
 
                   {/* Session list */}
-                  <div className="flex-1 overflow-y-auto px-2 py-2 space-y-1">
+                  <div className="flex-1 space-y-1 overflow-y-auto px-2 py-2">
                     {sessions.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-32 text-center px-4">
-                        <MessageSquare className="w-6 h-6 text-slate-300 mb-2" />
-                        <p className="text-[11px] text-slate-400 leading-relaxed">
+                      <div className="flex h-32 flex-col items-center justify-center px-4 text-center">
+                        <MessageSquare className="mb-2 h-6 w-6 text-slate-300" />
+                        <p className="text-[11px] leading-relaxed text-slate-400">
                           Your past conversations will appear here.
                         </p>
                       </div>
@@ -259,25 +317,30 @@ export default function WizaChat() {
             </AnimatePresence>
 
             {/* ── Main chat panel ── */}
-            <div className="flex flex-col flex-1 min-w-0" style={{ width: CHAT_W }}>
-
+            <div
+              className="flex min-w-0 flex-1 flex-col"
+              style={{ width: CHAT_W }}
+            >
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-emerald-700 dark:bg-emerald-800">
+              <div className="flex items-center justify-between bg-emerald-700 px-4 py-3 dark:bg-emerald-800">
                 <div className="flex items-center gap-2.5">
                   <div className="relative">
                     <Avatar className="h-8 w-8 border-2 border-white/20">
                       <AvatarImage src="/favicon.ico" />
-                      <AvatarFallback className="bg-emerald-800 text-xs text-white font-bold">WZ</AvatarFallback>
+                      <AvatarFallback className="bg-emerald-800 text-xs font-bold text-white">
+                        WZ
+                      </AvatarFallback>
                     </Avatar>
-                    <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-400 border border-emerald-700" />
+                    <span className="absolute right-0 bottom-0 h-2 w-2 rounded-full border border-emerald-700 bg-green-400" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-white flex items-center gap-1.5 leading-none">
-                      Wiza Chat<Sparkles className="h-3 w-3 text-emerald-300" />
+                    <p className="flex items-center gap-1.5 text-sm leading-none font-bold text-white">
+                      Wiza Chat
+                      <Sparkles className="h-3 w-3 text-emerald-300" />
                     </p>
                     {!isMinimized && (
-                      <p className="text-[10px] text-emerald-200 mt-0.5 uppercase tracking-widest font-medium">
-                        {isLoading ? 'Thinking…' : 'Always online'}
+                      <p className="mt-0.5 text-[10px] font-medium tracking-widest text-emerald-200 uppercase">
+                        {isLoading ? "Thinking…" : "Always online"}
                       </p>
                     )}
                   </div>
@@ -289,10 +352,10 @@ export default function WizaChat() {
                       onClick={() => setShowHistory(!showHistory)}
                       title="Conversation history"
                       className={cn(
-                        'h-7 w-7 flex items-center justify-center rounded-lg transition-colors',
+                        "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
                         showHistory
-                          ? 'bg-white/20 text-white'
-                          : 'text-emerald-200 hover:bg-white/10 hover:text-white',
+                          ? "bg-white/20 text-white"
+                          : "text-emerald-200 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       <History className="h-3.5 w-3.5" />
@@ -300,13 +363,17 @@ export default function WizaChat() {
                   )}
                   <button
                     onClick={() => setIsMinimized(!isMinimized)}
-                    className="h-7 w-7 flex items-center justify-center rounded-lg text-emerald-200 hover:bg-white/10 hover:text-white transition-colors"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-emerald-200 transition-colors hover:bg-white/10 hover:text-white"
                   >
-                    {isMinimized ? <Maximize2 className="h-3.5 w-3.5" /> : <Minimize2 className="h-3.5 w-3.5" />}
+                    {isMinimized ? (
+                      <Maximize2 className="h-3.5 w-3.5" />
+                    ) : (
+                      <Minimize2 className="h-3.5 w-3.5" />
+                    )}
                   </button>
                   <button
                     onClick={toggleChat}
-                    className="h-7 w-7 flex items-center justify-center rounded-lg text-emerald-200 hover:bg-white/10 hover:text-white transition-colors"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-emerald-200 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -317,50 +384,70 @@ export default function WizaChat() {
                 <>
                   {/* Loading history overlay */}
                   {loadingHistory && (
-                    <div className="flex items-center justify-center gap-2 py-3 bg-emerald-50 dark:bg-emerald-950/30 border-b border-emerald-100 dark:border-emerald-900">
+                    <div className="flex items-center justify-center gap-2 border-b border-emerald-100 bg-emerald-50 py-3 dark:border-emerald-900 dark:bg-emerald-950/30">
                       <Loader2 className="h-3.5 w-3.5 animate-spin text-emerald-600" />
-                      <span className="text-xs text-emerald-700 dark:text-emerald-300 font-medium">Loading conversation…</span>
+                      <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                        Loading conversation…
+                      </span>
                     </div>
                   )}
 
                   {/* Messages */}
                   <div
                     ref={scrollRef}
-                    className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scroll-smooth"
+                    className="flex-1 space-y-4 overflow-y-auto scroll-smooth px-4 py-4"
                   >
                     {messages.map((m) => {
                       const text = getMessageText(m);
                       const timestamp = getMessageTimestamp(m);
-                      const isUser = m.role === 'user';
+                      const isUser = m.role === "user";
                       return (
                         <motion.div
                           key={m.id}
                           initial={{ opacity: 0, y: 6 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.18 }}
-                          className={cn('flex', isUser ? 'justify-end' : 'justify-start')}
+                          className={cn(
+                            "flex",
+                            isUser ? "justify-end" : "justify-start"
+                          )}
                         >
-                          <div className={cn('flex items-end gap-2 max-w-[88%]', isUser && 'flex-row-reverse')}>
-                            <div className={cn(
-                              'w-6 h-6 rounded-lg flex items-center justify-center shrink-0',
-                              isUser
-                                ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700'
-                                : 'bg-slate-900 dark:bg-white text-emerald-400 dark:text-emerald-600',
-                            )}>
-                              {isUser ? <User className="h-3 w-3" /> : <Bot className="h-3 w-3" />}
+                          <div
+                            className={cn(
+                              "flex max-w-[88%] items-end gap-2",
+                              isUser && "flex-row-reverse"
+                            )}
+                          >
+                            <div
+                              className={cn(
+                                "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg",
+                                isUser
+                                  ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950"
+                                  : "bg-slate-900 text-emerald-400 dark:bg-white dark:text-emerald-600"
+                              )}
+                            >
+                              {isUser ? (
+                                <User className="h-3 w-3" />
+                              ) : (
+                                <Bot className="h-3 w-3" />
+                              )}
                             </div>
-                            <div className={cn(
-                              'px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed',
-                              isUser
-                                ? 'bg-emerald-600 text-white rounded-br-sm shadow-sm shadow-emerald-500/20'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-sm border border-slate-200 dark:border-slate-700',
-                            )}>
+                            <div
+                              className={cn(
+                                "rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
+                                isUser
+                                  ? "rounded-br-sm bg-emerald-600 text-white shadow-sm shadow-emerald-500/20"
+                                  : "rounded-bl-sm border border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                              )}
+                            >
                               <p className="whitespace-pre-wrap">{text}</p>
                               {timestamp && (
                                 <p
                                   className={cn(
-                                    'mt-2 text-[10px] font-medium',
-                                    isUser ? 'text-emerald-50/80' : 'text-slate-400 dark:text-slate-500',
+                                    "mt-2 text-[10px] font-medium",
+                                    isUser
+                                      ? "text-emerald-50/80"
+                                      : "text-slate-400 dark:text-slate-500"
                                   )}
                                 >
                                   {formatMessageTimestamp(timestamp)}
@@ -379,11 +466,11 @@ export default function WizaChat() {
                         animate={{ opacity: 1, y: 0 }}
                         className="flex justify-start"
                       >
-                        <div className="flex items-end gap-2 max-w-[88%]">
-                          <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 bg-slate-900 dark:bg-white text-emerald-400 dark:text-emerald-600">
+                        <div className="flex max-w-[88%] items-end gap-2">
+                          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-900 text-emerald-400 dark:bg-white dark:text-emerald-600">
                             <Bot className="h-3 w-3" />
                           </div>
-                          <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                          <div className="rounded-2xl rounded-bl-sm border border-slate-200 bg-slate-100 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
                             <TypingDots />
                           </div>
                         </div>
@@ -393,11 +480,13 @@ export default function WizaChat() {
                     {/* Error state */}
                     {error && !isLoading && (
                       <div className="flex justify-center">
-                        <div className="flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 rounded-xl">
-                          <p className="text-xs text-red-500">Something went wrong.</p>
+                        <div className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 dark:border-red-900 dark:bg-red-950/40">
+                          <p className="text-xs text-red-500">
+                            Something went wrong.
+                          </p>
                           <button
                             onClick={() => regenerate()}
-                            className="text-xs text-red-600 font-semibold flex items-center gap-1 hover:underline"
+                            className="flex items-center gap-1 text-xs font-semibold text-red-600 hover:underline"
                           >
                             <RefreshCcw className="h-2.5 w-2.5" /> Retry
                           </button>
@@ -407,10 +496,10 @@ export default function WizaChat() {
                   </div>
 
                   {/* Input */}
-                  <div className="px-3 pb-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <div className="border-t border-slate-100 px-3 pt-2 pb-3 dark:border-slate-800">
                     <form
                       onSubmit={handleSend}
-                      className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-xl px-3 py-1.5 border border-slate-200 dark:border-slate-700 focus-within:border-emerald-400 dark:focus-within:border-emerald-600 transition-colors"
+                      className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 transition-colors focus-within:border-emerald-400 dark:border-slate-700 dark:bg-slate-800 dark:focus-within:border-emerald-600"
                     >
                       <Input
                         value={inputValue}
@@ -418,12 +507,12 @@ export default function WizaChat() {
                         onKeyDown={handleKeyDown}
                         placeholder="Type a message…"
                         disabled={isLoading}
-                        className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-sm h-8 px-0 text-slate-900 dark:text-white placeholder:text-slate-400"
+                        className="h-8 flex-1 border-0 bg-transparent px-0 text-sm text-slate-900 shadow-none placeholder:text-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-white"
                       />
                       <button
                         type="submit"
                         disabled={isLoading || !inputValue.trim()}
-                        className="h-7 w-7 flex items-center justify-center rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 transition-colors shrink-0"
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-600 transition-colors hover:bg-emerald-700 disabled:opacity-30"
                       >
                         <Send className="h-3.5 w-3.5 text-white" />
                       </button>
@@ -431,14 +520,17 @@ export default function WizaChat() {
                   </div>
 
                   {/* Footer */}
-                  <div className="px-4 pb-2.5 flex justify-between items-center">
+                  <div className="flex items-center justify-between px-4 pb-2.5">
                     <button
-                      onClick={() => { startNewSession(); setShowHistory(false); }}
-                      className="text-[9px] text-slate-400 hover:text-emerald-600 transition-colors uppercase font-bold tracking-widest flex items-center gap-1"
+                      onClick={() => {
+                        startNewSession();
+                        setShowHistory(false);
+                      }}
+                      className="flex items-center gap-1 text-[9px] font-bold tracking-widest text-slate-400 uppercase transition-colors hover:text-emerald-600"
                     >
                       <RefreshCcw className="h-2 w-2" /> New chat
                     </button>
-                    <span className="text-[9px] text-slate-300 dark:text-slate-600 font-medium">
+                    <span className="text-[9px] font-medium text-slate-300 dark:text-slate-600">
                       Powered by EaziWage
                     </span>
                   </div>
@@ -454,10 +546,10 @@ export default function WizaChat() {
         <button
           onClick={toggleChat}
           className={cn(
-            'h-14 w-14 rounded-full shadow-2xl flex items-center justify-center border-2 transition-all duration-300',
+            "flex h-14 w-14 items-center justify-center rounded-full border-2 shadow-2xl transition-all duration-300",
             isOpen
-              ? 'bg-white dark:bg-slate-800 text-emerald-700 border-emerald-100 dark:border-slate-700'
-              : 'bg-emerald-700 text-white border-white/80 hover:bg-emerald-800',
+              ? "border-emerald-100 bg-white text-emerald-700 dark:border-slate-700 dark:bg-slate-800"
+              : "border-white/80 bg-emerald-700 text-white hover:bg-emerald-800"
           )}
         >
           {isOpen ? (
@@ -466,8 +558,8 @@ export default function WizaChat() {
             <div className="relative">
               <MessageSquare className="h-6 w-6" />
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400" />
               </span>
             </div>
           )}

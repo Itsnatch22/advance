@@ -28,10 +28,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate input
     const validatedData = partnerFormSchema.parse(body);
 
-    // Store in Supabase
     const { data: partnerData, error: dbError } = await supabase
       .from("partner_applications")
       .insert([
@@ -60,9 +58,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send emails in parallel
     const emailPromises = [
-      // 1. Confirmation email to partner
       resend.emails.send({
         from: "EaziWage Partnerships <partnerships@eaziwage.com>",
         to: validatedData.email,
@@ -72,7 +68,7 @@ export async function POST(request: NextRequest) {
           companyName: validatedData.companyName,
         }),
       }),
-      // 2. Notification to internal team
+
       resend.emails.send({
         from: "EaziWage System <noreply@eaziwage.com>",
         to: "partnerships@eaziwage.com",
@@ -88,13 +84,16 @@ export async function POST(request: NextRequest) {
           companySize: validatedData.companySize,
           message: validatedData.message,
         }),
-      })
+      }),
     ];
 
     const emailResults = await Promise.allSettled(emailPromises);
     emailResults.forEach((result, idx) => {
-      if (result.status === 'rejected') {
-        console.error(`Email ${idx === 0 ? 'partner' : 'internal'} failed:`, result.reason);
+      if (result.status === "rejected") {
+        console.error(
+          `Email ${idx === 0 ? "partner" : "internal"} failed:`,
+          result.reason
+        );
       }
     });
 

@@ -1,4 +1,3 @@
-// lib/server/supabaseAdmin.ts
 import { createClient } from "@supabase/supabase-js";
 
 let adminClient: ReturnType<typeof createClient> | null = null;

@@ -17,7 +17,6 @@ type ResultsGraphProps = {
     accessCap: number;
     platformFee: number;
     accessibleNow: number;
-    // other fields can be ignored
   };
 };
 

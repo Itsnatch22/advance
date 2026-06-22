@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("token");
 
-  // Always redirect — never expose raw errors to the browser
   const successUrl = `${APP_URL}/?subscribed=confirmed`;
   const errorUrl = `${APP_URL}/?subscribed=invalid`;
   const expiredUrl = `${APP_URL}/?subscribed=expired`;
@@ -32,14 +31,12 @@ export async function GET(request: NextRequest) {
 
     if (error || !subscription) return NextResponse.redirect(errorUrl);
 
-    // Already confirmed
-    if (subscription.status === "active") return NextResponse.redirect(successUrl);
+    if (subscription.status === "active")
+      return NextResponse.redirect(successUrl);
 
-    // Check token age — 24 hour expiry
     const subscribedAt = new Date(subscription.subscribed_at);
     const hoursSince = (Date.now() - subscribedAt.getTime()) / (1000 * 60 * 60);
     if (hoursSince > 24) {
-      // Clean up expired pending row
       await supabase
         .from("newsletter_subscriptions")
         .delete()
@@ -47,7 +44,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(expiredUrl);
     }
 
-    // Flip to active — clear token so it can't be reused
     const { error: updateError } = await supabase
       .from("newsletter_subscriptions")
       .update({
@@ -63,7 +59,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(errorUrl);
     }
 
-    // Send welcome email now that they've confirmed
     if (resend) {
       try {
         await resend.emails.send({
@@ -73,8 +68,10 @@ export async function GET(request: NextRequest) {
           react: SubscriptionNotification({ email: subscription.email }),
         });
       } catch (emailError) {
-        console.error("[newsletter][confirm] welcome email failed:", emailError);
-        // Don't block the redirect — confirmation succeeded
+        console.error(
+          "[newsletter][confirm] welcome email failed:",
+          emailError
+        );
       }
     }
 

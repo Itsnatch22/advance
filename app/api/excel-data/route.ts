@@ -1,10 +1,9 @@
-// app/api/excel-data/route.ts
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 
 let cache: { ts: number; data: unknown } | null = null;
-const CACHE_TTL = 1000 * 60 * 1; // 1 min cache
+const CACHE_TTL = 1000 * 60 * 1;
 
 export async function GET() {
   const file = path.join(process.cwd(), "data", "excel.json");

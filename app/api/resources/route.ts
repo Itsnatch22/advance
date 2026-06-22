@@ -75,12 +75,12 @@ async function fetchFromSupabase(
     .order("is_featured", { ascending: false })
     .order("date", { ascending: false });
 
-  // Category filter — "all" returns everything
+  
   if (category !== "all") {
     query = query.eq("category", category);
   }
 
-  // Full-text search via the generated tsvector column
+  
   if (search.trim()) {
     query = query.textSearch("fts", search.trim(), {
       type: "websearch",
@@ -222,7 +222,7 @@ async function fetchFromNewsAPI(
   from.setDate(from.getDate() - 30);
   params.set("from", from.toISOString().split("T")[0]);
 
-  const res = await fetch(`https://newsapi.org/v2/everything?${params.toString()}`, {
+  const res = await fetch(`https:
     headers: { "User-Agent": "EaziWage/1.0" },
   });
   if (!res.ok) return [];

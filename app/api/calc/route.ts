@@ -1,4 +1,4 @@
-// /app/api/calc/route.ts
+
 export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
@@ -6,7 +6,7 @@ import path from "path";
 import { calc, type Payload, type JsonConfig } from "@/lib/finance/calc";
 import { supabaseAdmin } from "@/lib/supabase/supabase";
 
-// Hardcoded config file paths to prevent path traversal
+
 const CONFIG_PATHS = {
   KE: path.join(process.cwd(), "data", "calcke.json"),
   UG: path.join(process.cwd(), "data", "calcug.json"),
@@ -14,11 +14,11 @@ const CONFIG_PATHS = {
   RW: path.join(process.cwd(), "data", "calcrw.json"),
 } as const;
 
-// Read JSON config for a country using only hardcoded paths
+
 async function readCountryConfig(country: string): Promise<JsonConfig> {
   const rawCode = (country || "").toUpperCase();
 
-  // Select hardcoded path based on validated country code
+  
   let filePath: string;
   switch (rawCode) {
     case "KE":
@@ -48,12 +48,12 @@ async function readCountryConfig(country: string): Promise<JsonConfig> {
   }
 }
 
-// ✅ STEP 5 — get location from IP (backend-only, clean)
+
 const locationCache = new Map<
   string,
   { expires: number; value: { country: string | null; city: string | null } }
 >();
-const LOCATION_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const LOCATION_CACHE_TTL = 5 * 60 * 1000; 
 
 async function getLocationFromIP(ip: string) {
   if (!ip || ip === "unknown" || ip.startsWith("127.")) {
@@ -70,7 +70,7 @@ async function getLocationFromIP(ip: string) {
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const res = await fetch(`https://ipapi.co/${ip}/json/`, {
+    const res = await fetch(`https:
       headers: { "User-Agent": "eaziwage-backend" },
       cache: "no-store",
       signal: controller.signal,
@@ -98,29 +98,29 @@ async function getLocationFromIP(ip: string) {
     clearTimeout(timeout);
   }
 }
-// ✅ END STEP 5
 
-// Main POST handler
+
+
 export async function POST(req: Request) {
   try {
-    // ✅ STEP 4 — capture IP & device (server-side)
+    
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0] ??
       req.headers.get("x-real-ip") ??
       "unknown";
 
     const device = req.headers.get("user-agent") ?? "unknown";
-    // ✅ END STEP 4
+    
 
-    // Check for cookie consent
+    
     const cookieHeader = req.headers.get("cookie") || "";
     const hasConsent = cookieHeader.includes("cookie-consent=accepted");
 
-    // ✅ STEP 5 — resolve location from IP
+    
     const location = hasConsent
       ? await getLocationFromIP(ip)
       : { country: null, city: null };
-    // ✅ END STEP 5
+    
 
     const { searchParams } = new URL(req.url);
     const country = (searchParams.get("country") || "KE").toUpperCase();
@@ -130,7 +130,7 @@ export async function POST(req: Request) {
 
     const cfg = await readCountryConfig(country);
 
-    // ✅ Run main calc engine
+    
     const result = calc(payload, cfg);
 
     const deductions =
@@ -143,7 +143,7 @@ export async function POST(req: Request) {
       result.payeAfterRelief +
       result.lst;
 
-    // ✅ STEP 6 — save calculation to Supabase (TRIGGERED ON CALCULATE)
+    
     const { error: insertError } = await supabaseAdmin
       .from("wage_calculations")
       .insert({
@@ -159,11 +159,11 @@ export async function POST(req: Request) {
 
     if (insertError) {
       console.error("❌ Supabase insert error:", insertError);
-      // Optionally, you could return a specific error response here
+      
     }
-    // ✅ END STEP 6
+    
 
-    // Envelope for debugging + traceability
+    
     const response = {
       ...result,
       _meta: {

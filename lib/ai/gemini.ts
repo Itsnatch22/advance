@@ -13,7 +13,6 @@ export type SummarizeJobPayload = {
 
 import { getCurrencyFromCountry, type CountryCode } from "../currency/currency";
 
-// Helper functions for currency formatting
 function formatMoney(amount: number, countryCode: CountryCode): string {
   const currency = getCurrencyFromCountry(countryCode)?.code;
   return `${currency} ${amount.toLocaleString()}`;
@@ -84,7 +83,6 @@ export function buildSystemPrompt(ctx: {
 }) {
   const countryCode = (ctx.countryCode || "KE") as CountryCode;
 
-  // ── Guest visitor prompt — no fabricated data ──────────────────────────
   if (ctx.isGuest) {
     return `You are Wiza, EaziWage's AI financial wellness coach — warm, playful, and fiercely committed to the financial wellbeing of the people you serve.
 
@@ -141,7 +139,6 @@ If a visitor asks about EaziWage, explain how it works and encourage them to sig
 - Structure: [INSIGHT] → [TABLE/CALCULATION] → [PLAYFUL COMMENTARY] → [NEXT STEP HOOK]`;
   }
 
-  // ── Authenticated employee prompt — real data from their profile ────────
   const billsSummary = (ctx.upcomingBills ?? [])
     .map(
       (b) =>
@@ -267,7 +264,7 @@ Once I know this, I'll build you a realistic budget that doesn't feel like punis
  */
 export async function* streamWizaReply(
   systemPrompt: string,
-  history: Content[], // previous turns: [{role, parts}]
+  history: Content[],
   userMessage: string
 ): AsyncGenerator<string> {
   if (!genAI) throw new Error("AI service is not configured");

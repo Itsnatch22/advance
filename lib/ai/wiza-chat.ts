@@ -220,7 +220,7 @@ async function getFallbackReply(query: string) {
 async function getGeminiReply(messages: UIMessage[]) {
   const query = extractLatestUserMessage(messages);
   const websiteContext = await buildWebsiteContextForQuery(query);
-  
+
   const systemPrompt = buildSystemPrompt({
     employeeName: "there",
     earnedWages: 0,
@@ -231,19 +231,22 @@ async function getGeminiReply(messages: UIMessage[]) {
     isGuest: true,
   });
 
-  // Add extra context to the system prompt
   const enhancedPrompt = `${systemPrompt}\n\n## Internal Knowledge Base\n${knowledgeBase}${websiteContext ? `\n\n## Website Context\n${websiteContext}` : ""}`;
 
   const geminiHistory = messages
-    .filter(m => m.role === "user" || m.role === "assistant")
+    .filter((m) => m.role === "user" || m.role === "assistant")
     .slice(0, -1)
-    .map(m => ({
+    .map((m) => ({
       role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: extractMessageText(m) }]
+      parts: [{ text: extractMessageText(m) }],
     }));
 
   let fullReply = "";
-  for await (const chunk of streamWizaReply(enhancedPrompt, geminiHistory, query)) {
+  for await (const chunk of streamWizaReply(
+    enhancedPrompt,
+    geminiHistory,
+    query
+  )) {
     fullReply += chunk;
   }
 

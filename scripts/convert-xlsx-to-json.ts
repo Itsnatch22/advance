@@ -30,8 +30,7 @@ function main() {
     });
 
     const outPath = path.join(process.cwd(), "data", "excel.json");
-    
-    // Ensure data directory exists
+
     const dataDir = path.dirname(outPath);
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
@@ -40,7 +39,10 @@ function main() {
     fs.writeFileSync(outPath, JSON.stringify(result, null, 2), "utf8");
     console.log("Successfully wrote JSON to", outPath);
   } catch (error) {
-    console.error("Error processing XLSX file:", error instanceof Error ? error.message : String(error));
+    console.error(
+      "Error processing XLSX file:",
+      error instanceof Error ? error.message : String(error)
+    );
     process.exit(1);
   }
 }

@@ -55,7 +55,7 @@ type FxRateCache = {
   rates: Record<string, number>;
 };
 
-const FX_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const FX_CACHE_TTL_MS = 60 * 60 * 1000;
 let fxRateCache: FxRateCache | null = null;
 
 export function getCurrencyFromLocale(localeStr: string) {
@@ -113,7 +113,6 @@ export function formatCurrency(
   const rate = getCachedFxRate(info.code);
   const converted = Math.round(amountKES * rate);
 
-  // Refresh rates in the background if they are stale.
   if (!fxRateCache || Date.now() - fxRateCache.lastFetched >= FX_CACHE_TTL_MS) {
     refreshFxRates().catch(() => {
       /* keep using fallback rates */

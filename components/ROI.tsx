@@ -8,10 +8,7 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
-import {
-  motion,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useCurrency } from "./CurrencyProvider";
 import { useParallax } from "@/hooks/use-parallax";
@@ -110,7 +107,10 @@ function saveFxToCache(rates: Record<string, number>) {
   } catch {}
 }
 
-function readFxFromCache(): { ts: number; rates: Record<string, number> } | null {
+function readFxFromCache(): {
+  ts: number;
+  rates: Record<string, number>;
+} | null {
   try {
     const raw = localStorage.getItem(FX_CACHE_KEY);
     if (!raw) return null;
@@ -162,8 +162,8 @@ const LabeledNumber = ({
   max: number;
   step?: number;
 }) => (
-  <label className="block group">
-    <div className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-green-600 transition-colors">
+  <label className="group block">
+    <div className="mb-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase transition-colors group-hover:text-green-600">
       {label}
     </div>
     <input
@@ -173,7 +173,7 @@ const LabeledNumber = ({
       max={max}
       step={step}
       onChange={(e) => onChange(Number(e.target.value || 0))}
-      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 transition-all outline-none shadow-sm"
+      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 shadow-sm transition-all outline-none focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
     />
   </label>
 );
@@ -187,8 +187,8 @@ const LabeledPercent = ({
   value: number;
   onChange: (v: number) => void;
 }) => (
-  <label className="block group">
-    <div className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-green-600 transition-colors">
+  <label className="group block">
+    <div className="mb-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase transition-colors group-hover:text-green-600">
       {label}
     </div>
     <div className="flex items-center gap-4">
@@ -199,7 +199,7 @@ const LabeledPercent = ({
         step={0.01}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-1.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-green-600"
+        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate-100 accent-green-600"
       />
       <span className="min-w-12 text-right font-mono text-sm font-black text-slate-900">
         {Math.round(value * 100)}%
@@ -223,12 +223,12 @@ const MetricCard = ({
     layout
     className={`relative overflow-hidden rounded-4xl border p-6 transition-all duration-500 ${
       accent
-        ? "border-green-500/20 bg-green-500/5 shadow-lg shadow-green-500/5 ring-1 ring-green-500/20"
+        ? "border-green-500/20 bg-green-500/5 shadow-lg ring-1 shadow-green-500/5 ring-green-500/20"
         : "border-slate-100 bg-white shadow-sm"
     }`}
   >
     <p
-      className={`text-[10px] font-black uppercase tracking-widest ${
+      className={`text-[10px] font-black tracking-widest uppercase ${
         accent ? "text-green-600" : "text-slate-400"
       }`}
     >
@@ -248,7 +248,7 @@ const MetricCard = ({
     </AnimatePresence>
     {sub && <p className="mt-1 text-[10px] font-bold text-slate-400">{sub}</p>}
     {accent && (
-      <div className="absolute top-0 right-0 h-16 w-16 -translate-y-1/2 translate-x-1/2 rounded-full bg-green-500/10 blur-2xl" />
+      <div className="absolute top-0 right-0 h-16 w-16 translate-x-1/2 -translate-y-1/2 rounded-full bg-green-500/10 blur-2xl" />
     )}
   </motion.div>
 );
@@ -260,7 +260,13 @@ const TiltROICard = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  const { rotateX, rotateY, spotlightBackground, handleMouseMove, handleMouseLeave } = useParallax();
+  const {
+    rotateX,
+    rotateY,
+    spotlightBackground,
+    handleMouseMove,
+    handleMouseLeave,
+  } = useParallax();
 
   return (
     <motion.div style={{ perspective: 1000 }} className="h-full">
@@ -268,13 +274,13 @@ const TiltROICard = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY }}
-        className={`group relative h-full overflow-hidden rounded-[3rem] border border-slate-200/60 bg-white/40 p-8 md:p-12 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10 ${className}`}
+        className={`group relative h-full overflow-hidden rounded-[3rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10 md:p-12 ${className}`}
       >
         <motion.div
           style={{
             background: spotlightBackground,
           }}
-          className="absolute inset-0 pointer-events-none rounded-[3rem]"
+          className="pointer-events-none absolute inset-0 rounded-[3rem]"
         />
         {children}
       </motion.div>
@@ -285,7 +291,6 @@ const TiltROICard = ({
 /* ---------- Main Component ---------- */
 
 export default function ROI() {
-  // Salary stored internally in KES; converted for display + input
   const [headcount, setHeadcount] = useState(250);
   const [avgSalaryKES, setAvgSalaryKES] = useState(45_000);
   const [adoption, setAdoption] = useState(0.6);
@@ -296,20 +301,24 @@ export default function ROI() {
 
   const { locale } = useCurrency();
   const initialCountry = (() => {
-    switch(locale) {
-      case 'en-tz': return 'TZ';
-      case 'en-ug': return 'UG';
-      case 'en-rw': return 'RW';
-      default: return 'KE';
+    switch (locale) {
+      case "en-tz":
+        return "TZ";
+      case "en-ug":
+        return "UG";
+      case "en-rw":
+        return "RW";
+      default:
+        return "KE";
     }
   })();
 
-  const [selectedCountry, setSelectedCountry] = useState<CountryKey>(initialCountry);
+  const [selectedCountry, setSelectedCountry] =
+    useState<CountryKey>(initialCountry);
   const [rates, setRates] = useState<Record<string, number> | null>(null);
   const [fxLoading, setFxLoading] = useState(false);
   const [fxError, setFxError] = useState<string | null>(null);
 
-  // Salary input shown in selected currency; stored as KES
   const salaryDisplayValue = kesToDisplay(avgSalaryKES, selectedCountry, rates);
   const currencyLabel = CURRENCIES[selectedCountry].label;
 
@@ -402,9 +411,9 @@ export default function ROI() {
 
   return (
     <section id="roi" className="relative overflow-hidden py-32">
-      <div className="absolute inset-0 pointer-events-none opacity-40">
+      <div className="pointer-events-none absolute inset-0 opacity-40">
         <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-green-50/50 blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-emerald-50/50 blur-[120px]" />
+        <div className="absolute right-1/4 bottom-1/4 h-96 w-96 rounded-full bg-emerald-50/50 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
@@ -415,7 +424,7 @@ export default function ROI() {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-green-600"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
             >
               <Calculator size={14} className="animate-pulse" />
               <span>Investment Return</span>
@@ -428,7 +437,7 @@ export default function ROI() {
 
           <div className="flex flex-col items-start gap-4 lg:items-end">
             <div className="flex items-center gap-3">
-              <div className="text-right text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <div className="text-right text-[10px] font-bold tracking-widest text-slate-400 uppercase">
                 <div>
                   Rates:{" "}
                   <span className="text-green-600">
@@ -440,13 +449,13 @@ export default function ROI() {
               <button
                 onClick={refreshRates}
                 disabled={fxLoading}
-                className="group flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 transition-all hover:border-green-500 hover:text-green-600 shadow-sm"
+                className="group flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 shadow-sm transition-all hover:border-green-500 hover:text-green-600"
               >
                 <RefreshCcw
                   className={`h-3 w-3 ${
                     fxLoading
                       ? "animate-spin"
-                      : "group-hover:rotate-180 transition-transform duration-500"
+                      : "transition-transform duration-500 group-hover:rotate-180"
                   }`}
                 />
                 <span>{fxLoading ? "Refreshing..." : "Refresh rates"}</span>
@@ -477,7 +486,7 @@ export default function ROI() {
                 step={currencyLabel === "KES" ? 500 : 1}
               />
 
-              <div className="sm:col-span-2 space-y-8 py-4 border-y border-slate-100/50">
+              <div className="space-y-8 border-y border-slate-100/50 py-4 sm:col-span-2">
                 <LabeledPercent
                   label="Staff Adoption"
                   value={adoption}
@@ -512,9 +521,9 @@ export default function ROI() {
                 />
               </div>
 
-              <div className="sm:col-span-2 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex flex-col items-center justify-between gap-6 sm:col-span-2 md:flex-row">
                 <div className="w-full space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                     Currency Display
                   </p>
                   <select
@@ -522,7 +531,7 @@ export default function ROI() {
                     onChange={(e) =>
                       setSelectedCountry(e.target.value as CountryKey)
                     }
-                    className="w-full rounded-2xl border border-slate-100 bg-white px-4 py-3 text-sm font-bold text-slate-900 shadow-sm outline-none focus:ring-4 focus:ring-green-500/10 transition-all cursor-pointer"
+                    className="w-full cursor-pointer rounded-2xl border border-slate-100 bg-white px-4 py-3 text-sm font-bold text-slate-900 shadow-sm transition-all outline-none focus:ring-4 focus:ring-green-500/10"
                   >
                     <option value="KE">Kenya — KES</option>
                     <option value="UG">Uganda — UGX</option>
@@ -533,7 +542,7 @@ export default function ROI() {
                   </select>
                 </div>
                 <div className="w-full md:text-right">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                  <p className="mb-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">
                     Base Currency
                   </p>
                   <p className="text-sm font-bold text-slate-900">
@@ -585,16 +594,16 @@ export default function ROI() {
               />
             </div>
 
-            <p className="mt-8 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <p className="mt-8 text-center text-[10px] font-bold tracking-widest text-slate-400 uppercase">
               Pricing: Flat USD 2 + 5% application fee.{" "}
               <span className="text-green-600">0% Interest.</span>
             </p>
           </TiltROICard>
 
           {/* Right: Benefits Narrative */}
-          <div className="lg:sticky lg:top-32 lg:pl-12 space-y-12">
+          <div className="space-y-12 lg:sticky lg:top-32 lg:pl-12">
             <div className="space-y-6">
-              <h3 className="text-3xl font-serif font-bold text-slate-900">
+              <h3 className="font-serif text-3xl font-bold text-slate-900">
                 Why forward-thinking HR teams{" "}
                 <span className="text-green-600">trust EaziWage</span>
               </h3>
@@ -622,7 +631,7 @@ export default function ROI() {
                   <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-50 text-green-600 transition-colors group-hover:bg-green-600 group-hover:text-white">
                     <CheckCircle2 size={14} strokeWidth={3} />
                   </div>
-                  <span className="font-bold text-slate-700 leading-relaxed transition-colors group-hover:text-slate-900">
+                  <span className="leading-relaxed font-bold text-slate-700 transition-colors group-hover:text-slate-900">
                     {text}
                   </span>
                 </motion.div>
@@ -636,15 +645,16 @@ export default function ROI() {
               >
                 <div className="absolute inset-0 bg-linear-to-br from-green-500/20 to-transparent opacity-50" />
                 <div className="relative z-10">
-                  <p className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-green-400 mb-4">
+                  <p className="mb-4 flex items-center gap-2 text-xs font-black tracking-widest text-green-400 uppercase">
                     <Sparkles size={14} /> Ready to see the difference?
                   </p>
-                  <h4 className="text-xl font-serif font-bold text-white mb-6">
+                  <h4 className="mb-6 font-serif text-xl font-bold text-white">
                     Be the first to empower your workforce.
                   </h4>
                   <Link
-                  href="/sales"
-                  className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white py-4 font-black uppercase tracking-widest text-slate-900 transition-all hover:bg-green-500 hover:text-white">
+                    href="/sales"
+                    className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white py-4 font-black tracking-widest text-slate-900 uppercase transition-all hover:bg-green-500 hover:text-white"
+                  >
                     Request a Demo <ArrowRight size={18} />
                   </Link>
                 </div>

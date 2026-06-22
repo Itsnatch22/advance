@@ -33,7 +33,6 @@ export default function SchedulePage() {
 
     embedRef.current.innerHTML = "";
 
-    // FIX 1: Increased retries (10) and delay (800ms) to handle slow connections
     const initWidget = (retries = 10) => {
       if (!embedRef.current) return;
 
@@ -54,7 +53,7 @@ export default function SchedulePage() {
             setTimeout(() => initWidget(retries - 1), 800);
             return;
           }
-          // FIX 2: Don't throw — set error state silently instead
+
           console.warn("Calendly failed to initialize after all retries");
           setCalendlyError(true);
           return;
@@ -83,7 +82,6 @@ export default function SchedulePage() {
 
     window.addEventListener("message", handleCalendlyEvent);
     return () => window.removeEventListener("message", handleCalendlyEvent);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meetingType, scriptReady, isScheduled]);
 
   const handleMeetingScheduled = async (payload: {
@@ -114,8 +112,16 @@ export default function SchedulePage() {
       <main className="relative min-h-screen overflow-hidden bg-white">
         {/* Background Elements */}
         <div className="pointer-events-none fixed inset-0">
-          <FloatingOrb color="bg-green-100" delay={0} className="-top-24 -right-24" />
-          <FloatingOrb color="bg-emerald-100" delay={2} className="-bottom-24 -left-24" />
+          <FloatingOrb
+            color="bg-green-100"
+            delay={0}
+            className="-top-24 -right-24"
+          />
+          <FloatingOrb
+            color="bg-emerald-100"
+            delay={2}
+            className="-bottom-24 -left-24"
+          />
           <div className="absolute inset-0 bg-white/40 backdrop-blur-[1px]" />
         </div>
 
@@ -125,7 +131,7 @@ export default function SchedulePage() {
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              className="lg:col-span-5 lg:sticky lg:top-40"
+              className="lg:sticky lg:top-40 lg:col-span-5"
             >
               <div className="space-y-8">
                 <motion.div
@@ -142,14 +148,31 @@ export default function SchedulePage() {
                 </h1>
 
                 <p className="text-xl leading-relaxed text-slate-500">
-                  Whether you&apos;re an employer looking to modernize your payroll or a potential partner, we&apos;re here to help. Select a meeting type to get started.
+                  Whether you&apos;re an employer looking to modernize your
+                  payroll or a potential partner, we&apos;re here to help.
+                  Select a meeting type to get started.
                 </p>
 
                 <div className="grid gap-4 sm:grid-cols-1">
                   {[
-                    { id: "user_to_admin", label: "General Inquiry", icon: Users, desc: "General questions about EaziWage" },
-                    { id: "sales_demo", label: "Sales Demo", icon: ShieldCheck, desc: "For employers looking for a custom walkthrough" },
-                    { id: "partner_onboarding", label: "Partner Onboarding", icon: Clock, desc: "For potential financial or tech partners" },
+                    {
+                      id: "user_to_admin",
+                      label: "General Inquiry",
+                      icon: Users,
+                      desc: "General questions about EaziWage",
+                    },
+                    {
+                      id: "sales_demo",
+                      label: "Sales Demo",
+                      icon: ShieldCheck,
+                      desc: "For employers looking for a custom walkthrough",
+                    },
+                    {
+                      id: "partner_onboarding",
+                      label: "Partner Onboarding",
+                      icon: Clock,
+                      desc: "For potential financial or tech partners",
+                    },
                   ].map((type) => (
                     <button
                       key={type.id}
@@ -160,19 +183,28 @@ export default function SchedulePage() {
                           : "border-slate-200 bg-white/40 hover:border-green-500/50 hover:bg-white/60"
                       }`}
                     >
-                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-colors duration-300 ${
-                        meetingType === type.id ? "bg-green-600 text-white" : "bg-slate-100 text-slate-400 group-hover:bg-green-100 group-hover:text-green-600"
-                      }`}>
+                      <div
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-colors duration-300 ${
+                          meetingType === type.id
+                            ? "bg-green-600 text-white"
+                            : "bg-slate-100 text-slate-400 group-hover:bg-green-100 group-hover:text-green-600"
+                        }`}
+                      >
                         <type.icon className="h-6 w-6" strokeWidth={1.5} />
                       </div>
                       <div>
-                        <h3 className={`font-bold transition-colors ${meetingType === type.id ? "text-green-900" : "text-slate-900"}`}>
+                        <h3
+                          className={`font-bold transition-colors ${meetingType === type.id ? "text-green-900" : "text-slate-900"}`}
+                        >
                           {type.label}
                         </h3>
                         <p className="text-sm text-slate-500">{type.desc}</p>
                       </div>
                       {meetingType === type.id && (
-                        <motion.div layoutId="active-indicator" className="absolute right-6 top-6">
+                        <motion.div
+                          layoutId="active-indicator"
+                          className="absolute top-6 right-6"
+                        >
                           <CheckCircle2 className="h-5 w-5 text-green-600" />
                         </motion.div>
                       )}
@@ -189,7 +221,7 @@ export default function SchedulePage() {
               transition={{ delay: 0.2 }}
               className="lg:col-span-7"
             >
-              <div className="relative rounded-[3rem] border border-slate-200 bg-white/40 p-2 backdrop-blur-3xl shadow-2xl">
+              <div className="relative rounded-[3rem] border border-slate-200 bg-white/40 p-2 shadow-2xl backdrop-blur-3xl">
                 <AnimatePresence mode="wait">
                   {isScheduled ? (
                     <motion.div
@@ -201,9 +233,12 @@ export default function SchedulePage() {
                       <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-green-100 text-green-600">
                         <CheckCircle2 className="h-12 w-12" />
                       </div>
-                      <h2 className="mb-4 font-serif text-4xl font-bold text-slate-900">Meeting Confirmed!</h2>
+                      <h2 className="mb-4 font-serif text-4xl font-bold text-slate-900">
+                        Meeting Confirmed!
+                      </h2>
                       <p className="mb-8 text-xl text-slate-500">
-                        We&apos;ve sent a calendar invitation to your email. We look forward to speaking with you.
+                        We&apos;ve sent a calendar invitation to your email. We
+                        look forward to speaking with you.
                       </p>
                       <button
                         onClick={() => setIsScheduled(false)}
@@ -224,7 +259,9 @@ export default function SchedulePage() {
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50">
                           {calendlyError ? (
                             <>
-                              <p className="mb-4 text-slate-500">Failed to load the scheduler.</p>
+                              <p className="mb-4 text-slate-500">
+                                Failed to load the scheduler.
+                              </p>
                               <button
                                 onClick={() => window.location.reload()}
                                 className="text-sm font-bold text-green-600 hover:underline"
@@ -235,7 +272,9 @@ export default function SchedulePage() {
                           ) : (
                             <>
                               <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-green-600 border-t-transparent" />
-                              <p className="text-slate-400">Loading scheduler...</p>
+                              <p className="text-slate-400">
+                                Loading scheduler...
+                              </p>
                             </>
                           )}
                         </div>
@@ -251,7 +290,8 @@ export default function SchedulePage() {
               </div>
 
               <p className="mt-8 text-center text-sm text-slate-400">
-                Secure scheduling powered by <span className="font-bold text-slate-600">Calendly</span>
+                Secure scheduling powered by{" "}
+                <span className="font-bold text-slate-600">Calendly</span>
               </p>
             </motion.div>
           </div>

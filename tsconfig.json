@@ -30,7 +30,7 @@
         "name": "next"
       }
     ],
-    // Performance optimizations
+    
     "assumeChangesOnlyAffectDirectDependencies": true,
     "disableSourceOfProjectReferenceRedirect": true,
     "disableSolutionSearching": true,

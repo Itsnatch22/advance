@@ -1,4 +1,3 @@
-// /app/api/meta/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
@@ -25,7 +24,6 @@ export async function GET(req: Request) {
       deductions: cfg.deductions || [],
     });
   } catch (err: { message?: string } | unknown) {
-    // 👈 FIXED HERE
     console.error("meta route error:", err);
     const errorMessage = err instanceof Error ? err.message : "server error";
     return NextResponse.json(

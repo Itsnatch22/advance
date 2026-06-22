@@ -1,5 +1,3 @@
-// /lib/configMap.ts
-
 export const countryConfig = {
   KE: {
     name: "Kenya",

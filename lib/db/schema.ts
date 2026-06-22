@@ -1,9 +1,3 @@
-// lib/db/schema.ts
-
-// This file contains the SQL for creating the database tables.
-// It is not executed directly by the application, but serves as a reference
-// for the database schema. It can be used to set up the database initially.
-
 export const schema = `
 
 -- ROLES

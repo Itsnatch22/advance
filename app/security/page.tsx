@@ -84,7 +84,7 @@ const certifications = [
 
 /* ----------------------------- components ----------------------------- */
 
-import { CreditCard } from "lucide-react"; // Import missing icon
+import { CreditCard } from "lucide-react";
 import FloatingOrb from "@/components/shared/FloatingOrb";
 
 const VaultDoor = ({
@@ -117,7 +117,7 @@ const VaultDoor = ({
               key={deg}
               className="absolute h-6 w-12 rounded-sm bg-slate-400"
               style={{ rotate: deg, x: 140 }}
-              animate={{ x: isOpen ? 120 : 140 }} // Retract bolts
+              animate={{ x: isOpen ? 120 : 140 }}
               transition={{ duration: 0.5, delay: isOpen ? 0 : 1 }}
             />
           ))}
@@ -363,19 +363,19 @@ export default function SecurityPage() {
             <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-green-500/20 blur-[80px]" />
 
             <div className="relative z-10">
-                <Database size={48} className="mx-auto mb-8 text-green-500" />
-                <h2 className="mb-6 font-serif text-3xl font-bold text-white md:text-4xl">
-                  Your Data Stays <span className="text-green-500">Yours</span>
-                </h2>
-                <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400">
-                  We believe in absolute data sovereignty. We do not sell, rent,
-                  or monetize your personal financial data. It is used solely to
-                  facilitate your transactions and improve your experience.
-                </p>
-                <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-6 py-2 text-sm font-bold text-green-400">
-                  <Lock size={16} />
-                  <span>End-to-End Encrypted</span>
-                </div>
+              <Database size={48} className="mx-auto mb-8 text-green-500" />
+              <h2 className="mb-6 font-serif text-3xl font-bold text-white md:text-4xl">
+                Your Data Stays <span className="text-green-500">Yours</span>
+              </h2>
+              <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400">
+                We believe in absolute data sovereignty. We do not sell, rent,
+                or monetize your personal financial data. It is used solely to
+                facilitate your transactions and improve your experience.
+              </p>
+              <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-6 py-2 text-sm font-bold text-green-400">
+                <Lock size={16} />
+                <span>End-to-End Encrypted</span>
+              </div>
             </div>
           </motion.div>
         </div>

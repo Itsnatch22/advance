@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import BlogsClient from "./BlogsClient";
 import { Resource } from "@/types/resources";
 
-// ISR: revalidate every hour
 export const revalidate = 3600;
 
 export const metadata = {
@@ -15,12 +14,9 @@ async function fetchResources(category = "all"): Promise<Resource[]> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://eaziwage.com";
 
-    const res = await fetch(
-      `${baseUrl}/api/resources?category=${category}`,
-      {
-        next: { revalidate: 3600 },
-      }
-    );
+    const res = await fetch(`${baseUrl}/api/resources?category=${category}`, {
+      next: { revalidate: 3600 },
+    });
 
     if (!res.ok) return [];
 
@@ -33,7 +29,6 @@ async function fetchResources(category = "all"): Promise<Resource[]> {
 }
 
 export default async function ResourcesPage() {
-  // Prefetch "all" on the server for fast initial render
   const initialResources = await fetchResources("all");
 
   return (

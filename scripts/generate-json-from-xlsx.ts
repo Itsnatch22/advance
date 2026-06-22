@@ -2,7 +2,7 @@ import fs from "fs-extra";
 import * as path from "path";
 import * as XLSX from "xlsx";
 
-const sourceDir = path.resolve(process.cwd()); 
+const sourceDir = path.resolve(process.cwd());
 const outDir = path.resolve(process.cwd(), "data");
 
 async function convert(fileName: string, outName: string) {
@@ -17,7 +17,7 @@ async function convert(fileName: string, outName: string) {
   wb.SheetNames.forEach((sheet) => {
     const ws = wb.Sheets[sheet];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
-    // store raw rows by sheet name for now
+
     jsonOut[sheet] = rows;
   });
 

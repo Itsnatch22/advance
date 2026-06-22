@@ -1,5 +1,5 @@
-import React from 'react';
-import { cn } from '@/lib/utils/utils';
+import React from "react";
+import { cn } from "@/lib/utils/utils";
 
 interface GridItemProps {
   span?: number;
@@ -22,11 +22,9 @@ export default function GridItem({
 }: GridItemProps) {
   const getResponsiveClasses = () => {
     const classes = [];
-    
-    // Base span (mobile first)
+
     classes.push(`col-span-${span}`);
-    
-    // Responsive spans
+
     if (smSpan !== undefined) {
       classes.push(`sm:col-span-${smSpan}`);
     }
@@ -39,13 +37,11 @@ export default function GridItem({
     if (xlSpan !== undefined) {
       classes.push(`xl:col-span-${xlSpan}`);
     }
-    
-    return classes.join(' ');
+
+    return classes.join(" ");
   };
 
   return (
-    <div className={cn(getResponsiveClasses(), className)}>
-      {children}
-    </div>
+    <div className={cn(getResponsiveClasses(), className)}>{children}</div>
   );
 }

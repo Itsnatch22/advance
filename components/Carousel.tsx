@@ -7,19 +7,17 @@ import Image from "next/image";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 
 export function AppleCardsCarouselDemo() {
-  const [selectedCard, setSelectedCard] = useState<typeof data[0] | null>(null);
+  const [selectedCard, setSelectedCard] = useState<(typeof data)[0] | null>(
+    null
+  );
   const cards = data.map((card) => (
-    <Card 
-      key={card.src} 
-      card={card} 
-      onClick={() => setSelectedCard(card)}
-    />
+    <Card key={card.src} card={card} onClick={() => setSelectedCard(card)} />
   ));
 
   return (
     <div className="h-full w-full py-20">
       <Carousel items={cards} />
-      
+
       {/* Modal */}
       <AnimatePresence>
         {selectedCard && (
@@ -41,7 +39,7 @@ export function AppleCardsCarouselDemo() {
               {/* Close button */}
               <button
                 onClick={() => setSelectedCard(null)}
-                className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-lg transition-colors hover:bg-white"
+                className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-lg transition-colors hover:bg-white"
               >
                 <X size={20} />
               </button>
@@ -58,7 +56,9 @@ export function AppleCardsCarouselDemo() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                   <div className="absolute bottom-4 left-4 text-white">
-                    <p className="text-sm font-medium opacity-90">{selectedCard.category}</p>
+                    <p className="text-sm font-medium opacity-90">
+                      {selectedCard.category}
+                    </p>
                     <h3 className="text-2xl font-bold">{selectedCard.title}</h3>
                   </div>
                 </div>
@@ -83,9 +83,16 @@ export function AppleCardsCarouselDemo() {
                   {selectedCard.stats && (
                     <div className="mt-8 grid grid-cols-2 gap-6">
                       {selectedCard.stats.map((stat, index) => (
-                        <div key={index} className="rounded-2xl bg-slate-50 p-4">
-                          <div className="text-2xl font-bold text-green-600">{stat.value}</div>
-                          <div className="text-sm text-slate-600">{stat.label}</div>
+                        <div
+                          key={index}
+                          className="rounded-2xl bg-slate-50 p-4"
+                        >
+                          <div className="text-2xl font-bold text-green-600">
+                            {stat.value}
+                          </div>
+                          <div className="text-sm text-slate-600">
+                            {stat.label}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -110,10 +117,6 @@ export function AppleCardsCarouselDemo() {
   );
 }
 
-// Sources:
-//   - DailyPay / ADP / PwC / Visa / Jem HR / Shortlister / Afridigest / Finmark Trust
-//   Stats are industry benchmarks; projections are clearly framed as such.
-
 const data = [
   {
     category: "School",
@@ -124,8 +127,16 @@ const data = [
       "Industry research shows that financial stress is among the leading causes of absenteeism and reduced performance at work. EWA gives school staff access to wages they have already earned, reducing the need for costly borrowing before payday. Employers across similar sectors report meaningful improvements in staff satisfaction and attendance after introducing earned wage access as a benefit.",
     ],
     stats: [
-      { value: "82%", label: "of employers say EWA positively impacts absenteeism (DailyPay, 2024)" },
-      { value: "93%", label: "of employers offering EWA report improved retention (ADP Research)" },
+      {
+        value: "82%",
+        label:
+          "of employers say EWA positively impacts absenteeism (DailyPay, 2024)",
+      },
+      {
+        value: "93%",
+        label:
+          "of employers offering EWA report improved retention (ADP Research)",
+      },
     ],
   },
   {
@@ -137,8 +148,15 @@ const data = [
       "Globally, employers in retail who offer EWA report significantly lower turnover and better customer service outcomes. In high-churn environments like retail, the cost of replacing a single employee often exceeds several months of their salary. Financial flexibility is proving to be a low-cost lever for retention.",
     ],
     stats: [
-      { value: "Up to 29%", label: "reduction in employee turnover with EWA (Shortlister / industry data)" },
-      { value: "96%", label: "of employers say EWA helps attract talent (DailyPay, 2024)" },
+      {
+        value: "Up to 29%",
+        label:
+          "reduction in employee turnover with EWA (Shortlister / industry data)",
+      },
+      {
+        value: "96%",
+        label: "of employers say EWA helps attract talent (DailyPay, 2024)",
+      },
     ],
   },
   {
@@ -150,8 +168,16 @@ const data = [
       "EWA positions progressive banks both as better employers and as innovators in the employee benefits space. Offering on-demand pay signals institutional commitment to staff financial wellness, and creates an opportunity to extend the same benefit to corporate clients as a value-added HR product.",
     ],
     stats: [
-      { value: "80%", label: "of employable Africans live paycheck to paycheck (Afridigest / industry data)" },
-      { value: "75%", label: "of adults who borrowed last year did so just to cover essentials (Finmark Trust, 2024)" },
+      {
+        value: "80%",
+        label:
+          "of employable Africans live paycheck to paycheck (Afridigest / industry data)",
+      },
+      {
+        value: "75%",
+        label:
+          "of adults who borrowed last year did so just to cover essentials (Finmark Trust, 2024)",
+      },
     ],
   },
   {
@@ -163,8 +189,16 @@ const data = [
       "In comparable markets, EWA adoption in manufacturing settings has been linked to measurable drops in absenteeism — particularly around end-of-month periods when financial pressure peaks. Workers who are not preoccupied with money problems show up more consistently and perform better on the floor.",
     ],
     stats: [
-      { value: "47%", label: "of African workers can only cover bills with little left over (PwC Africa Workforce Survey, 2025)" },
-      { value: "35%", label: "average reduction in turnover reported by EWA-adopting employers (Jem HR Research, 2025)" },
+      {
+        value: "47%",
+        label:
+          "of African workers can only cover bills with little left over (PwC Africa Workforce Survey, 2025)",
+      },
+      {
+        value: "35%",
+        label:
+          "average reduction in turnover reported by EWA-adopting employers (Jem HR Research, 2025)",
+      },
     ],
   },
   {
@@ -176,8 +210,16 @@ const data = [
       "When employees feel financially supported, the quality of guest experience follows. EWA gives hospitality workers real-time access to earnings they have already worked for, reducing dependence on informal lending and letting staff bring their full attention to the job.",
     ],
     stats: [
-      { value: "2×", label: "more likely to job-hunt: financially stressed vs. financially stable employees (DailyPay / industry data)" },
-      { value: "56%", label: "of workers globally say financial worries affect sleep and relationships (PwC Financial Wellness Survey)" },
+      {
+        value: "2×",
+        label:
+          "more likely to job-hunt: financially stressed vs. financially stable employees (DailyPay / industry data)",
+      },
+      {
+        value: "56%",
+        label:
+          "of workers globally say financial worries affect sleep and relationships (PwC Financial Wellness Survey)",
+      },
     ],
   },
   {
@@ -189,8 +231,16 @@ const data = [
       "EWA is particularly well-suited to logistics, where the work is physical, continuous, and already measurable by the day or shift. Giving drivers and warehouse teams access to earned wages on demand has the potential to improve driver retention and operational consistency — outcomes that translate directly to better service delivery.",
     ],
     stats: [
-      { value: "50%", label: "reduction in turnover projected for EWA-adopting logistics employers (Visa / industry research)" },
-      { value: "74%", label: "decrease in absenteeism projected in companies offering EWA (Visa / industry research)" },
+      {
+        value: "50%",
+        label:
+          "reduction in turnover projected for EWA-adopting logistics employers (Visa / industry research)",
+      },
+      {
+        value: "74%",
+        label:
+          "decrease in absenteeism projected in companies offering EWA (Visa / industry research)",
+      },
     ],
   },
 ];

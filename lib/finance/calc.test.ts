@@ -1,9 +1,7 @@
-// lib/calc.test.ts
 import { calc } from "./calc";
 import { readCountryConfig } from "./calc";
 
 describe("Calculator Logic", () => {
-  // Test case for Rwanda from user
   test("Rwanda: 80,000 salary for 30 days", async () => {
     const rwConfig = await readCountryConfig("RW");
     const result = calc(
@@ -15,13 +13,11 @@ describe("Calculator Logic", () => {
       },
       rwConfig
     );
-    // Expected available wage: 76,068
-    // Let's see what the current logic produces
+
     console.log("Rwanda result:", result.youCanAccessNow);
     expect(result.youCanAccessNow).toBe(76068);
   });
 
-  // Test case for Uganda from user
   test("Uganda: 10,000,000 salary for 30 days", async () => {
     const ugConfig = await readCountryConfig("UG");
     const result = calc(
@@ -33,13 +29,11 @@ describe("Calculator Logic", () => {
       },
       ugConfig
     );
-    // Expected available wage: 3,916,800
-    // Let's see what the current logic produces
+
     console.log("Uganda result:", result.youCanAccessNow);
     expect(result.youCanAccessNow).toBe(3916800);
   });
 
-  // Test case for Kenya to ensure no changes
   test("Kenya: 100,000 salary for 30 days", async () => {
     const keConfig = await readCountryConfig("KE");
     const result = calc(
@@ -51,13 +45,11 @@ describe("Calculator Logic", () => {
       },
       keConfig
     );
-    // No expected value given, just ensuring it runs without error
-    // and we can log the output to see it's reasonable.
+
     console.log("Kenya result:", result.youCanAccessNow);
     expect(result.success).toBe(true);
   });
 
-  // Test case for Tanzania to ensure no changes
   test("Tanzania: 500,000 salary for 30 days", async () => {
     const tzConfig = await readCountryConfig("TZ");
     const result = calc(
@@ -69,7 +61,7 @@ describe("Calculator Logic", () => {
       },
       tzConfig
     );
-    // No expected value given, just ensuring it runs without error
+
     console.log("Tanzania result:", result.youCanAccessNow);
     expect(result.success).toBe(true);
   });
