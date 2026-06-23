@@ -10,14 +10,15 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com",
-              "frame-src 'self' https://calendly.com https://*.calendly.com https://accounts.google.com https://accounts.microsoft.com",
-              "connect-src 'self' https://calendly.com https://api.calendly.com https://*.calendly.com",
-              "style-src 'self' 'unsafe-inline' https://assets.calendly.com",
-              "img-src 'self' data: blob: https:",
-              "font-src 'self' data: https://assets.calendly.com",
-            ].join("; "),
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com",
+  "script-src-elem 'self' 'unsafe-inline' https://assets.calendly.com https://*.calendly.com",  // ADD THIS
+  "frame-src 'self' https://calendly.com https://*.calendly.com https://accounts.google.com https://accounts.microsoft.com",
+  "connect-src 'self' https://calendly.com https://api.calendly.com https://*.calendly.com",
+  "style-src 'self' 'unsafe-inline' https://assets.calendly.com",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https://assets.calendly.com",
+].join("; "),
           },
         ],
       },
