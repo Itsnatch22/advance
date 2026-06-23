@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com https://vercel.live;",
   "script-src-elem 'self' 'unsafe-inline' https://assets.calendly.com https://*.calendly.com https://vercel.live;",  // ADD THIS
-  "frame-src 'self' https://calendly.com https://*.calendly.com https://accounts.google.com https://accounts.microsoft.com",
+  "frame-src 'self' https://calendly.com https://*.calendly.com https://accounts.google.com https://accounts.microsoft.com https://vercel.live;",
   "connect-src 'self' https://calendly.com https://api.calendly.com https://*.calendly.com",
   "style-src 'self' 'unsafe-inline' https://assets.calendly.com",
   "img-src 'self' data: blob: https:",
