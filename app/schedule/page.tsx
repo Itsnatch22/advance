@@ -21,7 +21,6 @@ const CALENDLY_LINKS = {
 
 type MeetingType = keyof typeof CALENDLY_LINKS;
 
-// Typed window interface kept local — not exported, not global pollution
 interface CalendlyWindow {
   Calendly?: {
     initInlineWidget: (options: {
@@ -40,9 +39,6 @@ export default function SchedulePage() {
   const [calendlyError, setCalendlyError] = useState(false);
   const embedRef = useRef<HTMLDivElement>(null);
 
-  // FIX 1: initWidget extracted to useCallback so it is stable across renders
-  // and can be called both from the effect and the retry button without
-  // re-creating a new closure each time meetingType changes.
   const initWidget = useCallback(
     (retries = 10) => {
       if (!embedRef.current) return;
@@ -51,17 +47,9 @@ export default function SchedulePage() {
 
       if (!win.Calendly) {
         if (retries > 0) {
-          // FIX 2: Retry interval reduced to 500ms (was 800ms).
-          // 10 retries × 500ms = 5s total budget — sufficient even on slow 3G.
-          // The old 800ms × 10 = 8s meant users waited 8s before seeing the
-          // error state, which is unacceptable UX and masks real failures.
           setTimeout(() => initWidget(retries - 1), 500);
           return;
         }
-        // Only reaches here after all retries are exhausted.
-        // Previously setCalendlyError(true) was also called in onError on the
-        // <Script> tag, which fired BEFORE the retry loop ran — causing the
-        // error UI to flash immediately on slow connections.
         setCalendlyError(true);
         return;
       }
@@ -84,28 +72,20 @@ export default function SchedulePage() {
   );
 
   useEffect(() => {
-    if (!scriptReady || !embedRef.current || isScheduled) return;
+  if (!scriptReady || !embedRef.current || isScheduled) return;
 
-    // FIX 3: Clear error state before each attempt so switching meeting types
-    // after a failure does not leave the error UI visible while the widget
-    // is actively retrying.
-    setCalendlyError(false);
-    embedRef.current.innerHTML = "";
-    initWidget();
+  setCalendlyError(false);
+  initWidget();
 
-    const handleCalendlyEvent = (e: MessageEvent) => {
-      if (e.data?.event === "calendly.event_scheduled") {
-        handleMeetingScheduled(e.data.payload);
-      }
-    };
+  const handleCalendlyEvent = (e: MessageEvent) => {
+    if (e.data?.event === "calendly.event_scheduled") {
+      handleMeetingScheduled(e.data.payload);
+    }
+  };
 
-    window.addEventListener("message", handleCalendlyEvent);
-    return () => window.removeEventListener("message", handleCalendlyEvent);
-    // handleMeetingScheduled is defined below and stable — intentionally
-    // excluded from deps to avoid re-registering the listener on every
-    // render. It reads meetingType via closure which is correct here.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meetingType, scriptReady, isScheduled, initWidget]);
+  window.addEventListener("message", handleCalendlyEvent);
+  return () => window.removeEventListener("message", handleCalendlyEvent);
+}, [meetingType, scriptReady, isScheduled, initWidget]);
 
   const handleMeetingScheduled = async (payload: {
     invitee?: { email?: string };
@@ -311,6 +291,7 @@ export default function SchedulePage() {
                         </div>
                       )}
                       <div
+                        key={meetingType}      
                         ref={embedRef}
                         className="calendly-inline-widget h-full w-full"
                         style={{ minHeight: "600px" }}
