@@ -73,7 +73,7 @@ export const summarizeWizaSession = task({
     if (send_to_email) {
       logger.info('Sending summary email', { to: send_to_email });
 
-      await fetch('https:
+      await fetch('https://resend.com/api/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -124,7 +124,7 @@ ${summary}
           hasSenderId: !!process.env.AT_SENDER_ID
         });
       } else {
-        await fetch('https:
+        await fetch('https://api.africastalking.com/messages/v1/send', {
           method:  'POST',
           headers: {
             apiKey:         process.env.AT_API_KEY!,
