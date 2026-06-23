@@ -32,15 +32,6 @@ const corporatePartners = [
   "/partners/CIC.png",
 ];
 
-const techPartners = [
-  "/partners/vercel.svg",
-  "/partners/next.jpg",
-  "/partners/supabase.svg",
-  "/partners/ts.png",
-  "/partners/resend.svg",
-  "/partners/mpesa.svg",
-];
-
 /* -------------------------- components -------------------------- */
 
 const TiltLogoCard = ({ src }: { src: string }) => {
@@ -63,11 +54,13 @@ const TiltLogoCard = ({ src }: { src: string }) => {
 function SectionHeader({
   eyebrow,
   title,
+  highlightWord,
   description,
   icon: Icon,
 }: {
   eyebrow: string;
   title: string;
+  highlightWord?: string;
   description: string;
   icon: React.ElementType;
 }) {
@@ -84,14 +77,16 @@ function SectionHeader({
       </motion.div>
 
       <h2 className="font-serif text-2xl leading-tight font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
-        {title.split('like').map((part, i, arr) => (
-          <React.Fragment key={i}>
-            {part}
-            {i < arr.length - 1 && (
-              <span className="text-green-600"> like</span>
-            )}
-          </React.Fragment>
-        ))}
+        {highlightWord
+    ? title.split(highlightWord).map((part, i, arr) => (
+        <React.Fragment key={i}>
+          {part}
+          {i < arr.length - 1 && (
+            <span className="text-green-600"> {highlightWord}</span>
+          )}
+        </React.Fragment>
+      ))
+    : title}
       </h2>
 
       <p className="text-lg leading-relaxed text-slate-500 sm:text-xl">{description}</p>
@@ -103,6 +98,7 @@ function PartnerSection({
   eyebrow,
   title,
   description,
+  highlightWord,
   partners,
   icon,
   reverse = false,
@@ -110,6 +106,7 @@ function PartnerSection({
   eyebrow: string;
   title: string;
   description: string;
+  highlightWord?: string;
   partners: string[];
   icon: React.ElementType;
   reverse?: boolean;
@@ -123,6 +120,7 @@ function PartnerSection({
           <SectionHeader
             eyebrow={eyebrow}
             title={title}
+            highlightWord={highlightWord}
             description={description}
             icon={icon}
           />
@@ -217,12 +215,13 @@ export default function PartnersPage() {
 
       {/* BANKS */}
       <PartnerSection
-        eyebrow="Banking"
-        title="Built for institutions like"
-        description="Designed to plug into the regulated financial infrastructure powering East Africa."
-        partners={bankingPartners}
-        icon={ShieldCheck}
-      />
+  eyebrow="Banking"
+  title="Built for institutions like"
+  highlightWord="like"
+  description="Designed to plug into the regulated financial infrastructure powering East Africa."
+  partners={bankingPartners}
+  icon={ShieldCheck}
+/>
 
       {/* Visual separator */}
       <div className="mx-auto h-px max-w-7xl bg-linear-to-r from-transparent via-slate-200 to-transparent"></div>
@@ -231,22 +230,11 @@ export default function PartnersPage() {
       <PartnerSection
         eyebrow="Enterprise"
         title="Built for employers like"
+        highlightWord="like"
         description="From retail to manufacturing — EaziWage is designed for the organisations that power East Africa's workforce."
         partners={corporatePartners}
         icon={Building2}
         reverse
-      />
-
-      {/* Visual separator */}
-      <div className="mx-auto h-px max-w-7xl bg-linear-to-r from-transparent via-slate-200 to-transparent"></div>
-
-      {/* TECH */}
-      <PartnerSection
-        eyebrow="Technology"
-        title="Built with modern infrastructure"
-        description="Battle-tested tools helping us scale reliably and ship fast."
-        partners={techPartners}
-        icon={Cpu}
       />
 
       {/* CTA */}
@@ -256,7 +244,7 @@ export default function PartnersPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="group relative overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white p-8 text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-3xl transition-all duration-500 hover:shadow-green-500/10 sm:p-12 lg:rounded-[3rem] lg:p-24"
+            className="group relative overflow-hidden rounded-4xl border border-slate-200/60 bg-white p-8 text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-3xl transition-all duration-500 hover:shadow-green-500/10 sm:p-12 lg:rounded-[3rem] lg:p-24"
           >
             <div className="absolute inset-0 bg-linear-to-br from-green-50/20 via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
