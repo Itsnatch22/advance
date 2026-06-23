@@ -47,7 +47,7 @@ async function scheduleConfirmationEmail(
   };
   const label = productLabel[product] ?? product;
 
-  const res = await fetch("https:
+  const res = await fetch("https://resend.com/api/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${RESEND_API_KEY}`,

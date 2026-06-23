@@ -6,7 +6,7 @@ const SYMBOLS = ["KES", "UGX", "TZS", "RWF", "BIF", "SOS", "USD"].join(",");
 export async function GET() {
   try {
     const res = await fetch(
-      `https:
+      `https://api.exchangerate.host/latest?base=USD&symbols=${SYMBOLS}`,
       { next: { revalidate: 3600 } } 
     );
 
