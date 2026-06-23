@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     
-    const recaptchaResponse = await fetch("https:
+    const recaptchaResponse = await fetch("https://google.com/recaptcha/api/siteverify", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({

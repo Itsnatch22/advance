@@ -222,7 +222,7 @@ async function fetchFromNewsAPI(
   from.setDate(from.getDate() - 30);
   params.set("from", from.toISOString().split("T")[0]);
 
-  const res = await fetch(`https:
+  const res = await fetch(`https://newsapi.org/v2/everything?${params.toString()}`, {
     headers: { "User-Agent": "EaziWage/1.0" },
   });
   if (!res.ok) return [];

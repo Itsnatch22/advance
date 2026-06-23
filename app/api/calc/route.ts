@@ -70,7 +70,7 @@ async function getLocationFromIP(ip: string) {
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const res = await fetch(`https:
+    const res = await fetch(`https://ipapi.co/${ip}/json/`, {
       headers: { "User-Agent": "eaziwage-backend" },
       cache: "no-store",
       signal: controller.signal,
