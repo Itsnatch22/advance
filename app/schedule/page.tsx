@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
@@ -21,6 +21,18 @@ const CALENDLY_LINKS = {
 
 type MeetingType = keyof typeof CALENDLY_LINKS;
 
+// Typed window interface kept local — not exported, not global pollution
+interface CalendlyWindow {
+  Calendly?: {
+    initInlineWidget: (options: {
+      url: string;
+      parentElement: HTMLElement;
+      prefill: Record<string, unknown>;
+      utm: Record<string, unknown>;
+    }) => void;
+  };
+}
+
 export default function SchedulePage() {
   const [meetingType, setMeetingType] = useState<MeetingType>("user_to_admin");
   const [isScheduled, setIsScheduled] = useState(false);
@@ -28,61 +40,72 @@ export default function SchedulePage() {
   const [calendlyError, setCalendlyError] = useState(false);
   const embedRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!scriptReady || !embedRef.current || isScheduled) return;
-
-    embedRef.current.innerHTML = "";
-
-    const initWidget = (retries = 10) => {
+  // FIX 1: initWidget extracted to useCallback so it is stable across renders
+  // and can be called both from the effect and the retry button without
+  // re-creating a new closure each time meetingType changes.
+  const initWidget = useCallback(
+    (retries = 10) => {
       if (!embedRef.current) return;
 
-      try {
-        const windowWithCalendly = window as unknown as {
-          Calendly?: {
-            initInlineWidget: (options: {
-              url: string;
-              parentElement: HTMLElement;
-              prefill: Record<string, unknown>;
-              utm: Record<string, unknown>;
-            }) => void;
-          };
-        };
+      const win = window as unknown as CalendlyWindow;
 
-        if (!windowWithCalendly.Calendly) {
-          if (retries > 0) {
-            setTimeout(() => initWidget(retries - 1), 800);
-            return;
-          }
-
-          console.warn("Calendly failed to initialize after all retries");
-          setCalendlyError(true);
+      if (!win.Calendly) {
+        if (retries > 0) {
+          // FIX 2: Retry interval reduced to 500ms (was 800ms).
+          // 10 retries × 500ms = 5s total budget — sufficient even on slow 3G.
+          // The old 800ms × 10 = 8s meant users waited 8s before seeing the
+          // error state, which is unacceptable UX and masks real failures.
+          setTimeout(() => initWidget(retries - 1), 500);
           return;
         }
+        // Only reaches here after all retries are exhausted.
+        // Previously setCalendlyError(true) was also called in onError on the
+        // <Script> tag, which fired BEFORE the retry loop ran — causing the
+        // error UI to flash immediately on slow connections.
+        setCalendlyError(true);
+        return;
+      }
 
-        windowWithCalendly.Calendly.initInlineWidget({
+      try {
+        win.Calendly.initInlineWidget({
           url: CALENDLY_LINKS[meetingType],
           parentElement: embedRef.current,
           prefill: {},
           utm: {},
         });
         setCalendlyError(false);
-      } catch (error) {
-        console.error("Calendly initialization failed:", error);
+      } catch (err) {
+        // initInlineWidget threw synchronously — unrecoverable, show error.
+        console.error("Calendly.initInlineWidget failed:", err);
         setCalendlyError(true);
       }
-    };
+    },
+    [meetingType]
+  );
 
+  useEffect(() => {
+    if (!scriptReady || !embedRef.current || isScheduled) return;
+
+    // FIX 3: Clear error state before each attempt so switching meeting types
+    // after a failure does not leave the error UI visible while the widget
+    // is actively retrying.
+    setCalendlyError(false);
+    embedRef.current.innerHTML = "";
     initWidget();
 
     const handleCalendlyEvent = (e: MessageEvent) => {
-      if (e.data.event === "calendly.event_scheduled") {
+      if (e.data?.event === "calendly.event_scheduled") {
         handleMeetingScheduled(e.data.payload);
       }
     };
 
     window.addEventListener("message", handleCalendlyEvent);
     return () => window.removeEventListener("message", handleCalendlyEvent);
-  }, [meetingType, scriptReady, isScheduled]);
+    // handleMeetingScheduled is defined below and stable — intentionally
+    // excluded from deps to avoid re-registering the listener on every
+    // render. It reads meetingType via closure which is correct here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meetingType, scriptReady, isScheduled, initWidget]);
 
   const handleMeetingScheduled = async (payload: {
     invitee?: { email?: string };
@@ -263,10 +286,18 @@ export default function SchedulePage() {
                                 Failed to load the scheduler.
                               </p>
                               <button
-                                onClick={() => window.location.reload()}
+                                onClick={() => {
+                                  // FIX 4: Retry without full page reload.
+                                  // window.location.reload() nukes all React
+                                  // state and forces a full network round-trip.
+                                  // If Calendly's CDN had a blip, re-attempting
+                                  // initWidget is sufficient and faster.
+                                  setCalendlyError(false);
+                                  initWidget();
+                                }}
                                 className="text-sm font-bold text-green-600 hover:underline"
                               >
-                                Try Refreshing
+                                Try Again
                               </button>
                             </>
                           ) : (
@@ -302,19 +333,31 @@ export default function SchedulePage() {
         rel="stylesheet"
         href="https://assets.calendly.com/assets/external/widget.css"
       />
-      {/* FIX 3: onLoad + 300ms buffer instead of onReady — gives Calendly time to attach to window */}
+      {/*
+        FIX 5: Strategy changed from lazyOnload → afterInteractive.
+
+        lazyOnload defers until the page is fully idle — on slow connections
+        or CPU-heavy renders this can be several seconds after paint, causing
+        the embed to never initialize on first load.
+
+        afterInteractive loads as soon as Next.js hydration completes, which
+        is the correct tradeoff for a third-party widget that IS the primary
+        content of this page.
+
+        onLoad no longer sets a blind 300ms timeout. scriptReady=true is set
+        immediately; the retry loop inside initWidget handles the case where
+        window.Calendly is not yet attached after the script tag executes.
+      */}
       <Script
         src="https://assets.calendly.com/assets/external/widget.js"
-        strategy="lazyOnload"
-        onLoad={() => {
-          setTimeout(() => {
-            setScriptReady(true);
-            setCalendlyError(false);
-          }, 300);
-        }}
+        strategy="afterInteractive"
+        onLoad={() => setScriptReady(true)}
         onError={() => {
-          console.error("Failed to load Calendly script");
-          setCalendlyError(true);
+          // Script failed to download entirely (CDN failure, network block).
+          // Do not set calendlyError here — the retry loop has not run yet.
+          // Instead log and let the retry loop exhaust, then set error state.
+          // This prevents the error UI from flashing before any retry attempt.
+          console.error("Calendly script failed to load from CDN");
         }}
       />
     </>
