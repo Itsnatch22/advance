@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
   "connect-src 'self' https://calendly.com https://api.calendly.com https://*.calendly.com",
   "style-src 'self' 'unsafe-inline' https://assets.calendly.com",
   "img-src 'self' data: blob: https:",
-  "font-src 'self' data: https://assets.calendly.com",
+  "font-src 'self' data: https://assets.calendly.com https://vercel.live/geist.woff2 https://vercel.live/geist_mono.woff2",
 ].join("; "),
           },
         ],
