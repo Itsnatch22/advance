@@ -4,6 +4,52 @@ import { createUIMessageStream, createUIMessageStreamResponse } from "ai";
 import { streamWizaReply, buildSystemPrompt } from "@/lib/ai/gemini";
 import type { CountryCode } from "@/lib/currency/currency";
 
+const SUPPORTED_COUNTRIES: CountryCode[] = ["KE", "UG", "TZ", "RW"];
+
+function detectCountry(req: NextRequest): CountryCode {
+  const cf = req.headers.get("cf-ipcountry");
+  if (cf && SUPPORTED_COUNTRIES.includes(cf as CountryCode)) return cf as CountryCode;
+
+  const vercel = req.headers.get("x-vercel-ip-country");
+  if (vercel && SUPPORTED_COUNTRIES.includes(vercel as CountryCode))
+    return vercel as CountryCode;
+
+  const lang = req.headers.get("accept-language") ?? "";
+  if (lang.includes("-KE") || lang.includes("-ke")) return "KE";
+  if (lang.includes("-UG") || lang.includes("-ug")) return "UG";
+  if (lang.includes("-TZ") || lang.includes("-tz")) return "TZ";
+  if (lang.includes("-RW") || lang.includes("-rw")) return "RW";
+
+  return "KE";
+}
+
+function buildGuestHistoryFromMessages(
+  rawMessages: unknown
+): Array<{ role: string; parts: Array<{ text: string }> }> {
+  if (!Array.isArray(rawMessages)) return [];
+  return rawMessages
+    .filter(
+      (m: any) =>
+        m?.id !== "welcome" && (m?.role === "user" || m?.role === "assistant")
+    )
+    .slice(0, -1) // exclude the current (latest) user message — it's the live turn
+    .map((m: any) => {
+      const text = Array.isArray(m.parts)
+        ? m.parts
+            .filter((p: any) => p?.type === "text" && typeof p.text === "string")
+            .map((p: any) => p.text as string)
+            .join("")
+        : typeof m.content === "string"
+          ? m.content
+          : "";
+      return {
+        role: m.role === "user" ? "user" : "model",
+        parts: [{ text }],
+      };
+    })
+    .filter((m) => m.parts[0].text.length > 0);
+}
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -182,7 +228,7 @@ export async function POST(req: NextRequest) {
       upcomingAdvances: [],
       budgetCategories: null,
       financialScore: 0,
-      countryCode: "KE",
+      countryCode: detectCountry(req),
       isGuest: true,
     });
   }
@@ -229,6 +275,10 @@ export async function POST(req: NextRequest) {
       role: m.role === "user" ? "user" : "model",
       parts: [{ text: m.content }],
     }));
+  } else if (!isAuthenticated) {
+    // Guest: build history from the client-sent messages array so Wiza
+    // remembers what was said earlier in the browser session.
+    geminiHistory = buildGuestHistoryFromMessages(body.messages);
   }
 
   const stream = createUIMessageStream({

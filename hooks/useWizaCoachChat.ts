@@ -3,6 +3,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type ChatTransport, type UIMessage } from "ai";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+
+export type DeliveryChannel = "chat" | "email" | "sms";
 
 export interface ChatMessage {
   id: string;
@@ -22,7 +25,7 @@ function createWelcomeMessage(): UIMessage {
     parts: [
       {
         type: "text",
-        text: "Hi! I'm Wiza, your financial coach. Ask me about salary advances, budgeting, and cash flow, and I’ll help you make sense of it.",
+        text: "Hi! I'm Wiza, your financial coach. Ask me about salary advances, budgeting, and cash flow, and I'll help you make sense of it.",
       },
     ],
   } as unknown as UIMessage;
@@ -42,6 +45,18 @@ function normalizeMessageId(id: unknown): string {
   return crypto.randomUUID();
 }
 
+async function getAuthHeader(): Promise<Record<string, string>> {
+  try {
+    const { data: { session } } = await getSupabaseBrowserClient().auth.getSession();
+    if (session?.access_token) {
+      return { Authorization: `Bearer ${session.access_token}` };
+    }
+  } catch {
+    // no session — proceed as guest
+  }
+  return {};
+}
+
 export function useWizaCoachChat() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const sessionContainer = useMemo(() => ({ id: null as string | null }), []);
@@ -51,7 +66,14 @@ export function useWizaCoachChat() {
       new DefaultChatTransport<UIMessage>({
         api: "/api/wiza/stream",
         fetch: async (url, init) => {
-          const response = await globalThis.fetch(url as string, init);
+          const authHeader = await getAuthHeader();
+          const response = await globalThis.fetch(url as string, {
+            ...init,
+            headers: {
+              ...(init?.headers as Record<string, string>),
+              ...authHeader,
+            },
+          });
           const sid = response.headers.get("X-Session-Id");
           if (sid && sid !== sessionContainer.id) {
             sessionContainer.id = sid;
@@ -112,48 +134,53 @@ export function useWizaCoachChat() {
     [chat]
   );
 
-  const requestSummary = useCallback(async (): Promise<string> => {
-    const completedMessages = messages.filter((message) => !message.pending);
-    if (!completedMessages.length) return "Nothing to summarise yet.";
+  const requestSummary = useCallback(
+    async (channel: DeliveryChannel = "chat", address?: string): Promise<string> => {
+      const completedMessages = messages.filter((message) => !message.pending);
+      if (!completedMessages.length) return "Nothing to summarise yet.";
 
-    try {
-      const res = await fetch("/api/wiza/summarize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          session_id: sessionId,
-          messages: completedMessages.map((message) => ({
-            role: message.role === "user" ? "user" : "assistant",
-            content: message.content,
-          })),
-        }),
-      });
+      try {
+        const authHeader = await getAuthHeader();
+        const res = await fetch("/api/wiza/summarize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...authHeader },
+          body: JSON.stringify({
+            session_id: sessionId,
+            channel,
+            address: address?.trim() || undefined,
+            messages: completedMessages.map((message) => ({
+              role: message.role === "user" ? "user" : "assistant",
+              content: message.content,
+            })),
+          }),
+        });
 
-      const json = await res.json();
-      if (json.summary) {
-        chat.setMessages((current) => [
-          ...current,
-          {
-            id: crypto.randomUUID(),
-            role: "assistant",
-            parts: [
-              {
-                type: "text",
-                text: `📋 **Session Summary**
+        const json = await res.json();
 
-${json.summary}`,
-              },
-            ],
-          } as unknown as UIMessage,
-        ]);
-        return "Summary ready!";
+        if (json.summary) {
+          chat.setMessages((current) => [
+            ...current,
+            {
+              id: crypto.randomUUID(),
+              role: "assistant",
+              parts: [
+                {
+                  type: "text",
+                  text: `📋 **Session Summary**\n\n${json.summary}`,
+                },
+              ],
+            } as unknown as UIMessage,
+          ]);
+          return "Summary ready!";
+        }
+
+        return json.message ?? json.error ?? "Could not generate summary.";
+      } catch {
+        return "Failed to generate summary. Please try again.";
       }
-
-      return json.message ?? json.error ?? "Could not generate summary.";
-    } catch {
-      return "Failed to generate summary. Please try again.";
-    }
-  }, [chat, messages, sessionId]);
+    },
+    [chat, messages, sessionId]
+  );
 
   const newSession = useCallback(() => {
     sessionContainer.id = null;

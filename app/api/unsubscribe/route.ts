@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
+import { verifyUnsubscribeToken } from "@/server/utils/unsubscribeToken";
 
 
 
@@ -25,6 +26,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 type Body = {
   email: string;
   product: string;
+  token: string;
   feedback?: string;
 };
 
@@ -152,13 +154,19 @@ export async function POST(req: Request) {
 
   try {
     const body: Body = await req.json();
-    const { email, product, feedback } = body;
+    const { email, product, token, feedback } = body;
 
-    
-    if (!email || !product) {
+    if (!email || !product || !token) {
       return NextResponse.json(
-        { message: "Missing email or product." },
+        { message: "Missing required fields." },
         { status: 400, headers: rl.headers }
+      );
+    }
+
+    if (!verifyUnsubscribeToken(token, email, product)) {
+      return NextResponse.json(
+        { message: "Invalid or expired unsubscribe link." },
+        { status: 401, headers: rl.headers }
       );
     }
 

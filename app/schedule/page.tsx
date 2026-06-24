@@ -78,6 +78,7 @@ export default function SchedulePage() {
   initWidget();
 
   const handleCalendlyEvent = (e: MessageEvent) => {
+    if (e.origin !== "https://calendly.com") return;
     if (e.data?.event === "calendly.event_scheduled") {
       handleMeetingScheduled(e.data.payload);
     }
@@ -99,7 +100,6 @@ export default function SchedulePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userEmail: payload?.invitee?.email ?? "",
-          adminEmail: "support@eaziwage.com",
           meetingType,
           calendlyEventId: payload?.event?.uuid ?? "",
           scheduledAt: payload?.event?.start_time ?? new Date().toISOString(),

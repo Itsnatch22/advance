@@ -11,8 +11,12 @@ import {
   CheckCircle2,
   AlertTriangle,
   Sparkles,
+  Mail,
+  MessageSquare,
+  MessagesSquare,
+  ChevronLeft,
 } from "lucide-react";
-import { useWizaCoachChat } from "@/hooks/useWizaCoachChat";
+import { useWizaCoachChat, type DeliveryChannel } from "@/hooks/useWizaCoachChat";
 
 function RichText({ text }: { text: string }) {
   return (
@@ -68,44 +72,176 @@ function formatConversationTimestamp(iso: string) {
   }).format(new Date(iso));
 }
 
+const CHANNEL_OPTIONS: {
+  id: DeliveryChannel;
+  label: string;
+  desc: string;
+  Icon: React.ElementType;
+}[] = [
+  {
+    id: "chat",
+    label: "Show in chat",
+    desc: "Display summary inline here",
+    Icon: MessagesSquare,
+  },
+  {
+    id: "email",
+    label: "Send to email",
+    desc: "Get a formatted email recap",
+    Icon: Mail,
+  },
+  {
+    id: "sms",
+    label: "Send via SMS",
+    desc: "Receive a concise text message",
+    Icon: MessageSquare,
+  },
+];
+
 function SummaryModal({
   onConfirm,
   onCancel,
 }: {
-  onConfirm: () => void;
+  onConfirm: (channel: DeliveryChannel, address?: string) => void;
   onCancel: () => void;
 }) {
+  const [step, setStep] = React.useState<"channel" | "address">("channel");
+  const [channel, setChannel] = React.useState<DeliveryChannel | null>(null);
+  const [address, setAddress] = React.useState("");
+
+  const isEmail = channel === "email";
+  const isSms = channel === "sms";
+
+  function handleChannelPick(ch: DeliveryChannel) {
+    if (ch === "chat") {
+      onConfirm("chat");
+      return;
+    }
+    setChannel(ch);
+    setStep("address");
+  }
+
+  function handleAddressSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!channel) return;
+    onConfirm(channel, address.trim() || undefined);
+  }
+
   return (
     <div className="absolute inset-0 z-30 flex items-center justify-center rounded-[2.5rem] bg-white/80 backdrop-blur-sm dark:bg-slate-950/80">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="mx-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900"
+        className="mx-6 w-full max-w-xs rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900"
       >
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950">
-          <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-        </div>
-        <h3 className="mb-1 font-semibold text-slate-900 dark:text-white">
-          Send session summary?
-        </h3>
-        <p className="mb-5 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-          Wiza will generate a summary of this conversation with key advice,
-          numbers, and next steps — then send it to your preferred channel.
-        </p>
-        <div className="flex gap-2">
-          <button
-            onClick={onConfirm}
-            className="flex-1 rounded-xl bg-slate-900 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-white dark:text-slate-900"
-          >
-            Yes, send it
-          </button>
-          <button
-            onClick={onCancel}
-            className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-          >
-            Cancel
-          </button>
-        </div>
+        <AnimatePresence mode="wait">
+          {step === "channel" ? (
+            <motion.div
+              key="channel"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+            >
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950">
+                <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <h3 className="mb-1 font-semibold text-slate-900 dark:text-white">
+                Where should Wiza send your summary?
+              </h3>
+              <p className="mb-5 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                Choose how you'd like to receive the key advice, numbers, and
+                next steps from this session.
+              </p>
+              <div className="space-y-2">
+                {CHANNEL_OPTIONS.map(({ id, label, desc, Icon }) => (
+                  <button
+                    key={id}
+                    onClick={() => handleChannelPick(id)}
+                    className="flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition-colors hover:border-emerald-400 hover:bg-emerald-50/50 dark:border-slate-700 dark:hover:border-emerald-600 dark:hover:bg-emerald-950/30"
+                  >
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
+                      <Icon className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">
+                        {label}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {desc}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={onCancel}
+                className="mt-4 w-full rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+              >
+                Cancel
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="address"
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 8 }}
+            >
+              <button
+                onClick={() => setStep("channel")}
+                className="mb-4 flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+                Back
+              </button>
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950">
+                {isEmail ? (
+                  <Mail className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                ) : (
+                  <MessageSquare className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                )}
+              </div>
+              <h3 className="mb-1 font-semibold text-slate-900 dark:text-white">
+                {isEmail ? "Where should we email it?" : "What's your phone number?"}
+              </h3>
+              <p className="mb-5 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                {isEmail
+                  ? "Enter your email and we'll send a full formatted recap."
+                  : "Include your country code — e.g. +254 712 345 678 for Kenya."}
+              </p>
+              <form onSubmit={handleAddressSubmit} className="space-y-3">
+                <input
+                  type={isEmail ? "email" : "tel"}
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder={isEmail ? "you@example.com" : "+254 712 345 678"}
+                  autoFocus
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-emerald-600"
+                />
+                {isSms && (
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                    SMS format: key numbers + next steps, under 480 characters.
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    className="flex-1 rounded-xl bg-slate-900 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-white dark:text-slate-900"
+                  >
+                    Send summary
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onCancel}
+                    className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );
@@ -149,9 +285,9 @@ export default function Wiza() {
     }
   };
 
-  const handleSummaryConfirm = async () => {
+  const handleSummaryConfirm = async (channel: DeliveryChannel, address?: string) => {
     setShowSummaryModal(false);
-    const msg = await requestSummary();
+    const msg = await requestSummary(channel, address);
     setSummaryStatus(msg);
     setTimeout(() => setSummaryStatus(null), 4000);
   };

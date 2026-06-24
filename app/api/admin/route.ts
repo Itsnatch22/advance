@@ -10,11 +10,22 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
+const DANGEROUS_TAGS =
+  /(<(script|iframe|object|embed|base|form)[^>]*>[\s\S]*?<\/\2>|<(script|iframe|object|embed|base|form)[^>]*\/?>)/gi;
+const EVENT_ATTRS = /\s+on\w+\s*=\s*("([^"]*)"|'([^']*)'|[^\s>]+)/gi;
+const JS_URLS = /(href|src|action)\s*=\s*["']?\s*javascript:[^"'\s>]*/gi;
+
+function sanitizeHtml(raw: string): string {
+  return raw
+    .replace(DANGEROUS_TAGS, "")
+    .replace(EVENT_ATTRS, "")
+    .replace(JS_URLS, "");
+}
+
 const sendSchema = z.object({
   subject: z.string().min(3, "Subject too short"),
   previewText: z.string().optional(),
-  htmlContent: z.string().min(10, "Content too short"),
-
+  htmlContent: z.string().min(10, "Content too short").max(200_000, "Content too large"),
   recipients: z.array(z.string().email()).optional(),
 });
 
@@ -53,7 +64,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { subject, previewText, htmlContent, recipients } = parsed.data;
+    const { subject, previewText, recipients } = parsed.data;
+    const htmlContent = sanitizeHtml(parsed.data.htmlContent);
 
     if (!resend) {
       return NextResponse.json(

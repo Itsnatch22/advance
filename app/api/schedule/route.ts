@@ -3,10 +3,12 @@ import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import MeetingConfirmation from "@/emails/MeetingConfirmation";
+import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
+
+const ADMIN_EMAIL = "support@eaziwage.com";
 
 const scheduleSchema = z.object({
   userEmail: z.string().email(),
-  adminEmail: z.string().email(),
   meetingType: z.enum(["user_to_admin", "sales_demo", "partner_onboarding"]),
   calendlyEventId: z.string().optional(),
   scheduledAt: z.string(),
@@ -20,13 +22,26 @@ const supabaseAdmin = createClient(
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
 export async function POST(request: NextRequest) {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+    request.headers.get("x-real-ip") ??
+    "unknown";
+
+  const rl = await checkRateLimit(rateLimiter, `schedule:${ip}`);
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429, headers: rl.headers }
+    );
+  }
+
   try {
     const body = await request.json();
     const validatedData = scheduleSchema.parse(body);
 
     const { error: dbError } = await supabaseAdmin.from("meeting_logs").insert({
       user_email: validatedData.userEmail,
-      admin_email: validatedData.adminEmail,
+      admin_email: ADMIN_EMAIL,
       meeting_type: validatedData.meetingType,
       calendly_event_id: validatedData.calendlyEventId,
       scheduled_at: validatedData.scheduledAt,
@@ -51,7 +66,7 @@ export async function POST(request: NextRequest) {
       subject: "Meeting Confirmed - EaziWage",
       react: MeetingConfirmation({
         userEmail: validatedData.userEmail,
-        adminEmail: validatedData.adminEmail,
+        adminEmail: ADMIN_EMAIL,
         meetingType: validatedData.meetingType,
         scheduledAt: scheduledDate,
       }),
@@ -59,11 +74,11 @@ export async function POST(request: NextRequest) {
 
     await resend.emails.send({
       from: "EaziWage <meetings@eaziwage.com>",
-      to: validatedData.adminEmail,
+      to: ADMIN_EMAIL,
       subject: "New Meeting Scheduled - EaziWage",
       react: MeetingConfirmation({
         userEmail: validatedData.userEmail,
-        adminEmail: validatedData.adminEmail,
+        adminEmail: ADMIN_EMAIL,
         meetingType: validatedData.meetingType,
         scheduledAt: scheduledDate,
       }),
