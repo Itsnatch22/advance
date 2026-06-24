@@ -291,9 +291,9 @@ export default function SchedulePage() {
                         </div>
                       )}
                       <div
-                        key={meetingType}      
+                        key={meetingType}
                         ref={embedRef}
-                        className="calendly-inline-widget h-full w-full"
+                        className="h-full w-full"
                         style={{ minHeight: "600px" }}
                       />
                     </motion.div>
