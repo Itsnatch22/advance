@@ -87,38 +87,7 @@ export default function CulturePage() {
           <div className="max-w-xl space-y-8">
             <p className="text-xl leading-relaxed text-slate-500">
               <FadeInText text="Late-night commits." delay={0.2} />{" "}
-              <Link
-                href="https://nextjs.org"
-                className="font-bold text-slate-900 transition-colors hover:text-green-600"
-                target="_blank"
-              >
-                Next.js
-              </Link>
-              ,{" "}
-              <Link
-                href="https://vercel.app"
-                className="font-bold text-slate-900 transition-colors hover:text-green-600"
-                target="_blank"
-              >
-                Vercel
-              </Link>
-              ,{" "}
-              <Link
-                href="https://tailwindcss.com"
-                className="font-bold text-slate-900 transition-colors hover:text-green-600"
-                target="_blank"
-              >
-                Tailwind CSS
-              </Link>
-              ,{" "}
-              <Link
-                href="https://github.com"
-                className="font-bold text-slate-900 transition-colors hover:text-green-600"
-                target="_blank"
-              >
-                GitHub
-              </Link>
-              . <FadeInText text="Big ideas. Small team." delay={0.4} /> <br />
+              <FadeInText text="Big ideas. Small team." delay={0.4} /> <br />
               <FadeInText
                 text="We build tools that help people breathe financially."
                 delay={0.6}
