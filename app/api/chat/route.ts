@@ -23,11 +23,17 @@ export async function POST(req: NextRequest): Promise<Response> {
       : [];
     const visitorId = getUuidString(body.visitor_id) ?? crypto.randomUUID();
     const sessionId = getUuidString(body.session_id);
+    const attachments = Array.isArray(body.attachments)
+      ? (body.attachments as { mimeType?: string; base64?: string }[])
+          .filter((a) => typeof a?.mimeType === "string" && typeof a?.base64 === "string")
+          .map((a) => ({ mimeType: a.mimeType!, base64: a.base64! }))
+      : [];
 
     const latestUserQuery = extractLatestUserMessage(safeMessages);
     const reply = await getChatReply(
       safeMessages,
-      process.env.COHERE_API_KEY ?? ""
+      process.env.COHERE_API_KEY ?? "",
+      attachments.length ? attachments : undefined
     );
 
     let resolvedSessionId: string | null = sessionId;

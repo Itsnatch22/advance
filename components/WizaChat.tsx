@@ -24,7 +24,11 @@ import { cn } from "@/lib/utils/utils";
 import {
   useWizaWidgetChat,
   type PublicSession,
+  type AttachmentData,
 } from "@/hooks/useWizaWidgetChat";
+import { VoiceButton } from "@/components/shared/VoiceButton";
+import { FileAttachButton, FilePreview, type AttachedFile } from "@/components/shared/FileAttachButton";
+import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
 
 type PublicChatPart = {
   type: string;
@@ -47,6 +51,21 @@ function getMessageText(m: PublicChatMessage): string {
       .map((p) => p.text ?? "")
       .join("");
   return m.content ?? "";
+}
+
+function MessageContent({ text }: { text: string }) {
+  if (text.startsWith("__gif__")) {
+    const url = text.slice("__gif__".length);
+    return (
+      <img
+        src={url}
+        alt="GIF"
+        className="max-h-36 max-w-full rounded-xl object-contain"
+        loading="lazy"
+      />
+    );
+  }
+  return <p className="whitespace-pre-wrap">{text}</p>;
 }
 
 function getMessageTimestamp(message: PublicChatMessage): string | null {
@@ -180,6 +199,8 @@ export default function WizaChat() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [attachment, setAttachment] = useState<AttachedFile | null>(null);
+  const [showGifPicker, setShowGifPicker] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -216,12 +237,25 @@ export default function WizaChat() {
 
   const handleSend = async (e?: FormEvent) => {
     e?.preventDefault();
-    if (!inputValue.trim() || isLoading) return;
+    if ((!inputValue.trim() && !attachment) || isLoading) return;
     const text = inputValue;
+    const file = attachment;
     setInputValue("");
+    setAttachment(null);
+    setShowGifPicker(false);
     if (showHistory) setShowHistory(false);
+    const att: AttachmentData | undefined = file
+      ? { mimeType: file.mimeType, base64: file.base64 }
+      : undefined;
     try {
-      await sendMessage({ text });
+      await sendMessage({ text, attachment: att });
+    } catch {}
+  };
+
+  const handleGifSelect = async (gif: GifResult) => {
+    setShowGifPicker(false);
+    try {
+      await sendMessage({ text: `__gif__${gif.url}` });
     } catch {}
   };
 
@@ -440,7 +474,7 @@ export default function WizaChat() {
                                   : "rounded-bl-sm border border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
                               )}
                             >
-                              <p className="whitespace-pre-wrap">{text}</p>
+                              <MessageContent text={text} />
                               {timestamp && (
                                 <p
                                   className={cn(
@@ -497,21 +531,65 @@ export default function WizaChat() {
 
                   {/* Input */}
                   <div className="border-t border-slate-100 px-3 pt-2 pb-3 dark:border-slate-800">
+                    {/* File preview */}
+                    {attachment && (
+                      <div className="mb-2">
+                        <FilePreview
+                          file={attachment}
+                          onRemove={() => setAttachment(null)}
+                        />
+                      </div>
+                    )}
+
+                    {/* GIF picker */}
+                    <div className="relative">
+                      <AnimatePresence>
+                        {showGifPicker && (
+                          <GifPicker
+                            onSelect={handleGifSelect}
+                            onClose={() => setShowGifPicker(false)}
+                            position="above"
+                          />
+                        )}
+                      </AnimatePresence>
+                    </div>
+
                     <form
                       onSubmit={handleSend}
-                      className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 transition-colors focus-within:border-emerald-400 dark:border-slate-700 dark:bg-slate-800 dark:focus-within:border-emerald-600"
+                      className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-2 py-1 transition-colors focus-within:border-emerald-400 dark:border-slate-700 dark:bg-slate-800 dark:focus-within:border-emerald-600"
                     >
+                      <FileAttachButton
+                        onFile={setAttachment}
+                        disabled={isLoading}
+                        className="h-7 w-7 shrink-0"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowGifPicker((v) => !v)}
+                        disabled={isLoading}
+                        title="Send a GIF"
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-40"
+                      >
+                        <span className="text-[9px] font-bold tracking-tight">GIF</span>
+                      </button>
+                      <VoiceButton
+                        onTranscript={(t) =>
+                          setInputValue((prev) => (prev ? `${prev} ${t}` : t))
+                        }
+                        disabled={isLoading}
+                        className="h-7 w-7 shrink-0"
+                      />
                       <Input
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="Type a message…"
+                        placeholder={attachment ? "Add a caption…" : "Type a message…"}
                         disabled={isLoading}
                         className="h-8 flex-1 border-0 bg-transparent px-0 text-sm text-slate-900 shadow-none placeholder:text-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-white"
                       />
                       <button
                         type="submit"
-                        disabled={isLoading || !inputValue.trim()}
+                        disabled={isLoading || (!inputValue.trim() && !attachment)}
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-600 transition-colors hover:bg-emerald-700 disabled:opacity-30"
                       >
                         <Send className="h-3.5 w-3.5 text-white" />

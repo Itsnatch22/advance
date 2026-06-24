@@ -23,7 +23,13 @@ import {
   HarmCategory,
   HarmBlockThreshold,
   type Content,
+  type Part,
 } from "@google/generative-ai";
+
+export type AttachmentData = {
+  mimeType: string;
+  base64: string;
+};
 
 if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
   console.error(
@@ -262,10 +268,39 @@ Once I know this, I'll build you a realistic budget that doesn't feel like punis
  * Stream a Gemini response given a full conversation history.
  * Returns an async generator that yields text chunks.
  */
+const MAX_RETRIES = 3;
+
+function isRetryable(err: unknown): boolean {
+  if (err && typeof err === "object" && "status" in err) {
+    const status = (err as { status: number }).status;
+    return status === 503 || status === 429 || status === 500;
+  }
+  return false;
+}
+
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  retries = MAX_RETRIES
+): Promise<T> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      if (!isRetryable(err) || attempt === retries) break;
+      const delay = Math.min(1000 * 2 ** attempt + Math.random() * 500, 8000);
+      await new Promise((res) => setTimeout(res, delay));
+    }
+  }
+  throw lastErr;
+}
+
 export async function* streamWizaReply(
   systemPrompt: string,
   history: Content[],
-  userMessage: string
+  userMessage: string,
+  attachments?: AttachmentData[]
 ): AsyncGenerator<string> {
   if (!genAI) throw new Error("AI service is not configured");
 
@@ -276,12 +311,18 @@ export async function* streamWizaReply(
     generationConfig: {
       temperature: 0.7,
       topP: 0.95,
-      maxOutputTokens: 32768,
+      maxOutputTokens: 8192,
     },
   });
 
-  const chat = model.startChat({ history });
-  const result = await chat.sendMessageStream(userMessage);
+  const messageParts: Part[] = [{ text: userMessage }];
+  for (const att of attachments ?? []) {
+    messageParts.push({ inlineData: { mimeType: att.mimeType, data: att.base64 } });
+  }
+
+  const result = await withRetry(() =>
+    model.startChat({ history }).sendMessageStream(messageParts)
+  );
 
   for await (const chunk of result.stream) {
     const text = chunk.text();
@@ -297,13 +338,15 @@ export async function generateSummary(transcript: string): Promise<string> {
 
   const model = genAI.getGenerativeModel({ model: MODEL });
 
-  const result = await model.generateContent(
-    `Summarise this financial coaching conversation in 3–5 bullet points. 
+  const result = await withRetry(() =>
+    model.generateContent(
+      `Summarise this financial coaching conversation in 3–5 bullet points.
 Focus on: advice given, key numbers mentioned, decisions made, and recommended next steps.
 Keep each bullet to one sentence. Use plain text, no markdown headers.
 
 TRANSCRIPT:
 ${transcript}`
+    )
   );
   return result.response.text();
 }

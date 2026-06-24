@@ -16,7 +16,10 @@ import {
   MessagesSquare,
   ChevronLeft,
 } from "lucide-react";
-import { useWizaCoachChat, type DeliveryChannel } from "@/hooks/useWizaCoachChat";
+import { useWizaCoachChat, type DeliveryChannel, type AttachmentData } from "@/hooks/useWizaCoachChat";
+import { VoiceButton } from "@/components/shared/VoiceButton";
+import { FileAttachButton, FilePreview, type AttachedFile } from "@/components/shared/FileAttachButton";
+import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
 
 function RichText({ text }: { text: string }) {
   return (
@@ -39,6 +42,21 @@ function RichText({ text }: { text: string }) {
       })}
     </>
   );
+}
+
+function MessageContent({ text }: { text: string }) {
+  if (text.startsWith("__gif__")) {
+    const url = text.slice("__gif__".length);
+    return (
+      <img
+        src={url}
+        alt="GIF"
+        className="max-h-44 max-w-full rounded-xl object-contain"
+        loading="lazy"
+      />
+    );
+  }
+  return <RichText text={text} />;
 }
 
 function TypingCursor() {
@@ -260,6 +278,8 @@ export default function Wiza() {
   const [input, setInput] = useState("");
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [summaryStatus, setSummaryStatus] = useState<string | null>(null);
+  const [attachment, setAttachment] = useState<AttachedFile | null>(null);
+  const [showGifPicker, setShowGifPicker] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -271,11 +291,22 @@ export default function Wiza() {
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!input.trim() || streaming) return;
-    const text = input;
+    if ((!input.trim() && !attachment) || streaming) return;
+    const text = input.trim();
+    const file = attachment;
     setInput("");
-    await sendMessage(text);
+    setAttachment(null);
+    setShowGifPicker(false);
+    const att: AttachmentData | undefined = file
+      ? { mimeType: file.mimeType, base64: file.base64 }
+      : undefined;
+    await sendMessage(text, att);
     inputRef.current?.focus();
+  };
+
+  const handleGifSelect = async (gif: GifResult) => {
+    setShowGifPicker(false);
+    await sendMessage(`__gif__${gif.url}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -545,7 +576,7 @@ export default function Wiza() {
                             <TypingCursor />
                           ) : (
                             <>
-                              <RichText text={msg.content} />
+                              <MessageContent text={msg.content} />
                               {msg.pending && <TypingCursor />}
                             </>
                           )}
@@ -587,20 +618,63 @@ export default function Wiza() {
 
             {/* Input */}
             <div className="border-t border-slate-100 px-4 pt-2 pb-4 dark:border-slate-800">
+              {/* File preview */}
+              {attachment && (
+                <div className="mb-2">
+                  <FilePreview file={attachment} onRemove={() => setAttachment(null)} />
+                </div>
+              )}
+
+              {/* GIF picker */}
+              <div className="relative">
+                <AnimatePresence>
+                  {showGifPicker && (
+                    <GifPicker
+                      onSelect={handleGifSelect}
+                      onClose={() => setShowGifPicker(false)}
+                      position="above"
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+
               <form onSubmit={handleSubmit} className="flex items-center gap-2">
+                {/* Toolbar buttons */}
+                <div className="flex items-center gap-1">
+                  <FileAttachButton
+                    onFile={setAttachment}
+                    disabled={streaming}
+                    className="h-10 w-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowGifPicker((v) => !v)}
+                    disabled={streaming}
+                    title="Send a GIF"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-40"
+                  >
+                    <span className="text-[11px] font-bold tracking-tight">GIF</span>
+                  </button>
+                  <VoiceButton
+                    onTranscript={(t) => setInput((prev) => (prev ? `${prev} ${t}` : t))}
+                    disabled={streaming}
+                    className="h-10 w-10"
+                  />
+                </div>
+
                 <input
                   ref={inputRef}
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ask Wiza anything…"
+                  placeholder={attachment ? "Add a caption…" : "Ask Wiza anything…"}
                   disabled={streaming}
                   className="flex-1 rounded-xl border border-transparent bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none disabled:opacity-50 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-emerald-600"
                 />
                 <button
                   type="submit"
-                  disabled={streaming || !input.trim()}
+                  disabled={streaming || (!input.trim() && !attachment)}
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors hover:bg-emerald-600 disabled:opacity-30 dark:bg-white dark:text-slate-900 dark:hover:bg-emerald-500 dark:hover:text-white"
                 >
                   <Send size={16} />

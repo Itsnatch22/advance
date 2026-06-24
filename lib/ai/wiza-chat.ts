@@ -3,7 +3,7 @@ import path from "path";
 import { supabaseServer } from "@/lib/supabase/supabase-server";
 import noahKnowledge from "@/data/noah_knowledge.json";
 import type { UIMessage } from "ai";
-import { streamWizaReply, buildSystemPrompt } from "@/lib/ai/gemini";
+import { streamWizaReply, buildSystemPrompt, type AttachmentData } from "@/lib/ai/gemini";
 
 type WebsiteSource = { title: string; route: string; filePath: string };
 type WebsiteContextChunk = { title: string; route: string; content: string };
@@ -217,8 +217,9 @@ async function getFallbackReply(query: string) {
   return `${best.entry.title}: ${bestText}`;
 }
 
-async function getGeminiReply(messages: UIMessage[]) {
-  const query = extractLatestUserMessage(messages);
+async function getGeminiReply(messages: UIMessage[], attachments?: AttachmentData[]) {
+  const rawQuery = extractLatestUserMessage(messages);
+  const query = rawQuery.startsWith("__gif__") ? "[User shared a GIF]" : rawQuery;
   const websiteContext = await buildWebsiteContextForQuery(query);
 
   const systemPrompt = buildSystemPrompt({
@@ -245,7 +246,8 @@ async function getGeminiReply(messages: UIMessage[]) {
   for await (const chunk of streamWizaReply(
     enhancedPrompt,
     geminiHistory,
-    query
+    query,
+    attachments
   )) {
     fullReply += chunk;
   }
@@ -254,14 +256,15 @@ async function getGeminiReply(messages: UIMessage[]) {
   return fullReply;
 }
 
-export async function getChatReply(messages: UIMessage[], _apiKey?: string) {
-  const latest = extractLatestUserMessage(messages);
+export async function getChatReply(messages: UIMessage[], _apiKey?: string, attachments?: AttachmentData[]) {
+  const rawLatest = extractLatestUserMessage(messages);
+  const latest = rawLatest.startsWith("__gif__") ? "[User shared a GIF]" : rawLatest;
   if (needsHumanIntervention(latest)) {
     return getHumanHandoffMessage();
   }
 
   try {
-    return await getGeminiReply(messages);
+    return await getGeminiReply(messages, attachments);
   } catch (err) {
     console.error("[gemini/chat] error", err);
     return await getFallbackReply(latest);

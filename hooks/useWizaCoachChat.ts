@@ -1,11 +1,16 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type ChatTransport, type UIMessage } from "ai";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export type DeliveryChannel = "chat" | "email" | "sms";
+
+export type AttachmentData = {
+  mimeType: string;
+  base64: string;
+};
 
 export interface ChatMessage {
   id: string;
@@ -60,6 +65,7 @@ async function getAuthHeader(): Promise<Record<string, string>> {
 export function useWizaCoachChat() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const sessionContainer = useMemo(() => ({ id: null as string | null }), []);
+  const pendingAttachmentRef = useRef<AttachmentData | null>(null);
 
   const transport = useMemo(
     () =>
@@ -81,12 +87,17 @@ export function useWizaCoachChat() {
           }
           return response;
         },
-        prepareSendMessagesRequest: ({ messages }) => ({
-          body: {
-            messages,
-            session_id: sessionContainer.id,
-          },
-        }),
+        prepareSendMessagesRequest: ({ messages }) => {
+          const att = pendingAttachmentRef.current;
+          pendingAttachmentRef.current = null;
+          return {
+            body: {
+              messages,
+              session_id: sessionContainer.id,
+              attachments: att ? [att] : [],
+            },
+          };
+        },
       }),
     [sessionContainer]
   );
@@ -124,11 +135,14 @@ export function useWizaCoachChat() {
   }, [chat.messages, chat.status]);
 
   const sendMessage = useCallback(
-    async (content: string) => {
-      if (!content.trim() || chat.status === "streaming") return;
+    async (content: string, attachment?: AttachmentData | null) => {
+      if (!content.trim() && !attachment) return;
+      if (chat.status === "streaming") return;
+      pendingAttachmentRef.current = attachment ?? null;
+      const text = content.trim() || "[Attached file]";
       await chat.sendMessage({
         role: "user",
-        parts: [{ type: "text", text: content }],
+        parts: [{ type: "text", text }],
       } as any);
     },
     [chat]

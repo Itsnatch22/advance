@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type ChatTransport, type UIMessage } from "ai";
 
@@ -23,6 +23,11 @@ type PublicChatMessage = {
   parts: PublicChatPart[];
   createdAt?: string;
   created_at?: string;
+};
+
+export type AttachmentData = {
+  mimeType: string;
+  base64: string;
 };
 
 const UUID_PATTERN =
@@ -58,6 +63,7 @@ function getOrCreateVisitorId(): string {
 export function useWizaWidgetChat() {
   const [visitorId, setVisitorId] = useState<string>("");
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const pendingAttachmentRef = useRef<AttachmentData | null>(null);
   const [sessions, setSessions] = useState<PublicSession[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
@@ -120,13 +126,18 @@ export function useWizaWidgetChat() {
           return response;
         },
 
-        prepareSendMessagesRequest: ({ messages }) => ({
-          body: {
-            messages,
-            visitor_id: stateContainer.visitorId || getOrCreateVisitorId(),
-            session_id: stateContainer.sessionId,
-          },
-        }),
+        prepareSendMessagesRequest: ({ messages }) => {
+          const att = pendingAttachmentRef.current;
+          pendingAttachmentRef.current = null;
+          return {
+            body: {
+              messages,
+              visitor_id: stateContainer.visitorId || getOrCreateVisitorId(),
+              session_id: stateContainer.sessionId,
+              attachments: att ? [att] : [],
+            },
+          };
+        },
       }),
     [stateContainer]
   );
@@ -205,11 +216,24 @@ export function useWizaWidgetChat() {
     [sessionId, visitorId, startNewSession]
   );
 
+  const sendMessage = useCallback(
+    async ({ text, attachment }: { text: string; attachment?: AttachmentData | null }) => {
+      if (!text.trim() && !attachment) return;
+      pendingAttachmentRef.current = attachment ?? null;
+      const displayText = text.trim() || "[Attached file]";
+      await (chat.sendMessage as (msg: { role: string; parts: { type: string; text: string }[] }) => Promise<void>)({
+        role: "user",
+        parts: [{ type: "text", text: displayText }],
+      });
+    },
+    [chat]
+  );
+
   const isLoading = chat.status === "submitted" || chat.status === "streaming";
 
   return {
     messages: chat.messages,
-    sendMessage: chat.sendMessage,
+    sendMessage,
     regenerate: chat.regenerate,
     setMessages: chat.setMessages,
     status: chat.status,

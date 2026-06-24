@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createUIMessageStream, createUIMessageStreamResponse } from "ai";
-import { streamWizaReply, buildSystemPrompt } from "@/lib/ai/gemini";
+import { streamWizaReply, buildSystemPrompt, type AttachmentData } from "@/lib/ai/gemini";
 import type { CountryCode } from "@/lib/currency/currency";
 
 const SUPPORTED_COUNTRIES: CountryCode[] = ["KE", "UG", "TZ", "RW"];
@@ -111,12 +111,20 @@ export async function POST(req: NextRequest) {
   }
 
   const incomingSessionId = body.session_id as string | null;
-  const content =
+  const rawContent =
     typeof body.content === "string" && body.content.trim()
       ? body.content.trim()
       : extractLatestUserMessage(body.messages).trim();
+  const isGif = rawContent.startsWith("__gif__");
+  const content = isGif ? "[User shared a GIF]" : rawContent;
 
-  if (!content) {
+  const attachments: AttachmentData[] = Array.isArray(body.attachments)
+    ? (body.attachments as { mimeType?: string; base64?: string }[])
+        .filter((a) => typeof a?.mimeType === "string" && typeof a?.base64 === "string")
+        .map((a) => ({ mimeType: a.mimeType!, base64: a.base64! }))
+    : [];
+
+  if (!rawContent) {
     return new Response("content is required", { status: 400 });
   }
 
@@ -291,7 +299,8 @@ export async function POST(req: NextRequest) {
         for await (const chunk of streamWizaReply(
           systemPrompt,
           geminiHistory,
-          content
+          content,
+          attachments.length ? attachments : undefined
         )) {
           fullReply += chunk;
           writer.write({
