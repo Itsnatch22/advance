@@ -256,7 +256,8 @@ export default function SchedulePage() {
                       key="embed"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="relative min-h-150 w-full overflow-hidden rounded-[2.5rem] bg-white"
+                      className="relative w-full overflow-hidden rounded-[2.5rem] bg-white"
+                      style={{ height: "700px" }}
                     >
                       {(!scriptReady || calendlyError) && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50">
@@ -293,8 +294,8 @@ export default function SchedulePage() {
                       <div
                         key={meetingType}
                         ref={embedRef}
-                        className="h-full w-full"
-                        style={{ minHeight: "600px" }}
+                        className="w-full"
+                        style={{ height: "700px" }}
                       />
                     </motion.div>
                   )}
