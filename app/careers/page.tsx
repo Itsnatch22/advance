@@ -86,6 +86,7 @@ export default function CareersPage() {
 
       {/* Hero Section */}
       <motion.section
+        ref={containerRef}
         style={{ y: yHero, opacity: opacityHero }}
         className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-6 py-40 text-center"
       >
