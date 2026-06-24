@@ -242,6 +242,72 @@ export const testimonials = [
 ] as const;
 
 
+export const testimonialCards = [
+  {
+    quote: "I cleared my electricity bill before it was disconnected. No stress, no calling relatives. Just opened the app and sorted it.",
+    author: "Ann Muthoni",
+    role: "Pharmacist",
+    location: "Nairobi 🇰🇪",
+    avatar: "AM",
+    rotation: "-10deg",
+    translateY: "-5%",
+  },
+  {
+    quote: "Our support team stopped asking for advances every other week. Productivity is up and HR pressure is down.",
+    author: "Kelvin Onyango",
+    role: "HR Manager",
+    location: "Nairobi 🇰🇪",
+    avatar: "KO",
+    rotation: "4deg",
+    translateY: "0%",
+  },
+  {
+    quote: "My baby needed medicine at night and I had no cash. EaziWage sent the money instantly. That moment meant everything.",
+    author: "Prossy Nankya",
+    role: "Nurse",
+    location: "Kampala 🇺🇬",
+    avatar: "PN",
+    rotation: "-4deg",
+    translateY: "-5%",
+  },
+  {
+    quote: "I paid my university tuition balance without taking a loan. That freedom is priceless.",
+    author: "Claudine Uwimana",
+    role: "Accountant",
+    location: "Kigali 🇷🇼",
+    avatar: "CU",
+    rotation: "4deg",
+    translateY: "5%",
+  },
+  {
+    quote: "School fees came earlier than expected. I accessed my wages in seconds and paid without panic.",
+    author: "Neema Joseph",
+    role: "Teacher",
+    location: "Dar es Salaam 🇹🇿",
+    avatar: "NJ",
+    rotation: "-10deg",
+    translateY: "0%",
+  },
+  {
+    quote: "Transport to work is no longer a daily struggle. I withdraw a small amount and move.",
+    author: "Isaac Okello",
+    role: "Warehouse Asst.",
+    location: "Kampala 🇺🇬",
+    avatar: "IO",
+    rotation: "4deg",
+    translateY: "5%",
+  },
+  {
+    quote: "I handle family expenses without borrowing from friends anymore. That respect matters to me.",
+    author: "Rehema Suleiman",
+    role: "Hotel Receptionist",
+    location: "Dar es Salaam 🇹🇿",
+    avatar: "RS",
+    rotation: "-3deg",
+    translateY: "10%",
+  },
+];
+
 export const partners = [
   { name: 'Safaricom', logo: '/logos/saf.png' },
   { name: 'KCB Group', logo: '/logos/kcb.png' },

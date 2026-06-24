@@ -1,136 +1,62 @@
 "use client";
-import React from "react";
-import { Icons } from "@/constants";
-import { testimonials } from "@/constants/data";
-import { motion } from "framer-motion";
-import { useParallax } from "@/hooks/use-parallax";
 
-const TestimonialCard = ({
-  testimonial,
-}: {
-  testimonial: {
-    rating: number;
-    quote: string;
-    avatar: string;
-    author: string;
-    role: string;
-    location: string;
-  };
-}) => {
-  const { rotateX, rotateY, spotlightBackground, handleMouseMove, handleMouseLeave } = useParallax();
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-  return (
-    <motion.div
-      style={{
-        perspective: 1000,
-      }}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="h-full"
-    >
-      <motion.div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          rotateX,
-          rotateY,
-        }}
-        className="group relative h-full w-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white/40 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
-      >
-        {/* spotlight effect */}
-        <motion.div
-          style={{
-            background: spotlightBackground,
-          }}
-          className="absolute inset-0 pointer-events-none"
-        />
-
-        <div className="relative z-10 flex h-full flex-col">
-          {/* stars reveal */}
-          <div className="mb-6 flex items-center gap-1.5">
-            {[...Array(testimonial.rating)].map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                transition={{ delay: 0.1 * i, type: "spring", stiffness: 200 }}
-              >
-                <Icons.Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              </motion.div>
-            ))}
-          </div>
-
-          <p className="mb-8 font-serif text-lg leading-relaxed text-slate-700 italic">
-            "{testimonial.quote}"
-          </p>
-
-          <div className="mt-auto flex items-center gap-4">
-            <div className="relative h-14 w-14 overflow-hidden rounded-2xl bg-linear-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center font-bold text-green-700 text-xl border border-green-500/10 shadow-inner">
-               <span className="relative z-10 group-hover:scale-110 transition-transform duration-500">{testimonial.avatar}</span>
-               <div className="absolute inset-0 bg-white/40 blur-sm translate-y-full group-hover:translate-y-0 transition-transform duration-700" />
-            </div>
-
-            <div>
-              <p className="font-bold tracking-tight text-slate-900 group-hover:text-green-700 transition-colors">
-                {testimonial.author}
-              </p>
-              <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                {testimonial.role} • {testimonial.location}
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        {/* subtle glass border highlight */}
-        <div className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/20 group-hover:ring-green-500/20 transition-all duration-500" />
-      </motion.div>
-    </motion.div>
-  );
-};
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export default function Testimonials() {
+  useGSAP(() => {
+    const clipAnimation = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#testimonial-clip",
+        start: "center center",
+        end: "+=800 center",
+        scrub: 0.5,
+        pin: true,
+        pinSpacing: true,
+      },
+    });
+
+    clipAnimation.to(".testimonial-mask", {
+      width: "100vw",
+      height: "100vh",
+      borderRadius: 0,
+    });
+  });
+
   return (
-    <section className="relative overflow-hidden bg-slate-50/50 py-32">
-      {/* architectural background elements */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-green-100/30 blur-[120px]" />
-        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-emerald-100/30 blur-[120px]" />
+    <section id="testimonials" className="w-screen bg-white dark:bg-slate-950">
+      {/* Title */}
+      <div className="flex flex-col items-center gap-4 pb-10 pt-24 text-center">
+        <p className="text-xs font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+          Trusted by thousands across East Africa
+        </p>
+        <h2 className="font-serif text-4xl font-black leading-tight text-slate-900 dark:text-white md:text-6xl">
+          What&apos;s{" "}
+          <span className="text-emerald-600 dark:text-emerald-400">
+            Everyone
+          </span>{" "}
+          Saying?
+        </h2>
+        <p className="max-w-md text-base text-slate-500 dark:text-slate-400">
+          Real people. Real wages. Real freedom.
+        </p>
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-6">
-        <div className="mb-24 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="mb-6 inline-block rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1 text-xs font-bold uppercase tracking-[0.2em] text-green-600"
+      {/* Clip reveal */}
+      <div className="relative h-dvh w-screen" id="testimonial-clip">
+        <div className="testimonial-mask">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="size-full object-cover"
           >
-            Social Proof
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl"
-          >
-            Built on <span className="text-green-600">Trust</span>.
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-6 text-lg text-slate-500 max-w-2xl mx-auto"
-          >
-            Discover why businesses and employees across the continent rely on EaziWage for financial flexibility.
-          </motion.p>
-        </div>
-
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {testimonials.map((t, i) => (
-            <TestimonialCard key={i} testimonial={t} />
-          ))}
+            <source src="/videos/testimonial.mp4" type="video/mp4" />
+          </video>
         </div>
       </div>
     </section>
