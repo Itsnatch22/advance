@@ -65,7 +65,85 @@ function MessageContent({ text }: { text: string }) {
       />
     );
   }
-  return <p className="whitespace-pre-wrap">{text}</p>;
+  const clean = text.replace(/\n?__ESCALATE__\s*$/m, "").trim();
+  return <p className="whitespace-pre-wrap">{clean}</p>;
+}
+
+function EscalateForm({ query, onDone }: { query: string; onDone: () => void }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [err, setErr] = useState(false);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim()) return;
+    setSending(true);
+    setErr(false);
+    try {
+      const res = await fetch("/api/escalate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), query }),
+      });
+      if (!res.ok) throw new Error();
+      setSent(true);
+      setTimeout(onDone, 3000);
+    } catch {
+      setErr(true);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (sent) {
+    return (
+      <div className="mt-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-3 dark:border-emerald-800 dark:bg-emerald-950/40">
+        <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+          ✓ Sent! Our team will reply to {email} shortly.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="mt-2 space-y-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 dark:border-slate-700 dark:bg-slate-800/60"
+    >
+      <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+        Leave your details and our support team will follow up:
+      </p>
+      <input
+        type="text"
+        placeholder="Your name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none dark:border-slate-600 dark:bg-slate-900 dark:text-white"
+      />
+      <input
+        type="email"
+        placeholder="Your email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none dark:border-slate-600 dark:bg-slate-900 dark:text-white"
+      />
+      {err && (
+        <p className="text-[10px] text-red-500">Failed to send. Please try again.</p>
+      )}
+      <button
+        type="submit"
+        disabled={sending || !name.trim() || !email.trim()}
+        className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-emerald-600 py-1.5 text-xs font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-40"
+      >
+        {sending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+        {sending ? "Sending…" : "Send to support"}
+      </button>
+    </form>
+  );
 }
 
 function getMessageTimestamp(message: PublicChatMessage): string | null {
@@ -201,6 +279,8 @@ export default function WizaChat() {
   const [inputValue, setInputValue] = useState("");
   const [attachment, setAttachment] = useState<AttachedFile | null>(null);
   const [showGifPicker, setShowGifPicker] = useState(false);
+  const [escalatedMsgId, setEscalatedMsgId] = useState<string | null>(null);
+  const [escalateDismissed, setEscalateDismissed] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -225,6 +305,19 @@ export default function WizaChat() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, status, isOpen, isMinimized]);
+
+  useEffect(() => {
+    if (status === "ready") {
+      const last = messages[messages.length - 1];
+      if (last && last.role !== "user") {
+        const text = getMessageText(last);
+        if (text.includes("__ESCALATE__")) {
+          setEscalatedMsgId(last.id);
+          setEscalateDismissed(false);
+        }
+      }
+    }
+  }, [messages, status]);
 
   useEffect(() => {
     if (isOpen) refreshSessions();
@@ -435,6 +528,10 @@ export default function WizaChat() {
                       const text = getMessageText(m);
                       const timestamp = getMessageTimestamp(m);
                       const isUser = m.role === "user";
+                      const isEscalateMsg = m.id === escalatedMsgId;
+                      const userQuery = isEscalateMsg
+                        ? getMessageText(messages[messages.indexOf(m) - 1] ?? m)
+                        : "";
                       return (
                         <motion.div
                           key={m.id}
@@ -442,8 +539,8 @@ export default function WizaChat() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.18 }}
                           className={cn(
-                            "flex",
-                            isUser ? "justify-end" : "justify-start"
+                            "flex flex-col",
+                            isUser ? "items-end" : "items-start"
                           )}
                         >
                           <div
@@ -489,6 +586,15 @@ export default function WizaChat() {
                               )}
                             </div>
                           </div>
+
+                          {isEscalateMsg && !escalateDismissed && (
+                            <div className="mt-1 w-[88%]">
+                              <EscalateForm
+                                query={userQuery}
+                                onDone={() => setEscalateDismissed(true)}
+                              />
+                            </div>
+                          )}
                         </motion.div>
                       );
                     })}

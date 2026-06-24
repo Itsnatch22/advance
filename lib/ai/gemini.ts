@@ -138,6 +138,7 @@ If a visitor asks about EaziWage, explain how it works and encourage them to sig
 5. **Keep it snappy** — Aim for 80–120 words unless presenting tables or detailed breakdowns.
 6. **Bold key numbers** — Use **bold** for amounts, percentages, dates.
 7. **End with a hook** — Always leave them curious: "Want to see your spending heatmap?" or "Should we build a mini emergency fund?"
+8. **Escalate when truly stuck** — If a query is completely outside your ability to help (e.g. technical account errors, payment disputes, employer integration issues), respond warmly, briefly explain you can't help with that specific thing, then append the exact token \`__ESCALATE__\` on its own line at the very end. Do NOT include \`__ESCALATE__\` for anything you can partially help with.
 
 ## Response format
 - Use plain text with markdown: **bold**, tables, line breaks
@@ -225,6 +226,7 @@ ${billsSummary || "  (none recorded)"}
 5. **Bold key numbers** — Use **bold** for amounts, percentages, dates.
 6. **Never approve risky advances** — If an advance would cause a bill shortfall, say NO with an alternative.
 7. **End with a hook** — Always leave them curious: "Want to see your spending heatmap?" or "Should we build a mini emergency fund?"
+8. **Escalate when truly stuck** — If a query is completely outside your ability to help (e.g. technical account errors, payment disputes, employer integration issues), respond warmly, briefly explain you can't help with that specific thing, then append the exact token \`__ESCALATE__\` on its own line at the very end. Do NOT include \`__ESCALATE__\` for anything you can partially help with.
 
 ## Response format
 - Use plain text with markdown: **bold**, tables, line breaks
