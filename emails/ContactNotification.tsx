@@ -1,16 +1,11 @@
 import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Preview,
   Section,
+  Heading,
   Text,
   Link,
-  Img,
+  Button,
 } from "@react-email/components";
+import EmailLayout from "./EmailLayout";
 
 interface ContactNotificationProps {
   name: string;
@@ -20,8 +15,6 @@ interface ContactNotificationProps {
   submittedAt: string;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
-
 export default function ContactNotification({
   name,
   email,
@@ -29,125 +22,64 @@ export default function ContactNotification({
   message,
   submittedAt,
 }: ContactNotificationProps) {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
+
   return (
-    <Html>
-      <Head />
-      <Preview>New Contact Form Submission Received</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          {/* Header */}
-          <Section style={header}>
-            <Img
-              src={`/logo.png`}
-              width="140"
-              height="auto"
-              alt="EaziWage"
-              style={logo}
-            />
-          </Section>
+    <EmailLayout
+      previewText="New Contact Form Submission Received"
+      showBorder
+      showBorderBottom
+      showBorderTop
+      footerContent={<></>} // Empty to use default footer from EmailLayout
+    >
+      {/* Header */}
+      {/* Logo is handled by EmailLayout by default */}
+      
+      {/* Content */}
+      <Section>
+        <Heading style={h1}>New Contact Submission</Heading>
 
-          {/* Content */}
-          <Section style={content}>
-            <Heading style={h1}>New Contact Submission</Heading>
+        <Text style={text}>Hi Team,</Text>
 
-            <Text style={text}>Hi Team,</Text>
+        <Text style={text}>
+          You have received a new contact form submission. Details are as
+          follows:
+        </Text>
 
-            <Text style={text}>
-              You have received a new contact form submission. Details are as
-              follows:
-            </Text>
+        <Section style={highlightBox}>
+          <Text style={highlightText}>
+            <strong>Name:</strong> {name}
+          </Text>
+          <Text style={highlightText}>
+            <strong>Email:</strong>{" "}
+            <Link href={`mailto:${email}`} style={link}>
+              {email}
+            </Link>
+          </Text>
+          <Text style={highlightText}>
+            <strong>Subject:</strong> {subject}
+          </Text>
+          <Text style={highlightText}>
+            <strong>Message:</strong> {message}
+          </Text>
+          <Text style={highlightText}>
+            <strong>Submitted At:</strong> {submittedAt}
+          </Text>
+        </Section>
 
-            <Section style={highlightBox}>
-              <Text style={highlightText}>
-                <strong>Name:</strong> {name}
-              </Text>
-              <Text style={highlightText}>
-                <strong>Email:</strong>{" "}
-                <Link href={`mailto:${email}`} style={link}>
-                  {email}
-                </Link>
-              </Text>
-              <Text style={highlightText}>
-                <strong>Subject:</strong> {subject}
-              </Text>
-              <Text style={highlightText}>
-                <strong>Message:</strong> {message}
-              </Text>
-              <Text style={highlightText}>
-                <strong>Submitted At:</strong> {submittedAt}
-              </Text>
-            </Section>
+        <Text style={text}>
+          Please review the submission and follow up accordingly.
+        </Text>
 
-            <Text style={text}>
-              Please review the submission and follow up accordingly.
-            </Text>
-
-            <Button style={button} href={`${baseUrl}/admin`}>
-              Go to Dashboard
-            </Button>
-          </Section>
-
-          {/* Footer */}
-          <Section style={footer}>
-            <Text style={footerText}>
-              © 2026 EaziWage. Empowering Africa's workforce.
-            </Text>
-            <Text style={footerText}>
-              <Link href={baseUrl} style={footerLink}>
-                Website
-              </Link>{" "}
-              •{" "}
-              <Link href={`${baseUrl}/data.pdf`} style={footerLink}>
-                Privacy Policy
-              </Link>{" "}
-              •{" "}
-              <Link href={`${baseUrl}/terms.pdf`} style={footerLink}>
-                Terms of Service
-              </Link>{" "}
-              •{" "}
-              <Link href={`${baseUrl}/unsubscribe`} style={footerLink}>
-                Unsubscribe
-              </Link>
-            </Text>
-          </Section>
-        </Container>
-      </Body>
-    </Html>
+        <Button style={button} href={`${baseUrl}/admin`}>
+          Go to Dashboard
+        </Button>
+      </Section>
+    </EmailLayout>
   );
 }
 
 /* ----------------------------- styles ----------------------------- */
-
-const main = {
-  backgroundColor: "#f6f9fc",
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-};
-
-const container = {
-  backgroundColor: "#ffffff",
-  margin: "0 auto",
-  padding: "0 0 48px",
-  marginBottom: "64px",
-  maxWidth: "600px",
-  borderRadius: "12px",
-  overflow: "hidden",
-  border: "1px solid #e5e7eb",
-};
-
-const header = {
-  padding: "32px 48px",
-  backgroundColor: "#ffffff",
-  borderBottom: "1px solid #f3f4f6",
-};
-
-const logo = {
-  margin: "0 auto",
-};
-
-const content = {
-  padding: "32px 48px",
-};
 
 const h1 = {
   color: "#111827",
@@ -196,24 +128,4 @@ const button = {
 const link = {
   color: "#16a34a",
   textDecoration: "underline",
-};
-
-const footer = {
-  borderTop: "1px solid #f3f4f6",
-  padding: "32px 48px",
-  textAlign: "center" as const,
-  backgroundColor: "#f9fafb",
-};
-
-const footerText = {
-  color: "#6b7280",
-  fontSize: "14px",
-  lineHeight: "1.5",
-  margin: "4px 0",
-};
-
-const footerLink = {
-  color: "#16a34a",
-  textDecoration: "none",
-  fontWeight: "600",
 };

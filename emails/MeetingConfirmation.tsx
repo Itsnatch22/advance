@@ -1,16 +1,5 @@
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Preview,
-  Section,
-  Text,
-  Link,
-  Img,
-} from "@react-email/components";
+import { Section, Heading, Text, Button, Link } from "@react-email/components";
+import  EmailLayout  from "./EmailLayout";
 
 interface MeetingConfirmationProps {
   userEmail: string;
@@ -28,117 +17,51 @@ export default function MeetingConfirmation({
   scheduledAt,
 }: MeetingConfirmationProps) {
   return (
-    <Html>
-      <Head />
-      <Preview>Meeting Confirmation - EaziWage</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          {/* Header */}
-          <Section style={header}>
-            <Img
-              src={`/logo.png`}
-              width="140"
-              height="auto"
-              alt="EaziWage"
-              style={logo}
-            />
-          </Section>
+    <EmailLayout
+      previewText="Meeting Confirmation - EaziWage"
+    >
+      {/* Content */}
+      <Section>
+        <Heading style={h1}>Meeting Scheduled Successfully!</Heading>
 
-          {/* Content */}
-          <Section style={content}>
-            <Heading style={h1}>Meeting Scheduled Successfully!</Heading>
+        <Text style={text}>Hi,</Text>
 
-            <Text style={text}>Hi,</Text>
+        <Text style={text}>
+          Your meeting has been successfully scheduled. Details are below:
+        </Text>
 
-            <Text style={text}>
-              Your meeting has been successfully scheduled. Details are below:
-            </Text>
+        <Section style={highlightBox}>
+          <Text style={highlightText}>
+            <strong>Meeting Type:</strong> {meetingType.replace(/_/g, " ").toUpperCase()}
+          </Text>
+          <Text style={highlightText}>
+            <strong>Scheduled For:</strong> {scheduledAt}
+          </Text>
+          <Text style={highlightText}>
+            <strong>Participants:</strong> {userEmail} & {adminEmail}
+          </Text>
+        </Section>
 
-            <Section style={highlightBox}>
-              <Text style={highlightText}>
-                <strong>Meeting Type:</strong> {meetingType.replace(/_/g, " ").toUpperCase()}
-              </Text>
-              <Text style={highlightText}>
-                <strong>Scheduled For:</strong> {scheduledAt}
-              </Text>
-              <Text style={highlightText}>
-                <strong>Participants:</strong> {userEmail} & {adminEmail}
-              </Text>
-            </Section>
+        <Text style={text}>
+          A calendar invitation has been sent to your email address with the meeting link. 
+          If you need to reschedule or cancel, please use the links provided in that invitation.
+        </Text>
 
-            <Text style={text}>
-              A calendar invitation has been sent to your email address with the meeting link. 
-              If you need to reschedule or cancel, please use the links provided in that invitation.
-            </Text>
+        <Button style={button} href={baseUrl}>
+          Go to EaziWage
+        </Button>
 
-            <Button style={button} href={baseUrl}>
-              Go to EaziWage
-            </Button>
-
-            <Text style={text}>
-              Best regards,
-              <br />
-              The EaziWage Team
-            </Text>
-          </Section>
-
-          {/* Footer */}
-          <Section style={footer}>
-            <Text style={footerText}>
-              © 2026 EaziWage. Empowering Africa's workforce.
-            </Text>
-            <Text style={footerText}>
-              <Link href={baseUrl} style={footerLink}>
-                Website
-              </Link>{" "}
-              •{" "}
-              <Link href={`${baseUrl}/data.pdf`} style={footerLink}>
-                Privacy Policy
-              </Link>{" "}
-              •{" "}
-              <Link href={`${baseUrl}/terms.pdf`} style={footerLink}>
-                Terms of Service
-              </Link>
-            </Text>
-          </Section>
-        </Container>
-      </Body>
-    </Html>
+        <Text style={text}>
+          Best regards,
+          <br />
+          The EaziWage Team
+        </Text>
+      </Section>
+    </EmailLayout>
   );
 }
 
 /* ----------------------------- styles ----------------------------- */
-
-const main = {
-  backgroundColor: "#f6f9fc",
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-};
-
-const container = {
-  backgroundColor: "#ffffff",
-  margin: "0 auto",
-  padding: "0 0 48px",
-  marginBottom: "64px",
-  maxWidth: "600px",
-  borderRadius: "12px",
-  overflow: "hidden",
-  border: "1px solid #e5e7eb",
-};
-
-const header = {
-  padding: "32px 48px",
-  backgroundColor: "#ffffff",
-  borderBottom: "1px solid #f3f4f6",
-};
-
-const logo = {
-  margin: "0 auto",
-};
-
-const content = {
-  padding: "32px 48px",
-};
 
 const h1 = {
   color: "#111827",
@@ -184,22 +107,7 @@ const button = {
   margin: "32px 0",
 };
 
-const footer = {
-  borderTop: "1px solid #f3f4f6",
-  padding: "32px 48px",
-  textAlign: "center" as const,
-  backgroundColor: "#f9fafb",
-};
-
-const footerText = {
-  color: "#6b7280",
-  fontSize: "14px",
-  lineHeight: "1.5",
-  margin: "4px 0",
-};
-
-const footerLink = {
+const link = {
   color: "#16a34a",
-  textDecoration: "none",
-  fontWeight: "600",
+  textDecoration: "underline",
 };
