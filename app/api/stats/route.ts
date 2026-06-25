@@ -9,15 +9,11 @@ const supabase = createClient(
 export const revalidate = 0;
 
 export async function GET() {
-    const { data, error } = await supabase
-        .from("stats")
-        .select("total_users, active_employers, active_employees, total_disbursed, updated_at")
-        .eq('id', 1)
-        .single();
+    const { data, error } = await supabase.rpc('get_stats');
 
     if (error || !data) {
         return NextResponse.json({ data: null, error: error?.message ?? "No data" }, { status: 502 });
     }
 
-    return NextResponse.json({ data }, { status: 200 });
+    return NextResponse.json({ data: data[0] }, { status: 200 });
 }
