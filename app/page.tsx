@@ -13,7 +13,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 export default function HomePage() {
   return (
     <ErrorBoundary>
-      <div>
+      <div className="overflow-hidden">
         <Hero />
         <Marquee />
         <ProblemStatement />

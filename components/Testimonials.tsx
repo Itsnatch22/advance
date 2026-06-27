@@ -23,7 +23,9 @@ export default function Testimonials() {
       width: "100vw",
       height: "100vh",
       borderRadius: 0,
-    });
+    }).from("video", {
+      scale: 1.2,
+    }, "<");
   });
 
   return (
