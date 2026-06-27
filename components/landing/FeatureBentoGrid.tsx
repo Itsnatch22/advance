@@ -25,15 +25,15 @@ const fadeUp = (i: number) => ({
 
 function AdvanceCalculatorMockup() {
   return (
-    <div className="relative mt-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
+    <div className="relative mt-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
       {/* Slider */}
       <p className="mb-1 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
         Request Amount
       </p>
-      <p className="mb-3 text-2xl font-bold text-slate-900 dark:text-white">
+      <p className="mb-3 text-2xl font-bold text-slate-900">
         KES 8,500
       </p>
-      <div className="relative h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
+      <div className="relative h-2 w-full overflow-hidden rounded-full bg-slate-100">
         <div
           className="eaziwage-gradient absolute inset-y-0 left-0 rounded-full"
           style={{ width: "68%" }}
@@ -48,15 +48,15 @@ function AdvanceCalculatorMockup() {
         <span>KES 12,500</span>
       </div>
       {/* Breakdown */}
-      <div className="mt-4 space-y-1.5 rounded-xl bg-slate-50 p-3 dark:bg-white/5">
+      <div className="mt-4 space-y-1.5 rounded-xl bg-slate-50 p-3">
         {[
           ["You receive", "KES 8,500"],
           ["Processing fee", "KES 255"],
           ["Repay on payday", "KES 8,755"],
         ].map(([label, value]) => (
           <div key={label} className="flex items-center justify-between text-xs">
-            <span className="text-slate-500 dark:text-slate-400">{label}</span>
-            <span className="font-semibold text-slate-800 dark:text-slate-100">
+            <span className="text-slate-500">{label}</span>
+            <span className="font-semibold text-slate-800">
               {value}
             </span>
           </div>
@@ -79,10 +79,10 @@ function FlagRow() {
         {countries.map(({ flag, code }) => (
           <div
             key={code}
-            className="flex flex-1 flex-col items-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50 py-3 dark:border-white/10 dark:bg-white/5"
+            className="flex flex-1 flex-col items-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50 py-3"
           >
             <span className="text-2xl">{flag}</span>
-            <span className="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400">
+            <span className="font-mono text-[10px] font-bold text-slate-500">
               {code}
             </span>
           </div>
@@ -91,7 +91,7 @@ function FlagRow() {
       {/* minimal East Africa SVG map outline */}
       <svg
         viewBox="0 0 120 100"
-        className="mx-auto h-20 w-auto opacity-20 dark:opacity-10"
+        className="mx-auto h-20 w-auto opacity-20"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.5"
@@ -121,8 +121,8 @@ function DisbursementFlow() {
               done
                 ? "bg-green-500 text-white"
                 : active
-                  ? "animate-pulse border-2 border-green-500 bg-green-50 text-green-600 dark:bg-green-900/20"
-                  : "border border-slate-200 bg-slate-50 text-slate-400 dark:border-white/10 dark:bg-white/5"
+                  ? "animate-pulse border-2 border-green-500 bg-green-50 text-green-600"
+                  : "border border-slate-200 bg-slate-50 text-slate-400"
             )}
           >
             {done ? "✓" : "→"}
@@ -131,21 +131,21 @@ function DisbursementFlow() {
             className={cn(
               "text-sm",
               done || active
-                ? "font-semibold text-slate-800 dark:text-slate-100"
+                ? "font-semibold text-slate-800"
                 : "text-slate-400"
             )}
           >
             {label}
           </span>
           {active && (
-            <span className="ml-auto rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">
+            <span className="ml-auto rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">
               In progress
             </span>
           )}
         </div>
       ))}
-      <div className="mt-2 rounded-xl border border-green-100 bg-green-50 px-3 py-2 dark:border-green-900/20 dark:bg-green-900/10">
-        <p className="text-[11px] font-semibold text-green-700 dark:text-green-400">
+      <div className="mt-2 rounded-xl border border-green-100 bg-green-50 px-3 py-2">
+        <p className="text-[11px] font-semibold text-green-700">
           via DusuPay · avg. 3 minutes
         </p>
       </div>
@@ -155,20 +155,20 @@ function DisbursementFlow() {
 
 function PayrollMockup() {
   return (
-    <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-white/5">
-      <div className="border-b border-slate-100 px-4 py-3 dark:border-white/10">
+    <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200/80 bg-white">
+      <div className="border-b border-slate-100 px-4 py-3">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">
           Payroll Impact — October
         </p>
       </div>
       <div className="space-y-2 p-4">
         {[
-          ["Total advances", "KES 2.4M", "text-slate-800 dark:text-slate-100"],
-          ["Employees advanced", "187", "text-slate-800 dark:text-slate-100"],
-          ["Payroll commitment", "18.4%", "text-green-600 dark:text-green-400"],
+          ["Total advances", "KES 2.4M", "text-slate-800"],
+          ["Employees advanced", "187", "text-slate-800"],
+          ["Payroll commitment", "18.4%", "text-green-600"],
         ].map(([label, value, cls]) => (
           <div key={label} className="flex items-center justify-between text-sm">
-            <span className="text-slate-500 dark:text-slate-400">{label}</span>
+            <span className="text-slate-500">{label}</span>
             <span className={cn("font-bold", cls)}>{value}</span>
           </div>
         ))}
@@ -194,12 +194,11 @@ function BentoCard({
       className={cn(
         "group relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white p-6 shadow-sm",
         "transition-shadow duration-300 hover:shadow-xl hover:shadow-green-500/5",
-        "dark:border-white/10 dark:bg-white/5",
         className
       )}
     >
       {/* hover gradient wash */}
-      <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-green-50/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:from-green-900/10" />
+      <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-green-50/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="relative z-10 flex h-full flex-col">{children}</div>
     </motion.div>
   );
@@ -209,8 +208,8 @@ function BentoCard({
 
 function IconPill({ icon: Icon }: { icon: React.ElementType }) {
   return (
-    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-green-100 dark:bg-green-900/30">
-      <Icon className="h-5 w-5 text-green-700 dark:text-green-400" strokeWidth={1.5} />
+    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-green-100">
+      <Icon className="h-5 w-5 text-green-700" strokeWidth={1.5} />
     </div>
   );
 }
@@ -239,7 +238,7 @@ export default function FeatureBentoGrid() {
 
           <motion.h2
             {...fadeUp(1)}
-            className="font-serif text-4xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-5xl"
+            className="font-serif text-4xl font-bold leading-tight tracking-tight text-slate-900 sm:text-5xl"
           >
             Built for Africa&apos;s{" "}
             <span className="text-green-600">Workforce</span>
@@ -247,7 +246,7 @@ export default function FeatureBentoGrid() {
 
           <motion.p
             {...fadeUp(2)}
-            className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-slate-500 dark:text-slate-400"
+            className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-slate-500"
           >
             One platform. Four countries. Real wages, on demand.
           </motion.p>
@@ -277,15 +276,15 @@ export default function FeatureBentoGrid() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-[11px] font-bold tracking-wide text-green-700 uppercase dark:bg-green-900/30 dark:text-green-400">
+                <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-[11px] font-bold tracking-wide text-green-700 uppercase">
                   Core Feature
                 </span>
-                <h3 className="mt-4 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+                <h3 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">
                   Your salary,
                   <br />
                   before payday.
                 </h3>
-                <p className="mt-3 leading-relaxed text-slate-500 dark:text-slate-400">
+                <p className="mt-3 leading-relaxed text-slate-500">
                   No loans. No interest. Just your earned wages, exactly when
                   you need them.
                 </p>
@@ -293,7 +292,7 @@ export default function FeatureBentoGrid() {
             </div>
             <AdvanceCalculatorMockup />
             <div className="mt-auto pt-6">
-              <button className="group/btn inline-flex items-center gap-1.5 text-sm font-semibold text-green-600 transition-colors hover:text-green-700 dark:text-green-400">
+              <button className="group/btn inline-flex items-center gap-1.5 text-sm font-semibold text-green-600 transition-colors hover:text-green-700">
                 See how it works
                 <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
               </button>
@@ -302,12 +301,12 @@ export default function FeatureBentoGrid() {
 
           {/* ── Card 2 — Multi-Country (1×2) ─────────────────────── */}
           <BentoCard index={1} className="lg:col-span-1 lg:row-span-2">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+            <h3 className="text-lg font-bold text-slate-900">
               One Platform,
               <br />
               Four Countries
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               Kenya, Uganda, Rwanda, Tanzania. Local currencies, local
               compliance.
             </p>
@@ -316,10 +315,10 @@ export default function FeatureBentoGrid() {
 
           {/* ── Card 3 — Instant Disbursement (1×2) ──────────────── */}
           <BentoCard index={2} className="lg:col-span-1 lg:row-span-2">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+            <h3 className="text-lg font-bold text-slate-900">
               Funds in Minutes
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               Mobile money or bank transfer. Powered by DusuPay. No waiting.
             </p>
             <DisbursementFlow />
@@ -327,10 +326,10 @@ export default function FeatureBentoGrid() {
 
           {/* ── Card 4 — Employer Dashboard (2×1 on lg) ──────────── */}
           <BentoCard index={3} className="lg:col-span-2 md:col-span-2">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+            <h3 className="text-lg font-bold text-slate-900">
               Full Payroll Visibility
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               See advance commitments before payday runs. No surprises.
             </p>
             <PayrollMockup />
@@ -339,10 +338,10 @@ export default function FeatureBentoGrid() {
           {/* ── Card 5 — Fraud Protection (1×1) ──────────────────── */}
           <BentoCard index={4} className="lg:col-span-1">
             <IconPill icon={ShieldCheck} />
-            <h3 className="font-bold text-slate-900 dark:text-white">
+            <h3 className="font-bold text-slate-900">
               Real-Time Fraud Engine
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               Every request screened before it moves.
             </p>
           </BentoCard>
@@ -350,10 +349,10 @@ export default function FeatureBentoGrid() {
           {/* ── Card 6 — Encryption (1×1) ─────────────────────────── */}
           <BentoCard index={5} className="lg:col-span-1">
             <IconPill icon={Lock} />
-            <h3 className="font-bold text-slate-900 dark:text-white">
+            <h3 className="font-bold text-slate-900">
               Bank-Grade Security
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               PII encrypted at rest. Zero plaintext exposure.
             </p>
           </BentoCard>
@@ -361,10 +360,10 @@ export default function FeatureBentoGrid() {
           {/* ── Card 7 — CBK Compliant (1×1) ─────────────────────── */}
           <BentoCard index={6} className="lg:col-span-1">
             <IconPill icon={BadgeCheck} />
-            <h3 className="font-bold text-slate-900 dark:text-white">
+            <h3 className="font-bold text-slate-900">
               Regulatory Ready
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               Built for East African financial regulation from day one.
             </p>
           </BentoCard>
@@ -372,10 +371,10 @@ export default function FeatureBentoGrid() {
           {/* ── Card 8 — Notifications (1×1) ─────────────────────── */}
           <BentoCard index={7} className="lg:col-span-1">
             <IconPill icon={Bell} />
-            <h3 className="font-bold text-slate-900 dark:text-white">
+            <h3 className="font-bold text-slate-900">
               Always In the Loop
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               27 notification events. Push, email, in-app. Nothing slips
               through.
             </p>
@@ -384,10 +383,10 @@ export default function FeatureBentoGrid() {
           {/* ── Card 9 — Zero Interest (1×1) ─────────────────────── */}
           <BentoCard index={8} className="lg:col-span-1">
             <IconPill icon={Sparkles} />
-            <h3 className="font-bold text-slate-900 dark:text-white">
+            <h3 className="font-bold text-slate-900">
               No Hidden Costs
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               Just a small processing fee. No interest, ever.
             </p>
           </BentoCard>
