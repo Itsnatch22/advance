@@ -148,6 +148,27 @@
   }
 }
 
+/* ── Marquee ─────────────────────────────────────────────────────── */
+@keyframes marquee-ltr {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-rtl {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.animate-marquee-ltr {
+  animation: marquee-ltr var(--mdur, 40s) linear infinite;
+}
+.animate-marquee-rtl {
+  animation: marquee-rtl var(--mdur, 35s) linear infinite;
+}
+/* pause the scrolling track when hovering any logo in that row */
+.marquee-row:hover .animate-marquee-ltr,
+.marquee-row:hover .animate-marquee-rtl {
+  animation-play-state: paused;
+}
+
 /* ── Testimonials clip reveal ────────────────────────────────────── */
 .testimonial-mask {
   position: absolute;
