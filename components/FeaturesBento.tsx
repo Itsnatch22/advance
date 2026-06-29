@@ -25,7 +25,7 @@ const fadeUp = (i: number) => ({
     initial: { opacity: 0, y: 24 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-60px" },
-    transition: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
+    transition: { duration: 0.5, delay: i * 0.1, ease: "easeOut" as const },
 });
 
 /* ─── sub-components ─────────────────────────────────────────── */
