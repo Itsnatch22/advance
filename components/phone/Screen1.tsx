@@ -1,8 +1,11 @@
 "use client";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { usePhoneCurrency } from "@/hooks/use-phone-currency";
 
 export default function Screen1() {
+  const { fmt } = usePhoneCurrency();
+
   return (
     <div className="flex h-full flex-col bg-[#F8F9F7] px-5 py-3">
       {/* Header */}
@@ -24,9 +27,9 @@ export default function Screen1() {
         <p className="mb-2 text-[10px] uppercase tracking-widest text-white/50">
           Earned this period
         </p>
-        <p className="text-3xl font-bold leading-none">KES 18,400</p>
+        <p className="text-3xl font-bold leading-none">{fmt(18_400)}</p>
         <p className="mt-1 text-[11px] text-white/60">
-          of KES 24,000 total salary
+          of {fmt(24_000)} total salary
         </p>
 
         {/* Progress bar */}
@@ -56,7 +59,7 @@ export default function Screen1() {
       <div className="grid grid-cols-3 gap-2">
         {[
           { label: "Next payday", value: "8 days" },
-          { label: "Available", value: "KES 9,200" },
+          { label: "Available", value: fmt(9_200) },
           { label: "Advances", value: "1 active" },
         ].map(({ label, value }) => (
           <div key={label} className="rounded-xl bg-[#F3F4F6] p-2.5">

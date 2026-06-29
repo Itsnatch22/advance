@@ -1,7 +1,17 @@
 "use client";
 import { ChevronLeft } from "lucide-react";
+import { usePhoneCurrency } from "@/hooks/use-phone-currency";
+
+const REQUEST_KES = 4_200;
+const FEE_RATE = 0.01;
+const MAX_KES = 9_200;
 
 export default function Screen2() {
+  const { fmt, mobileMoney } = usePhoneCurrency();
+
+  const fee = Math.round(REQUEST_KES * FEE_RATE);
+  const received = REQUEST_KES - fee;
+
   return (
     <div className="flex h-full flex-col bg-[#F8F9F7] px-5 py-3">
       {/* Header */}
@@ -17,7 +27,9 @@ export default function Screen2() {
         <p className="text-[10px] uppercase tracking-widest text-[#6B7280]">
           Request amount
         </p>
-        <p className="my-2 text-4xl font-bold text-[#0A0A0A]">KES 4,200</p>
+        <p className="my-2 text-4xl font-bold text-[#0A0A0A]">
+          {fmt(REQUEST_KES)}
+        </p>
 
         {/* +/− with mini track */}
         <div className="mx-auto flex w-fit items-center gap-4">
@@ -32,7 +44,7 @@ export default function Screen2() {
           </div>
         </div>
         <p className="mt-2 text-[11px] text-[#6B7280]">
-          Max available: KES 9,200
+          Max available: {fmt(MAX_KES)}
         </p>
       </div>
 
@@ -41,20 +53,20 @@ export default function Screen2() {
         <div className="flex items-center justify-between py-1">
           <span className="text-xs text-[#6B7280]">You receive</span>
           <span className="text-sm font-semibold text-[#0A0A0A]">
-            KES 4,158
+            {fmt(received)}
           </span>
         </div>
         <div className="flex items-center justify-between py-1">
           <span className="text-xs text-[#6B7280]">Fee</span>
           <span className="text-sm font-semibold text-[#0A0A0A]">
-            KES 42 (1%)
+            {fmt(fee)} (1%)
           </span>
         </div>
         <div className="my-2 h-px bg-[#E5E7EB]" />
         <div className="flex items-center justify-between py-1">
           <span className="text-xs text-[#6B7280]">To</span>
           <span className="text-sm font-semibold text-[#0A0A0A]">
-            M-Pesa · 07** *** 234
+            {mobileMoney} · *** *** 234
           </span>
         </div>
       </div>

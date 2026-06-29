@@ -1,7 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
+import { usePhoneCurrency } from "@/hooks/use-phone-currency";
+
+const SENT_KES = 4_200;
 
 export default function FloatingNotification() {
+  const { fmt } = usePhoneCurrency();
+
   return (
     <motion.div
       initial={{ x: 60, opacity: 0 }}
@@ -23,7 +28,7 @@ export default function FloatingNotification() {
         <div className="h-2 w-2 shrink-0 rounded-full bg-[#10B981]" />
         <div>
           <p className="whitespace-nowrap text-[12px] font-semibold text-[#0A0A0A]">
-            KES 4,200 sent
+            {fmt(SENT_KES)} sent
           </p>
           <p className="text-[10px] text-[#6B7280]">2s ago</p>
         </div>

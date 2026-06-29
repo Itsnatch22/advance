@@ -1,7 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
+import { usePhoneCurrency } from "@/hooks/use-phone-currency";
+
+const SENT_KES = 4_200;
 
 export default function Screen3() {
+  const { fmt, mobileMoney } = usePhoneCurrency();
+
   return (
     <div className="flex h-full flex-col items-center justify-center bg-[#F8F9F7] px-5 py-4">
       {/* Animated checkmark */}
@@ -52,8 +57,10 @@ export default function Screen3() {
       </div>
 
       {/* Amount */}
-      <p className="text-4xl font-bold text-[#0A0A0A]">KES 4,200 Sent</p>
-      <p className="mt-1 text-sm text-[#6B7280]">to M-Pesa ending 234</p>
+      <p className="text-4xl font-bold text-[#0A0A0A]">{fmt(SENT_KES)} Sent</p>
+      <p className="mt-1 text-sm text-[#6B7280]">
+        to {mobileMoney} ending 234
+      </p>
       <p className="mt-2 text-xs text-[#6B7280]">2 seconds ago</p>
 
       {/* Action buttons */}
