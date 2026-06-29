@@ -22,6 +22,8 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "./ui";
 
+const FOUNDING_YEAR = 2025;
+
 export default function Footer() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
   const [email, setEmail] = useState("");
@@ -288,18 +290,22 @@ export default function Footer() {
                 {
                   icon: Facebook,
                   url: "https://www.facebook.com/share/1CwgkthTRT/",
+                  label: "EaziWage on Facebook",
                 },
                 {
                   icon: Instagram,
                   url: "https://www.instagram.com/eaziwagelimited/",
+                  label: "EaziWage on Instagram",
                 },
                 {
                   icon: Twitter,
                   url: "https://x.com/eaziwagelimited?t=m-WyH8sFtbLOAiRjVKFVPw&s=08",
+                  label: "EaziWage on X (Twitter)",
                 },
                 {
                   icon: Linkedin,
                   url: "https://www.linkedin.com/company/eaziwage/?viewAsMember=true",
+                  label: "EaziWage on LinkedIn",
                 },
               ].map((social, index) => (
                 <motion.a
@@ -307,21 +313,16 @@ export default function Footer() {
                   whileTap={{ scale: 0.95 }}
                   href={social.url}
                   key={index}
+                  aria-label={social.label}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800/50 text-slate-400 ring-1 ring-slate-700/50 transition-all duration-300 hover:bg-emerald-500/10 hover:text-emerald-400 hover:ring-emerald-500/30"
                 >
-                  <social.icon className="h-4 w-4" strokeWidth={2} />
+                  <social.icon className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
                 </motion.a>
               ))}
             </div>
 
-            {/* App Store Badges 
-            <div className="pt-6">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">Coming Soon to Mobile</p>
-              <AppStoreButtons />
-            </div>
-            */}
           </div>
 
           {/* Product - enhanced link styling */}
@@ -447,7 +448,7 @@ export default function Footer() {
         {/* Bottom Bar - enhanced layout and styling */}
         <div className="mt-12 flex flex-col items-center justify-between gap-5 border-t border-slate-800/60 pt-8 sm:mt-16 sm:pt-10 md:flex-row">
           <p className="text-center text-xs text-slate-500 sm:text-sm md:text-left">
-            &copy; 2025 - {currentYear ?? ""} EaziWage. All Rights Reserved
+            &copy; {FOUNDING_YEAR} - {currentYear ?? ""} EaziWage. All Rights Reserved
           </p>
 
           <div className="flex items-center gap-2 text-xs text-slate-500 sm:text-sm">

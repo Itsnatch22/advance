@@ -96,7 +96,7 @@ const StatCard = ({ value, label }: { value: string; label: string }) => (
     whileHover={{ y: -5, scale: 1.05 }}
     className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white/40 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:border-slate-300/60 hover:bg-white/60"
   >
-    <div className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl" dangerouslySetInnerHTML={{ __html: value }} />
+    <div className="text-3xl font-black tracking-tighter text-slate-900 sm:text-4xl">{value}</div>
     <div className="mt-1 text-[10px] font-black tracking-[0.2em] text-green-600/60 uppercase">
       {label}
     </div>
@@ -273,10 +273,11 @@ export default function ContactPage() {
                 />
 
                 <div className="space-y-2">
-                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                  <label htmlFor="contact-name" className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                     Full Name
                   </label>
                   <input
+                    id="contact-name"
                     placeholder="Your name..."
                     {...register("name")}
                     className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
@@ -289,10 +290,11 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                  <label htmlFor="contact-email" className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                     Email Address
                   </label>
                   <input
+                    id="contact-email"
                     type="email"
                     placeholder="Your email..."
                     {...register("email")}
@@ -306,10 +308,11 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                  <label htmlFor="contact-subject" className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                     Subject
                   </label>
                   <input
+                    id="contact-subject"
                     placeholder="Your subject..."
                     {...register("subject")}
                     className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
@@ -322,10 +325,11 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
+                  <label htmlFor="contact-message" className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                     Message
                   </label>
                   <textarea
+                    id="contact-message"
                     rows={4}
                     placeholder="Your message..."
                     {...register("message")}

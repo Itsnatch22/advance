@@ -198,7 +198,7 @@ function BentoCard({
       )}
     >
       {/* hover gradient wash */}
-      <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-green-50/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-br from-green-50/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="relative z-10 flex h-full flex-col">{children}</div>
     </motion.div>
   );
@@ -256,18 +256,10 @@ export default function FeatureBentoGrid() {
         <div
           className={cn(
             "grid gap-4",
-            // mobile: single column
             "grid-cols-1",
-            // tablet: 2 columns
             "md:grid-cols-2",
-            // desktop: 4 columns with explicit placement
             "lg:grid-cols-4 lg:[grid-template-rows:repeat(3,auto)]"
           )}
-          style={
-            {
-              "--area": "auto",
-            } as React.CSSProperties
-          }
         >
           {/* ── Card 1 — Hero (2×2) ───────────────────────────────── */}
           <BentoCard
@@ -380,8 +372,8 @@ export default function FeatureBentoGrid() {
             </p>
           </BentoCard>
 
-          {/* ── Card 9 — Zero Interest (1×1) ─────────────────────── */}
-          <BentoCard index={8} className="lg:col-span-1">
+          {/* ── Card 9 — Zero Interest (2×1) fills last row ──────── */}
+          <BentoCard index={8} className="lg:col-span-2">
             <IconPill icon={Sparkles} />
             <h3 className="font-bold text-slate-900">
               No Hidden Costs

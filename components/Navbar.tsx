@@ -193,7 +193,7 @@ const Navbar = () => {
         {/* Right side buttons - Enhanced */}
         <div className="hidden items-center gap-3 lg:flex">
           <Link
-            href="https://app.eaziwage.com"
+            href={process.env.NEXT_PUBLIC_APP_URL ?? "https://app.eaziwage.com"}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -218,13 +218,16 @@ const Navbar = () => {
 
         {/* Mobile toggle - Enhanced */}
         <button
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-nav"
           className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors hover:bg-slate-200 lg:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? (
-            <X className="h-5 w-5" strokeWidth={2.5} />
+            <X className="h-5 w-5" aria-hidden="true" strokeWidth={2.5} />
           ) : (
-            <Menu className="h-5 w-5" strokeWidth={2.5} />
+            <Menu className="h-5 w-5" aria-hidden="true" strokeWidth={2.5} />
           )}
         </button>
       </div>
@@ -233,6 +236,9 @@ const Navbar = () => {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
+            id="mobile-nav"
+            role="dialog"
+            aria-label="Navigation menu"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -288,7 +294,7 @@ const Navbar = () => {
             <hr className="border-slate-200" />
 
             <Link
-              href="https://app.eaziwage.com"
+              href={process.env.NEXT_PUBLIC_APP_URL ?? "https://app.eaziwage.com"}
               onClick={() => setMobileOpen(false)}
               className="w-full rounded-xl border border-slate-200/60 bg-white px-4 py-3 text-center font-semibold text-slate-700 ring-1 ring-slate-900/5 transition-all hover:bg-slate-50 hover:text-emerald-600"
             >

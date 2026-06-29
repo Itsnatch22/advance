@@ -1,15 +1,19 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import Typed from "typed.js";
 import { ArrowRight, Calendar } from "lucide-react";
 
 export default function CTA() {
-  const typedRef = useRef(null);
+  const typedRef = useRef<HTMLSpanElement>(null);
+  const prefersReduced = useReducedMotion();
+  const d = (n: number) => (prefersReduced ? 0 : n);
 
   useEffect(() => {
-    const typed = new Typed(typedRef.current, {
+    const el = typedRef.current;
+    if (!el) return;
+    const typed = new Typed(el, {
       strings: [
         "Transform Your Workplace",
         "Boost Retention",
@@ -42,7 +46,7 @@ export default function CTA() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: d(0.6) }}
           viewport={{ once: true }}
           className="mb-6 flex justify-center sm:mb-8"
         >
@@ -56,7 +60,7 @@ export default function CTA() {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
+          transition={{ duration: d(0.7), delay: d(0.1) }}
           viewport={{ once: true }}
           className="mb-8 font-serif text-5xl leading-tight font-bold tracking-tight text-white sm:text-6xl lg:text-7xl"
         >
@@ -72,7 +76,7 @@ export default function CTA() {
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.2 }}
+          transition={{ duration: d(0.9), delay: d(0.2) }}
           viewport={{ once: true }}
           className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-200"
         >
@@ -84,7 +88,7 @@ export default function CTA() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4 }}
+          transition={{ duration: d(1), delay: d(0.4) }}
           viewport={{ once: true }}
           className="mt-16 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5"
         >
@@ -127,7 +131,7 @@ export default function CTA() {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.6 }}
+          transition={{ duration: d(1), delay: d(0.6) }}
           viewport={{ once: true }}
           className="mt-12 flex flex-wrap items-center justify-center gap-8 border-t border-white/10 pt-8 text-sm text-slate-300 sm:gap-12"
         >

@@ -24,9 +24,36 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "EaziWage - Earned Wage Access for Employees Across Africa",
+  title: {
+    default: "EaziWage - Earned Wage Access for Employees Across Africa",
+    template: "%s | EaziWage",
+  },
   description:
-    "A system designed to enable employees to get access to an advance before payday.",
+    "EaziWage lets employees access up to 60% of earned wages instantly — no loans, no interest. Built for employers across Kenya, Uganda, Tanzania and Rwanda.",
+  metadataBase: new URL("https://eaziwage.com"),
+  openGraph: {
+    type: "website",
+    siteName: "EaziWage",
+    title: "EaziWage - Earned Wage Access for Employees Across Africa",
+    description:
+      "EaziWage lets employees access up to 60% of earned wages instantly — no loans, no interest. Built for employers across Kenya, Uganda, Tanzania and Rwanda.",
+    url: "https://eaziwage.com",
+    images: [
+      {
+        url: "/cta.jpg",
+        width: 1200,
+        height: 630,
+        alt: "EaziWage — Earned Wage Access",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EaziWage - Earned Wage Access for Employees Across Africa",
+    description:
+      "EaziWage lets employees access up to 60% of earned wages instantly — no loans, no interest.",
+    images: ["/cta.jpg"],
+  },
 };
 
 export default async function RootLayout({

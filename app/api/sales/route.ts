@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     
     await resend.emails.send({
       from: "sales@eaziwage.com",
-      to: "admin@eaziwage.com",
+      to: "support@eaziwage.com",
       subject: "New Sales Lead",
       react: SalesNotification({
         name: validatedData.name,

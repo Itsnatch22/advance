@@ -25,66 +25,61 @@ const securityLayers = [
     id: "infrastructure",
     title: "Infrastructure Security",
     icon: Server,
-    description:
-      "Bank-grade cloud infrastructure with multi-zone redundancy and DDoS protection.",
+    description: "Enterprise cloud infrastructure with built-in redundancy and security.",
     details: [
-      "Hosted on AWS secure cloud",
-      "99.99% uptime SLA",
-      "Automated failover systems",
-      "Continuous vulnerability scanning",
+      "Hosted on Supabase enterprise cloud",
+      "Automated backups and point-in-time recovery",
+      "DDoS protection via Cloudflare",
+      "Continuous uptime monitoring",
     ],
   },
   {
     id: "data",
     title: "Data Encryption",
     icon: Lock,
-    description:
-      "Military-grade encryption for all data, both in transit and at rest.",
+    description: "Bank-grade encryption for all data, both in transit and at rest.",
     details: [
-      "AES-256 encryption at rest",
+      "PII encrypted at rest via AES-256",
       "TLS 1.3 encryption in transit",
-      "Key management via KMS",
-      "Zero-knowledge architecture",
+      "Encrypted national IDs and bank details",
+      "Zero plaintext PII exposure",
     ],
   },
   {
     id: "access",
     title: "Access Control",
     icon: Key,
-    description:
-      "Strict role-based access controls and multi-factor authentication protocols.",
+    description: "Strict role-based access controls enforced at the database level.",
     details: [
-      "Role-Based Access Control (RBAC)",
-      "Mandatory 2FA for admin access",
-      "Biometric user authentication",
-      "Session timeout policies",
+      "Row Level Security on all tables",
+      "Role-based access — admin, employer, employee",
+      "Service role separation from client",
+      "Session-based authentication via Supabase Auth",
     ],
   },
   {
     id: "compliance",
     title: "Regulatory Compliance",
     icon: FileKey,
-    description:
-      "Fully compliant with data protection laws across all operating jurisdictions.",
+    description: "Built for East African financial regulation from day one.",
     details: [
-      "ODPC (Kenya) Compliant",
-      "GDPR aligned framework",
-      "Regular external audits",
-      "Transparent data processing agreements",
+      "ODPC (Kenya) data protection aligned",
+      "CBK EWA framework compliant",
+      "Full audit trail on all admin actions",
+      "Transparent data processing — no data sold",
     ],
   },
 ];
 
 const certifications = [
-  { label: "ODPC Compliant", icon: ShieldCheck },
-  { label: "ISO 27001 Aligned", icon: CheckCircle2 },
-  { label: "PCI-DSS Ready", icon: CreditCard },
+  { label: "ODPC Aligned", icon: ShieldCheck },
+  { label: "CBK Framework", icon: CheckCircle2 },
   { label: "256-bit SSL", icon: Lock },
+  { label: "Audit Logged", icon: Database },
 ];
 
 /* ----------------------------- components ----------------------------- */
 
-import { CreditCard } from "lucide-react";
 import FloatingOrb from "@/components/shared/FloatingOrb";
 
 const VaultDoor = ({
@@ -101,7 +96,7 @@ const VaultDoor = ({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="relative h-80 w-80 md:h-96 md:w-96">
+      <div className="relative h-64 w-64 sm:h-80 sm:w-80 md:h-96 md:w-96">
         {/* Outer Ring */}
         <div className="absolute inset-0 rounded-full border-20 border-slate-200 bg-slate-100 shadow-[inset_0_10px_20px_rgba(0,0,0,0.1),0_20px_40px_rgba(0,0,0,0.2)]" />
 
@@ -216,8 +211,9 @@ export default function SecurityPage() {
             transition={{ delay: 0.3, duration: 1 }}
             className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
           >
-            Your trust is our currency. We employ bank-grade security protocols
-            and rigorous compliance standards to protect your financial data.
+            Your trust is our currency. Every piece of financial data is
+            encrypted, access-controlled, and audit-logged — built for East
+            Africa&apos;s regulatory standards.
           </motion.p>
         </div>
       </motion.section>
@@ -370,7 +366,8 @@ export default function SecurityPage() {
               <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400">
                 We believe in absolute data sovereignty. We do not sell, rent,
                 or monetize your personal financial data. It is used solely to
-                facilitate your transactions and improve your experience.
+                facilitate your wage advances and improve your experience across
+                Kenya, Uganda, Rwanda, and Tanzania.
               </p>
               <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-6 py-2 text-sm font-bold text-green-400">
                 <Lock size={16} />

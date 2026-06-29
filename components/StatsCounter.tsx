@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import CountUp from "react-countup";
 
 export default function StatsCounter() {
@@ -12,6 +12,7 @@ export default function StatsCounter() {
   };
 
   const [inView, setInView] = useState(false);
+  const prefersReduced = useReducedMotion();
 
   return (
     <section className="relative w-full overflow-hidden bg-white py-40">
@@ -68,7 +69,7 @@ export default function StatsCounter() {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
+              transition={{ duration: prefersReduced ? 0 : 0.6, delay: prefersReduced ? 0 : i * 0.1 }}
               onViewportEnter={() => setInView(true)}
               className="group relative flex flex-col items-center"
             >
@@ -77,7 +78,7 @@ export default function StatsCounter() {
                   <span className="bg-linear-to-b from-slate-900 to-slate-500 bg-clip-text text-transparent group-hover:from-green-700 group-hover:to-green-500">
                     {item.prefix}
                     {inView ? (
-                      <CountUp end={item.value} duration={3} separator="," />
+                      <CountUp end={item.value} duration={prefersReduced ? 0.01 : 3} separator="," />
                     ) : (
                       "0"
                     )}

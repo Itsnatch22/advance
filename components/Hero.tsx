@@ -1,5 +1,5 @@
 "use client";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import {
   Sparkles,
   Check,
@@ -15,7 +15,7 @@ import { useCurrency } from "./CurrencyProvider";
 import { formatCurrency } from "@/lib/currency/currency";
 import { useParallax } from "@/hooks/use-parallax";
 import { useSearchParams } from "next/navigation";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 
 export default function Hero() {
   const [email, setEmail] = useState("");
@@ -33,13 +33,13 @@ export default function Hero() {
   const opacityPhone = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   const { rotateX, rotateY, handleMouseMove, handleMouseLeave } = useParallax();
+  const prefersReduced = useReducedMotion();
 
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    router.push(
-      `https://app.eaziwage.com/register?email=${encodeURIComponent(email)}`
-    );
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.eaziwage.com";
+    router.push(`${appUrl}/register?email=${encodeURIComponent(email)}`);
   };
 
   const searchParams = useSearchParams();
@@ -49,20 +49,15 @@ export default function Hero() {
     if (!subscribed) return;
 
     if (subscribed === "confirmed") {
-      toast.success("Subscription confirmed!", {
-        description: "Welcome to EaziWage updates. You're all set. 🎉",
+      toast.success("Subscription confirmed! Welcome to EaziWage updates.", {
         duration: 6000,
       });
     } else if (subscribed === "expired") {
-      toast.error("Confirmation link expired", {
-        description:
-          "Your link was valid for 24 hours. Please subscribe again.",
+      toast.error("Confirmation link expired. Your link was valid for 24 hours — please subscribe again.", {
         duration: 6000,
       });
     } else if (subscribed === "invalid") {
-      toast.error("Invalid confirmation link", {
-        description:
-          "This link doesn't look right. Please try subscribing again.",
+      toast.error("Invalid confirmation link. Please try subscribing again.", {
         duration: 6000,
       });
     }
@@ -161,7 +156,11 @@ export default function Hero() {
           <motion.div
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            style={{ y: yPhone, rotate: rotatePhone, opacity: opacityPhone }}
+            style={{
+            y: prefersReduced ? 0 : yPhone,
+            rotate: prefersReduced ? 0 : rotatePhone,
+            opacity: prefersReduced ? 1 : opacityPhone,
+          }}
             className="perspective-1000 relative hidden lg:block"
           >
             {/* 3D Phone Frame */}
