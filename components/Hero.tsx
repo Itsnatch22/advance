@@ -1,39 +1,17 @@
 "use client";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import {
-  Sparkles,
-  Check,
-  Wallet,
-  TrendingUp,
-  ChevronRight,
-} from "lucide-react";
-import React, { useState, useRef, Suspense, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Sparkles, ChevronRight } from "lucide-react";
+import React, { useState, Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import HeroStats from "./HeroStats";
+import HeroPhone from "./HeroPhone";
 import { GridSystem } from "./grid";
-import { useCurrency } from "./CurrencyProvider";
-import { formatCurrency } from "@/lib/currency/currency";
-import { useParallax } from "@/hooks/use-parallax";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 export default function Hero() {
   const [email, setEmail] = useState("");
   const router = useRouter();
-  const containerRef = useRef<HTMLElement>(null);
-  const { locale } = useCurrency();
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const yPhone = useTransform(scrollYProgress, [0, 1], [0, -150]);
-  const rotatePhone = useTransform(scrollYProgress, [0, 1], [0, -5]);
-  const opacityPhone = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
-  const { rotateX, rotateY, handleMouseMove, handleMouseLeave } = useParallax();
-  const prefersReduced = useReducedMotion();
 
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +47,6 @@ export default function Hero() {
 
   return (
     <GridSystem
-      ref={containerRef}
       variant="dots"
       opacity={0.03}
       className="bg-white py-40"
@@ -153,117 +130,7 @@ export default function Hero() {
           </div>
 
           {/* Visual Column */}
-          <motion.div
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{
-            y: prefersReduced ? 0 : yPhone,
-            rotate: prefersReduced ? 0 : rotatePhone,
-            opacity: prefersReduced ? 1 : opacityPhone,
-          }}
-            className="perspective-1000 relative hidden lg:block"
-          >
-            {/* 3D Phone Frame */}
-            <motion.div
-              style={{ rotateX, rotateY }}
-              className="relative z-20 mx-auto w-full max-w-85 rounded-[3rem] border-12 border-slate-900 bg-slate-900 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)]"
-            >
-              <div className="relative overflow-hidden rounded-[2.2rem] bg-slate-50">
-                {/* App Interface */}
-                <div className="bg-linear-to-br from-green-600 to-emerald-700 p-8 text-white">
-                  <div className="mb-8 flex items-start justify-between">
-                    <div>
-                      <p className="mb-1 text-xs font-bold tracking-widest uppercase opacity-60">
-                        Available Balance
-                      </p>
-                      <p className="text-3xl font-bold">
-                        {formatCurrency(12450, locale)}
-                      </p>
-                    </div>
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/20 backdrop-blur-md">
-                      <Wallet className="h-6 w-6" />
-                    </div>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-md">
-                    <div className="mb-3 flex justify-between text-xs font-bold">
-                      <span className="opacity-70">Earned this month</span>
-                      <span>{formatCurrency(24708.66, locale)}</span>
-                    </div>
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "60%" }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                        className="h-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]"
-                      />
-                    </div>
-                    <p className="mt-3 text-center text-[10px] font-bold tracking-tighter uppercase opacity-50">
-                      60% available for advance
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4 p-6">
-                  <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
-                        <TrendingUp className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-900">
-                          Quick Advance
-                        </p>
-                        <p className="text-xs text-slate-400">
-                          Instant Disbursement
-                        </p>
-                      </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-slate-300" />
-                  </div>
-
-                  <div className="flex items-center gap-4 rounded-2xl border border-green-100 bg-green-50/50 p-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-600 text-white">
-                      <Check className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-900">
-                        {formatCurrency(4961.34, locale)} Sent
-                      </p>
-                      <p className="text-xs font-bold text-green-600">
-                        Transfer Complete · 2s ago
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Floating Notification */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-1/4 -right-12 z-30 hidden xl:block"
-            >
-              <div className="rounded-2xl border border-slate-200/60 bg-white/80 p-5 shadow-2xl shadow-slate-900/10 backdrop-blur-xl">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500 text-white shadow-lg shadow-green-500/20">
-                    <Check className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">
-                      Transfer Complete
-                    </p>
-                    <p className="text-xs font-bold text-green-600">
-                      1.8 seconds
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Ambient decorative elements */}
-            <div className="absolute -bottom-10 -left-10 -z-10 h-64 w-64 rounded-full bg-green-500/10 blur-3xl" />
-          </motion.div>
+          <HeroPhone autoPlay cycleInterval={3000} />
         </div>
       </div>
     </GridSystem>
