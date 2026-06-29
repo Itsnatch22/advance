@@ -9,6 +9,7 @@ import FAQ from "@/components/FAQ";
 import Coverage from "@/components/Coverage";
 import Marquee from "@/components/Marquee";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import WordReveal from "@/components/WordReveal";
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <div className="overflow-hidden">
         <Hero />
         <Marquee />
+        <WordReveal />
         <ProblemStatement />
         <Works />
         <StatsCounter />
