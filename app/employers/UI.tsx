@@ -74,7 +74,7 @@ export default function UI() {
         </div>
 
         {/* Right column – Enhanced phone mock with refined styling */}
-        <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
+        <div className="relative mx-auto w-full max-w-xs lg:max-w-sm">
           {/* Ambient glow effect behind phone */}
           <div className="absolute -inset-8 rounded-full bg-linear-to-br from-emerald-100/40 via-green-100/30 to-transparent blur-3xl"></div>
 
