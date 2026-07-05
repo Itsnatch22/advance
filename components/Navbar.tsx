@@ -193,7 +193,7 @@ const Navbar = () => {
         {/* Right side buttons - Enhanced */}
         <div className="hidden items-center gap-3 lg:flex">
           <Link
-            href={process.env.NEXT_PUBLIC_APP_URL ?? "https://app.eaziwage.com"}
+            href={process.env.NEXT_PUBLIC_DASHBOARD_APP_URL ?? "https://app.eaziwage.com"}
             target="_blank"
             rel="noopener noreferrer"
           >

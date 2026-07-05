@@ -33,7 +33,7 @@ export function AppleCardsCarouselDemo() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 24, opacity: 0 }}
               transition={{ type: "spring", damping: 28, stiffness: 320 }}
-              className="relative w-full max-w-4xl overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white shadow-2xl shadow-slate-900/20 ring-1 ring-slate-900/5"
+              className="relative w-full max-w-4xl overflow-hidden rounded-4xl border border-slate-200/60 bg-white shadow-2xl shadow-slate-900/20 ring-1 ring-slate-900/5"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
