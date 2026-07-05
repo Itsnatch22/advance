@@ -106,37 +106,6 @@ export default function CalculatorPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Bottom CTA strip — consistent with other pages */}
-      <section className="border-t border-slate-100 bg-slate-50">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-            <div>
-              <p className="text-sm font-semibold text-slate-900">
-                Ready to access your earned wages?
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                Sign up and start withdrawing in minutes — no loans, no interest.
-              </p>
-            </div>
-            <div className="flex shrink-0 items-center gap-3">
-              <Link
-                href={`${process.env.NEXT_PUBLIC_APP_URL ?? "https://app.eaziwage.com"}/register`}
-                className="group inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/30"
-              >
-                Get started
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-emerald-200 hover:text-emerald-700"
-              >
-                Contact us
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
