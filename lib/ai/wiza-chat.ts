@@ -3,7 +3,7 @@ import path from "path";
 import { supabaseServer } from "@/lib/supabase/supabase-server";
 import noahKnowledge from "@/data/noah_knowledge.json";
 import type { UIMessage } from "ai";
-import { streamWizaReply, buildSystemPrompt, type AttachmentData } from "@/lib/ai/gemini";
+import { streamWizaReply, buildSystemPrompt, type AttachmentData } from "@/lib/ai/cohere";
 
 type WebsiteSource = { title: string; route: string; filePath: string };
 type WebsiteContextChunk = { title: string; route: string; content: string };
@@ -217,7 +217,7 @@ async function getFallbackReply(query: string) {
   return `${best.entry.title}: ${bestText}`;
 }
 
-async function getGeminiReply(messages: UIMessage[], attachments?: AttachmentData[]) {
+async function getCohereReply(messages: UIMessage[], attachments?: AttachmentData[]) {
   const rawQuery = extractLatestUserMessage(messages);
   const query = rawQuery.startsWith("__gif__") ? "[User shared a GIF]" : rawQuery;
   const websiteContext = await buildWebsiteContextForQuery(query);
@@ -252,7 +252,7 @@ async function getGeminiReply(messages: UIMessage[], attachments?: AttachmentDat
     fullReply += chunk;
   }
 
-  if (!fullReply) throw new Error("Gemini returned empty response");
+  if (!fullReply) throw new Error("Cohere returned empty response");
   return fullReply;
 }
 
@@ -264,9 +264,9 @@ export async function getChatReply(messages: UIMessage[], _apiKey?: string, atta
   }
 
   try {
-    return await getGeminiReply(messages, attachments);
+    return await getCohereReply(messages, attachments);
   } catch (err) {
-    console.error("[gemini/chat] error", err);
+    console.error("[cohere/chat] error", err);
     return await getFallbackReply(latest);
   }
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { tasks } from "@trigger.dev/sdk";
-import { generateSummary } from "@/lib/ai/gemini";
+import { generateSummary } from "@/lib/ai/cohere";
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
 import type { summarizeWizaSession } from "@/trigger/wiza-summarize";
 
@@ -66,7 +66,7 @@ async function sendSmsDirect(to: string, summary: string): Promise<void> {
   });
   if (process.env.AT_SENDER_ID) params.set("from", process.env.AT_SENDER_ID);
 
-  const res = await fetch("https://api.africastalking.com/messages/v1/send", {
+  const res = await fetch("https://api.africastalking.com/version1/messaging", {
     method: "POST",
     headers: {
       apiKey: process.env.AT_API_KEY!,

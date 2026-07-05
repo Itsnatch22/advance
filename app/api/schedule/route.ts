@@ -8,7 +8,10 @@ import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
 const ADMIN_EMAIL = "support@eaziwage.com";
 
 const scheduleSchema = z.object({
-  userEmail: z.string().email(),
+  userEmail: z.string().trim().refine(
+    (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+    { message: "Invalid email address" }
+  ),
   meetingType: z.enum(["user_to_admin", "sales_demo", "partner_onboarding"]),
   calendlyEventId: z.string().optional(),
   scheduledAt: z.string(),
