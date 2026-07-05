@@ -10,9 +10,11 @@ import { FloatingOrb } from "@/components/shared/FloatingOrb";
 export default function CalculatorPage() {
   return (
     <main className="relative overflow-hidden bg-white">
-      {/* Ambient orbs — matches employees/employers pages */}
-      <FloatingOrb color="bg-emerald-300" className="left-[-8rem] top-24" delay={0} />
-      <FloatingOrb color="bg-green-200" className="right-[-6rem] top-48" delay={1.5} />
+      {/* Ambient orbs */}
+      <div className="pointer-events-none absolute inset-0">
+        <FloatingOrb color="bg-green-100" delay={0} className="left-[10%] top-[-10%]" />
+        <FloatingOrb color="bg-emerald-100" delay={2} className="right-[10%] bottom-[10%]" />
+      </div>
 
       {/* Hero section */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">

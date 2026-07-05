@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/utils";
+import { useParallax } from "@/hooks/use-parallax";
 
 interface TiltCardProps {
   children: React.ReactNode;
@@ -10,55 +11,34 @@ interface TiltCardProps {
 }
 
 export const TiltCard = ({ children, className }: TiltCardProps) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["17.5deg", "-17.5deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-17.5deg", "17.5deg"]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  const {
+    rotateX,
+    rotateY,
+    spotlightBackground,
+    handleMouseMove,
+    handleMouseLeave,
+  } = useParallax();
 
   return (
-    <motion.div
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        rotateY,
-        rotateX,
-        transformStyle: "preserve-3d",
-      }}
-      className={cn(
-        "relative rounded-[2rem] border border-slate-200 bg-white shadow-xl transition-shadow hover:shadow-2xl",
-        className
-      )}
-    >
-      <div
-        style={{
-          transform: "translateZ(75px)",
-          transformStyle: "preserve-3d",
-        }}
-        className="h-full w-full"
+    <motion.div style={{ perspective: 1000 }}>
+      <motion.div
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{ rotateX, rotateY }}
+        className={cn(
+          "group relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl transition-shadow duration-500 hover:shadow-2xl",
+          className
+        )}
       >
+        {/* Spotlight that follows the cursor */}
+        <motion.div
+          style={{ background: spotlightBackground }}
+          className="pointer-events-none absolute inset-0"
+        />
         {children}
-      </div>
+        {/* Thin emerald accent bar that slides in on hover */}
+        <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-emerald-500 transition-all duration-700 group-hover:w-full" />
+      </motion.div>
     </motion.div>
   );
 };
