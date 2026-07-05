@@ -17,14 +17,22 @@ const scheduleSchema = z.object({
   scheduledAt: z.string(),
 });
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const supabaseAdmin =
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+    ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+    : null;
 
 export async function POST(request: NextRequest) {
+  if (!supabaseAdmin) {
+    return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+  }
+
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey) {
+    return NextResponse.json({ error: "Email service unavailable" }, { status: 503 });
+  }
+  const resend = new Resend(resendApiKey);
+
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
     request.headers.get("x-real-ip") ??
@@ -41,6 +49,14 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const validatedData = scheduleSchema.parse(body);
+
+    const scheduledDate = new Date(validatedData.scheduledAt);
+    if (isNaN(scheduledDate.getTime()) || scheduledDate <= new Date()) {
+      return NextResponse.json(
+        { error: "scheduledAt must be a valid future ISO datetime" },
+        { status: 400 }
+      );
+    }
 
     const { error: dbError } = await supabaseAdmin.from("meeting_logs").insert({
       user_email: validatedData.userEmail,
