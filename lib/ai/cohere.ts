@@ -40,7 +40,7 @@ const cohere = process.env.COHERE_API_KEY
   ? new CohereClient({ token: process.env.COHERE_API_KEY })
   : null;
 
-const MODEL = "command-r-plus";
+const MODEL = "command-a-03-2025";
 
 // ── System prompt ─────────────────────────────────────────────────────────────
 
