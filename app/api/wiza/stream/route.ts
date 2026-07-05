@@ -83,6 +83,7 @@ export async function POST(req: NextRequest) {
 
   const authHeader = req.headers.get("Authorization");
   let employeeAuthId: string | null = null;
+  let employeeRecordId: string | null = null;
   let isAuthenticated = false;
 
   if (authHeader?.startsWith("Bearer ")) {
@@ -152,6 +153,7 @@ export async function POST(req: NextRequest) {
         isGuest: true,
       });
     } else if (employee.kyc_status !== "approved") {
+      employeeRecordId = employee.id;
       systemPrompt = buildSystemPrompt({
         employeeName: employee.full_name ?? "there",
         earnedWages: 0,
@@ -167,6 +169,7 @@ export async function POST(req: NextRequest) {
         pendingKyc: true,
       });
     } else {
+      employeeRecordId = employee.id;
       const { data: snapshot } = await supabase
         .from("earnings_snapshots")
         .select(
@@ -247,6 +250,7 @@ export async function POST(req: NextRequest) {
         .from("wiza_sessions")
         .insert({
           employee_id: employeeAuthId,
+          employee_live_id: employeeRecordId,
           title: content.slice(0, 80),
         })
         .select("id")
