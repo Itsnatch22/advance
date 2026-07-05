@@ -7,6 +7,7 @@ import {
   getCurrencyFromCountry,
   type CountryCode,
 } from "@/lib/currency/currency";
+import { TiltCard } from "@/components/shared/TiltCard";
 
 import {
   BarChart,
@@ -366,7 +367,7 @@ export default function Calculator() {
   const locale = currencyDetails.localeStr;
 
   return (
-    <div className="mx-auto w-full max-w-sm rounded-3xl border border-slate-200/60 bg-white p-6 shadow-sm ring-1 ring-slate-900/5 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/10 sm:max-w-md md:max-w-lg">
+    <TiltCard className="mx-auto w-full max-w-sm p-6 ring-1 ring-slate-900/5 sm:max-w-md md:max-w-lg">
       <h2 className="mb-5 text-center font-serif text-3xl font-bold tracking-tight text-slate-900">
         Wage Access Calculator
       </h2>
@@ -480,7 +481,10 @@ export default function Calculator() {
 
       {/* Days Slider */}
       <div className="mt-5">
-        <label htmlFor="days-worked-input" className="text-sm font-medium text-slate-700">
+        <label
+          htmlFor="days-worked-input"
+          className="text-sm font-medium text-slate-700"
+        >
           Days worked this cycle
         </label>
         <input
@@ -526,12 +530,11 @@ export default function Calculator() {
 
             <div className="space-y-2">
               {[
-                { label: "Net Earnings", value: result.netMonthly, highlight: false },
-                { label: "Accrued Earnings", value: result.accruedGross, highlight: false },
+                { label: "Net Earnings", value: result.netMonthly },
+                { label: "Accrued Earnings", value: result.accruedGross },
                 {
                   label: `Access Cap (${result.accessCapPercent}%)`,
                   value: result.accessCap,
-                  highlight: false,
                 },
               ].map(({ label, value }) => (
                 <div
@@ -553,7 +556,6 @@ export default function Calculator() {
               </div>
             </div>
 
-            {/* Hero number */}
             <div className="mt-4 rounded-xl border border-emerald-200 bg-white/70 p-4 text-center ring-1 ring-emerald-500/10">
               <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">
                 You Can Access Now
@@ -563,9 +565,10 @@ export default function Calculator() {
               </p>
             </div>
 
-            {/* Deductions */}
             <div className="mt-3 text-center text-xs text-slate-500">
-              <span className="font-semibold text-slate-600">Remittances → </span>
+              <span className="font-semibold text-slate-600">
+                Remittances →{" "}
+              </span>
               {Object.entries(result.deductions)
                 .map(
                   ([key, val]) =>
@@ -582,6 +585,6 @@ export default function Calculator() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </TiltCard>
   );
 }
