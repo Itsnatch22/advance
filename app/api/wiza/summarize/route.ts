@@ -5,12 +5,28 @@ import { generateSummary } from "@/lib/ai/gemini";
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
 import type { summarizeWizaSession } from "@/trigger/wiza-summarize";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Guard required env vars at startup so errors are clear rather than cryptic
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+// supabase is lazily validated inside POST so we can return a proper 503
+const supabase =
+  SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
+    ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    : null;
 
 type DeliveryChannel = "chat" | "email" | "sms";
+
+/** Escape user-controlled content before inserting into raw HTML strings. */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
 
 function buildTranscript(messages: { role: string; content: string }[]): string {
   return messages
@@ -28,7 +44,7 @@ function formatSmsText(summary: string): string {
 }
 
 async function sendEmailDirect(to: string, summary: string): Promise<void> {
-  await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -44,7 +60,7 @@ async function sendEmailDirect(to: string, summary: string): Promise<void> {
           <p style="color:#475569;">Here's what Wiza advised in your recent session:</p>
           <div style="background:#f8fafc;border-left:3px solid #10b981;padding:16px 20px;
                       border-radius:4px;white-space:pre-line;line-height:1.7;">
-${summary}
+${escapeHtml(summary)}
           </div>
           <p style="color:#94a3b8;font-size:13px;margin-top:24px;">
             Wiza — EaziWage financial wellness coach
@@ -53,6 +69,10 @@ ${summary}
       `,
     }),
   });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Resend API error ${res.status}: ${body}`);
+  }
 }
 
 async function sendSmsDirect(to: string, summary: string): Promise<void> {
@@ -69,7 +89,7 @@ async function sendSmsDirect(to: string, summary: string): Promise<void> {
   const res = await fetch("https://api.africastalking.com/version1/messaging", {
     method: "POST",
     headers: {
-      apiKey: process.env.AT_API_KEY!,
+      apiKey: process.env.AT_API_KEY,
       "Content-Type": "application/x-www-form-urlencoded",
       Accept: "application/json",
     },
@@ -79,6 +99,14 @@ async function sendSmsDirect(to: string, summary: string): Promise<void> {
 }
 
 export async function POST(req: NextRequest) {
+  // ── Env guard ─────────────────────────────────────────────────────────────
+  if (!supabase || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return NextResponse.json(
+      { error: "Service unavailable — Supabase not configured" },
+      { status: 503 }
+    );
+  }
+
   // ── Rate limit ────────────────────────────────────────────────────────────
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
@@ -128,8 +156,20 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
-      await sendEmailDirect(address, summary);
-      return NextResponse.json({ message: "Summary sent to your email!" });
+      let delivered = false;
+      try {
+        await sendEmailDirect(address, summary);
+        delivered = true;
+      } catch (e) {
+        console.error("[wiza/summarize] Email delivery failed:", e);
+      }
+      return NextResponse.json({
+        success: true,
+        delivered,
+        message: delivered
+          ? "Summary sent to your email!"
+          : "Summary generated but email delivery failed",
+      });
     }
 
     if (channel === "sms") {
@@ -139,15 +179,20 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
+      let delivered = false;
       try {
         await sendSmsDirect(address.replace(/\s/g, ""), summary);
-        return NextResponse.json({ message: "Summary sent to your phone!" });
-      } catch {
-        return NextResponse.json(
-          { error: "SMS service unavailable. Try email instead." },
-          { status: 503 }
-        );
+        delivered = true;
+      } catch (e) {
+        console.error("[wiza/summarize] SMS delivery failed:", e);
       }
+      return NextResponse.json({
+        success: true,
+        delivered,
+        message: delivered
+          ? "Summary sent to your phone!"
+          : "Summary generated but SMS delivery failed. Try email instead.",
+      });
     }
 
     // channel === 'chat': return inline
@@ -155,11 +200,9 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Authenticated path ────────────────────────────────────────────────────
-  const userClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { global: { headers: { Authorization: authHeader } } }
-  );
+  const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
   const {
     data: { user },
   } = await userClient.auth.getUser();

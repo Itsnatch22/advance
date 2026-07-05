@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
       ]);
 
       if (dbError) {
-        console.error("Database error:", dbError);
+        console.error("[contact/route] contacts.insert failed:", dbError);
       }
     }
 
