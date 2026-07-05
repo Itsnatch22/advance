@@ -16,7 +16,7 @@ export default function Hero() {
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.eaziwage.com";
+    const appUrl = process.env.NEXT_PUBLIC_DASHBOARD_APP_URL ?? "https://app.eaziwage.com";
     router.push(`${appUrl}/register?email=${encodeURIComponent(email)}`);
   };
 

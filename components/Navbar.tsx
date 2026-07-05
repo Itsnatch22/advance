@@ -294,7 +294,7 @@ const Navbar = () => {
             <hr className="border-slate-200" />
 
             <Link
-              href={process.env.NEXT_PUBLIC_APP_URL ?? "https://app.eaziwage.com"}
+              href={process.env.NEXT_PUBLIC_DASHBOARD_APP_URL?? "https://app.eaziwage.com"}
               onClick={() => setMobileOpen(false)}
               className="w-full rounded-xl border border-slate-200/60 bg-white px-4 py-3 text-center font-semibold text-slate-700 ring-1 ring-slate-900/5 transition-all hover:bg-slate-50 hover:text-emerald-600"
             >
