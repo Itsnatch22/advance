@@ -16,28 +16,28 @@ const countries = [
     flag: "/flag/KE.png",
     providers: ["M-PESA", "Airtel Money"],
     currency: "KES",
-    cap: 60,
+    cap: 50,
   },
   {
     name: "Uganda",
     flag: "/flag/UG.png",
     providers: ["MTN MoMo", "Airtel Money"],
     currency: "UGX",
-    cap: 45,
+    cap: 60,
   },
   {
     name: "Tanzania",
     flag: "/flag/TZ.png",
     providers: ["M-PESA", "Tigo Pesa"],
     currency: "TZS",
-    cap: 40,
+    cap: 30,
   },
   {
     name: "Rwanda",
     flag: "/flag/RW.png",
     providers: ["MTN MoMo", "Airtel Money"],
     currency: "RWF",
-    cap: 50,
+    cap: 45,
   },
 ];
 
