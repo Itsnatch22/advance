@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { publicReadLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 
 
-const SYMBOLS = ["KES", "UGX", "TZS", "RWF", "BIF", "SOS", "USD"].join(",");
+// open.er-api.com: free, no auth, updates daily, same `rates` shape as exchangerate.host
+const FX_URL = "https://open.er-api.com/v6/latest/USD";
 
 export async function GET(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
@@ -12,13 +13,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const res = await fetch(
-      `https://api.exchangerate.host/latest?base=USD&symbols=${SYMBOLS}`,
-      { next: { revalidate: 3600 } }
-    );
+    const res = await fetch(FX_URL, { next: { revalidate: 3600 } });
 
     if (!res.ok) {
-      throw new Error("FX provider returned error");
+      throw new Error(`FX provider returned ${res.status}`);
     }
 
     const data = await res.json();
