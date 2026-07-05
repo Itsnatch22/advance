@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { createRouteHandlerClient } from "@/lib/supabase/route-handler";
+import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -14,12 +15,15 @@ const DANGEROUS_TAGS =
   /(<(script|iframe|object|embed|base|form)[^>]*>[\s\S]*?<\/\2>|<(script|iframe|object|embed|base|form)[^>]*\/?>)/gi;
 const EVENT_ATTRS = /\s+on\w+\s*=\s*("([^"]*)"|'([^']*)'|[^\s>]+)/gi;
 const JS_URLS = /(href|src|action)\s*=\s*["']?\s*javascript:[^"'\s>]*/gi;
+// Strip data: URIs from href/src attributes (can carry inline scripts/content)
+const DATA_URIS = /(href|src)\s*=\s*["']data:[^"']*["']/gi;
 
 function sanitizeHtml(raw: string): string {
   return raw
     .replace(DANGEROUS_TAGS, "")
     .replace(EVENT_ATTRS, "")
-    .replace(JS_URLS, "");
+    .replace(JS_URLS, "")
+    .replace(DATA_URIS, "");
 }
 
 const sendSchema = z.object({
@@ -30,6 +34,16 @@ const sendSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Rate limit (admin-gated, generous 100/min from apiLimiter)
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = await checkRateLimit(apiLimiter, ip);
+  if (!rl.success)
+    return NextResponse.json(
+      { error: "Rate limit exceeded" },
+      { status: 429, headers: rl.headers }
+    );
+
   try {
     const supabase = await createRouteHandlerClient();
     const {
@@ -122,7 +136,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    await admin
+    const { error: notifyError } = await admin
       .from("admin_notifications")
       .insert({
         type: "system_alert",
@@ -130,8 +144,9 @@ export async function POST(request: NextRequest) {
         message: `Delivered to ${sent} subscribers. ${failed > 0 ? `${failed} failed.` : ""}`,
         metadata: { sent, failed, total: emails.length, subject },
         read: false,
-      })
-      .match(() => {});
+      });
+    if (notifyError)
+      console.error("[newsletter][send] admin_notifications.insert failed:", notifyError);
 
     return NextResponse.json({
       success: true,
