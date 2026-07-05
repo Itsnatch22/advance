@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { tasks } from "@trigger.dev/sdk";
-import { generateSummary } from "@/lib/ai/cohere";
+import { generateSummary } from "@/lib/ai/gemini";
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
 import type { summarizeWizaSession } from "@/trigger/wiza-summarize";
 

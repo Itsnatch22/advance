@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createUIMessageStream, createUIMessageStreamResponse } from "ai";
-import { streamWizaReply, buildSystemPrompt, type AttachmentData } from "@/lib/ai/cohere";
+import { streamWizaReply, buildSystemPrompt, type AttachmentData } from "@/lib/ai/gemini";
 import type { CountryCode } from "@/lib/currency/currency";
 
 const SUPPORTED_COUNTRIES: CountryCode[] = ["KE", "UG", "TZ", "RW"];
@@ -76,8 +76,8 @@ function extractLatestUserMessage(messages: unknown): string {
 }
 
 export async function POST(req: NextRequest) {
-  if (!process.env.COHERE_API_KEY) {
-    console.error("[wiza/stream] COHERE_API_KEY is not configured");
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    console.error("[wiza/stream] GOOGLE_GENERATIVE_AI_API_KEY is not configured");
     return new Response("AI service is not configured", { status: 503 });
   }
 
@@ -266,7 +266,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  let chatHistory: Array<{ role: string; parts: Array<{ text: string }> }> =
+  let geminiHistory: Array<{ role: string; parts: Array<{ text: string }> }> =
     [];
 
   if (isAuthenticated && employeeAuthId && sessionId) {
@@ -277,14 +277,14 @@ export async function POST(req: NextRequest) {
       .order("created_at", { ascending: true })
       .limit(HISTORY_LIMIT);
 
-    chatHistory = (history ?? []).slice(0, -1).map((m) => ({
+    geminiHistory = (history ?? []).slice(0, -1).map((m) => ({
       role: m.role === "user" ? "user" : "model",
       parts: [{ text: m.content }],
     }));
   } else if (!isAuthenticated) {
     // Guest: build history from the client-sent messages array so Wiza
     // remembers what was said earlier in the browser session.
-    chatHistory = buildGuestHistoryFromMessages(body.messages);
+    geminiHistory = buildGuestHistoryFromMessages(body.messages);
   }
 
   const stream = createUIMessageStream({
@@ -296,7 +296,7 @@ export async function POST(req: NextRequest) {
         let fullReply = "";
         for await (const chunk of streamWizaReply(
           systemPrompt,
-          chatHistory,
+          geminiHistory,
           content,
           attachments.length ? attachments : undefined
         )) {
