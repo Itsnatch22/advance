@@ -91,7 +91,7 @@ async function scheduleConfirmationEmail(
                   <p style="font-size:15px;color:#4a4a6a;line-height:1.6;margin:0 0 24px">
                     Changed your mind? You can always re-subscribe from our website.
                   </p>
-                  <a href="https:
+                  <a href="https://eaziwage.com"
                     style="display:inline-block;background:#16a34a;color:#fff;padding:11px 22px;
                       border-radius:8px;font-size:15px;font-weight:600;text-decoration:none">
                     Visit EaziWage
@@ -101,8 +101,8 @@ async function scheduleConfirmationEmail(
               <tr>
                 <td style="padding:16px 32px;border-top:1px solid #e8e8f0;font-size:12px;color:#8888aa;">
                   © ${new Date().getFullYear()} EaziWage ·
-                  <a href="https:
-                  <a href="https:
+                  <a href="https://eaziwage.com/data.pdf" style="color:#8888aa">Privacy</a> ·
+                  <a href="https://eaziwage.com/terms.pdf" style="color:#8888aa">Terms</a>
                 </td>
               </tr>
             </table>
@@ -114,7 +114,7 @@ You've been unsubscribed from ${label}.
 
 This confirms that ${email} has been removed from ${label}. You won't receive any more of these emails.
 
-Changed your mind? Visit https:
+Changed your mind? Visit https://eaziwage.com
 
 © ${new Date().getFullYear()} EaziWage
       `.trim(),
@@ -239,7 +239,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message: `You have been unsubscribed from ${product}. A confirmation email will arrive within ${CONFIRMATION_DELAY_DAYS} day${CONFIRMATION_DELAY_DAYS}.`,
+        message: `You have been unsubscribed from ${product}. A confirmation email will arrive shortly.`,
       },
       { status: 200, headers: rl.headers }
     );

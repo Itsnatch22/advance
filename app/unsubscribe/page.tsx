@@ -2,20 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Wallet } from "lucide-react";
-import { DM_Sans, DM_Serif_Display } from "next/font/google";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  display: "swap",
-});
-
-const dmSerifDisplay = DM_Serif_Display({
-  subsets: ["latin"],
-  weight: ["400"],
-  display: "swap",
-});
+import { Wallet, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 
 type Product = "newsletter" | "partners" | "sales" | "all";
 
@@ -37,9 +24,10 @@ const LEAVE_REASONS = [
 export default function UnsubscribePage() {
   const [email, setEmail] = useState("");
   const [product, setProduct] = useState<Product>("newsletter");
+  const [token, setToken] = useState("");
   const [feedback, setFeedback] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error" | null>(null);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -47,11 +35,12 @@ export default function UnsubscribePage() {
     const params = new URLSearchParams(window.location.search);
     const e = params.get("email");
     const p = params.get("product");
+    const t = params.get("token");
 
     if (e) setEmail(e);
     if (p && ["newsletter", "partners", "sales", "all"].includes(p))
       setProduct(p as Product);
-    setStatus("idle");
+    if (t) setToken(t);
     setMounted(true);
   }, []);
 
@@ -59,18 +48,13 @@ export default function UnsubscribePage() {
     e.preventDefault();
     setStatus("loading");
 
-    const combinedFeedback = [
-      selectedReason,
-      feedback,
-    ]
-      .filter(Boolean)
-      .join(" — ");
+    const combinedFeedback = [selectedReason, feedback].filter(Boolean).join(" — ");
 
     try {
       const res = await fetch("/api/unsubscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, product, feedback: combinedFeedback }),
+        body: JSON.stringify({ email, product, token, feedback: combinedFeedback }),
       });
 
       const body = await res.json();
@@ -86,346 +70,77 @@ export default function UnsubscribePage() {
   }
 
   return (
-    <div className={`${dmSans.className} ${dmSerifDisplay.className}`}>
-      <style>{`
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-          --font-dm-sans: ${dmSans.style.fontFamily};
-          --font-dm-serif: ${dmSerifDisplay.style.fontFamily};
-          --ink: #1a1a2e;
-          --ink-soft: #4a4a6a;
-          --ink-muted: #8888aa;
-          --surface: #fafaf8;
-          --card: #ffffff;
-          --border: #e8e8f0;
-          --accent: #16a34a;
-          --accent-light: #dcfce7;
-          --accent-dark: #166534;
-          --danger: #dc2626;
-          --danger-light: #fef2f2;
-          --radius: 16px;
-          --radius-sm: 8px;
-          --shadow: 0 1px 3px rgba(26,26,46,0.08), 0 8px 32px rgba(26,26,46,0.06);
-          --shadow-focus: 0 0 0 3px rgba(22,163,74,0.18);
-        }
-
-        body {
-          font-family: var(--font-dm-sans), sans-serif;
-          background: var(--surface);
-          color: var(--ink);
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 24px;
-          background-image: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(22,163,74,0.07) 0%, transparent 70%);
-        }
-
-        .page-wrapper {
-          width: 100%;
-          max-width: 520px;
-          opacity: 0;
-          transform: translateY(18px);
-          transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .page-wrapper.mounted {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        .card {
-          background: var(--card);
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          box-shadow: var(--shadow);
-          overflow: hidden;
-        }
-
-        /* Header */
-        .card-header {
-          padding: 24px 32px 20px;
-          border-bottom: 1px solid var(--border);
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-        .logo-mark {
-          width: 32px;
-          height: 32px;
-          background: var(--accent);
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .logo-mark svg { width: 18px; height: 18px; fill: white; }
-        .logo-text {
-          font-family: var(--font-dm-serif), serif;
-          font-size: 20px;
-          color: var(--ink);
-          letter-spacing: -0.3px;
-        }
-
-        /* Body */
-        .card-body { padding: 32px; }
-
-        .heading {
-          font-family: var(--font-dm-serif), serif;
-          font-size: 26px;
-          color: var(--ink);
-          line-height: 1.2;
-          letter-spacing: -0.4px;
-        }
-        .subtext {
-          margin-top: 8px;
-          font-size: 14.5px;
-          color: var(--ink-soft);
-          line-height: 1.6;
-        }
-        .product-pill {
-          display: inline-block;
-          background: var(--accent-light);
-          color: var(--accent-dark);
-          border-radius: 20px;
-          padding: 1px 10px;
-          font-size: 13px;
-          font-weight: 600;
-          letter-spacing: 0.1px;
-        }
-
-        /* Form */
-        form { margin-top: 28px; display: flex; flex-direction: column; gap: 20px; }
-
-        .field { display: flex; flex-direction: column; gap: 6px; }
-        label {
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--ink-soft);
-          letter-spacing: 0.3px;
-          text-transform: uppercase;
-        }
-
-        input[type="email"], select, textarea {
-          font-family: var(--font-dm-sans), sans-serif;
-          font-size: 15px;
-          color: var(--ink);
-          background: var(--surface);
-          border: 1.5px solid var(--border);
-          border-radius: var(--radius-sm);
-          padding: 10px 14px;
-          width: 100%;
-          outline: none;
-          transition: border-color 0.2s, box-shadow 0.2s;
-          appearance: none;
-        }
-        input[type="email"]:focus, select:focus, textarea:focus {
-          border-color: var(--accent);
-          box-shadow: var(--shadow-focus);
-          background: #fff;
-        }
-        textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
-
-        select {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 14px center;
-          padding-right: 36px;
-        }
-
-        /* Reason chips */
-        .reason-grid {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-top: 2px;
-        }
-        .reason-chip {
-          padding: 6px 14px;
-          border-radius: 20px;
-          border: 1.5px solid var(--border);
-          font-size: 13px;
-          font-weight: 500;
-          color: var(--ink-soft);
-          cursor: pointer;
-          background: var(--surface);
-          transition: all 0.15s ease;
-          user-select: none;
-        }
-        .reason-chip:hover { border-color: var(--accent); color: var(--accent); }
-        .reason-chip.selected {
-          border-color: var(--accent);
-          background: var(--accent-light);
-          color: var(--accent-dark);
-        }
-
-        /* Actions */
-        .actions {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          padding-top: 4px;
-        }
-
-        .btn-primary {
-          font-family: var(--font-dm-sans), sans-serif;
-          font-size: 15px;
-          font-weight: 600;
-          background: var(--ink);
-          color: #fff;
-          border: none;
-          border-radius: var(--radius-sm);
-          padding: 11px 22px;
-          cursor: pointer;
-          transition: background 0.2s, transform 0.1s;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          white-space: nowrap;
-        }
-        .btn-primary:hover:not(:disabled) { background: #2d2d4e; }
-        .btn-primary:active:not(:disabled) { transform: scale(0.98); }
-        .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
-
-        .spinner {
-          width: 16px; height: 16px;
-          border: 2px solid rgba(255,255,255,0.3);
-          border-top-color: #fff;
-          border-radius: 50%;
-          animation: spin 0.7s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .link-keep {
-          font-size: 14px;
-          color: var(--ink-muted);
-          text-decoration: none;
-          font-weight: 500;
-          transition: color 0.15s;
-        }
-        .link-keep:hover { color: var(--accent); }
-
-        /* Alerts */
-        .alert {
-          padding: 14px 16px;
-          border-radius: var(--radius-sm);
-          font-size: 14.5px;
-          line-height: 1.5;
-          display: flex;
-          gap: 10px;
-          align-items: flex-start;
-        }
-        .alert-error {
-          background: var(--danger-light);
-          border: 1px solid #fecaca;
-          color: var(--danger);
-        }
-        .alert-icon { flex-shrink: 0; margin-top: 1px; }
-
-        /* Success state */
-        .success-state {
-          text-align: center;
-          padding: 12px 0 8px;
-        }
-        .success-icon {
-          width: 56px; height: 56px;
-          background: var(--accent-light);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 16px;
-        }
-        .success-icon svg { width: 28px; height: 28px; stroke: var(--accent); }
-        .success-heading {
-          font-family: var(--font-dm-serif), serif;
-          font-size: 22px;
-          color: var(--ink);
-        }
-        .success-sub {
-          margin-top: 8px;
-          font-size: 14.5px;
-          color: var(--ink-soft);
-          line-height: 1.6;
-        }
-        .success-note {
-          margin-top: 16px;
-          font-size: 13px;
-          color: var(--ink-muted);
-          background: var(--surface);
-          border: 1px solid var(--border);
-          border-radius: var(--radius-sm);
-          padding: 10px 14px;
-          line-height: 1.5;
-        }
-
-        /* Footer */
-        .card-footer {
-          padding: 16px 32px;
-          border-top: 1px solid var(--border);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          font-size: 13px;
-          color: var(--ink-muted);
-        }
-        .card-footer a { color: var(--ink-muted); text-decoration: none; }
-        .card-footer a:hover { color: var(--accent); text-decoration: underline; }
-        .footer-links { display: flex; gap: 16px; }
-      `}</style>
-
-      <div className={`page-wrapper${mounted ? " mounted" : ""}`}>
-        <div className="card">
+    <div
+      className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12"
+      style={{
+        backgroundImage:
+          "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(22,163,74,0.07) 0%, transparent 70%)",
+      }}
+    >
+      <div
+        className={`w-full max-w-lg transition-all duration-500 ${
+          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
           {/* Header */}
-          <div className="card-header">
-            <div className="logo-mark">
-              <Wallet
-              className="h-8 w-8 text-emerald-700"
-              strokeWidth={2}
-              aria-hidden="true"
-            />
+          <div className="px-8 py-5 border-b border-slate-200 flex items-center gap-3">
+            <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+              <Wallet className="h-4 w-4 text-white" strokeWidth={2} aria-hidden="true" />
             </div>
-            <span className="logo-text">EaziWage</span>
+            <span className="font-serif text-xl text-slate-900 tracking-tight">EaziWage</span>
           </div>
 
           {/* Body */}
-          <div className="card-body">
+          <div className="px-8 py-8">
             {status === "success" ? (
-              <div className="success-state">
-                <div className="success-icon">
-                  <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              <div className="text-center py-4">
+                <div className="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="h-7 w-7 text-emerald-600" strokeWidth={2} />
                 </div>
-                <h2 className="success-heading">You're unsubscribed</h2>
-                <p className="success-sub">{message}</p>
-                <div className="success-note">
-                  📬 A confirmation email has been sent to <strong>{email}</strong>. Please allow a few days for all emails to stop.
+                <h2 className="font-serif text-2xl text-slate-900">You&apos;re unsubscribed</h2>
+                <p className="mt-2 text-sm text-slate-500 leading-relaxed">{message}</p>
+                <div className="mt-4 text-sm text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 leading-relaxed">
+                  📬 A confirmation email has been sent to{" "}
+                  <strong className="text-slate-700">{email}</strong>. Please allow a few days for
+                  all emails to stop.
                 </div>
               </div>
             ) : (
               <>
-                <h2 className="heading">We&apos;re sorry to see you go</h2>
-                <p className="subtext">
+                <h2 className="font-serif text-2xl text-slate-900 tracking-tight">
+                  We&apos;re sorry to see you go
+                </h2>
+                <p className="mt-2 text-sm text-slate-500 leading-relaxed">
                   You&apos;re unsubscribing from{" "}
-                  <span className="product-pill">{PRODUCT_LABELS[product]}</span>
+                  <span className="inline-block bg-emerald-50 text-emerald-700 rounded-full px-3 py-0.5 text-xs font-semibold">
+                    {PRODUCT_LABELS[product]}
+                  </span>
                 </p>
 
-                <form onSubmit={handleSubmit}>
-                  <div className="field">
-                    <label>Email address</label>
+                <form onSubmit={handleSubmit} className="mt-7 flex flex-col gap-5">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      Email address
+                    </label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
+                      className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/20"
                     />
                   </div>
 
-                  <div className="field">
-                    <label>Unsubscribe from</label>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      Unsubscribe from
+                    </label>
                     <select
                       value={product}
                       onChange={(e) => setProduct(e.target.value as Product)}
+                      className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 appearance-none"
                     >
                       <option value="newsletter">Newsletter</option>
                       <option value="partners">Partner Emails</option>
@@ -434,55 +149,67 @@ export default function UnsubscribePage() {
                     </select>
                   </div>
 
-                  <div className="field">
-                    <label>Why are you leaving?</label>
-                    <div className="reason-grid">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      Why are you leaving?
+                    </label>
+                    <div className="flex flex-wrap gap-2">
                       {LEAVE_REASONS.map((r) => (
-                        <span
+                        <button
                           key={r}
-                          className={`reason-chip${selectedReason === r ? " selected" : ""}`}
+                          type="button"
                           onClick={() => setSelectedReason(selectedReason === r ? "" : r)}
+                          className={`px-3.5 py-1.5 rounded-full border text-xs font-medium transition-all ${
+                            selectedReason === r
+                              ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                              : "border-slate-200 bg-slate-50 text-slate-500 hover:border-emerald-400 hover:text-emerald-600"
+                          }`}
                         >
                           {r}
-                        </span>
+                        </button>
                       ))}
                     </div>
                   </div>
 
-                  <div className="field">
-                    <label>Additional feedback</label>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      Additional feedback
+                    </label>
                     <textarea
                       value={feedback}
                       onChange={(e) => setFeedback(e.target.value)}
                       placeholder="Anything else we should know? (optional)"
+                      rows={3}
+                      className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 resize-y"
                     />
                   </div>
 
                   {status === "error" && (
-                    <div className="alert alert-error">
-                      <span className="alert-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                      </span>
+                    <div className="flex items-start gap-2.5 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+                      <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" strokeWidth={2} />
                       {message}
                     </div>
                   )}
 
-                  <div className="actions">
+                  <div className="flex items-center gap-5 pt-1">
                     <button
                       type="submit"
-                      className="btn-primary"
                       disabled={status === "loading"}
+                      className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {status === "loading" ? (
                         <>
-                          <span className="spinner" />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                           Unsubscribing…
                         </>
                       ) : (
                         "Confirm unsubscribe"
                       )}
                     </button>
-                    <Link href="/" className="link-keep">
+                    <Link
+                      href="/"
+                      className="text-sm text-slate-400 font-medium hover:text-emerald-600 transition-colors"
+                    >
                       Keep me subscribed
                     </Link>
                   </div>
@@ -492,11 +219,25 @@ export default function UnsubscribePage() {
           </div>
 
           {/* Footer */}
-          <div className="card-footer">
+          <div className="px-8 py-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-400">
             <span>© {new Date().getFullYear()} EaziWage</span>
-            <div className="footer-links">
-              <a href="https://eaziwage.com/data.pdf" target="_blank" rel="noopener noreferrer">Privacy</a>
-              <a href="https://eaziwage.com/terms.pdf" target="_blank" rel="noopener noreferrer">Terms</a>
+            <div className="flex gap-4">
+              <a
+                href="https://eaziwage.com/data.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-emerald-600 transition-colors"
+              >
+                Privacy
+              </a>
+              <a
+                href="https://eaziwage.com/terms.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-emerald-600 transition-colors"
+              >
+                Terms
+              </a>
             </div>
           </div>
         </div>
