@@ -14,12 +14,10 @@ const salesSchema = z.object({
   recaptchaToken: z.string().min(1, "reCAPTCHA token is required"),
 });
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const supabaseAdmin =
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+    ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+    : null;
 
 export async function GET() {
   if (!supabaseAdmin) {
@@ -39,9 +37,24 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  if (!supabaseAdmin) {
+    return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+  }
+
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey) {
+    return NextResponse.json({ error: "Email service unavailable" }, { status: 503 });
+  }
+  const resend = new Resend(resendApiKey);
+
+  const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
+  if (!recaptchaSecretKey) {
+    return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+  }
+
   const ip = request.headers.get("x-forwarded-for") ?? "anonymous";
 
-  
+
   const rateLimitResult = await checkRateLimit(rateLimiter, `sales:${ip}`);
   if (!rateLimitResult.success) {
     return NextResponse.json(
@@ -58,12 +71,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    
+
     const recaptchaResponse = await fetch("https://google.com/recaptcha/api/siteverify", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
-        secret: process.env.RECAPTCHA_SECRET_KEY!,
+        secret: recaptchaSecretKey,
         response: validatedData.recaptchaToken,
         remoteip: ip,
       }),

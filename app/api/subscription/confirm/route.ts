@@ -20,8 +20,14 @@ export async function GET(request: NextRequest) {
 
   if (!token) return NextResponse.redirect(errorUrl);
 
+  if (!/^[0-9a-f-]{36}$/i.test(token)) return NextResponse.redirect(errorUrl);
+
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+  }
+
   try {
-    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const { data: subscription, error } = await supabase
       .from("newsletter_subscriptions")
@@ -34,8 +40,9 @@ export async function GET(request: NextRequest) {
     if (subscription.status === "active")
       return NextResponse.redirect(successUrl);
 
-    const subscribedAt = new Date(subscription.subscribed_at);
-    const hoursSince = (Date.now() - subscribedAt.getTime()) / (1000 * 60 * 60);
+    // subscribed_at is set when the subscription row is created (token issue time)
+    const tokenIssuedAt = new Date(subscription.subscribed_at);
+    const hoursSince = (Date.now() - tokenIssuedAt.getTime()) / (1000 * 60 * 60);
     if (hoursSince > 24) {
       await supabase
         .from("newsletter_subscriptions")

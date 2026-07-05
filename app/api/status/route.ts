@@ -32,19 +32,20 @@ const STALE_THRESHOLD_MS = 30 * 60 * 1000;
 const CALENDAR_DAYS = 90;
 
 // ---------------------------------------------------------------------------
-// Supabase service-role client
-// ---------------------------------------------------------------------------
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-// ---------------------------------------------------------------------------
 // GET
 // ---------------------------------------------------------------------------
 
 export async function GET() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !supabaseKey) {
+    return NextResponse.json(
+      { status: 'down', message: 'Service unavailable' },
+      { status: 503 }
+    );
+  }
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   try {
     const [healthResult, incidentResult] = await Promise.all([
       supabase
