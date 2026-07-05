@@ -3,8 +3,17 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-import { calc, type Payload, type JsonConfig } from "@/lib/finance/calc";
+import { z } from "zod";
+import { calc, type JsonConfig } from "@/lib/finance/calc";
 import { supabaseAdmin } from "@/lib/supabase/supabase";
+import { calcLimiter, checkRateLimit } from "@/lib/security/rate-limit";
+
+const payloadSchema = z.object({
+  salary: z.number().finite().nonnegative(),
+  daysWorked: z.number().finite().nonnegative(),
+  cycleDays: z.number().finite().positive(),
+  allowances: z.record(z.string(), z.number().finite()).optional(),
+});
 
 
 const CONFIG_PATHS = {
@@ -103,30 +112,37 @@ async function getLocationFromIP(ip: string) {
 
 export async function POST(req: Request) {
   try {
-    
+
     const ip =
-      req.headers.get("x-forwarded-for")?.split(",")[0] ??
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       req.headers.get("x-real-ip") ??
       "unknown";
 
-    const device = req.headers.get("user-agent") ?? "unknown";
-    
+    const rl = await checkRateLimit(calcLimiter, ip);
+    if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429, headers: rl.headers });
 
-    
+    const device = req.headers.get("user-agent") ?? "unknown";
+
+
+
     const cookieHeader = req.headers.get("cookie") || "";
     const hasConsent = cookieHeader.includes("cookie-consent=accepted");
 
-    
+
     const location = hasConsent
       ? await getLocationFromIP(ip)
       : { country: null, city: null };
-    
+
 
     const { searchParams } = new URL(req.url);
     const country = (searchParams.get("country") || "KE").toUpperCase();
 
-    const payload = (await req.json()) as Payload;
-    payload.country = country;
+    const rawBody = await req.json();
+    const parsed = payloadSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
+    }
+    const payload = { ...parsed.data, country };
 
     const cfg = await readCountryConfig(country);
 
@@ -158,8 +174,14 @@ export async function POST(req: Request) {
       });
 
     if (insertError) {
-      console.error("❌ Supabase insert error:", insertError);
-      
+      console.error("❌ Supabase insert error (wage_calculations):", {
+        message: insertError.message,
+        code: insertError.code,
+        country,
+        gross: result.gross,
+        netPay: result.netPay,
+      });
+      // Analytics write failure — do not fail the request
     }
     
 
