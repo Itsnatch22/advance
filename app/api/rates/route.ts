@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
+import { publicReadLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 
 const JSON_PATH = path.join(process.cwd(), "data", "calc.json");
 
@@ -28,7 +29,10 @@ function parseRatesSheet(data: unknown) {
           key.trim().toLowerCase().includes("threshold")
       );
 
-      if (!generalKey || !amountKey) continue;
+      if (!generalKey || !amountKey) {
+        console.warn("[rates] Skipping row — missing 'general' or 'amount/threshold' key:", rowObj);
+        continue;
+      }
 
       const rawKey = String(rowObj[generalKey] ?? "").trim();
       const rawAmount = rowObj[amountKey];
@@ -48,7 +52,13 @@ function parseRatesSheet(data: unknown) {
   return rates;
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = await checkRateLimit(publicReadLimiter, ip);
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429, headers: rl.headers });
+  }
+
   try {
     const data = await loadJson();
     const rates = parseRatesSheet(data);

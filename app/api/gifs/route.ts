@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicReadLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 
 type GiphyImage = { url: string };
 type GiphyItem = {
@@ -11,8 +12,14 @@ type GiphyItem = {
 };
 
 export async function GET(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = await checkRateLimit(publicReadLimiter, ip);
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429, headers: rl.headers });
+  }
+
   const apiKey = process.env.GIPHY_API_KEY;
-  if (!apiKey) return NextResponse.json({ gifs: [] });
+  if (!apiKey) return NextResponse.json({ error: "GIF service unavailable" }, { status: 503 });
 
   const q = req.nextUrl.searchParams.get("q")?.trim() ?? "";
   const endpoint = q
