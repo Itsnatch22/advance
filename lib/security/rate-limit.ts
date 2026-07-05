@@ -65,6 +65,46 @@ export const apiLimiter = new Ratelimit({
   prefix: "ratelimit:api",
 });
 
+/** Wage calculator — 30 requests per minute per IP */
+export const calcLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(30, "1 m"),
+  analytics: true,
+  prefix: "ratelimit:calc",
+});
+
+/** Chat endpoints (Wiza AI) — 60 requests per minute per IP */
+export const chatLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(60, "1 m"),
+  analytics: true,
+  prefix: "ratelimit:chat",
+});
+
+/** Wiza AI streaming — 20 requests per minute per IP */
+export const wizaStreamLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(20, "1 m"),
+  analytics: true,
+  prefix: "ratelimit:wiza:stream",
+});
+
+/** Escalation emails — 5 per hour per IP */
+export const escalateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "1 h"),
+  analytics: true,
+  prefix: "ratelimit:escalate",
+});
+
+/** Public read APIs (resources, fx, gifs, stats) — 120 per minute per IP */
+export const publicReadLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(120, "1 m"),
+  analytics: true,
+  prefix: "ratelimit:public-read",
+});
+
 /**
  * Helper to format rate limit response headers
  */
