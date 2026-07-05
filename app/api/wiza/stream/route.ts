@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { createUIMessageStream, createUIMessageStreamResponse } from "ai";
 import { streamWizaReply, buildSystemPrompt, type AttachmentData } from "@/lib/ai/gemini";
 import type { CountryCode } from "@/lib/currency/currency";
+import { wizaStreamLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 
 const SUPPORTED_COUNTRIES: CountryCode[] = ["KE", "UG", "TZ", "RW"];
 
@@ -50,11 +51,6 @@ function buildGuestHistoryFromMessages(
     .filter((m) => m.parts[0].text.length > 0);
 }
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 const HISTORY_LIMIT = 20;
 
 function extractLatestUserMessage(messages: unknown): string {
@@ -76,10 +72,30 @@ function extractLatestUserMessage(messages: unknown): string {
 }
 
 export async function POST(req: NextRequest) {
+  // --- Env var guards (checked inside handler, not at module load time) ---
   if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
     console.error("[wiza/stream] GOOGLE_GENERATIVE_AI_API_KEY is not configured");
     return new Response("AI service is not configured", { status: 503 });
   }
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.error("[wiza/stream] Supabase env vars are not configured");
+    return new Response("Service unavailable", { status: 503 });
+  }
+  if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.error("[wiza/stream] NEXT_PUBLIC_SUPABASE_ANON_KEY is not configured");
+    return new Response("Service unavailable", { status: 503 });
+  }
+
+  // Build supabase client inside handler after env vars are confirmed present
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+
+  // --- Rate limiting ---
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = await checkRateLimit(wizaStreamLimiter, ip);
+  if (!rl.success) return new Response("Rate limit exceeded", { status: 429, headers: rl.headers });
 
   const authHeader = req.headers.get("Authorization");
   let employeeAuthId: string | null = null;
@@ -88,8 +104,8 @@ export async function POST(req: NextRequest) {
 
   if (authHeader?.startsWith("Bearer ")) {
     const userClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       { global: { headers: { Authorization: authHeader } } }
     );
     const {
@@ -109,6 +125,17 @@ export async function POST(req: NextRequest) {
     return new Response(`Invalid JSON: ${error}`, { status: 400 });
   }
 
+  // --- Unsafe body casting guards ---
+  if (body.messages !== undefined && !Array.isArray(body.messages)) {
+    return new Response("messages must be an array", { status: 400 });
+  }
+  if (body.rawContent !== undefined && typeof body.rawContent !== "string") {
+    return new Response("rawContent must be a string", { status: 400 });
+  }
+  if (typeof body.rawContent === "string") {
+    body.rawContent = body.rawContent.slice(0, 10000);
+  }
+
   const incomingSessionId = body.session_id as string | null;
   const rawContent =
     typeof body.content === "string" && body.content.trim()
@@ -117,11 +144,26 @@ export async function POST(req: NextRequest) {
   const isGif = rawContent.startsWith("__gif__");
   const content = isGif ? "[User shared a GIF]" : rawContent;
 
-  const attachments: AttachmentData[] = Array.isArray(body.attachments)
-    ? (body.attachments as { mimeType?: string; base64?: string }[])
-        .filter((a) => typeof a?.mimeType === "string" && typeof a?.base64 === "string")
-        .map((a) => ({ mimeType: a.mimeType!, base64: a.base64! }))
-    : [];
+  // --- Attachment count/size limit ---
+  const rawAttachments = Array.isArray(body.attachments) ? body.attachments : [];
+  if (rawAttachments.length > 5) {
+    return new Response("Too many attachments (max 5)", { status: 400 });
+  }
+  const MAX_TOTAL_ATTACHMENT_BYTES = 10 * 1024 * 1024; // 10 MB
+  let totalAttachmentBytes = 0;
+  for (const a of rawAttachments as { mimeType?: string; base64?: string }[]) {
+    if (typeof a?.base64 === "string") {
+      // base64 encodes ~4/3 bytes — approximate raw size
+      totalAttachmentBytes += Math.ceil((a.base64.length * 3) / 4);
+    }
+  }
+  if (totalAttachmentBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+    return new Response("Attachments exceed 10 MB total", { status: 400 });
+  }
+
+  const attachments: AttachmentData[] = (rawAttachments as { mimeType?: string; base64?: string }[])
+    .filter((a) => typeof a?.mimeType === "string" && typeof a?.base64 === "string")
+    .map((a) => ({ mimeType: a.mimeType!, base64: a.base64! }));
 
   if (!rawContent) {
     return new Response("content is required", { status: 400 });
@@ -261,6 +303,24 @@ export async function POST(req: NextRequest) {
         return new Response("Failed to create session", { status: 500 });
       }
       sessionId = newSession.id;
+    } else {
+      // --- Session ownership verification (guest-provided session_id) ---
+      // Confirm the session belongs to the authenticated user before inserting messages.
+      const { data: existingSession, error: sessionFetchErr } = await supabase
+        .from("wiza_sessions")
+        .select("employee_id")
+        .eq("id", sessionId)
+        .single();
+
+      if (sessionFetchErr || !existingSession) {
+        console.error("[wiza/stream] Session not found:", sessionId, sessionFetchErr);
+        return new Response("Session not found", { status: 404 });
+      }
+
+      if (existingSession.employee_id !== employeeAuthId) {
+        console.error("[wiza/stream] Session ownership mismatch for session:", sessionId);
+        return new Response("Forbidden", { status: 403 });
+      }
     }
 
     await supabase.from("wiza_messages").insert({
