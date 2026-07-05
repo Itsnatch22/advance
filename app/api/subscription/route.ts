@@ -4,11 +4,12 @@ import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
 import NewsletterConfirmation from "@/emails/NewsletterConfirmation";
+import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
 
 function getSupabaseClient() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
@@ -27,6 +28,12 @@ const subscriptionSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = await checkRateLimit(apiLimiter, ip);
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429, headers: rl.headers });
+  }
+
   try {
     const supabase = getSupabaseClient();
     if (!supabase) {

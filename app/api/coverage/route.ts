@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { publicReadLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -15,7 +16,13 @@ const CODE_TO_NAME: Record<string, string> = {
   RW: "Rwanda",
 };
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = await checkRateLimit(publicReadLimiter, ip);
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429, headers: rl.headers });
+  }
+
     if (!supabase) {
       return NextResponse.json(
         { error: "Supabase is not configured for public read access." },

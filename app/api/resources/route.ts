@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { publicReadLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -267,6 +268,12 @@ async function fetchFromNewsAPI(
 }
 
 export async function GET(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = await checkRateLimit(publicReadLimiter, ip);
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429, headers: rl.headers });
+  }
+
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category") ?? "all";
   const search = searchParams.get("search") ?? "";
