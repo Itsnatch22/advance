@@ -16,18 +16,16 @@ const payloadSchema = z.object({
 });
 
 
-const CONFIG_PATHS = {
-  KE: path.join(process.cwd(), "data", "calcke.json"),
-  UG: path.join(process.cwd(), "data", "calcug.json"),
-  TZ: path.join(process.cwd(), "data", "calctz.json"),
-  RW: path.join(process.cwd(), "data", "calcrw.json"),
-} as const;
-
-
 async function readCountryConfig(country: string): Promise<JsonConfig> {
   const rawCode = (country || "").toUpperCase();
 
-  
+  const CONFIG_PATHS = {
+    KE: path.join(process.cwd(), "data", "calcke.json"),
+    UG: path.join(process.cwd(), "data", "calcug.json"),
+    TZ: path.join(process.cwd(), "data", "calctz.json"),
+    RW: path.join(process.cwd(), "data", "calcrw.json"),
+  } as const;
+
   let filePath: string;
   switch (rawCode) {
     case "KE":

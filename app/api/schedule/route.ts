@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = scheduleSchema.parse(body);
 
-    const scheduledDate = new Date(validatedData.scheduledAt);
-    if (isNaN(scheduledDate.getTime()) || scheduledDate <= new Date()) {
+    const scheduledDateObj = new Date(validatedData.scheduledAt);
+    if (isNaN(scheduledDateObj.getTime()) || scheduledDateObj <= new Date()) {
       return NextResponse.json(
         { error: "scheduledAt must be a valid future ISO datetime" },
         { status: 400 }
