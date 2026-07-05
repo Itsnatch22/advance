@@ -20,6 +20,8 @@ import { useWizaCoachChat, type DeliveryChannel, type AttachmentData } from "@/h
 import { VoiceButton } from "@/components/shared/VoiceButton";
 import { FileAttachButton, FilePreview, type AttachedFile } from "@/components/shared/FileAttachButton";
 import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
+import { FloatingOrb } from "@/components/shared/FloatingOrb";
+import { TiltCard } from "@/components/shared/TiltCard";
 
 function RichText({ text }: { text: string }) {
   return (
@@ -328,10 +330,10 @@ export default function Wiza() {
 
   return (
     <section className="relative overflow-hidden bg-white py-24 dark:bg-slate-950">
-      {/* Subtle background */}
+      {/* Ambient orbs */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-0 right-0 h-125 w-125 rounded-full bg-emerald-50/60 blur-[140px] dark:bg-emerald-950/30" />
-        <div className="absolute bottom-0 left-0 h-100 w-100 rounded-full bg-teal-50/60 blur-[120px] dark:bg-teal-950/20" />
+        <FloatingOrb color="bg-emerald-100" delay={0} className="right-[5%] top-[-10%]" />
+        <FloatingOrb color="bg-green-100" delay={2} className="left-[5%] bottom-[10%]" />
       </div>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -421,8 +423,8 @@ export default function Wiza() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.32 }}
-            className="relative flex h-168 flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900"
           >
+          <TiltCard className="flex h-168 flex-col rounded-[2.5rem] border-slate-200/60 shadow-2xl">
             {/* Summary modal overlay */}
             {showSummaryModal && (
               <SummaryModal
@@ -681,6 +683,7 @@ export default function Wiza() {
                 </button>
               </form>
             </div>
+          </TiltCard>
           </motion.div>
         </div>
       </div>
