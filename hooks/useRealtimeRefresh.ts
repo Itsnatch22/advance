@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export interface RealtimeTable {
   table: string;
@@ -48,7 +48,7 @@ export function useRealtimeRefresh(
   useEffect(() => {
     if (!tables.length) return;
 
-    const supabase = createClient();
+    const supabase = getSupabaseBrowserClient();
     const channelName = `realtime-refresh:${configKey}`;
     let channel = supabase.channel(channelName);
 

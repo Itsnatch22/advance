@@ -34,6 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Resource, ResourceCategory } from "@/types/resources";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";
+import { useRealtimeRefresh } from "@/hooks/useRealtimeRefresh";
 
 interface CategoryOption {
   id: "all" | ResourceCategory;
@@ -289,6 +290,11 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
       }
     },
     []
+  );
+
+  useRealtimeRefresh(
+    [{ table: "blogs", event: "INSERT" }],
+    () => fetchResources(selectedCategory, searchQuery)
   );
 
   useEffect(() => {

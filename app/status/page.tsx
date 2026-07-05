@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRealtimeRefresh } from "@/hooks/useRealtimeRefresh";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle2,
@@ -243,6 +244,11 @@ export default function StatusPage() {
     const poll = setInterval(fetchStatus, 30_000);
     return () => clearInterval(poll);
   }, [fetchStatus]);
+
+  useRealtimeRefresh(
+    [{ table: "api_health", event: "*" }],
+    () => fetchStatus()
+  );
 
   useEffect(() => {
     if (!data) return;
