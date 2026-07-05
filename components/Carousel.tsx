@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 
@@ -25,72 +25,77 @@ export function AppleCardsCarouselDemo() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-4 backdrop-blur-md"
             onClick={() => setSelectedCard(null)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              className="relative mx-4 max-h-[90vh] max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl"
+              initial={{ y: 24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 24, opacity: 0 }}
+              transition={{ type: "spring", damping: 28, stiffness: 320 }}
+              className="relative w-full max-w-4xl overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white shadow-2xl shadow-slate-900/20 ring-1 ring-slate-900/5"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
               <button
                 onClick={() => setSelectedCard(null)}
-                className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-lg transition-colors hover:bg-white"
+                className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/60 bg-white text-slate-500 shadow-sm ring-1 ring-slate-900/5 transition-all hover:bg-slate-50 hover:text-slate-900"
+                aria-label="Close"
               >
-                <X size={20} />
+                <X size={16} strokeWidth={2.5} />
               </button>
 
               {/* Content */}
-              <div className="flex flex-col lg:flex-row">
-                {/* Image */}
-                <div className="relative h-64 lg:h-auto lg:w-1/2">
+              <div className="flex max-h-[88vh] flex-col lg:flex-row">
+                {/* Image panel */}
+                <div className="relative h-56 shrink-0 lg:h-auto lg:w-[42%]">
                   <Image
                     src={selectedCard.src}
                     alt={selectedCard.title}
                     fill
-                    className="h-full w-full object-cover"
+                    className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <p className="text-sm font-medium opacity-90">
+                  <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
+                  <div className="absolute bottom-5 left-5 right-5">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-emerald-400">
                       {selectedCard.category}
                     </p>
-                    <h3 className="text-2xl font-bold">{selectedCard.title}</h3>
+                    <h3 className="font-serif text-xl font-bold leading-snug text-white">
+                      {selectedCard.title}
+                    </h3>
                   </div>
                 </div>
 
-                {/* Story Content */}
-                <div className="flex-1 p-8 lg:p-12">
-                  <div className="mb-6">
-                    <h2 className="mb-4 font-serif text-3xl font-bold text-slate-900">
-                      {selectedCard.category} Success Story
-                    </h2>
-                    <div className="h-1 w-20 bg-green-600" />
+                {/* Story panel */}
+                <div className="flex-1 overflow-y-auto p-7 lg:p-10">
+                  {/* Eyebrow badge */}
+                  <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    {selectedCard.category} · Success Story
                   </div>
 
-                  <div className="prose prose-lg max-w-none text-slate-600">
+                  <h2 className="mb-2 font-serif text-2xl font-bold leading-snug text-slate-900">
+                    EWA in {selectedCard.category}
+                  </h2>
+                  <div className="mb-6 h-0.5 w-12 rounded-full bg-linear-to-r from-emerald-600 to-green-500" />
+
+                  <div className="space-y-4 text-sm leading-relaxed text-slate-600">
                     {selectedCard.story?.map((paragraph, index) => (
-                      <p key={index} className="mb-4 leading-relaxed">
-                        {paragraph}
-                      </p>
+                      <p key={index}>{paragraph}</p>
                     ))}
                   </div>
 
                   {selectedCard.stats && (
-                    <div className="mt-8 grid grid-cols-2 gap-6">
+                    <div className="mt-7 grid grid-cols-2 gap-4">
                       {selectedCard.stats.map((stat, index) => (
                         <div
                           key={index}
-                          className="rounded-2xl bg-slate-50 p-4"
+                          className="rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50 via-green-50/60 to-white p-4 ring-1 ring-emerald-500/10"
                         >
-                          <div className="text-2xl font-bold text-green-600">
+                          <div className="font-serif text-2xl font-bold text-emerald-700">
                             {stat.value}
                           </div>
-                          <div className="text-sm text-slate-600">
+                          <div className="mt-1 text-xs leading-relaxed text-slate-500">
                             {stat.label}
                           </div>
                         </div>
@@ -98,13 +103,13 @@ export function AppleCardsCarouselDemo() {
                     </div>
                   )}
 
-                  <div className="mt-8">
+                  <div className="mt-7 border-t border-slate-100 pt-6">
                     <button
                       onClick={() => setSelectedCard(null)}
-                      className="inline-flex items-center gap-2 rounded-2xl bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700"
+                      className="inline-flex items-center gap-2 rounded-xl border border-slate-200/60 px-5 py-2.5 text-sm font-semibold text-slate-600 ring-1 ring-slate-900/5 transition-all hover:border-emerald-200 hover:text-emerald-700"
                     >
-                      Close Story
-                      <ArrowRight size={16} />
+                      <X size={14} strokeWidth={2.5} />
+                      Close
                     </button>
                   </div>
                 </div>
