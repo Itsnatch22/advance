@@ -54,3 +54,42 @@ model MeetingLog {
 
   @@map("meeting_logs")
 }
+
+model EmailCampaign {
+  id                 String             @id @default(uuid())
+  subject            String
+  title              String
+  htmlContent        String             @map("html_content")
+  plainTextContent   String?            @map("plain_text_content")
+  status             String             @default("draft")
+  createdBy          String             @map("created_by")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  scheduledAt        DateTime?          @map("scheduled_at")
+  sentAt             DateTime?          @map("sent_at")
+  totalRecipients    Int?               @map("total_recipients")
+  sentCount          Int                @default(0) @map("sent_count")
+  failedCount        Int                @default(0) @map("failed_count")
+  logs               EmailCampaignLog[]
+
+  @@map("email_campaigns")
+}
+
+model EmailCampaignLog {
+  id                String    @id @default(uuid())
+  campaignId        String    @map("campaign_id")
+  recipientEmail    String    @map("recipient_email")
+  subscriberId      String?   @map("subscriber_id")
+  deliveryStatus    String    @default("queued") @map("delivery_status")
+  providerMessageId String?   @map("provider_message_id")
+  sentAt            DateTime? @map("sent_at")
+  openedAt          DateTime? @map("opened_at")
+  clickedAt         DateTime? @map("clicked_at")
+  errorMessage      String?   @map("error_message")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  campaign          EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([recipientEmail])
+  @@map("email_campaign_logs")
+}
