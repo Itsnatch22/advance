@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
     });
 
     const recaptchaData = await recaptchaResponse.json();
+    console.log("reCAPTCHA response:", recaptchaData);
 
     if (!recaptchaData.success || recaptchaData.score < 0.5) {
       return NextResponse.json({ error: "reCAPTCHA verification failed" }, { status: 400 });
@@ -64,6 +65,8 @@ export async function POST(request: NextRequest) {
       .select("id, email")
       .eq("email", email)
       .single();
+
+    console.log("Admin check:", { adminRecord, adminError });
 
     if (adminError || !adminRecord) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
@@ -83,6 +86,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
+    console.error("Login API error:", error);
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }
