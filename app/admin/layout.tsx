@@ -2,8 +2,16 @@
 
 import { AdminAuthGuard } from "./auth-guard";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/admin/login";
+
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
   return (
     <AdminAuthGuard>
       <div className="min-h-screen bg-slate-50">
