@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, LogIn, Eye, EyeOff } from "lucide-react";
-import Script from "next/script";
 import Image from "next/image";
+import FloatingOrb from "@/components/shared/FloatingOrb";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -20,11 +20,10 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      // Get reCAPTCHA token
       const recaptchaToken = await new Promise<string>((resolve, reject) => {
         let attempts = 0;
         const maxAttempts = 10;
-        
+
         const tryExecute = () => {
           attempts++;
           const windowWithRecaptcha = window as unknown as {
@@ -36,7 +35,7 @@ export default function AdminLoginPage() {
               ) => Promise<string>;
             };
           };
-          
+
           if (!windowWithRecaptcha.grecaptcha) {
             if (attempts < maxAttempts) {
               setTimeout(tryExecute, 100);
@@ -56,7 +55,7 @@ export default function AdminLoginPage() {
               .catch(reject);
           });
         };
-        
+
         tryExecute();
       });
 
@@ -73,7 +72,6 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Redirect to campaigns
       window.location.href = "/admin/campaigns";
     } catch (err) {
       console.error("Login error:", err);
@@ -84,135 +82,133 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <Script
-        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-        strategy="afterInteractive"
-      />
+    <div className="relative min-h-screen overflow-hidden bg-white">
+      {/* Background orbs — matches site style */}
+      <div className="pointer-events-none fixed inset-0">
+        <FloatingOrb color="bg-green-100" delay={0} className="-top-24 -right-24" />
+        <FloatingOrb color="bg-emerald-100" delay={2} className="-bottom-24 -left-24" />
+        <div className="absolute inset-0 bg-white/40 backdrop-blur-[1px]" />
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-md"
-      >
-        <div className="rounded-2xl border border-slate-200/60 bg-white shadow-lg p-10">
-          {/* Header */}
-          <div className="mb-10">
-            <div className="flex items-center gap-3 mb-6">
-              <Image src="/logo.png" alt="EaziWage" className="h-7" width={28} height={28} />
-              <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-500/10">
-                Admin
-              </span>
+      <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-md"
+        >
+          <div className="rounded-3xl border border-slate-200/60 bg-white/40 p-10 shadow-2xl shadow-green-500/5 backdrop-blur-xl">
+            {/* Header */}
+            <div className="mb-10">
+              <div className="mb-6 flex items-center gap-3">
+                <Image src="/logo.png" alt="EaziWage" width={28} height={28} className="h-7 w-7" />
+                <span className="rounded-full border border-green-500/10 bg-green-500/5 px-2.5 py-0.5 text-xs font-black tracking-widest text-green-600 uppercase">
+                  Admin
+                </span>
+              </div>
+              <h1 className="mb-2 font-serif text-3xl font-bold tracking-tight text-slate-900">
+                Secure Access
+              </h1>
+              <p className="text-slate-500">
+                Sign in with your admin credentials to manage email campaigns.
+              </p>
             </div>
-            <h1 className="font-serif text-3xl font-bold text-slate-900 mb-2">
-              Secure Access
-            </h1>
-            <p className="text-slate-500">
-              Sign in with your admin credentials to manage email campaigns
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Honeypot */}
+              <input
+                type="text"
+                className="sr-only"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+
+              {/* Email */}
+              <div className="space-y-2">
+                <label className="ml-1 text-xs font-black tracking-[0.2em] text-green-600/60 uppercase">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@eaziwage.com"
+                  required
+                  className="w-full rounded-2xl border border-slate-200/60 bg-white/40 px-5 py-4 text-base text-slate-900 placeholder-slate-400 backdrop-blur-sm transition-all focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10"
+                />
+              </div>
+
+              {/* Password */}
+              <div className="space-y-2">
+                <label className="ml-1 text-xs font-black tracking-[0.2em] text-green-600/60 uppercase">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    className="w-full rounded-2xl border border-slate-200/60 bg-white/40 px-5 py-4 pr-12 text-base text-slate-900 placeholder-slate-400 backdrop-blur-sm transition-all focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex items-start gap-2 rounded-2xl border border-red-100 bg-red-50/60 p-4 text-red-700"
+                  >
+                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+                    <p className="text-sm font-medium">{error}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-green-600 px-5 py-4 font-bold text-white transition-all hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <LogIn className="h-4 w-4" />
+                {loading ? "Signing in…" : "Sign In"}
+              </button>
+            </form>
+
+            {/* reCAPTCHA notice */}
+            <p className="mt-6 text-center text-xs text-slate-400">
+              Protected by reCAPTCHA —{" "}
+              <a href="https://policies.google.com/privacy" className="underline hover:text-slate-600">
+                Privacy
+              </a>{" "}
+              &amp;{" "}
+              <a href="https://policies.google.com/terms" className="underline hover:text-slate-600">
+                Terms
+              </a>
             </p>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Honeypot */}
-            <input
-              type="text"
-              className="sr-only"
-              value={honeypot}
-              onChange={(e) => setHoneypot(e.target.value)}
-              tabIndex={-1}
-              autoComplete="off"
-            />
-
-            {/* Email */}
-            <div className="space-y-2">
-              <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@example.com"
-                required
-                className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 focus:outline-none"
-              />
-            </div>
-
-            {/* Password */}
-            <div className="space-y-2">
-              <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 pr-12 text-base transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Error */}
-            <AnimatePresence>
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="flex items-gap-2 rounded-2xl border border-red-100 bg-red-50 p-4 text-red-700"
-                >
-                  <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-                  <p className="text-sm font-medium">{error}</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full mt-8 px-5 py-4 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-            >
-              <LogIn className="w-4 h-4" />
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-
-          {/* reCAPTCHA notice */}
-          <p className="text-center text-xs text-slate-400 mt-4">
-            This site is protected by reCAPTCHA and the Google{" "}
-            <a href="https://policies.google.com/privacy" className="underline">
-              Privacy Policy
-            </a>{" "}
-            and{" "}
-            <a href="https://policies.google.com/terms" className="underline">
-              Terms of Service
-            </a>{" "}
-            apply.
+          <p className="mt-4 text-center text-xs text-slate-400">
+            Admin area · Restricted access only
           </p>
-        </div>
-
-        {/* Footer */}
-        <p className="text-center text-xs text-slate-500 mt-4">
-          Admin area · Restricted access only
-        </p>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }

@@ -77,7 +77,9 @@ interface CalendlyInviteeCreatedPayload {
     name?: string;
     uri?: string; // invitee URI - .../invitees/{invitee_uuid}
     scheduled_event?: {
-      uuid?: string;
+      // Calendly v2 exposes uri, not uuid. UUID is the last path segment.
+      // e.g. "https://api.calendly.com/scheduled_events/{UUID}"
+      uri?: string;
       start_time?: string;
     };
     tracking?: {
@@ -123,7 +125,9 @@ export async function POST(request: NextRequest) {
 
   const email = body.payload.email;
   const scheduledAt = body.payload.scheduled_event?.start_time;
-  const calendlyEventId = body.payload.scheduled_event?.uuid;
+  // Calendly v2 puts the event UUID as the last segment of the scheduled_event.uri
+  const eventUri = body.payload.scheduled_event?.uri;
+  const calendlyEventId = eventUri ? (eventUri.split("/").pop() ?? null) : null;
   const utmContent = body.payload.tracking?.utm_content;
 
   if (!email || !scheduledAt || !calendlyEventId) {
