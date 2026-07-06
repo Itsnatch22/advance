@@ -53,9 +53,8 @@ next-env.d.ts
 !.vscode/extensions.json
 .idea/
 
-# misc
-.qodo
-
 /generated/prisma
 
 .trigger
+
+.claude

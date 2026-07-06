@@ -59,7 +59,13 @@ export default function SchedulePage() {
           url: CALENDLY_LINKS[meetingType],
           parentElement: embedRef.current,
           prefill: {},
-          utm: {},
+          // utmContent carries the meetingType through to the Calendly
+          // webhook payload (payload.tracking.utm_content), which is how
+          // /api/webhooks/calendly figures out which of the three meeting
+          // types was booked. There is no other reliable way to recover
+          // this server-side since the widget itself has no concept of
+          // "meetingType" - that's purely a label in our own UI.
+          utm: { utmContent: meetingType },
         });
         setCalendlyError(false);
       } catch (err) {
@@ -80,7 +86,7 @@ export default function SchedulePage() {
   const handleCalendlyEvent = (e: MessageEvent) => {
     if (e.origin !== "https://calendly.com") return;
     if (e.data?.event === "calendly.event_scheduled") {
-      handleMeetingScheduled(e.data.payload);
+      handleMeetingScheduled();
     }
   };
 
@@ -88,26 +94,16 @@ export default function SchedulePage() {
   return () => window.removeEventListener("message", handleCalendlyEvent);
 }, [meetingType, scriptReady, isScheduled, initWidget]);
 
-  const handleMeetingScheduled = async (payload: {
-    invitee?: { email?: string };
-    event?: { uuid?: string; start_time?: string };
-  }) => {
+  // Calendly's postMessage payload only ever contains URIs
+  // (payload.event.uri / payload.invitee.uri) - never an email address or a
+  // plain event UUID, no matter how this handler used to read it. Logging
+  // the meeting to meeting_logs and sending confirmation emails is now
+  // handled entirely server-side by the Calendly webhook
+  // (/api/webhooks/calendly), which receives the real invitee email and
+  // scheduled time directly from Calendly. This handler just flips the UI
+  // to the success state.
+  const handleMeetingScheduled = () => {
     setIsScheduled(true);
-
-    try {
-      await fetch("/api/schedule", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userEmail: payload?.invitee?.email ?? "",
-          meetingType,
-          calendlyEventId: payload?.event?.uuid ?? "",
-          scheduledAt: payload?.event?.start_time ?? new Date().toISOString(),
-        }),
-      });
-    } catch (error) {
-      console.error("Failed to log meeting:", error);
-    }
   };
 
   return (
