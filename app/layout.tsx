@@ -10,6 +10,7 @@ import WizaChat from "@/components/WizaChat";
 import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
 import { CurrencyProvider } from "@/components/CurrencyProvider";
+import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
@@ -71,6 +72,7 @@ export default async function RootLayout({
       <body
         className={`${ibmPlexMono.variable} ${playfairDisplay.variable} antialiased`}
       >
+        <KeyboardShortcuts />
         <CurrencyProvider locale={locale}>
           <Toaster position="top-center" />
           <Toploader color="#16a34a" />

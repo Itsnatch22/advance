@@ -13,6 +13,7 @@ interface EnvConfig {
   UPSTASH_REDIS_REST_URL: string;
   UPSTASH_REDIS_REST_TOKEN: string;
   RESEND_API_KEY: string;
+  ADMIN_PASSWORD?: string;
 }
 
 class EnvironmentError extends Error {
@@ -61,6 +62,10 @@ export function validateEnv(): EnvConfig {
     if (!process.env.RESEND_API_KEY) {
       errors.push("RESEND_API_KEY is not defined");
     }
+
+    if (!process.env.ADMIN_PASSWORD) {
+      errors.push("ADMIN_PASSWORD is not defined");
+    }
   }
 
   if (errors.length > 0) {
@@ -77,6 +82,7 @@ export function validateEnv(): EnvConfig {
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL!,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN!,
     RESEND_API_KEY: process.env.RESEND_API_KEY!,
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD!,
   };
 }
 

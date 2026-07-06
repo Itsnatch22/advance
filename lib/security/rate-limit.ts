@@ -105,6 +105,14 @@ export const publicReadLimiter = new Ratelimit({
   prefix: "ratelimit:public-read",
 });
 
+/** Admin login attempts — 5 per hour per IP (strict for security) */
+export const adminLoginLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "1 h"),
+  analytics: true,
+  prefix: "ratelimit:admin:login",
+});
+
 /**
  * Helper to format rate limit response headers
  */
