@@ -22,27 +22,42 @@ export default function AdminLoginPage() {
     try {
       // Get reCAPTCHA token
       const recaptchaToken = await new Promise<string>((resolve, reject) => {
-        const windowWithRecaptcha = window as unknown as {
-          grecaptcha: {
-            ready: (cb: () => void) => void;
-            execute: (
-              siteKey: string,
-              options: { action: string }
-            ) => Promise<string>;
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        const tryExecute = () => {
+          attempts++;
+          const windowWithRecaptcha = window as unknown as {
+            grecaptcha?: {
+              ready: (cb: () => void) => void;
+              execute: (
+                siteKey: string,
+                options: { action: string }
+              ) => Promise<string>;
+            };
           };
+          
+          if (!windowWithRecaptcha.grecaptcha) {
+            if (attempts < maxAttempts) {
+              setTimeout(tryExecute, 100);
+              return;
+            }
+            reject(new Error("reCAPTCHA not loaded after multiple attempts"));
+            return;
+          }
+
+          const grecaptcha = windowWithRecaptcha.grecaptcha;
+          grecaptcha.ready(() => {
+            grecaptcha
+              .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!, {
+                action: "admin_login",
+              })
+              .then(resolve)
+              .catch(reject);
+          });
         };
-        if (typeof window === "undefined" || !windowWithRecaptcha.grecaptcha) {
-          reject("reCAPTCHA not loaded");
-          return;
-        }
-        windowWithRecaptcha.grecaptcha.ready(() => {
-          windowWithRecaptcha.grecaptcha
-            .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!, {
-              action: "admin_login",
-            })
-            .then(resolve)
-            .catch(reject);
-        });
+        
+        tryExecute();
       });
 
       const res = await fetch("/api/admin/auth/login", {
@@ -72,6 +87,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <Script
         src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+        strategy="afterInteractive"
       />
 
       <motion.div
