@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse, redirect } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
@@ -41,6 +41,60 @@ async function sendConfirmationEmail(email: string, product: string): Promise<vo
 
   if (error) {
     console.error("[unsubscribe] Failed to send confirmation email:", error);
+  }
+}
+
+const VALID_PRODUCTS = ["newsletter", "partners", "sales", "all"] as const;
+type ValidProduct = (typeof VALID_PRODUCTS)[number];
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const email = searchParams.get("email");
+  const product = searchParams.get("product");
+  const token = searchParams.get("token");
+
+  // Validate all three params are present
+  if (!email || !product || !token) {
+    return redirect(`${APP_URL}/unsubscribe?error=missing`);
+  }
+
+  // Validate token
+  if (!verifyUnsubscribeToken(token, email, product)) {
+    return redirect(`${APP_URL}/unsubscribe?error=invalid`);
+  }
+
+  // Validate product
+  if (!VALID_PRODUCTS.includes(product as ValidProduct)) {
+    return redirect(`${APP_URL}/unsubscribe?error=invalid`);
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const now = new Date().toISOString();
+
+  try {
+    // Update newsletter_subscriptions — upsert on email conflict
+    const { error: dbError } = await supabase
+      .from("newsletter_subscriptions")
+      .upsert(
+        { email: normalizedEmail, status: "inactive", unsubscribed_at: now },
+        { onConflict: "email" }
+      )
+      .select();
+
+    if (dbError) {
+      console.error("[unsubscribe][GET] newsletter_subscriptions upsert error:", dbError);
+      return redirect(`${APP_URL}/unsubscribe?error=server`);
+    }
+
+    // Fire-and-forget confirmation email
+    sendConfirmationEmail(normalizedEmail, product).catch((err) =>
+      console.error("[unsubscribe][GET] sendConfirmationEmail threw:", err)
+    );
+
+    return redirect(`${APP_URL}/unsubscribe?success=true&product=${encodeURIComponent(product)}`);
+  } catch (err) {
+    console.error("[unsubscribe][GET] unexpected error:", err);
+    return redirect(`${APP_URL}/unsubscribe?error=server`);
   }
 }
 

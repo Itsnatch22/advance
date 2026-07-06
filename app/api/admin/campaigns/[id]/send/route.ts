@@ -1,0 +1,122 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { createRouteHandlerClient } from "@/lib/supabase/route-handler";
+import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
+import { tasks } from "@trigger.dev/sdk/v3";
+import type { CampaignStatus } from "@/types/campaigns";
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+async function getAuthenticatedAdmin(request: NextRequest) {
+  const supabase = await createRouteHandlerClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user) return { error: "Unauthorized", status: 401 as const };
+
+  const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const { data: adminRecord, error: adminError } = await admin
+    .from("system_admins")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+
+  if (adminError || !adminRecord) {
+    return { error: "Forbidden — admins only", status: 403 as const };
+  }
+
+  return { user, admin };
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = await checkRateLimit(apiLimiter, ip);
+  if (!rl.success)
+    return NextResponse.json(
+      { error: "Rate limit exceeded" },
+      { status: 429, headers: rl.headers }
+    );
+
+  const auth = await getAuthenticatedAdmin(request);
+  if ("error" in auth)
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+
+  const { user, admin } = auth;
+  const { id } = await params;
+
+  try {
+    // Fetch campaign
+    const { data: campaign, error: fetchError } = await admin
+      .from("email_campaigns")
+      .select("id, status")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !campaign) {
+      return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+    }
+
+    const sendableStatuses: CampaignStatus[] = ["draft", "scheduled"];
+    if (!sendableStatuses.includes(campaign.status as CampaignStatus)) {
+      return NextResponse.json(
+        { error: `Campaign is already ${campaign.status}` },
+        { status: 409 }
+      );
+    }
+
+    // Atomically transition to "sending" — guards against double-send race condition
+    const { data: transitioned, error: updateError } = await admin
+      .from("email_campaigns")
+      .update({ status: "sending", updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("status", campaign.status) // only update if status hasn't changed
+      .select("id")
+      .single();
+
+    if (updateError || !transitioned) {
+      return NextResponse.json(
+        { error: "Campaign send already triggered" },
+        { status: 409 }
+      );
+    }
+
+    // Count active confirmed subscribers for the response estimate
+    const { count } = await admin
+      .from("newsletter_subscriptions")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active")
+      .not("confirmed_at", "is", null);
+
+    // Trigger Trigger.dev job
+    await tasks.trigger("send-email-campaign", {
+      campaign_id: id,
+      triggered_by: user.id,
+    });
+
+    return NextResponse.json({
+      success: true,
+      campaign_id: id,
+      estimated_recipients: count ?? 0,
+    });
+  } catch (err) {
+    console.error("[campaigns/[id]/send][POST] error:", err);
+    // Attempt to roll back the status transition so the campaign isn't stuck in "sending"
+    try {
+      const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      await admin
+        .from("email_campaigns")
+        .update({ status: "draft", updated_at: new Date().toISOString() })
+        .eq("id", id)
+        .eq("status", "sending");
+    } catch (rollbackErr) {
+      console.error("[campaigns/[id]/send][POST] rollback failed:", rollbackErr);
+    }
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+}
