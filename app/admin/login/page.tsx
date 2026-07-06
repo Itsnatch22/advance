@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, LogIn, Eye, EyeOff } from "lucide-react";
 import Script from "next/script";
+import Image from "next/image";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -82,7 +83,7 @@ export default function AdminLoginPage() {
           {/* Header */}
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-6">
-              <img src="/eaziwage/EW-LOGO.png" alt="EaziWage" className="h-7" />
+              <Image src="/logo.png" alt="EaziWage" className="h-7" width={28} height={28} />
               <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-500/10">
                 Admin
               </span>

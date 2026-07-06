@@ -36,7 +36,7 @@ function PreviewModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 12 }}
           transition={{ duration: 0.25 }}
-          className="relative w-full max-w-3xl rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-2xl overflow-hidden"
+          className="relative w-full max-w-3xl rounded-4xl border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-2xl overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
@@ -48,7 +48,7 @@ function PreviewModal({
               <X className="h-4 w-4" />
             </button>
           </div>
-          <div className="h-[600px] w-full">
+          <div className="h-150 w-full">
             <iframe
               srcDoc={html || "<p style='font-family:sans-serif;padding:2rem;color:#94a3b8'>No HTML content yet.</p>"}
               className="h-full w-full border-0"
@@ -139,7 +139,7 @@ export default function NewCampaignPage() {
         <div className="grid gap-8 lg:grid-cols-5">
           {/* Left — editor (3/5) */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm p-6 space-y-5">
+            <div className="rounded-4xl border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm p-6 space-y-5">
               {/* Title */}
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">
@@ -265,7 +265,7 @@ export default function NewCampaignPage() {
           {/* Right — sidebar (2/5) */}
           <div className="lg:col-span-2 space-y-5">
             {/* Preview */}
-            <div className="rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm p-6">
+            <div className="rounded-4xl border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm p-6">
               <h2 className="mb-3 font-serif text-lg font-semibold text-slate-900">Preview</h2>
               <p className="mb-4 text-sm text-slate-500">
                 See how your email will look in a browser before sending.
@@ -280,7 +280,7 @@ export default function NewCampaignPage() {
             </div>
 
             {/* Schedule */}
-            <div className="rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm p-6">
+            <div className="rounded-4xl border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm p-6">
               <h2 className="mb-3 font-serif text-lg font-semibold text-slate-900">Schedule</h2>
               <p className="mb-3 text-sm text-slate-500">
                 Leave blank to save as draft. Set a date to schedule automatically.
@@ -297,7 +297,7 @@ export default function NewCampaignPage() {
             </div>
 
             {/* Template variables */}
-            <div className="rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm p-6">
+            <div className="rounded-4xl border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm p-6">
               <div className="mb-3 flex items-center gap-2">
                 <Info className="h-4 w-4 text-emerald-600" />
                 <h2 className="font-serif text-lg font-semibold text-slate-900">

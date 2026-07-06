@@ -64,7 +64,7 @@ function StatCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[2rem] border border-slate-200/60 bg-white px-6 py-5 ring-1 ring-slate-900/5 shadow-sm flex items-center gap-4">
+    <div className="rounded-4xl border border-slate-200/60 bg-white px-6 py-5 ring-1 ring-slate-900/5 shadow-sm flex items-center gap-4">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
         {icon}
       </div>
@@ -191,7 +191,7 @@ export default function CampaignsPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm overflow-hidden"
+        className="rounded-4xl border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm overflow-hidden"
       >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -247,10 +247,10 @@ export default function CampaignsPage() {
                       variants={itemVariants}
                       className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors"
                     >
-                      <td className="px-4 py-4 font-medium text-slate-900 max-w-[180px]">
+                      <td className="px-4 py-4 font-medium text-slate-900 max-w-45">
                         <span className="block truncate">{c.title}</span>
                       </td>
-                      <td className="px-4 py-4 text-slate-600 max-w-[200px]">
+                      <td className="px-4 py-4 text-slate-600 max-w-50">
                         <span className="block truncate">{c.subject}</span>
                       </td>
                       <td className="px-4 py-4">
