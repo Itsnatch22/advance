@@ -57,14 +57,15 @@ export default function PartnerNotificationEmail({
 /* ----------------------------- styles ----------------------------- */
 
 const h1 = {
-  color: "#111827",
-  fontSize: "24px",
+  color: "#0f172a",
+  fontSize: "28px",
   fontWeight: "700",
   marginBottom: "24px",
+  fontFamily: 'Georgia, "Times New Roman", serif',
 };
 
 const text = {
-  color: "#374151",
+  color: "#475569",
   fontSize: "16px",
   lineHeight: "1.6",
   margin: "8px 0",
@@ -72,16 +73,16 @@ const text = {
 
 const messageText = {
   ...text,
-  backgroundColor: "#f9fafb",
+  backgroundColor: "#f8fafc",
   padding: "16px",
-  borderRadius: "8px",
-  border: "1px solid #e5e7eb",
+  borderRadius: "12px",
+  border: "1px solid #e2e8f0",
 };
 
 const highlightBox = {
   backgroundColor: "#f0fdf4",
-  border: "1px solid #d1fae5",
-  borderRadius: "8px",
+  border: "1px solid #bbf7d0",
+  borderRadius: "12px",
   padding: "16px",
   marginBottom: "24px",
 };

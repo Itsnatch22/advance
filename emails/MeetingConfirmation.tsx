@@ -64,16 +64,17 @@ export default function MeetingConfirmation({
 /* ----------------------------- styles ----------------------------- */
 
 const h1 = {
-  color: "#111827",
-  fontSize: "24px",
+  color: "#0f172a",
+  fontSize: "28px",
   fontWeight: "700",
   margin: "0 0 24px",
   lineHeight: "1.3",
   textAlign: "center" as const,
+  fontFamily: 'Georgia, "Times New Roman", serif',
 };
 
 const text = {
-  color: "#374151",
+  color: "#475569",
   fontSize: "16px",
   lineHeight: "1.6",
   margin: "16px 0",
@@ -81,22 +82,22 @@ const text = {
 
 const highlightBox = {
   backgroundColor: "#f0fdf4",
-  border: "1px solid #d1fae5",
-  borderRadius: "12px",
+  border: "1px solid #bbf7d0",
+  borderRadius: "16px",
   padding: "20px",
   margin: "24px 0",
 };
 
 const highlightText = {
-  color: "#065f46",
+  color: "#166534",
   fontSize: "15px",
   lineHeight: "1.6",
   margin: "8px 0",
 };
 
 const button = {
-  backgroundColor: "#16a34a",
-  borderRadius: "12px",
+  backgroundColor: "#15803d",
+  borderRadius: "16px",
   color: "#ffffff",
   fontSize: "16px",
   fontWeight: "700",
@@ -108,6 +109,6 @@ const button = {
 };
 
 const link = {
-  color: "#16a34a",
+  color: "#15803d",
   textDecoration: "underline",
 };

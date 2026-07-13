@@ -21,16 +21,17 @@ export default function TestEmail({ message }: TestEmailProps) {
 }
 
 const h1 = {
-  color: "#111827",
-  fontSize: "24px",
+  color: "#0f172a",
+  fontSize: "28px",
   fontWeight: "700",
   margin: "0 0 24px",
   lineHeight: "1.3",
   textAlign: "center" as const,
+  fontFamily: 'Georgia, "Times New Roman", serif',
 };
 
 const text = {
-  color: "#374151",
+  color: "#475569",
   fontSize: "16px",
   lineHeight: "1.6",
   margin: "16px 0",

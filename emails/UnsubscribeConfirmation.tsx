@@ -73,7 +73,7 @@ export default function UnsubscribeConfirmation({
 
                 <InnerButton
                   href={resubscribeUrl}
-                  className="bg-emerald-600 text-white text-sm font-semibold px-6 py-3 rounded-xl no-underline block text-center"
+                  className="bg-green-600 text-white text-sm font-semibold px-6 py-3 rounded-xl no-underline block text-center"
                 >
                   Visit EaziWage
                 </InnerButton>

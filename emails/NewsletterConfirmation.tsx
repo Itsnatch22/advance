@@ -50,7 +50,7 @@ export default function NewsletterConfirmation({ email, confirmUrl }: Newsletter
                 
                 <InnerButton
                   href={confirmUrl}
-                  className="bg-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-xl no-underline block text-center"
+                  className="bg-green-600 text-white text-sm font-semibold px-6 py-3 rounded-xl no-underline block text-center"
                 >
                   Confirm Subscription
                 </InnerButton>

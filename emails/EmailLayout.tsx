@@ -38,7 +38,7 @@ interface EmailLayoutProps {
 export default function EmailLayout({
   previewText,
   children,
-  bgColor = "#f6f9fc",
+  bgColor = "#f8fafc",
   showLogo = true,
   logoWidth = 140,
   logoHeight = "auto",
@@ -48,11 +48,11 @@ export default function EmailLayout({
   showBorder = true,
   containerPadding = "0 0 48px",
   containerMarginBottom = "64px",
-  containerBorderRadius = "12px",
-  containerBorder = "1px solid #e5e7eb",
-  headerPadding = "32px 48px",
+  containerBorderRadius = "24px",
+  containerBorder = "1px solid #e2e8f0",
+  headerPadding = "40px 48px",
   contentPadding = "32px 48px",
-  footerPadding = "32px 48px",
+  footerPadding = "40px 48px",
   showBorderBottom = true,
   showBorderTop = true,
 }: EmailLayoutProps) {
@@ -61,7 +61,7 @@ export default function EmailLayout({
   const main = {
     backgroundColor: bgColor,
     fontFamily:
-      '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+      '-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",sans-serif',
   };
 
   const container = {
@@ -71,18 +71,23 @@ export default function EmailLayout({
     marginBottom: containerMarginBottom,
     maxWidth: "600px",
     borderRadius: containerBorderRadius,
-    overflow: "hidden",
+    overflow: "hidden" as const,
     border: showBorder ? containerBorder : undefined,
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.07)",
   };
 
   const header = {
     padding: headerPadding,
     backgroundColor: "#ffffff",
-    borderBottom: showBorderBottom ? "1px solid #f3f4f6" : undefined,
+    borderBottom: showBorderBottom ? "1px solid #e2e8f0" : undefined,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   };
 
   const logo = {
     margin: "0 auto",
+    display: "block",
   };
 
   const content = {
@@ -90,23 +95,36 @@ export default function EmailLayout({
   };
 
   const footer = {
-    borderTop: showBorderTop ? "1px solid #f3f4f6" : undefined,
+    borderTop: showBorderTop ? "1px solid #e2e8f0" : undefined,
     padding: footerPadding,
     textAlign: "center" as const,
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#f8fafc",
   };
 
   const footerText = {
-    color: "#6b7280",
-    fontSize: "14px",
-    lineHeight: "1.5",
-    margin: "4px 0",
+    color: "#64748b",
+    fontSize: "13px",
+    lineHeight: "1.6",
+    margin: "6px 0",
   };
 
   const footerLink = {
-    color: "#16a34a",
+    color: "#15803d",
     textDecoration: "none",
     fontWeight: "600",
+  };
+
+  const divider = {
+    borderTop: "1px solid #e2e8f0",
+    margin: "24px 0",
+  };
+
+  const tagline = {
+    color: "#64748b",
+    fontSize: "13px",
+    lineHeight: "1.4",
+    margin: "8px 0 0 0",
+    fontWeight: "500",
   };
 
   return (
@@ -115,18 +133,21 @@ export default function EmailLayout({
       <Preview>{previewText}</Preview>
       <Body style={main}>
         <Container style={container}>
-          {/* Header */}
-          <Section style={header}>
-            {showLogo && (
-              <Img
-                src={`/logo.png`}
-                width={logoWidth}
-                height={logoHeight}
-                alt={logoAlt}
-                style={logo}
-              />
-            )}
-          </Section>
+          {/* Header with Logo */}
+          {showLogo && (
+            <Section style={header}>
+              <div style={{ textAlign: "center" as const }}>
+                <Img
+                  src={`${baseUrl}/logo.png`}
+                  width={logoWidth}
+                  height={logoHeight}
+                  alt={logoAlt}
+                  style={logo}
+                />
+                <div style={tagline}>Empowering Africa's Workforce</div>
+              </div>
+            </Section>
+          )}
 
           {/* Content */}
           <Section style={content}>{children}</Section>
@@ -136,25 +157,25 @@ export default function EmailLayout({
             <Section style={footer}>
               {footerContent || (
                 <>
+                  <div style={divider} />
                   <Text style={footerText}>
-                    © 2026 EaziWage. Empowering Africa's workforce.
+                    © 2026 EaziWage. Transforming financial wellness.
                   </Text>
                   <Text style={footerText}>
-                    <Link href={baseUrl} style={footerLink}>
+                    <Link href={`${baseUrl}`} style={footerLink}>
                       Website
                     </Link>{" "}
                     •{" "}
-                    <Link href={`${baseUrl}/data.pdf`} style={footerLink}>
-                      Privacy Policy
-                    </Link>{" "}
-                    •{" "}
-                    <Link href={`${baseUrl}/terms.pdf`} style={footerLink}>
-                      Terms of Service
+                    <Link href={`${baseUrl}/security`} style={footerLink}>
+                      Security
                     </Link>{" "}
                     •{" "}
                     <Link href={`${baseUrl}/unsubscribe`} style={footerLink}>
                       Unsubscribe
                     </Link>
+                  </Text>
+                  <Text style={footerText}>
+                    Nairobi, Kenya · support@eaziwage.com
                   </Text>
                 </>
               )}
