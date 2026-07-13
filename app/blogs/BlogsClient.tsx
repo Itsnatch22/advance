@@ -271,13 +271,24 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
         if (search.trim()) params.set("search", search.trim());
 
         const res = await fetch(`/api/resources?${params.toString()}`);
-        if (!res.ok) {
-          const err = (await res.json()) as { error?: string };
-          throw new Error(err.error ?? "Failed to fetch");
+        const rawText = await res.text();
+
+        if (!rawText) {
+          throw new Error(`Empty response from server (status ${res.status})`);
         }
 
-        const data = (await res.json()) as { resources?: Resource[] };
-        setResources(data.resources ?? []);
+        let parsed: { resources?: Resource[]; error?: string };
+        try {
+          parsed = JSON.parse(rawText);
+        } catch {
+          throw new Error(`Invalid response from server (status ${res.status})`);
+        }
+
+        if (!res.ok) {
+          throw new Error(parsed.error ?? "Failed to fetch");
+        }
+
+        setResources(parsed.resources ?? []);
         setLastFetched(new Date());
       } catch (err) {
         setError(

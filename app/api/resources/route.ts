@@ -269,16 +269,17 @@ async function fetchFromNewsAPI(
 
 export async function GET(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  const rl = await checkRateLimit(publicReadLimiter, ip);
-  if (!rl.success) {
-    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429, headers: rl.headers });
-  }
-
-  const { searchParams } = new URL(request.url);
-  const category = searchParams.get("category") ?? "all";
-  const search = searchParams.get("search") ?? "";
 
   try {
+    const rl = await checkRateLimit(publicReadLimiter, ip);
+    if (!rl.success) {
+      return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429, headers: rl.headers });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get("category") ?? "all";
+    const search = searchParams.get("search") ?? "";
+
     let resources = await fetchFromSupabase(category, search);
 
     if (resources.length === 0 && search.trim()) {
@@ -295,19 +296,10 @@ export async function GET(request: NextRequest) {
       }
     );
   } catch (err) {
-    console.error("[resources] Handler error:", err);
-
-    try {
-      const fallback = await fetchFromNewsAPI(category, search);
-      return NextResponse.json(
-        { resources: fallback, total: fallback.length, source: "newsapi-fallback" },
-        { status: 200 }
-      );
-    } catch {
-      return NextResponse.json(
-        { error: "Failed to fetch resources" },
-        { status: 500 }
-      );
-    }
+    console.error("[resources] Fatal handler error:", err);
+    return NextResponse.json(
+      { resources: [], total: 0, error: "Service temporarily unavailable" },
+      { status: 500 }
+    );
   }
 }

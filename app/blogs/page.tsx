@@ -6,7 +6,7 @@ import { Resource } from "@/types/resources";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Resources",
+  title: "Blogs",
   description:
     "Guides, insights, and the latest news on Earned Wage Access and financial wellness across Africa.",
   openGraph: {
