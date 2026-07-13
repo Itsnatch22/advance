@@ -10,7 +10,6 @@ import Coverage from "@/components/Coverage";
 import Marquee from "@/components/Marquee";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import WordReveal from "@/components/WordReveal";
-import Testimonials from "@/components/Testimonials"
 
 export default function HomePage() {
   return (
@@ -25,7 +24,6 @@ export default function HomePage() {
         <Needs />
         <Pricing />
         <Coverage />
-        <Testimonials />
         <FAQ />
         <CTA />
       </div>
