@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
   if (!token) return NextResponse.redirect(errorUrl);
 
-  if (!/^[0-9a-f-]{36}$/i.test(token)) return NextResponse.redirect(errorUrl);
+  if (!/^[0-9a-f]{64}$/i.test(token)) return NextResponse.redirect(errorUrl);
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
