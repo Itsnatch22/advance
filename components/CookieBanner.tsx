@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Cookie, X, ChevronLeft, ShieldCheck, BarChart3 } from "lucide-react";
 import {
   COOKIE_CONSENT_NAME,
@@ -177,7 +178,11 @@ const CookieBanner = () => {
                         </p>
                       </div>
                     </div>
-                    <ToggleSwitch checked disabled />
+                    <Switch
+                      checked
+                      disabled
+                      className="data-[state=checked]:bg-green-600"
+                    />
                   </div>
 
                   <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
@@ -193,9 +198,10 @@ const CookieBanner = () => {
                         </p>
                       </div>
                     </div>
-                    <ToggleSwitch
+                    <Switch
                       checked={analyticsEnabled}
-                      onChange={setAnalyticsEnabled}
+                      onCheckedChange={setAnalyticsEnabled}
+                      className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-zinc-700"
                     />
                   </div>
                 </div>
@@ -227,34 +233,5 @@ const CookieBanner = () => {
     </AnimatePresence>
   );
 };
-
-function ToggleSwitch({
-  checked,
-  onChange,
-  disabled,
-}: {
-  checked: boolean;
-  onChange?: (value: boolean) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      disabled={disabled}
-      onClick={() => onChange?.(!checked)}
-      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-        checked ? "bg-green-600" : "bg-zinc-700"
-      } ${disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
-    >
-      <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
-          checked ? "translate-x-5" : "translate-x-0.5"
-        }`}
-      />
-    </button>
-  );
-}
 
 export default CookieBanner;
