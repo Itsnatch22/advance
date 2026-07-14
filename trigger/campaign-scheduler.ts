@@ -1,5 +1,7 @@
 import { task, logger } from '@trigger.dev/sdk/v3';
 import { createClient } from '@supabase/supabase-js';
+import { sendEmailCampaign } from './campaign-send';
+import { logAdminAction } from '@/lib/admin/audit';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,6 +12,7 @@ export const campaignScheduler = task({
   id: 'campaign-scheduler',
   maxDuration: 300,
   run: async () => {
+    const startedAt = Date.now();
     logger.info('Campaign scheduler starting');
     const now = new Date().toISOString();
     // Find due schedules
@@ -25,34 +28,45 @@ export const campaignScheduler = task({
       throw error;
     }
 
-    if (!due || due.length === 0) {
+    const queueLength = due?.length ?? 0;
+
+    if (queueLength === 0) {
       logger.info('No due campaigns');
-      return { processed: 0 };
+      return { processed: 0, queueLength: 0, durationMs: Date.now() - startedAt };
     }
 
     let processed = 0;
-    for (const row of due) {
+    let failed = 0;
+    for (const row of due!) {
       try {
-        // Trigger the send job (this uses the Trigger.dev task 'send-email-campaign')
-        // The SDK's tasks.trigger may return a trigger id; handle best-effort
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const res = await (global as any).tasks?.trigger?.('send-email-campaign', { campaign_id: row.campaign_id, triggered_by: 'scheduler' });
-        const triggerId = res?.id ?? null;
+        const handle = await sendEmailCampaign.trigger({
+          campaign_id: row.campaign_id,
+          triggered_by: 'scheduler',
+        });
 
         // Persist trigger id on campaign for traceability
-        await supabase.from('email_campaigns').update({ scheduled_job_id: triggerId, status: 'scheduled' }).eq('id', row.campaign_id);
+        await supabase.from('email_campaigns').update({ scheduled_job_id: handle.id, status: 'scheduled' }).eq('id', row.campaign_id);
 
         // Delete schedule row (it is now scheduled/enqueued)
         await supabase.from('email_campaign_schedules').delete().eq('id', row.id);
 
         processed++;
       } catch (e) {
+        failed++;
         logger.error('Failed processing scheduled campaign', { id: row.id, error: e });
       }
     }
 
-    logger.info('Campaign scheduler finished', { processed });
-    return { processed };
+    const durationMs = Date.now() - startedAt;
+    logger.info('Campaign scheduler finished', { processed, failed, queueLength, durationMs });
+
+    if (failed > 0) {
+      await logAdminAction(null, 'scheduler.run_with_failures', {
+        objectType: 'campaign_scheduler',
+        meta: { processed, failed, queueLength, durationMs },
+      });
+    }
+
+    return { processed, failed, queueLength, durationMs };
   },
 });
