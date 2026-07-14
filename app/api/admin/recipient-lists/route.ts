@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { getAuthenticatedAdmin } from '@/lib/admin/campaigns';
 import { sendSuccess, sendError } from '@/lib/utils/response';
+import { logAdminAction } from '@/lib/admin/audit';
 
 const createSchema = z.object({
   name: z.string().min(1).max(200),
@@ -42,6 +43,18 @@ export async function POST(request: NextRequest) {
     if (emails && emails.length > 0) {
       const members = emails.map((e: string) => ({ list_id: list.id, email: e }));
       await admin.from('recipient_list_members').insert(members);
+    }
+
+    // Fire-and-forget audit log
+    try {
+      logAdminAction(user.id, 'recipient_list.create', {
+        objectType: 'recipient_list',
+        objectId: list.id,
+        meta: { name, memberCount: emails?.length ?? 0 },
+      });
+    } catch (e) {
+      // logAdminAction already logs errors; don't block response
+      console.warn('[admin/recipient-lists][POST] audit log failed', String(e));
     }
 
     return sendSuccess({ list }, 201);

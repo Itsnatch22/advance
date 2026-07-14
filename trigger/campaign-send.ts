@@ -15,7 +15,7 @@ export const sendEmailCampaign = task({
   id: "send-email-campaign",
   maxDuration: 600,
 
-  run: async (payload: { campaign_id: string; triggered_by: string }) => {
+  run: async (payload: { campaign_id: string; triggered_by: string; recipients?: Array<{ id: string | null; email: string }> }) => {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -60,37 +60,45 @@ export const sendEmailCampaign = task({
       subject: campaign.subject,
     });
 
-    // 2. Fetch active confirmed subscribers
-    const audience = (campaign.audience_filter ?? { segment: "all" }) as {
-      segment?: string;
-      emails?: string[];
-    };
+    // 2. Resolve recipients: either from payload override or from campaign audience_filter
+    let subscribers: Array<{ id: string | null; email: string }> = [];
 
-    let subscriberQuery = supabase
-      .from("newsletter_subscriptions")
-      .select("id, email")
-      .eq("status", "active")
-      .not("confirmed_at", "is", null);
+    if (Array.isArray(payload.recipients) && payload.recipients.length > 0) {
+      subscribers = payload.recipients;
+    } else {
+      const audience = (campaign.audience_filter ?? { segment: "all" }) as {
+        segment?: string;
+        emails?: string[];
+      };
 
-    if (audience.segment === "manual" && audience.emails?.length) {
-      subscriberQuery = subscriberQuery.in(
-        "email",
-        audience.emails.map((email) => email.toLowerCase())
-      );
+      let subscriberQuery = supabase
+        .from("newsletter_subscriptions")
+        .select("id, email")
+        .eq("status", "active")
+        .not("confirmed_at", "is", null);
+
+      if (audience.segment === "manual" && audience.emails?.length) {
+        subscriberQuery = subscriberQuery.in(
+          "email",
+          audience.emails.map((email) => email.toLowerCase())
+        );
+      }
+      if (audience.segment === "recent") {
+        const since = new Date();
+        since.setDate(since.getDate() - 30);
+        subscriberQuery = subscriberQuery.gte("created_at", since.toISOString());
+      }
+
+      const { data: subsData, error: subError } = await subscriberQuery;
+
+      if (subError) {
+        throw new Error(`Failed to fetch subscribers: ${subError.message}`);
+      }
+
+      subscribers = (subsData ?? []).map((s: any) => ({ id: s.id ?? null, email: s.email }));
     }
-    if (audience.segment === "recent") {
-      const since = new Date();
-      since.setDate(since.getDate() - 30);
-      subscriberQuery = subscriberQuery.gte("created_at", since.toISOString());
-    }
 
-    const { data: subscribers, error: subError } = await subscriberQuery;
-
-    if (subError) {
-      throw new Error(`Failed to fetch subscribers: ${subError.message}`);
-    }
-
-    const total = subscribers?.length ?? 0;
+    const total = subscribers.length;
 
     // 3. Update total_recipients on the campaign row
     await supabase
@@ -117,7 +125,7 @@ export const sendEmailCampaign = task({
     }
 
     // 5. Fetch profiles for personalization
-    const emailList = subscribers!.map((s) => s.email);
+    const emailList = subscribers.map((s) => s.email);
     const { data: profiles } = await supabase
       .from("profiles")
       .select("email, full_name")
@@ -135,7 +143,7 @@ export const sendEmailCampaign = task({
     const sanitizedBase = sanitizeCampaignHtml(campaign.html_content);
 
     for (let offset = 0; offset < total; offset += BATCH_SIZE) {
-      const batch = subscribers!.slice(offset, offset + BATCH_SIZE);
+      const batch = subscribers.slice(offset, offset + BATCH_SIZE);
 
       logger.info("Processing batch", {
         batchStart: offset,

@@ -51,6 +51,18 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       if (members.length > 0) await admin.from('recipient_list_members').insert(members);
     }
 
+    // Fire-and-forget audit log
+    try {
+      const { logAdminAction } = await import('@/lib/admin/audit');
+      logAdminAction(user.id, 'recipient_list.update', {
+        objectType: 'recipient_list',
+        objectId: id,
+        meta: { updates: Object.keys(updates), emailsReplaced: !!parsed.data.emails },
+      });
+    } catch (e) {
+      console.warn('[admin/recipient-lists/[id]][PATCH] audit log failed', String(e));
+    }
+
     return sendSuccess({ list: updated });
   } catch (err) {
     console.error('[admin/recipient-lists/[id]][PATCH] error:', err);
@@ -61,12 +73,24 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await getAuthenticatedAdmin(request);
   if ('error' in auth) return sendError(auth.error, auth.status);
-  const { admin } = auth;
+  const { admin, user } = auth;
   const { id } = await params;
 
   try {
     const { error } = await admin.from('recipient_lists').delete().eq('id', id);
     if (error) throw error;
+
+    // Fire-and-forget audit log
+    try {
+      const { logAdminAction } = await import('@/lib/admin/audit');
+      logAdminAction(user.id, 'recipient_list.delete', {
+        objectType: 'recipient_list',
+        objectId: id,
+      });
+    } catch (e) {
+      console.warn('[admin/recipient-lists/[id]][DELETE] audit log failed', String(e));
+    }
+
     return new Response(null, { status: 204 });
   } catch (err) {
     console.error('[admin/recipient-lists/[id]][DELETE] error:', err);

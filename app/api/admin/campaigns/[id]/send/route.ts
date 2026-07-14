@@ -79,24 +79,49 @@ export async function POST(
       return sendError("Campaign send already triggered", 409);
     }
 
-    // Count active confirmed subscribers for the response estimate
-    const { count } = await admin
-      .from("newsletter_subscriptions")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "active")
-      .not("confirmed_at", "is", null);
+    // Read optional body for recipient list override
+    const body = await request.json().catch(() => ({}));
+    const { list_id } = body || {};
+
+    let recipientsPayload: Array<{ id: string | null; email: string }> | undefined = undefined;
+
+    if (list_id) {
+      // Resolve members for the list
+      const { data: members, error: membersErr } = await admin
+        .from('recipient_list_members')
+        .select('email, subscriber_id')
+        .eq('list_id', list_id);
+      if (membersErr) {
+        return sendError('Failed to resolve recipient list', 500);
+      }
+      recipientsPayload = (members ?? []).map((m: any) => ({ id: m.subscriber_id ?? null, email: m.email }));
+    }
+
+    // Count active confirmed subscribers for the response estimate (only when not using list override)
+    let count: number | null = null;
+    if (!recipientsPayload) {
+      const c = await admin
+        .from("newsletter_subscriptions")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active")
+        .not("confirmed_at", "is", null);
+      count = c.count ?? 0;
+    } else {
+      count = recipientsPayload.length;
+    }
 
     // Trigger Trigger.dev job
     await tasks.trigger("send-email-campaign", {
       campaign_id: id,
       triggered_by: user.id,
+      recipients: recipientsPayload,
     });
 
     await logCampaignAudit(admin, {
       campaignId: id,
       actorId: user.id,
       action: "campaign_send_triggered",
-      metadata: { estimated_recipients: count ?? 0 },
+      metadata: { estimated_recipients: count ?? 0, list_override: !!list_id },
     });
 
     return sendSuccess({ campaign_id: id, estimated_recipients: count ?? 0 });

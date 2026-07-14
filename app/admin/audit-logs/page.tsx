@@ -1,10 +1,9 @@
 import React from "react";
 import { createClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
+import { createRouteHandlerClient } from "@/lib/supabase/route-handler";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const ADMIN_UI_TOKEN = process.env.ADMIN_UI_TOKEN;
 
 type LogRow = {
   id: string;
@@ -17,13 +16,18 @@ type LogRow = {
 };
 
 export default async function AdminAuditLogsPage({ searchParams }: { searchParams?: any }) {
-  // Server-side simple auth using an ADMIN_UI_TOKEN cookie
-  const adminToken = cookies().get("admin_token")?.value ?? null;
-  if (!ADMIN_UI_TOKEN || adminToken !== ADMIN_UI_TOKEN) {
+  // Server-side auth using Supabase session
+  const supabaseClient = await createRouteHandlerClient();
+  const {
+    data: { user },
+    error: authErr,
+  } = await supabaseClient.auth.getUser();
+
+  if (authErr || !user) {
     return (
       <div style={{ padding: 20 }}>
         <h1>Unauthorized</h1>
-        <p>Admin UI token missing or invalid. Set an <code>admin_token</code> cookie to access this page.</p>
+        <p>Please sign in as an admin to access this page.</p>
       </div>
     );
   }
@@ -37,6 +41,18 @@ export default async function AdminAuditLogsPage({ searchParams }: { searchParam
     );
   }
 
+  // Verify admin
+  const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const { data: adminRecord } = await adminClient.from('system_admins').select('id').eq('user_id', user.id).single();
+  if (!adminRecord) {
+    return (
+      <div style={{ padding: 20 }}>
+        <h1>Forbidden</h1>
+        <p>You must be a system admin to view audit logs.</p>
+      </div>
+    );
+  }
+
   const limit = Math.min(200, Number(searchParams?.limit ?? 50));
   const page = Math.max(0, Number(searchParams?.page ?? 0));
   const adminIdFilter = searchParams?.admin_id || null;
@@ -46,11 +62,10 @@ export default async function AdminAuditLogsPage({ searchParams }: { searchParam
   const fromDate = searchParams?.from || null;
   const toDate = searchParams?.to || null;
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
   const from = page * limit;
   const to = from + limit - 1;
 
-  let query = supabase
+  let query = adminClient
     .from("admin_audit_logs")
     .select("id, admin_id, action, object_type, object_id, meta, created_at", { count: "exact" })
     .order("created_at", { ascending: false });
