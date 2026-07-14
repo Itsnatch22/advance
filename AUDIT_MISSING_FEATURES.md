@@ -68,15 +68,14 @@ The website is **70% complete**. Core functionality works, but several pages are
 ## 🟡 **MEDIUM PRIORITY — Code Quality & Architecture Issues**
 
 
-### 11. **Hardcoded Config Values** 🟡 *Started*
+### 11. **Hardcoded Config Values** ✅ Fixed🟢
 - **Examples:**
   - Contact: Support email
   - Admin: Email sender addresses
-- **Missing:** Config/constants module
-- **Progress:** `constants/config.ts` exists; calculator and platform fee now use it
-- **Remaining:** Migrate email sender/support addresses and route-level constants
-- **Impact:** Low — Workaround exists
-- **Effort:** 0.5-1 day
+- **What was done:** Centralized email senders and support addresses in `constants/config.ts` and replaced remaining hardcoded addresses across routes, emails, and UI components (contact, footer, subscription, partners, wiza summaries, unsubscribe, and related handlers).
+- **Notes / remaining operational steps:** Ensure environment variables (RESEND_* and SUPPORT_EMAIL) are set in staging/production. Run Supabase/Trigger.dev deployments and update any mailer sender overrides if needed.
+- **Impact:** Low — improves maintainability and makes sender addresses configurable
+- **Effort:** Completed in this pass
 
 ---
 
@@ -111,26 +110,12 @@ The website is **70% complete**. Core functionality works, but several pages are
 - **Impact:** Low — Not MVP-critical
 - **Effort:** 3-5 days
 
-### 17. **Admin Audit Logs**
-- **Status:** Not implemented
-- **Missing:** Campaign send history, recipient tracking
-- **Impact:** Low — Compliance feature
-- **Effort:** 2-3 days
-
----
-
-## ✅ **Completed & Working Well**
-
-- Homepage + landing pages ✅
-- Blog/Resources page (fixed this session) ✅
-- Calculator + FX rates ✅
-- Contact form ✅
-- Email system (just redesigned) ✅
-- Newsletter subscription (just fixed) ✅
-- Partner onboarding form ✅
-- Authentication (admin login) ✅
-- Wiza AI chat (functional) ✅
-- Navbar + Footer ✅
+### 17. **Admin Audit Logs** ✅ Fixed🟢
+- **Status:** Implemented (DB migration + helper + API endpoint)
+- **What was done:** Added `admin_audit_logs` migration, `lib/admin/audit.ts` helper, and an admin API endpoint `POST/GET /api/admin/audit-logs` to write and query logs. The campaign send task now writes a `campaign.send` audit entry on completion.
+- **Notes / remaining operational steps:** Apply Supabase migration to create the table in staging/production. Consider adding admin UI and retention policy/indexing as next steps.
+- **Impact:** Low — Adds compliance-grade audit trail for admin actions
+- **Effort remaining:** Minimal (DB apply + optional UI)
 
 ---
 
@@ -184,14 +169,5 @@ From `BACKLOG.md`:
 - **H10:** Chat route complexity (partially addressed)
 - **M9-M19:** Config, consistency, performance issues (all noted above)
 
----
-
-## 📝 **Notes**
-
-- **Database:** Supabase setup appears complete; no schema issues detected
-- **Environment:** `.env.local` now has correct URL formats (quotes removed)
-- **Builds:** All recent changes build successfully (TypeScript passing)
-- **Email:** Now properly branded and logo-enabled
-- **Subscription:** Token validation fixed (64-char hex format)
 
 **Next audit recommended:** 2 weeks (after docs + admin sprints)

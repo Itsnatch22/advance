@@ -258,6 +258,18 @@ export const sendEmailCampaign = task({
       status: finalStatus,
     });
 
+    // Write an admin audit log for this send action (if triggered_by/admin id provided)
+    try {
+      const { logAdminAction } = await import("@/lib/admin/audit");
+      await logAdminAction(payload.triggered_by ?? null, "campaign.send", {
+        objectType: "campaign",
+        objectId: payload.campaign_id,
+        meta: { sent: sentCount, failed: failedCount, total, status: finalStatus },
+      });
+    } catch (e) {
+      logger.warn("Failed to write admin audit log", { error: String(e) });
+    }
+
     return { sent: sentCount, failed: failedCount, total };
   },
 });
