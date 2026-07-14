@@ -11,10 +11,10 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com https://vercel.live;",
-  "script-src-elem 'self' 'unsafe-inline' https://assets.calendly.com https://*.calendly.com https://vercel.live;",  // ADD THIS
-  "frame-src 'self' https://calendly.com https://*.calendly.com https://accounts.google.com https://accounts.microsoft.com https://vercel.live;",
-  "connect-src 'self' https://calendly.com https://api.calendly.com https://*.calendly.com https://*.pusher.com wss://*.pusher.com https://ws-us3.pusher.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com https://vercel.live https://www.google.com https://www.gstatic.com https://www.recaptcha.net;",
+  "script-src-elem 'self' 'unsafe-inline' https://assets.calendly.com https://*.calendly.com https://vercel.live https://www.google.com https://www.gstatic.com https://www.recaptcha.net;",
+  "frame-src 'self' https://calendly.com https://*.calendly.com https://accounts.google.com https://accounts.microsoft.com https://vercel.live https://www.google.com https://www.recaptcha.net;",
+  "connect-src 'self' https://calendly.com https://api.calendly.com https://*.calendly.com https://*.pusher.com wss://*.pusher.com https://ws-us3.pusher.com https://www.google.com https://www.gstatic.com",
             "style-src 'self' 'unsafe-inline' https://assets.calendly.com",
             "img-src 'self' data: blob: https:",
             "font-src 'self' data: https://assets.calendly.com https://vercel.live/geist.woff2 https://vercel.live/geist_mono.woff2",
