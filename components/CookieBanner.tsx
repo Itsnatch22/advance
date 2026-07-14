@@ -109,43 +109,45 @@ const CookieBanner = () => {
             <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-green-500/10 blur-3xl" />
 
             {view === "banner" ? (
-              <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
+              <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-500/20 text-green-500 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
                   <Cookie className="h-6 w-6" />
                 </div>
 
-                <div className="flex-1 space-y-2">
-                  <h3 className="text-lg font-bold text-white md:text-xl">
-                    Cookie Preferences
-                  </h3>
-                  <p className="text-sm leading-relaxed text-zinc-400">
-                    We use necessary cookies to run the site, and optional
-                    analytics cookies to understand traffic and improve the
-                    wage calculator. Choose what you&apos;re comfortable with.
-                  </p>
-                </div>
+                <div className="flex-1 space-y-5">
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-bold text-white md:text-xl">
+                      Cookie Preferences
+                    </h3>
+                    <p className="text-sm leading-relaxed text-zinc-400">
+                      We use necessary cookies to run the site, and optional
+                      analytics cookies to understand traffic and improve the
+                      wage calculator. Choose what you&apos;re comfortable with.
+                    </p>
+                  </div>
 
-                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-                  <Button
-                    variant="outline"
-                    onClick={openPreferences}
-                    className="h-11 border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 hover:text-white sm:w-auto"
-                  >
-                    Manage Preferences
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={handleRejectAll}
-                    className="h-11 border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 hover:text-white sm:w-28"
-                  >
-                    Reject
-                  </Button>
-                  <Button
-                    onClick={handleAcceptAll}
-                    className="h-11 bg-green-600 font-semibold text-white shadow-[0_0_15px_rgba(22,163,74,0.3)] hover:bg-green-500 sm:w-32"
-                  >
-                    Accept All
-                  </Button>
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Button
+                      variant="outline"
+                      onClick={openPreferences}
+                      className="h-11 border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 hover:text-white sm:w-auto"
+                    >
+                      Manage Preferences
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleRejectAll}
+                      className="h-11 border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 hover:text-white sm:w-28"
+                    >
+                      Reject
+                    </Button>
+                    <Button
+                      onClick={handleAcceptAll}
+                      className="h-11 bg-green-600 font-semibold text-white shadow-[0_0_15px_rgba(22,163,74,0.3)] hover:bg-green-500 sm:w-32"
+                    >
+                      Accept All
+                    </Button>
+                  </div>
                 </div>
               </div>
             ) : (
