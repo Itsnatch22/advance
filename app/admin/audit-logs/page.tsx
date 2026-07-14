@@ -41,10 +41,11 @@ export default async function AdminAuditLogsPage({ searchParams }: { searchParam
     );
   }
 
-  // Verify admin
+  // Verify admin -- system_admins.id is the FK to auth.users(id) directly,
+  // there is no separate user_id column.
   const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  const { data: adminRecord } = await adminClient.from('system_admins').select('id').eq('user_id', user.id).single();
-  if (!adminRecord) {
+  const { data: adminRecord } = await adminClient.from('system_admins').select('id, is_admin').eq('id', user.id).single();
+  if (!adminRecord || !adminRecord.is_admin) {
     return (
       <div style={{ padding: 20 }}>
         <h1>Forbidden</h1>
