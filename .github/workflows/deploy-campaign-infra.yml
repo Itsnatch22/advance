@@ -1,0 +1,40 @@
+name: Deploy Campaign Infra
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      TRIGGER_DEV_API_KEY: ${{ secrets.TRIGGER_DEV_API_KEY }}
+      TRIGGER_DEV_PROJECT: ${{ secrets.TRIGGER_DEV_PROJECT }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Run deployment script
+        run: ./.github/scripts/deploy-campaign-infra.sh
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          TRIGGER_DEV_API_KEY: ${{ secrets.TRIGGER_DEV_API_KEY }}
+          TRIGGER_DEV_PROJECT: ${{ secrets.TRIGGER_DEV_PROJECT }}
