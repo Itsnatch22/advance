@@ -41,7 +41,27 @@ export async function GET(req: NextRequest) {
       counts[name] = count;
     });
 
-    return NextResponse.json(counts, {
+    // Also fetch partner availability matrix (if table exists)
+    let partners: any[] = [];
+    try {
+      const { data: pa, error: paErr } = await supabaseServer
+        .from('partner_availability')
+        .select('partner, country_code, available')
+        .order('partner', { ascending: true });
+      if (!paErr && pa) {
+        // group by partner
+        const map: Record<string, Record<string, boolean>> = {};
+        pa.forEach((r: any) => {
+          map[r.partner] = map[r.partner] || {};
+          map[r.partner][r.country_code] = !!r.available;
+        });
+        partners = Object.keys(map).map((p) => ({ partner: p, availability: map[p] }));
+      }
+    } catch (e) {
+      // ignore — partner table optional
+    }
+
+    return NextResponse.json({ counts, partners }, {
       headers: {
         "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
       },

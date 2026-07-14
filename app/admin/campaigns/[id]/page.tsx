@@ -258,6 +258,13 @@ export default function CampaignDetailPage() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Template & recipient lists for editing
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [lists, setLists] = useState<any[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedList, setSelectedList] = useState<string | null>(null);
+  const [importedEmails, setImportedEmails] = useState<string[]>([]);
+
   // Modals
   const [showTestModal, setShowTestModal] = useState(false);
   const [showSendConfirm, setShowSendConfirm] = useState(false);
@@ -305,6 +312,45 @@ export default function CampaignDetailPage() {
     load();
   }, [id]);
 
+  // load templates and recipient lists for editing UI
+  useEffect(() => {
+    (async () => {
+      try {
+        const [tRes, lRes] = await Promise.all([
+          fetch('/api/admin/templates'),
+          fetch('/api/admin/recipient-lists'),
+        ]);
+        if (tRes.ok) { const td = await tRes.json(); setTemplates(td.templates ?? []); }
+        if (lRes.ok) { const ld = await lRes.json(); setLists(ld.lists ?? []); }
+      } catch {}
+    })();
+  }, []);
+
+  // apply template when selected
+  useEffect(() => {
+    if (!selectedTemplate) return;
+    const t = templates.find((x) => x.id === selectedTemplate);
+    if (t) {
+      setEditHtml(t.html_content ?? "");
+      setEditPlain(t.plain_text_content ?? "");
+      setEditSubject((s) => s || t.name || s);
+    }
+  }, [selectedTemplate, templates]);
+
+  // fetch members when a list is selected
+  useEffect(() => {
+    if (!selectedList) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/admin/recipient-lists/${selectedList}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const members = data.members ?? [];
+        setImportedEmails(members.map((m: any) => m.email));
+      } catch {}
+    })();
+  }, [selectedList]);
+
   async function handleSave() {
     if (!campaign) return;
     setSaveError(null);
@@ -314,15 +360,19 @@ export default function CampaignDetailPage() {
 
     setSaving(true);
     try {
+      const body: Record<string, any> = {
+        title: editTitle.trim(),
+        subject: editSubject.trim(),
+        html_content: editHtml,
+        plain_text_content: editPlain.trim() || null,
+      };
+      if (selectedTemplate) body.template_key = selectedTemplate;
+      if (importedEmails.length > 0) body.audience_filter = { segment: 'manual', emails: importedEmails };
+
       const res = await fetch(`/api/admin/campaigns/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: editTitle.trim(),
-          subject: editSubject.trim(),
-          html_content: editHtml,
-          plain_text_content: editPlain.trim() || null,
-        }),
+        body: JSON.stringify(body),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -536,27 +586,75 @@ export default function CampaignDetailPage() {
               >
                 <div className="mt-5 space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                      HTML Content
-                    </label>
-                    <textarea
-                      value={editHtml}
-                      onChange={(e) => setEditHtml(e.target.value)}
-                      rows={10}
-                      className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-3 font-mono text-xs text-slate-900 ring-1 ring-slate-900/5 placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-emerald-200 transition-colors resize-y"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                      Plain Text
-                      <span className="ml-1 font-normal text-slate-400">(optional)</span>
-                    </label>
-                    <textarea
-                      value={editPlain}
-                      onChange={(e) => setEditPlain(e.target.value)}
-                      rows={4}
-                      className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-3 font-mono text-xs text-slate-900 ring-1 ring-slate-900/5 placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-emerald-200 transition-colors resize-y"
-                    />
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Template</label>
+                    <select
+                      value={selectedTemplate ?? ""}
+                      onChange={(e) => setSelectedTemplate(e.target.value || null)}
+                      className="mt-2 w-full rounded-xl border border-slate-200/60 bg-slate-50 px-3 py-2 text-sm text-slate-700"
+                    >
+                      <option value="">— none —</option>
+                      {/* templates are loaded above in the file's useEffect */}
+                      {templates.map((t) => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                      ))}
+                    </select>
+
+                    <div className="mt-4">
+                      <label className="mb-1.5 block text-sm font-semibold text-slate-700">HTML Content</label>
+                      <textarea
+                        value={editHtml}
+                        onChange={(e) => setEditHtml(e.target.value)}
+                        rows={10}
+                        className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-3 font-mono text-xs text-slate-900 ring-1 ring-slate-900/5 placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-emerald-200 transition-colors resize-y"
+                      />
+                    </div>
+
+                    <div className="mt-4">
+                      <label className="mb-1.5 block text-sm font-semibold text-slate-700">Plain Text
+                        <span className="ml-1 font-normal text-slate-400">(optional)</span>
+                      </label>
+                      <textarea
+                        value={editPlain}
+                        onChange={(e) => setEditPlain(e.target.value)}
+                        rows={4}
+                        className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-3 font-mono text-xs text-slate-900 ring-1 ring-slate-900/5 placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-emerald-200 transition-colors resize-y"
+                      />
+                    </div>
+
+                    <div className="mt-4 rounded border p-3">
+                      <h4 className="text-sm font-semibold">Recipients</h4>
+                      <p className="text-xs text-slate-500 mt-1">Select a recipient list or upload a CSV to update campaign audience.</p>
+                      <div className="mt-3">
+                        <label className="block text-xs font-medium text-slate-600">Choose list</label>
+                        <select
+                          value={selectedList ?? ""}
+                          onChange={(e) => setSelectedList(e.target.value || null)}
+                          className="mt-2 w-full rounded border px-3 py-2 text-sm"
+                        >
+                          <option value="">— none —</option>
+                          {lists.map((l) => (
+                            <option key={l.id} value={l.id}>{l.name}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="mt-3">
+                        <label className="block text-xs font-medium text-slate-600">Or upload CSV</label>
+                        <input type="file" accept=".csv" onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (!f) return;
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            const text = String(reader.result ?? "");
+                            const emails = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(l));
+                            // set importedEmails via window to bridge placeholder state
+                            setImportedEmails(Array.from(new Set([...importedEmails, ...emails])));
+                          };
+                          reader.readAsText(f);
+                        }} className="mt-2" />
+                        <p className="mt-2 text-xs text-slate-400">Imported will overwrite current audience when saved.</p>
+                      </div>
+                    </div>
                   </div>
                   {saveError && (
                     <div className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">

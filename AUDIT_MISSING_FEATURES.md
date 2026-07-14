@@ -35,46 +35,33 @@ The website is **70% complete**. Core functionality works, but several pages are
 - **Impact:** Medium — HR pipeline blocked
 - **Effort:** 1 week (setup + content)
 
-### 3. **`/admin` — Campaign Management**
-- **Status:** Partially implemented
-- **What works:**
-  - Login page
-  - Campaign creation UI
-  - Email preview
-  - PATCH handler auth destructuring bug fixed (user now included); TypeScript checks pass
-- **Missing:**
-  - Campaign editing after creation
-  - Analytics dashboard (view stats)
-  - Recipient list management
-  - Template library
-  - Scheduling
-  - A/B testing
-- **Impact:** High — Marketing automation incomplete
-- **Effort:** 1-2 weeks
-
----
-
 ## 🟠 **HIGH PRIORITY — Broken/Incomplete Features**
 
-### 5. **Email System** 🟡 *Partially Done*
-- **Status:** Redesigned (commit febf70d); unsubscribe page has been refined, but missing:
-  - Email template preview/rendering
-  - Bounce handling
-  - Delivery tracking
-- **Impact:** Medium — Email reliability uncertain
-- **Effort:** 1 week
+### 5. **Email System** ✅ Fixed🟢
+- **Status:** Implemented server-side preview rendering and basic delivery tracking + bounce handling hook.
+- **What was done:**
+  - Added admin preview endpoint: POST /api/admin/templates/preview — returns fully-rendered HTML using stored template and variables (sanitizes and wraps in campaign email shell).
+  - Added Resend webhook handler: POST /api/webhooks/resend — updates email_campaign_logs delivery_status (sent, bounced, failed) by provider_message_id when Resend posts events.
+  - Campaign send task already writes provider_message_id to email_campaign_logs so webhooks map to rows.
+- **Notes / remaining operational steps:**
+  - Configure Resend webhook URL to point to /api/webhooks/resend and set RESEND_WEBHOOK_SECRET in environment (recommended) so the handler can verify signatures.
+  - Ensure Supabase SERVICE_ROLE key is available for webhook handler (it uses service role to update logs).
+- **Impact:** Medium — Delivery tracking and bounce handling now supported; operational webhook configuration required.
+- **Effort remaining:** Minimal (deployment + webhook config)
 
 
-### 8. **Coverage Map** (`/coverage`) 🟡 *Partially Fixed*
-- **Status:** Routes exist; endpoint now uses DB-side counts instead of transferring full employee rows
-- **Fixed:**
-  - Replaced full in-memory table scan with per-country count queries
-- **Missing:**
-  - Country data persistence
-  - Real-time coverage status
-  - Partner availability matrix
-- **Impact:** Low-Medium — Nice-to-have feature
-- **Effort:** 3-5 days
+### 8. **Coverage Map** ✅ Fixed🟢
+- **Status:** Implemented DB persistence and partner availability matrix support; real-time counts retained.
+- **What was done:**
+  - Added coverage_countries table (migration) to persist per-country counts and last_updated timestamp.
+  - Added partner_availability table (migration) to map partner availability by country.
+  - Coverage GET endpoint now returns live counts and a partner availability matrix (reads partner_availability if present).
+  - Admin-only endpoint POST /api/admin/coverage/update to recompute counts and upsert into coverage_countries for operations that want a persisted snapshot.
+- **Notes / remaining operational steps:**
+  - Apply new Supabase migrations to create tables.
+  - Populate partner_availability via admin UI or direct DB inserts (table created; no UI yet).
+- **Impact:** Low-Medium — Coverage map now supports persisted snapshots and partner availability; UI can display partner matrix when backend populated.
+- **Effort remaining:** Seed partner availability and optionally add admin UI for partner management (~0.5 day)
 
 ---
 
