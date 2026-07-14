@@ -11,6 +11,7 @@ import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
 import { CurrencyProvider } from "@/components/CurrencyProvider";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
+import { COOKIE_CONSENT_NAME, parseConsentValue } from "@/lib/consent";
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
@@ -64,8 +65,8 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const locale = cookieStore.get("NEXT_LOCALE")?.value || "en-ke";
-  const analyticsConsent =
-    cookieStore.get("cookie-consent")?.value === "accepted";
+  const consent = parseConsentValue(cookieStore.get(COOKIE_CONSENT_NAME)?.value);
+  const analyticsConsent = consent?.analytics === true;
 
   return (
     <html lang="en" suppressHydrationWarning>

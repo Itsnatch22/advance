@@ -1,13 +1,24 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase/supabase";
+
+const bodySchema = z.object({
+  choice: z.enum(["accepted", "rejected", "customized"]),
+  categories: z.object({
+    necessary: z.literal(true),
+    analytics: z.boolean(),
+  }),
+});
 
 export async function POST(req: Request) {
   try {
-    const { choice } = await req.json();
+    const parsed = bodySchema.safeParse(await req.json());
 
-    if (!choice || !["accepted", "rejected"].includes(choice)) {
+    if (!parsed.success) {
       return NextResponse.json({ error: "Invalid choice" }, { status: 400 });
     }
+
+    const { choice, categories } = parsed.data;
 
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0] ??
@@ -20,6 +31,7 @@ export async function POST(req: Request) {
       .from("cookie_consents")
       .insert({
         user_choice: choice,
+        categories,
         ip_address: ip,
         user_agent: userAgent,
         created_at: new Date().toISOString(),

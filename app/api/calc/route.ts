@@ -7,6 +7,7 @@ import { z } from "zod";
 import { calc, type JsonConfig } from "@/lib/finance/calc";
 import { supabaseAdmin } from "@/lib/supabase/supabase";
 import { calcLimiter, checkRateLimit } from "@/lib/security/rate-limit";
+import { COOKIE_CONSENT_NAME, getCookieFromHeader, parseConsentValue } from "@/lib/consent";
 
 const payloadSchema = z.object({
   salary: z.number().finite().nonnegative(),
@@ -124,7 +125,8 @@ export async function POST(req: Request) {
 
 
     const cookieHeader = req.headers.get("cookie") || "";
-    const hasConsent = cookieHeader.includes("cookie-consent=accepted");
+    const consent = parseConsentValue(getCookieFromHeader(cookieHeader, COOKIE_CONSENT_NAME));
+    const hasConsent = consent?.analytics === true;
 
 
     const location = hasConsent

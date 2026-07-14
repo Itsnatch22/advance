@@ -3,53 +3,95 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Cookie, X } from "lucide-react";
+import { Cookie, X, ChevronLeft, ShieldCheck, BarChart3 } from "lucide-react";
+import {
+  COOKIE_CONSENT_NAME,
+  COOKIE_CONSENT_MAX_AGE,
+  DEFAULT_CONSENT,
+  type ConsentCategories,
+  parseConsentValue,
+  serializeConsentValue,
+} from "@/lib/consent";
+
+export const OPEN_COOKIE_PREFERENCES_EVENT = "open-cookie-preferences";
+
+type Choice = "accepted" | "rejected" | "customized";
 
 const CookieBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [view, setView] = useState<"banner" | "preferences">("banner");
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
 
-  const setConsentCookie = (choice: "accepted" | "rejected") => {
+  const readStoredConsent = (): ConsentCategories | null => {
+    if (typeof document === "undefined") return null;
+    const cookieMatch = document.cookie.match(
+      new RegExp(`(?:^|;\\s*)${COOKIE_CONSENT_NAME}=([^;]*)`)
+    );
+    const stored =
+      cookieMatch?.[1] ?? (typeof window !== "undefined" ? window.localStorage.getItem(COOKIE_CONSENT_NAME) : null);
+    return parseConsentValue(stored);
+  };
+
+  const persistConsent = (categories: ConsentCategories) => {
     if (typeof document === "undefined") return;
-    document.cookie = `cookie-consent=${choice}; path=/; max-age=${31536000}; SameSite=Lax`;
+    const value = serializeConsentValue(categories);
+    document.cookie = `${COOKIE_CONSENT_NAME}=${value}; path=/; max-age=${COOKIE_CONSENT_MAX_AGE}; SameSite=Lax`;
+    window.localStorage.setItem(COOKIE_CONSENT_NAME, value);
   };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const cookieMatch = document.cookie.match(
-      /(^|;)\s*cookie-consent=(accepted|rejected)\b/
-    );
-    const storedConsent =
-      cookieMatch?.[2] || localStorage.getItem("cookie-consent");
-
-    if (!storedConsent) {
+    const existing = readStoredConsent();
+    if (!existing) {
       setIsVisible(true);
-      return;
+    } else {
+      // Re-persist so a legacy plain "accepted"/"rejected" value gets
+      // upgraded to the JSON shape without re-prompting the visitor.
+      persistConsent(existing);
+      setAnalyticsEnabled(existing.analytics);
     }
 
-    if (storedConsent === "accepted") {
-      setConsentCookie("accepted");
-    }
+    const handleReopen = () => {
+      const current = readStoredConsent() ?? DEFAULT_CONSENT;
+      setAnalyticsEnabled(current.analytics);
+      setView("preferences");
+      setIsVisible(true);
+    };
+
+    window.addEventListener(OPEN_COOKIE_PREFERENCES_EVENT, handleReopen);
+    return () => window.removeEventListener(OPEN_COOKIE_PREFERENCES_EVENT, handleReopen);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChoice = async (choice: "accepted" | "rejected") => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("cookie-consent", choice);
-      setConsentCookie(choice);
-    }
-    setIsVisible(false);
-
+  const reportChoice = async (choice: Choice, categories: ConsentCategories) => {
     try {
       await fetch("/api/cookie-consent", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ choice }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ choice, categories }),
       });
     } catch (error) {
       console.error("Failed to save cookie consent:", error);
     }
+  };
+
+  const applyChoice = (choice: Choice, categories: ConsentCategories) => {
+    persistConsent(categories);
+    setIsVisible(false);
+    setView("banner");
+    void reportChoice(choice, categories);
+  };
+
+  const handleAcceptAll = () => applyChoice("accepted", { necessary: true, analytics: true });
+  const handleRejectAll = () => applyChoice("rejected", { necessary: true, analytics: false });
+  const handleSavePreferences = () =>
+    applyChoice("customized", { necessary: true, analytics: analyticsEnabled });
+
+  const openPreferences = () => {
+    const current = readStoredConsent();
+    setAnalyticsEnabled(current?.analytics ?? false);
+    setView("preferences");
   };
 
   return (
@@ -65,41 +107,116 @@ const CookieBanner = () => {
           <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black/80 p-6 backdrop-blur-xl md:p-8">
             <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-green-500/10 blur-3xl" />
 
-            <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-500/20 text-green-500 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
-                <Cookie className="h-6 w-6" />
-              </div>
+            {view === "banner" ? (
+              <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-500/20 text-green-500 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
+                  <Cookie className="h-6 w-6" />
+                </div>
 
-              <div className="flex-1 space-y-2">
-                <h3 className="text-lg font-bold text-white md:text-xl">
-                  Cookie Preferences
-                </h3>
-                <p className="text-sm leading-relaxed text-zinc-400">
-                  We use cookies to enhance your experience, analyze site
-                  traffic, and ensure the platform is secure. Trust is our
-                  priority. Choose how you'd like to proceed.
-                </p>
-              </div>
+                <div className="flex-1 space-y-2">
+                  <h3 className="text-lg font-bold text-white md:text-xl">
+                    Cookie Preferences
+                  </h3>
+                  <p className="text-sm leading-relaxed text-zinc-400">
+                    We use necessary cookies to run the site, and optional
+                    analytics cookies to understand traffic and improve the
+                    wage calculator. Choose what you&apos;re comfortable with.
+                  </p>
+                </div>
 
-              <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
-                <Button
-                  variant="outline"
-                  onClick={() => handleChoice("rejected")}
-                  className="h-11 border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 hover:text-white sm:w-28"
-                >
-                  Reject
-                </Button>
-                <Button
-                  onClick={() => handleChoice("accepted")}
-                  className="h-11 bg-green-600 font-semibold text-white shadow-[0_0_15px_rgba(22,163,74,0.3)] hover:bg-green-500 sm:w-32"
-                >
-                  Accept All
-                </Button>
+                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                  <Button
+                    variant="outline"
+                    onClick={openPreferences}
+                    className="h-11 border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 hover:text-white sm:w-auto"
+                  >
+                    Manage Preferences
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleRejectAll}
+                    className="h-11 border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 hover:text-white sm:w-28"
+                  >
+                    Reject
+                  </Button>
+                  <Button
+                    onClick={handleAcceptAll}
+                    className="h-11 bg-green-600 font-semibold text-white shadow-[0_0_15px_rgba(22,163,74,0.3)] hover:bg-green-500 sm:w-32"
+                  >
+                    Accept All
+                  </Button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col gap-5">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setView("banner")}
+                    aria-label="Back"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <h3 className="text-lg font-bold text-white md:text-xl">
+                    Manage Preferences
+                  </h3>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-500/10 text-green-500">
+                        <ShieldCheck className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-white">Necessary</p>
+                        <p className="mt-1 text-xs leading-relaxed text-zinc-400">
+                          Required for the site to function — session
+                          security, locale routing, and remembering this
+                          choice. Always on.
+                        </p>
+                      </div>
+                    </div>
+                    <ToggleSwitch checked disabled />
+                  </div>
+
+                  <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-500/10 text-green-500">
+                        <BarChart3 className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-white">Analytics</p>
+                        <p className="mt-1 text-xs leading-relaxed text-zinc-400">
+                          Aggregate site analytics, and lets the wage
+                          calculator auto-detect your country from IP.
+                        </p>
+                      </div>
+                    </div>
+                    <ToggleSwitch
+                      checked={analyticsEnabled}
+                      onChange={setAnalyticsEnabled}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button
+                    onClick={handleSavePreferences}
+                    className="h-11 bg-green-600 font-semibold text-white shadow-[0_0_15px_rgba(22,163,74,0.3)] hover:bg-green-500"
+                  >
+                    Save Preferences
+                  </Button>
+                </div>
+              </div>
+            )}
 
             <button
-              onClick={() => setIsVisible(false)}
+              onClick={() => {
+                setIsVisible(false);
+                setView("banner");
+              }}
+              aria-label="Dismiss"
               className="absolute top-4 right-4 text-zinc-500 transition-colors hover:text-white"
             >
               <X className="h-5 w-5" />
@@ -110,5 +227,34 @@ const CookieBanner = () => {
     </AnimatePresence>
   );
 };
+
+function ToggleSwitch({
+  checked,
+  onChange,
+  disabled,
+}: {
+  checked: boolean;
+  onChange?: (value: boolean) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={() => onChange?.(!checked)}
+      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+        checked ? "bg-green-600" : "bg-zinc-700"
+      } ${disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
+    >
+      <span
+        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
+          checked ? "translate-x-5" : "translate-x-0.5"
+        }`}
+      />
+    </button>
+  );
+}
 
 export default CookieBanner;

@@ -16,12 +16,14 @@ import {
   AlertCircle,
   Loader2,
   Wallet,
+  Cookie,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { EMAIL_CONFIG } from '@/constants/config';
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "./ui";
+import { OPEN_COOKIE_PREFERENCES_EVENT } from "./CookieBanner";
 
 const FOUNDING_YEAR = 2025;
 
@@ -462,16 +464,27 @@ export default function Footer() {
             <span>Kenya · Uganda · Tanzania · Rwanda</span>
           </div>
 
-          <Link
-            href="/status"
-            className="group flex items-center gap-2 rounded-lg bg-slate-800/30 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700/50 transition-all duration-300 hover:bg-emerald-500/10 hover:text-emerald-400 hover:ring-emerald-500/30 sm:text-sm"
-          >
-            <Shield
-              className="h-3 w-3 animate-pulse text-emerald-500 sm:h-3.5 sm:w-3.5"
-              strokeWidth={2}
-            />
-            <span>Eaziwage Status</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event(OPEN_COOKIE_PREFERENCES_EVENT))}
+              className="group flex items-center gap-2 rounded-lg bg-slate-800/30 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700/50 transition-all duration-300 hover:bg-emerald-500/10 hover:text-emerald-400 hover:ring-emerald-500/30 sm:text-sm"
+            >
+              <Cookie className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2} />
+              <span>Cookie Preferences</span>
+            </button>
+
+            <Link
+              href="/status"
+              className="group flex items-center gap-2 rounded-lg bg-slate-800/30 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700/50 transition-all duration-300 hover:bg-emerald-500/10 hover:text-emerald-400 hover:ring-emerald-500/30 sm:text-sm"
+            >
+              <Shield
+                className="h-3 w-3 animate-pulse text-emerald-500 sm:h-3.5 sm:w-3.5"
+                strokeWidth={2}
+              />
+              <span>Eaziwage Status</span>
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
