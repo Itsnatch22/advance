@@ -115,6 +115,25 @@ export async function POST(request: NextRequest) {
       metadata: { status: scheduled_at ? "scheduled" : "draft" },
     });
 
+    // If scheduled_at is a future date, create a schedule row to be picked up by the scheduler
+    if (scheduled_at) {
+      try {
+        const scheduleRes = await admin
+          .from('email_campaign_schedules')
+          .insert({ campaign_id: campaign.id, scheduled_at: scheduled_at, created_by: user.id })
+          .select()
+          .single();
+        if (!scheduleRes.error && scheduleRes.data?.id) {
+          await admin
+            .from('email_campaigns')
+            .update({ scheduled_job_id: scheduleRes.data.id })
+            .eq('id', campaign.id);
+        }
+      } catch (e) {
+        console.error('[campaigns][POST] schedule insert failed', e);
+      }
+    }
+
     return sendSuccess({ campaign }, 201);
   } catch (err) {
     console.error("[campaigns][POST] error:", err);

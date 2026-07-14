@@ -4,6 +4,7 @@ import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 import { sanitizeCampaignHtml } from "@/lib/campaigns/utils";
 import type { CampaignStatus } from "@/types/campaigns";
 import { getAuthenticatedAdmin, logCampaignAudit } from "@/lib/admin/campaigns";
+import { sendSuccess, sendError } from '@/lib/utils/response';
 
 const updateSchema = z.object({
   subject: z.string().min(3).max(300).optional(),
@@ -90,24 +91,18 @@ export async function PATCH(
       .single();
 
     if (fetchError || !campaign) {
-      return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+      return sendError("Campaign not found", 404);
     }
 
     const lockedStatuses: CampaignStatus[] = ["sending", "completed", "failed"];
     if (lockedStatuses.includes(campaign.status as CampaignStatus)) {
-      return NextResponse.json(
-        { error: `Cannot edit a campaign with status "${campaign.status}"` },
-        { status: 409 }
-      );
+      return sendError(`Cannot edit a campaign with status "${campaign.status}"`, 409);
     }
 
     const body = await request.json();
     const parsed = updateSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Validation failed", issues: parsed.error.issues },
-        { status: 400 }
-      );
+      return sendError("Validation failed", 400, { issues: parsed.error.issues });
     }
 
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
@@ -141,6 +136,33 @@ export async function PATCH(
 
     if (updateError) throw updateError;
 
+    // If scheduled_at was changed, upsert/delete schedule row accordingly
+    try {
+      if ("scheduled_at" in parsed.data) {
+        const newScheduled = parsed.data.scheduled_at ?? null;
+        if (newScheduled) {
+          // insert or update schedule row
+          const upsertRes = await admin
+            .from('email_campaign_schedules')
+            .upsert({ campaign_id: id, scheduled_at: newScheduled, created_by: user.id }, { onConflict: 'campaign_id' })
+            .select()
+            .single();
+          if (!upsertRes.error && upsertRes.data?.id) {
+            await admin
+              .from('email_campaigns')
+              .update({ scheduled_job_id: upsertRes.data.id })
+              .eq('id', id);
+          }
+        } else {
+          // removed schedule -> delete schedule row and clear scheduled_job_id
+          await admin.from('email_campaign_schedules').delete().eq('campaign_id', id);
+          await admin.from('email_campaigns').update({ scheduled_job_id: null }).eq('id', id);
+        }
+      }
+    } catch (e) {
+      console.error('[campaigns][PATCH] schedule upsert/delete failed', e);
+    }
+
     await logCampaignAudit(admin, {
       campaignId: id,
       actorId: user.id,
@@ -148,7 +170,7 @@ export async function PATCH(
       metadata: { fields: Object.keys(updates).filter((key) => key !== "updated_at") },
     });
 
-    return NextResponse.json({ campaign: updated });
+    return sendSuccess({ campaign: updated });
   } catch (err) {
     console.error("[campaigns/[id]][PATCH] error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

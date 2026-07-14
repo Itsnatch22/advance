@@ -56,10 +56,6 @@ The website is **70% complete**. Core functionality works, but several pages are
 
 ## 🟠 **HIGH PRIORITY — Broken/Incomplete Features**
 
-### 4. **Newsletter Subscription Flow** ✅ *Just Fixed*
-- **Issue:** Token validation was failing (64-char hex vs 36-char UUID)
-- **Status:** FIXED (commit d428c6b)
-
 ### 5. **Email System** 🟡 *Partially Done*
 - **Status:** Redesigned (commit febf70d); unsubscribe page has been refined, but missing:
   - Email template preview/rendering
@@ -68,32 +64,6 @@ The website is **70% complete**. Core functionality works, but several pages are
 - **Impact:** Medium — Email reliability uncertain
 - **Effort:** 1 week
 
-### 6. **Wiza AI Chat** (`/wiza-ai-for-eaziwage`) ✅ *Mostly Fixed*
-- **Status:** Functional and polished; shared hook now powers coach + widget
-- **What works:**
-  - Chat interface
-  - Cohere API integration
-  - Message history
-- **Recently verified/fixed:**
-  - File attachment processing reaches backend
-  - Public widget conversation threading persists via Supabase
-  - Rate limiting is enforced on chat/stream routes
-  - Typing indicators and retry/error recovery exist
-  - Duplicate hook consolidation compile issues fixed
-- **Remaining:**
-  - Coach-mode guest conversations are kept in browser message history, not persisted server-side
-- **Impact:** Medium — Core feature works but lacks polish
-- **Effort:** 0.5-1 day for remaining persistence decision
-
-### 7. **Calculator** (`/calculator`) ✅ *Fixed*
-- **Status:** Functional and production-polished
-- **Fixed:**
-  - NSSF fallback now comes from centralized config
-  - Production `alert()` calls replaced with toasts
-  - Formula clarity added to the results UI
-  - Platform fee percentage now uses centralized config
-- **Impact:** Low — Works but not production-ready
-- **Effort:** Done
 
 ### 8. **Coverage Map** (`/coverage`) 🟡 *Partially Fixed*
 - **Status:** Routes exist; endpoint now uses DB-side counts instead of transferring full employee rows
@@ -110,21 +80,7 @@ The website is **70% complete**. Core functionality works, but several pages are
 
 ## 🟡 **MEDIUM PRIORITY — Code Quality & Architecture Issues**
 
-### 9. **Duplicate Chat Implementations** ✅ *Fixed*
-- **Status:** Consolidated into `hooks/useWizaChat.ts`
-- **Former files removed:** 
-  - `hooks/useWizaCoachChat.ts`
-  - `hooks/useWizaWidgetChat.ts`
-- **Validation:** TypeScript passes after consolidation fixes
-- **Effort:** Done
 
-### 10. **API Response Inconsistency** ✅ *Fixed (migration helpers added)*
-- **Issue:** Response envelopes differed across routes (e.g. `{ data }`, `{ resources }`, `{ message }`, `{ status }`).
-- **Affected Routes:** All `/api/*` routes
-- **Progress:** `lib/utils/response.ts` now provides robust normalization and NextResponse send helpers (`sendSuccess`/`sendError`). Legacy shapes (data/resources/items/message) are auto-normalized. TypeScript checks pass after migration help update.
-- **Remaining:** Migrate route handlers to consistently use `sendSuccess` / `sendError` or `successResponse` where practical (low-effort bulk migration).
-- **Impact:** Medium — Client code now has a clear target envelope to adopt
-- **Effort:** Helpers implemented; route migration estimated 1-2 days.
 ### 11. **Hardcoded Config Values** 🟡 *Started*
 - **Examples:**
   - Contact: Support email
@@ -134,11 +90,6 @@ The website is **70% complete**. Core functionality works, but several pages are
 - **Remaining:** Migrate email sender/support addresses and route-level constants
 - **Impact:** Low — Workaround exists
 - **Effort:** 0.5-1 day
-
-### 12. **Font Loading** (`/unsubscribe` page) ✅ *Fixed*
-- **Status:** No page-level Google Font `@import`; uses the app-level font setup
-- **Impact:** Negligible
-- **Effort:** Done
 
 ---
 
