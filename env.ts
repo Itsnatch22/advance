@@ -5,6 +5,7 @@
 
 interface EnvConfig {
   NEXT_PUBLIC_SUPABASE_URL: string;
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
   NEXT_PUBLIC_RECAPTCHA_SITE_KEY: string;
   NEXT_PUBLIC_APP_URL?: string;
 
@@ -13,7 +14,6 @@ interface EnvConfig {
   UPSTASH_REDIS_REST_URL: string;
   UPSTASH_REDIS_REST_TOKEN: string;
   RESEND_API_KEY: string;
-  ADMIN_PASSWORD?: string;
 }
 
 class EnvironmentError extends Error {
@@ -34,6 +34,10 @@ export function validateEnv(): EnvConfig {
     errors.push("NEXT_PUBLIC_SUPABASE_URL is not defined");
   } else if (!isValidUrl(process.env.NEXT_PUBLIC_SUPABASE_URL)) {
     errors.push("NEXT_PUBLIC_SUPABASE_URL is not a valid URL");
+  }
+
+  if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    errors.push("NEXT_PUBLIC_SUPABASE_ANON_KEY is not defined");
   }
 
   if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
@@ -62,10 +66,6 @@ export function validateEnv(): EnvConfig {
     if (!process.env.RESEND_API_KEY) {
       errors.push("RESEND_API_KEY is not defined");
     }
-
-    if (!process.env.ADMIN_PASSWORD) {
-      errors.push("ADMIN_PASSWORD is not defined");
-    }
   }
 
   if (errors.length > 0) {
@@ -76,13 +76,14 @@ export function validateEnv(): EnvConfig {
 
   return {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     NEXT_PUBLIC_RECAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY!,
     RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY!,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL!,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN!,
     RESEND_API_KEY: process.env.RESEND_API_KEY!,
-    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD!,
   };
 }
 
