@@ -35,7 +35,14 @@ export default function CulturePage() {
   } = useParallax();
 
   useEffect(() => {
-    const typed = new Typed(typedRef.current!, {
+    const el = typedRef.current;
+    if (!el) return;
+    // Guard against React Strict Mode's dev-only double-invoke of effects:
+    // if a previous instance's destroy() hasn't fully flushed before this
+    // one initializes, its cursor element can end up stripped from the DOM.
+    // Clearing the node first guarantees a clean slate either way.
+    el.innerHTML = "";
+    const typed = new Typed(el, {
       strings: ["Culture", "Vibe", "Innovation", "Identity"],
       typeSpeed: 80,
       backSpeed: 50,
