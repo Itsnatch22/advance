@@ -3,7 +3,7 @@ import { z } from "zod";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 import { sanitizeCampaignHtml } from "@/lib/campaigns/utils";
 import type { CampaignStatus } from "@/types/campaigns";
-import { getAuthenticatedAdmin, logCampaignAudit } from "@/lib/admin/campaigns";
+import { getAuthenticatedAdmin, requireAdminWrite, logCampaignAudit } from "@/lib/admin/campaigns";
 import { sendSuccess, sendError } from '@/lib/utils/response';
 
 const updateSchema = z.object({
@@ -75,7 +75,7 @@ export async function PATCH(
       { status: 429, headers: rl.headers }
     );
 
-  const auth = await getAuthenticatedAdmin(request);
+  const auth = await requireAdminWrite(request);
   if ("error" in auth)
     return NextResponse.json({ error: auth.error }, { status: auth.status });
 
@@ -190,7 +190,7 @@ export async function DELETE(
       { status: 429, headers: rl.headers }
     );
 
-  const auth = await getAuthenticatedAdmin(request);
+  const auth = await requireAdminWrite(request);
   if ("error" in auth)
     return NextResponse.json({ error: auth.error }, { status: auth.status });
 

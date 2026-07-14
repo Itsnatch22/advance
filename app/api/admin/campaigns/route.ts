@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 import { sanitizeCampaignHtml } from "@/lib/campaigns/utils";
-import { getAuthenticatedAdmin, logCampaignAudit } from "@/lib/admin/campaigns";
+import { getAuthenticatedAdmin, requireAdminWrite, logCampaignAudit } from "@/lib/admin/campaigns";
 import { sendSuccess, sendError } from '@/lib/utils/response';
 
 const createSchema = z.object({
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       { status: 429, headers: rl.headers }
     );
 
-  const auth = await getAuthenticatedAdmin(request);
+  const auth = await requireAdminWrite(request);
   if ("error" in auth)
     return NextResponse.json({ error: auth.error }, { status: auth.status });
 

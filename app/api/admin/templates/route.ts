@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
 import { createRouteHandlerClient } from '@/lib/supabase/route-handler';
-import { getAuthenticatedAdmin } from '@/lib/admin/campaigns';
+import { getAuthenticatedAdmin, requireAdminWrite } from '@/lib/admin/campaigns';
 import { sendSuccess, sendError } from '@/lib/utils/response';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await getAuthenticatedAdmin(request);
+  const auth = await requireAdminWrite(request);
   if ('error' in auth) return sendError(auth.error, auth.status);
   const { admin, user } = auth;
 

@@ -1,9 +1,9 @@
 import { NextRequest } from 'next/server';
-import { getAuthenticatedAdmin } from '@/lib/admin/campaigns';
+import { requireAdminWrite } from '@/lib/admin/campaigns';
 import { sendSuccess, sendError } from '@/lib/utils/response';
 
 export async function POST(request: NextRequest) {
-  const auth = await getAuthenticatedAdmin(request);
+  const auth = await requireAdminWrite(request);
   if ('error' in auth) return sendError(auth.error, auth.status);
   const { admin } = auth;
 

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { getAuthenticatedAdmin } from '@/lib/admin/campaigns';
+import { getAuthenticatedAdmin, requireAdminWrite } from '@/lib/admin/campaigns';
 import { sendSuccess, sendError } from '@/lib/utils/response';
 import { logAdminAction } from '@/lib/admin/audit';
 
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await getAuthenticatedAdmin(request);
+  const auth = await requireAdminWrite(request);
   if ('error' in auth) return sendError(auth.error, auth.status);
   const { admin, user } = auth;
 

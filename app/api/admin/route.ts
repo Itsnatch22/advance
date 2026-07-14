@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
-import { createRouteHandlerClient } from "@/lib/supabase/route-handler";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
+import { requireAdminWrite } from "@/lib/admin/campaigns";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
@@ -47,29 +44,11 @@ export async function POST(request: NextRequest) {
     );
 
   try {
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const auth = await requireAdminWrite(request);
+    if ("error" in auth) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
-
-    const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
-    const { data: adminRecord, error: adminError } = await admin
-      .from("system_admins")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (adminError || !adminRecord) {
-      return NextResponse.json(
-        { error: "Forbidden — admins only" },
-        { status: 403 }
-      );
-    }
+    const { admin } = auth;
 
     const body = await request.json();
     const parsed = sendSchema.safeParse(body);
