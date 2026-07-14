@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { EMAIL_CONFIG } from '@/constants/config';
 import MeetingConfirmation from "@/emails/MeetingConfirmation";
+import { logAdminAction } from "@/lib/admin/audit";
 
-const ADMIN_EMAIL = "support@eaziwage.com";
+const ADMIN_EMAIL = EMAIL_CONFIG.SUPPORT_EMAIL;
 
 // Calendly webhook events fire for every event type in the account, not just
 // the three used on /schedule. If a payload's utm_content doesn't match one
@@ -106,6 +108,10 @@ export async function POST(request: NextRequest) {
 
   if (!verifyCalendlySignature(rawBody, signatureHeader, signingKey)) {
     console.warn("Calendly webhook signature verification failed");
+    await logAdminAction(null, "webhook.calendly.invalid_signature", {
+      objectType: "webhook",
+      meta: { hasSignatureHeader: !!signatureHeader },
+    });
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
@@ -168,6 +174,11 @@ export async function POST(request: NextRequest) {
 
   if (dbError) {
     console.error("Supabase error logging meeting:", dbError);
+    await logAdminAction(null, "webhook.calendly.db_error", {
+      objectType: "meeting",
+      objectId: calendlyEventId,
+      meta: { error: dbError.message },
+    });
     return NextResponse.json({ error: "Failed to log meeting" }, { status: 500 });
   }
 
@@ -193,7 +204,7 @@ export async function POST(request: NextRequest) {
   try {
     await Promise.all([
       resend.emails.send({
-        from: "EaziWage <meetings@eaziwage.com>",
+            from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
         to: email,
         subject: "Meeting Confirmed - EaziWage",
         react: MeetingConfirmation({
@@ -204,7 +215,7 @@ export async function POST(request: NextRequest) {
         }),
       }),
       resend.emails.send({
-        from: "EaziWage <meetings@eaziwage.com>",
+            from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
         to: ADMIN_EMAIL,
         subject: "New Meeting Scheduled - EaziWage",
         react: MeetingConfirmation({
@@ -222,6 +233,11 @@ export async function POST(request: NextRequest) {
     // retry of THIS attempt, since isNewRecord was true and won't be true
     // again). Just log it for manual follow-up.
     console.error("Resend error sending confirmation emails:", emailError);
+    await logAdminAction(null, "webhook.calendly.email_failure", {
+      objectType: "meeting",
+      objectId: calendlyEventId,
+      meta: { error: emailError instanceof Error ? emailError.message : String(emailError) },
+    });
   }
 
   return NextResponse.json({ received: true });

@@ -16,6 +16,7 @@ export const sendEmailCampaign = task({
   maxDuration: 600,
 
   run: async (payload: { campaign_id: string; triggered_by: string; recipients?: Array<{ id: string | null; email: string }> }) => {
+    const startedAt = Date.now();
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -258,12 +259,14 @@ export const sendEmailCampaign = task({
       })
       .eq("id", payload.campaign_id);
 
+    const durationMs = Date.now() - startedAt;
     logger.info("Campaign send complete", {
       campaign_id: payload.campaign_id,
       sent: sentCount,
       failed: failedCount,
       total,
       status: finalStatus,
+      durationMs,
     });
 
     // Write an admin audit log for this send action (if triggered_by/admin id provided)
@@ -272,12 +275,12 @@ export const sendEmailCampaign = task({
       await logAdminAction(payload.triggered_by ?? null, "campaign.send", {
         objectType: "campaign",
         objectId: payload.campaign_id,
-        meta: { sent: sentCount, failed: failedCount, total, status: finalStatus },
+        meta: { sent: sentCount, failed: failedCount, total, status: finalStatus, durationMs },
       });
     } catch (e) {
       logger.warn("Failed to write admin audit log", { error: String(e) });
     }
 
-    return { sent: sentCount, failed: failedCount, total };
+    return { sent: sentCount, failed: failedCount, total, durationMs };
   },
 });

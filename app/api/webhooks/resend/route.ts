@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { logAdminAction } from '@/lib/admin/audit';
 
 // Minimal Resend webhook handler — updates email_campaign_logs by provider_message_id
 // Expected event shapes vary; this handler handles common message.* events.
@@ -34,6 +35,10 @@ export async function POST(request: NextRequest) {
   if (RESEND_WEBHOOK_SECRET) {
     if (!verifySignature(rawBody, sigHeader, RESEND_WEBHOOK_SECRET)) {
       console.warn('Resend webhook signature verification failed');
+      await logAdminAction(null, 'webhook.resend.invalid_signature', {
+        objectType: 'webhook',
+        meta: { hasSignatureHeader: !!sigHeader },
+      });
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
   }
@@ -87,9 +92,18 @@ export async function POST(request: NextRequest) {
 
       if (updateErr) {
         console.error('Failed updating email_campaign_logs for provider id', providerId, updateErr);
+        await logAdminAction(null, 'webhook.resend.db_error', {
+          objectType: 'email_campaign_log',
+          objectId: providerId,
+          meta: { error: updateErr.message, eventType: type },
+        });
       }
     } catch (e) {
       console.error('Error processing resend webhook event', e);
+      await logAdminAction(null, 'webhook.resend.processing_error', {
+        objectType: 'webhook',
+        meta: { error: e instanceof Error ? e.message : String(e) },
+      });
       continue;
     }
   }
