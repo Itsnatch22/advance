@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createRouteHandlerClient } from "@/lib/supabase/route-handler";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
+import { sendSuccess, sendError } from '@/lib/utils/response';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -36,10 +37,7 @@ export async function GET(
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const rl = await checkRateLimit(apiLimiter, ip);
   if (!rl.success)
-    return NextResponse.json(
-      { error: "Rate limit exceeded" },
-      { status: 429, headers: rl.headers }
-    );
+    return sendError("Rate limit exceeded", 429, undefined, rl.headers as Record<string,string>);
 
   const auth = await getAuthenticatedAdmin(request);
   if ("error" in auth)
@@ -57,7 +55,7 @@ export async function GET(
       .single();
 
     if (campaignError || !campaign) {
-      return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+        return sendError("Campaign not found", 404);
     }
 
     // Fetch all delivery_status values for this campaign (for grouping)
@@ -104,7 +102,7 @@ export async function GET(
 
     if (auditError && auditError.code !== "42P01") throw auditError;
 
-    return NextResponse.json({
+    return sendSuccess({
       campaign,
       stats: {
         total,

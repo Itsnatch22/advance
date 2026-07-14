@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createRouteHandlerClient } from "@/lib/supabase/route-handler";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
+import { sendSuccess, sendError } from '@/lib/utils/response';
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { CampaignStatus } from "@/types/campaigns";
 import { logCampaignAudit } from "@/lib/admin/campaigns";
@@ -39,10 +40,7 @@ export async function POST(
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const rl = await checkRateLimit(apiLimiter, ip);
   if (!rl.success)
-    return NextResponse.json(
-      { error: "Rate limit exceeded" },
-      { status: 429, headers: rl.headers }
-    );
+    return sendError("Rate limit exceeded", 429, undefined, rl.headers as Record<string,string>);
 
   const auth = await getAuthenticatedAdmin(request);
   if ("error" in auth)
@@ -60,15 +58,12 @@ export async function POST(
       .single();
 
     if (fetchError || !campaign) {
-      return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+      return sendError("Campaign not found", 404);
     }
 
     const sendableStatuses: CampaignStatus[] = ["draft", "scheduled"];
     if (!sendableStatuses.includes(campaign.status as CampaignStatus)) {
-      return NextResponse.json(
-        { error: `Campaign is already ${campaign.status}` },
-        { status: 409 }
-      );
+      return sendError(`Campaign is already ${campaign.status}`, 409);
     }
 
     // Atomically transition to "sending" — guards against double-send race condition
@@ -81,10 +76,7 @@ export async function POST(
       .single();
 
     if (updateError || !transitioned) {
-      return NextResponse.json(
-        { error: "Campaign send already triggered" },
-        { status: 409 }
-      );
+      return sendError("Campaign send already triggered", 409);
     }
 
     // Count active confirmed subscribers for the response estimate
@@ -107,11 +99,7 @@ export async function POST(
       metadata: { estimated_recipients: count ?? 0 },
     });
 
-    return NextResponse.json({
-      success: true,
-      campaign_id: id,
-      estimated_recipients: count ?? 0,
-    });
+    return sendSuccess({ campaign_id: id, estimated_recipients: count ?? 0 });
   } catch (err) {
     console.error("[campaigns/[id]/send][POST] error:", err);
     // Attempt to roll back the status transition so the campaign isn't stuck in "sending"

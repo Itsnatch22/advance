@@ -3,6 +3,7 @@ import { z } from "zod";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 import { sanitizeCampaignHtml } from "@/lib/campaigns/utils";
 import { getAuthenticatedAdmin, logCampaignAudit } from "@/lib/admin/campaigns";
+import { sendSuccess, sendError } from '@/lib/utils/response';
 
 const createSchema = z.object({
   subject: z.string().min(3).max(300),
@@ -45,10 +46,10 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error;
 
-    return NextResponse.json({ campaigns });
+    return sendSuccess({ campaigns });
   } catch (err) {
     console.error("[campaigns][GET] error:", err);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return sendError("Internal error", 500);
   }
 }
 
@@ -72,10 +73,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const parsed = createSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Validation failed", issues: parsed.error.issues },
-        { status: 400 }
-      );
+      return sendError("Validation failed", 400, { issues: parsed.error.issues });
     }
 
     const {
@@ -117,7 +115,7 @@ export async function POST(request: NextRequest) {
       metadata: { status: scheduled_at ? "scheduled" : "draft" },
     });
 
-    return NextResponse.json({ campaign }, { status: 201 });
+    return sendSuccess({ campaign }, 201);
   } catch (err) {
     console.error("[campaigns][POST] error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
