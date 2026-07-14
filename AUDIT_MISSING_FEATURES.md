@@ -1,173 +1,69 @@
-# 🔍 EaziWage Website Audit — Missing Features & Incomplete Implementations
+# Next Steps — Post-Implementation Action Plan
 
-**Date:** July 13, 2026  
-**Status:** ACTIVE (Implementation pass resumed July 14, 2026)
-
----
-
-## 📋 Summary
-
-The website is **70% complete**. Core functionality works, but several pages are placeholders, and multiple features need implementation or refinement. Below is a prioritized breakdown.
+**Date:** 2026-07-14
+**Context:** Core campaign, email, coverage, webhook dispatcher, and admin-audit work have been implemented. This document lists immediate, prioritized operational and engineering steps to finalize the feature set and harden the platform for staging/production.
 
 ---
 
-## 🔴 **CRITICAL — Pages Not Implemented**
+## 1) Apply database migrations (High — one-time)
+- Apply all new Supabase migrations in staging/production in this order:
+  1. 20260714000000_campaign_schedules.sql (scheduling table + scheduled_job_id)
+  2. 20260714000300_coverage_countries.sql (coverage persistence)
+  3. 20260714000301_partner_availability.sql (partner matrix)
+  4. 20260714000400_admin_audit_logs.sql (audit table)
+  5. 20260714000500_admin_audit_logs_retention.sql (indexes + cleanup function)
+- Verify migrations with a schema diff and run tsc --noEmit afterward.
 
-### 1. **`/docs`** — "Coming Soon"
-- **Status:** Placeholder page only
-- **Content:** Lottie animation + CTA to email support
-- **Missing:**
-  - API documentation
-  - SDK guides
-  - Integration recipes
-  - OpenAPI spec
-- **Impact:** High — Developers cannot self-serve; support load increases
-- **Effort:** 2-3 weeks (comprehensive docs site)
+## 2) Deploy and schedule Trigger.dev tasks (High)
+- Deploy the trigger/campaign-send and trigger/campaign-scheduler tasks.
+- If using Trigger.dev scheduler, map scheduled_job_id on email_campaigns rows to the job id when scheduling.
+- If using pg_cron or external runner, schedule a periodic job that queries email_campaign_schedules where status='scheduled' and scheduled_at <= now() to enqueue sends.
 
-### 2. **`/careers`** — "Coming Soon"
-- **Status:** Placeholder page only
-- **Content:** Generic roles, no job listings
-- **Missing:**
-  - Actual job postings (ATS integration)
-  - Application flow
-  - Team profiles
-  - Culture content
-- **Impact:** Medium — HR pipeline blocked
-- **Effort:** 1 week (setup + content)
+## 3) Webhook operational setup (High)
+- Configure and register provider webhooks:
+  - Resend -> POST /api/webhooks/resend, set RESEND_WEBHOOK_SECRET
+  - Calendly -> POST /api/webhooks (existing calendly handler), set CALENDLY_WEBHOOK_SIGNING_KEY
+- Ensure service role key in env is present for webhook handlers to update DB rows.
+- Create alerting/monitoring for webhook failures (log + retry metrics).
 
-## 🟠 **HIGH PRIORITY — Broken/Incomplete Features**
+## 4) Admin UI & Auth hardening (Medium)
+- Set ADMIN_UI_TOKEN env var in staging/production and provision `admin_token` cookie to authorized admins (or replace with proper server-side auth).
+- Replace the temporary x-admin-id header usage in programmatic APIs with real auth (session or JWT middleware) for production.
+- Add role-based access checks in admin API endpoints.
 
-### 5. **Email System** ✅ Fixed🟢
-- **Status:** Implemented server-side preview rendering and basic delivery tracking + bounce handling hook.
-- **What was done:**
-  - Added admin preview endpoint: POST /api/admin/templates/preview — returns fully-rendered HTML using stored template and variables (sanitizes and wraps in campaign email shell).
-  - Added Resend webhook handler: POST /api/webhooks/resend — updates email_campaign_logs delivery_status (sent, bounced, failed) by provider_message_id when Resend posts events.
-  - Campaign send task already writes provider_message_id to email_campaign_logs so webhooks map to rows.
-- **Notes / remaining operational steps:**
-  - Configure Resend webhook URL to point to /api/webhooks/resend and set RESEND_WEBHOOK_SECRET in environment (recommended) so the handler can verify signatures.
-  - Ensure Supabase SERVICE_ROLE key is available for webhook handler (it uses service role to update logs).
-- **Impact:** Medium — Delivery tracking and bounce handling now supported; operational webhook configuration required.
-- **Effort remaining:** Minimal (deployment + webhook config)
+## 5) Retention & housekeeping (Medium)
+- Schedule cleanup_admin_audit_logs() daily (pg_cron or external scheduler) to enforce retention.
+- Review retention_days in admin_audit_logs_retention_settings and adjust to compliance requirements.
 
+## 6) Tests, type checks, and CI (High)
+- Run: tsc --noEmit; run existing test suite or a focused integration test covering: create campaign → schedule → send (dry-run) → webhook delivery update.
+- Add a smoke test that runs on deployment: schedule a test campaign, assert email_campaign_logs updated and webhook path processed.
 
-### 8. **Coverage Map** ✅ Fixed🟢
-- **Status:** Implemented DB persistence and partner availability matrix support; real-time counts retained.
-- **What was done:**
-  - Added coverage_countries table (migration) to persist per-country counts and last_updated timestamp.
-  - Added partner_availability table (migration) to map partner availability by country.
-  - Coverage GET endpoint now returns live counts and a partner availability matrix (reads partner_availability if present).
-  - Admin-only endpoint POST /api/admin/coverage/update to recompute counts and upsert into coverage_countries for operations that want a persisted snapshot.
-- **Notes / remaining operational steps:**
-  - Apply new Supabase migrations to create tables.
-  - Populate partner_availability via admin UI or direct DB inserts (table created; no UI yet).
-- **Impact:** Low-Medium — Coverage map now supports persisted snapshots and partner availability; UI can display partner matrix when backend populated.
-- **Effort remaining:** Seed partner availability and optionally add admin UI for partner management (~0.5 day)
+## 7) Seed data and admin conveniences (Low)
+- Seed partner_availability rows (or provide admin UI to manage availability) so coverage map UI can show partner matrix.
+- Seed any necessary sample audit logs for QA.
 
----
+## 8) UI polish & validation (Low)
+- Template picker / CSV recipient import: add CSV preview, validation feedback, and dedupe checks.
+- Admin audit UI: add server-side filtering by date range, export CSV, and per-action drilldown.
 
-## 🟡 **MEDIUM PRIORITY — Code Quality & Architecture Issues**
+## 9) Observability & alerts (Medium)
+- Add logging and metrics for:
+  - Campaign send failures and per-batch failure rates.
+  - Webhook verification failures and processing errors.
+  - Scheduler run durations and queue length.
+- Integrate alerts (Slack/email) for critical failures.
 
-
-### 11. **Hardcoded Config Values** ✅ Fixed🟢
-- **Examples:**
-  - Contact: Support email
-  - Admin: Email sender addresses
-- **What was done:** Centralized email senders and support addresses in `constants/config.ts` and replaced remaining hardcoded addresses across routes, emails, and UI components (contact, footer, subscription, partners, wiza summaries, unsubscribe, and related handlers).
-- **Notes / remaining operational steps:** Ensure environment variables (RESEND_* and SUPPORT_EMAIL) are set in staging/production. Run Supabase/Trigger.dev deployments and update any mailer sender overrides if needed.
-- **Impact:** Low — improves maintainability and makes sender addresses configurable
-- **Effort:** Completed in this pass
+## 10) Optional improvements (Future)
+- Move expensive coverage aggregation into a DB view or materialized view for performance.
+- Centralize webhook endpoints and public registration (consider keeping provider-specific verification paths if required by providers).
+- Add end-to-end tests that simulate provider webhooks and assert audit logs, campaign logs, and coverage snapshots update correctly.
 
 ---
 
-## 🟢 **LOW PRIORITY — Optimization & Refinement**
+If you want, the next action I can take (one of these) is:
+- Convert admin UI to use the project's real auth (server-side sessions) and add export/filtering (recommended), or
+- Implement CSV preview/deduping for recipient import, or
+- Add a deployment-ready Trigger.dev job manifest and a small CI job that applies Supabase migrations during deploy.
 
-### 13. **Performance Issues**
-- **Coverage route:** Full table scan for aggregation (should be DB view)
-- **Currency formatter:** `Intl.NumberFormat` recreated on every call (should cache)
-- **Impact:** Negligible at current scale
-- **Effort:** 1 day each
-
-### 14. **Rate Limiting**
-- **Status:** Implemented but only partially used
-- **Missing routes:** Most public routes use `publicReadLimiter`, but:
-  - Some routes missing rate limiting entirely
-  - Limits not documented for clients
-- **Impact:** Low — Protection exists
-- **Effort:** 1 day
-
-### 15. **Error Handling**
-- **Status:** Inconsistent
-- **Issues:**
-  - Some routes return 500 on all errors
-  - Others return 400 with detail
-  - Client doesn't always surface error messages
-- **Impact:** Low — Users get generic "try again" messages
-- **Effort:** 2-3 days
-
-### 16. **Webhook System** (`/api/webhooks`)
-- **Status:** Route exists, logic TBD
-- **Missing:** Actual webhook processing
-- **Impact:** Low — Not MVP-critical
-- **Effort:** 3-5 days
-
-### 17. **Admin Audit Logs** ✅ Fixed🟢
-- **Status:** Implemented (DB migration + helper + API endpoint)
-- **What was done:** Added `admin_audit_logs` migration, `lib/admin/audit.ts` helper, and an admin API endpoint `POST/GET /api/admin/audit-logs` to write and query logs. The campaign send task now writes a `campaign.send` audit entry on completion.
-- **Notes / remaining operational steps:** Apply Supabase migration to create the table in staging/production. Admin UI added at `/admin/audit-logs` (client page) for browsing logs. A retention/indexing migration was added to create extra indexes and a cleanup function; schedule `cleanup_admin_audit_logs()` daily (pg_cron or external scheduler) to enforce retention.
-- **Impact:** Low — Adds compliance-grade audit trail for admin actions
-- **Effort remaining:** Minimal (DB apply + optional UI polishing)
-
----
-
-## 📊 **Effort Breakdown**
-
-| Category | Days | Priority |
-|----------|------|----------|
-| **Docs site** | 14 | CRITICAL |
-| **Admin campaigns (full)** | 7 | HIGH |
-| **Email/newsletter refinements** | 3 | HIGH |
-| **Careers (ATS)** | 5 | HIGH |
-| **Wiza polish** | 1 | MEDIUM |
-| **API consistency** | 3 | MEDIUM |
-| **Duplicate chat cleanup** | 0 | DONE |
-| **Config extraction** | 1 | LOW |
-| **Performance tuning** | 2 | LOW |
-| **Webhook impl** | 3 | LOW |
-| **—** | **—** | **—** |
-| **TOTAL** | **39 days** | — |
-
----
-
-## 🎯 **Recommended Next Steps** (Priority Order)
-
-### **Sprint 1 (Week 1-2):** High-Impact Wins
-1. ✅ Fix docs site (placeholder → basic API docs + SDK links)
-2. ✅ Complete admin campaigns (analytics + scheduling)
-3. ✅ Polish Wiza AI (file handling, error UI)
-
-### **Sprint 2 (Week 3-4):** Quality & Scale
-1. ✅ Standardize API response envelopes
-2. ✅ Consolidate chat hooks
-3. ✅ Extract config/constants
-
-### **Sprint 3 (Week 5+):** Content & Compliance
-1. ✅ Launch careers page with real jobs
-2. ✅ Add admin audit logs
-3. ✅ Implement webhooks
-
-### **Ongoing:** Tech Debt
-- Cache formatters
-- DB aggregation for coverage
-- Comprehensive error handling
-
----
-
-## 🔗 **Related Issues**
-
-From `BACKLOG.md`:
-- **H9:** Two chat implementations (noted above)
-- **H10:** Chat route complexity (partially addressed)
-- **M9-M19:** Config, consistency, performance issues (all noted above)
-
-
-**Next audit recommended:** 2 weeks (after docs + admin sprints)
+(Per your instruction: no extra recommendations will be made after this change.)
