@@ -109,7 +109,7 @@ const CookieBanner = () => {
             <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-green-500/10 blur-3xl" />
 
             {view === "banner" ? (
-              <div className="flex items-start gap-4">
+              <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-500/20 text-green-500 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
                   <Cookie className="h-6 w-6" />
                 </div>
