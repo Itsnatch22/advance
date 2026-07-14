@@ -32,6 +32,7 @@ export default function PartnerNotificationEmail({
       showBorder
       showBorderBottom
       showBorderTop
+      footerLinks={[]}
     >
       {/* Content */}
       <Section>

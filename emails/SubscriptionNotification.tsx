@@ -16,6 +16,11 @@ export default function SubscriptionNotification({
       showBorder
       showBorderBottom
       showBorderTop
+      footerLinks={[
+        { label: "Website", href: "" },
+        { label: "Blogs", href: "/blogs" },
+        { label: "Unsubscribe", href: "/unsubscribe" },
+      ]}
     >
       {/* Content */}
       <Section>
@@ -104,7 +109,7 @@ const highlightText = {
 };
 
 const button = {
-  backgroundColor: "#15803d",
+  backgroundColor: "#059669",
   borderRadius: "16px",
   color: "#ffffff",
   fontSize: "16px",
@@ -117,12 +122,6 @@ const button = {
 };
 
 const link = {
-  color: "#15803d",
+  color: "#059669",
   textDecoration: "underline",
-};
-
-const footerLink = {
-  color: "#15803d",
-  textDecoration: "none",
-  fontWeight: "600",
 };

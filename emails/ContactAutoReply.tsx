@@ -22,6 +22,11 @@ export default function ContactAutoReply({
       showBorder
       showBorderBottom
       showBorderTop
+      footerLinks={[
+        { label: "Website", href: "" },
+        { label: "Contact", href: "/contact" },
+        { label: "Docs", href: "/docs" },
+      ]}
     >
       {/* Header */}
       {/* Logo is handled by EmailLayout by default */}
@@ -92,8 +97,3 @@ const highlightText = {
   margin: "8px 0",
 };
 
-const footerLink = {
-  color: "#15803d",
-  textDecoration: "none",
-  fontWeight: "600",
-};

@@ -22,6 +22,7 @@ export default function SalesNotification({
       showBorder
       showBorderBottom
       showBorderTop
+      footerLinks={[]}
     >
       {/* Content */}
       <Section>
@@ -98,7 +99,7 @@ const highlightText = {
 };
 
 const button = {
-  backgroundColor: "#15803d",
+  backgroundColor: "#059669",
   borderRadius: "16px",
   color: "#ffffff",
   fontSize: "16px",
@@ -111,12 +112,6 @@ const button = {
 };
 
 const link = {
-  color: "#15803d",
+  color: "#059669",
   textDecoration: "underline",
-};
-
-const footerLink = {
-  color: "#15803d",
-  textDecoration: "none",
-  fontWeight: "600",
 };

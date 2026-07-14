@@ -1,16 +1,5 @@
-import {
-  Section as OuterSection,
-  Tailwind,
-  Body as InnerBody,
-  Container as InnerContainer,
-  Section as InnerSection,
-  Heading as InnerHeading,
-  Text as InnerText,
-  Button as InnerButton,
-  Hr as InnerHr,
-} from "@react-email/components";
+import { Section, Heading, Text, Button } from "@react-email/components";
 import EmailLayout from "./EmailLayout";
-import { EMAIL_CONFIG } from '@/constants/config';
 
 const PRODUCT_LABELS: Record<string, string> = {
   newsletter: "Newsletter",
@@ -35,60 +24,60 @@ export default function UnsubscribeConfirmation({
   return (
     <EmailLayout
       previewText={`You've been unsubscribed from ${label}`}
-      showLogo={false}
-      showFooter={false}
+      footerLinks={[{ label: "Website", href: "" }]}
     >
-      <OuterSection>
-        <Tailwind>
-          <InnerBody className="bg-slate-50 font-sans">
-            <InnerContainer className="mx-auto py-12 px-4 max-w-xl">
-              <InnerSection className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+      <Section>
+        <Heading style={h1}>Unsubscription confirmed</Heading>
 
-                {/* Brand */}
-                <InnerHeading className="text-2xl font-bold text-slate-900 mb-1">
-                  EaziWage
-                </InnerHeading>
-                <InnerText className="text-slate-500 text-sm mt-0 mb-6">
-                  Earned Wage Access for East Africa
-                </InnerText>
+        <Text style={text}>Hi there,</Text>
 
-                <InnerHr className="border-slate-100 mb-6" />
+        <Text style={text}>
+          <strong>{email}</strong> has been removed from{" "}
+          <strong>{label}</strong>. You won&apos;t receive any more of these
+          emails. Please allow a few days for all sends to stop.
+        </Text>
 
-                {/* Confirmation */}
-                <InnerHeading className="text-lg font-semibold text-slate-900 mb-2">
-                  Unsubscription confirmed ✓
-                </InnerHeading>
-                <InnerText className="text-slate-600 text-sm leading-relaxed mb-2">
-                  Hi there,
-                </InnerText>
-                <InnerText className="text-slate-600 text-sm leading-relaxed mb-6">
-                  <strong>{email}</strong> has been removed from{" "}
-                  <strong>{label}</strong>. You won&apos;t receive any more of
-                  these emails. Please allow a few days for all sends to stop.
-                </InnerText>
+        <Text style={text}>
+          Changed your mind? You can re-subscribe at any time from our
+          website.
+        </Text>
 
-                <InnerText className="text-slate-600 text-sm leading-relaxed mb-6">
-                  Changed your mind? You can re-subscribe at any time from our
-                  website.
-                </InnerText>
-
-                <InnerButton
-                  href={resubscribeUrl}
-                  className="bg-green-600 text-white text-sm font-semibold px-6 py-3 rounded-xl no-underline block text-center"
-                >
-                  Visit EaziWage
-                </InnerButton>
-
-                <InnerHr className="border-slate-100 mt-6 mb-4" />
-
-                <InnerText className="text-xs text-slate-400 text-center">
-                  EaziWage · Nairobi, Kenya · {EMAIL_CONFIG.SUPPORT_EMAIL}
-                </InnerText>
-              </InnerSection>
-            </InnerContainer>
-          </InnerBody>
-        </Tailwind>
-      </OuterSection>
+        <Button style={button} href={resubscribeUrl}>
+          Visit EaziWage
+        </Button>
+      </Section>
     </EmailLayout>
   );
 }
+
+/* ----------------------------- styles ----------------------------- */
+
+const h1 = {
+  color: "#0f172a",
+  fontSize: "28px",
+  fontWeight: "700",
+  margin: "0 0 24px",
+  lineHeight: "1.3",
+  textAlign: "center" as const,
+  fontFamily: 'Georgia, "Times New Roman", serif',
+};
+
+const text = {
+  color: "#475569",
+  fontSize: "16px",
+  lineHeight: "1.6",
+  margin: "16px 0",
+};
+
+const button = {
+  backgroundColor: "#059669",
+  borderRadius: "16px",
+  color: "#ffffff",
+  fontSize: "16px",
+  fontWeight: "700",
+  textDecoration: "none",
+  textAlign: "center" as const,
+  display: "block",
+  padding: "16px 24px",
+  margin: "32px 0",
+};
