@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { sendSuccess, sendError } from "@/lib/utils/response";
 import { z } from "zod";
 import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 import { contactLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 import ContactNotification from "@/emails/ContactNotification";
 import ContactAutoReply from "@/emails/ContactAutoReply";
+import { EMAIL_CONFIG } from '@/constants/config';
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -29,14 +31,11 @@ const supabase =
       )
     : null;
 
-const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@eaziwage.com";
+const SUPPORT_EMAIL = EMAIL_CONFIG.SUPPORT_EMAIL;
 
 export async function GET() {
   if (!supabase) {
-    return NextResponse.json(
-      { error: "Supabase not configured" },
-      { status: 503 }
-    );
+    return sendError("Supabase not configured", 503);
   }
 
   const { count, error } = await supabase
@@ -45,10 +44,10 @@ export async function GET() {
     .eq("status", "approved");
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return sendError(error.message, 500);
   }
 
-  return NextResponse.json({ count: count ?? 0 });
+  return sendSuccess({ count: count ?? 0 });
 }
 
 export async function POST(request: NextRequest) {
@@ -61,18 +60,7 @@ export async function POST(request: NextRequest) {
     const rateLimitResult = await checkRateLimit(contactLimiter, ip);
 
     if (!rateLimitResult.success) {
-      return NextResponse.json(
-        {
-          error: "Rate limit exceeded. Please try again later.",
-          message: "Too many requests from this IP address",
-        },
-        {
-          status: 429,
-          headers: {
-            ...rateLimitResult.headers,
-          },
-        }
-      );
+      return sendError("Rate limit exceeded. Please try again later.", 429, undefined, rateLimitResult.headers);
     }
 
     const body = await request.json();
@@ -80,34 +68,19 @@ export async function POST(request: NextRequest) {
     const parsed = contactSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json(
-        {
-          error: "Validation failed",
-          issues: parsed.error.issues.map((issue) => ({
-            path: issue.path.join("."),
-            message: issue.message,
-          })),
-        },
-        { status: 400 }
-      );
+        return sendError("Validation failed", 400, { issues: parsed.error.issues.map((issue) => ({ path: issue.path.join("."), message: issue.message })) });
     }
 
     if (parsed.data.honeypot) {
       console.log(`Bot detected from IP: ${ip}`);
-      return NextResponse.json(
-        { message: "Message sent successfully" },
-        { status: 200 }
-      );
+      return sendSuccess({ message: "Message sent successfully" }, 200);
     }
 
     const { name, email, subject, message } = parsed.data;
 
     if (!resend) {
       console.error("Resend API key not configured");
-      return NextResponse.json(
-        { error: "Email service is not available. Please try again later." },
-        { status: 503 }
-      );
+      return sendError("Email service is not available. Please try again later.", 503);
     }
 
     if (supabase) {
@@ -165,42 +138,22 @@ export async function POST(request: NextRequest) {
       console.error("Failed to send auto-reply:", emailError);
     }
 
-    return NextResponse.json(
-      {
-        message: "Message sent successfully",
-        success: true,
-      },
-      {
-        status: 200,
-        headers: {
-          "X-RateLimit-Limit": "5",
-          "X-RateLimit-Remaining": rateLimitResult.remaining.toString(),
-        },
-      }
-    );
+    return sendSuccess({ message: "Message sent successfully", success: true }, 200, undefined, {
+      "X-RateLimit-Limit": "5",
+      "X-RateLimit-Remaining": rateLimitResult.remaining.toString(),
+    });
   } catch (error) {
     console.error("Unexpected error in contact form:", error);
 
-    return NextResponse.json(
-      {
-        error: "An unexpected error occurred. Please try again later.",
-        message: "Internal server error",
-      },
-      { status: 500 }
-    );
+    return sendError("An unexpected error occurred. Please try again later.", 500);
+
   }
 }
 
 export async function OPTIONS() {
-  return NextResponse.json(
-    {},
-    {
-      status: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-    }
-  );
+  return sendSuccess({}, 200, undefined, {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  });
 }

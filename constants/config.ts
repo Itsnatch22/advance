@@ -182,9 +182,27 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
- * Format currency
+ * Format currency with cached Intl.NumberFormat instances to avoid
+ * recreating formatters on every call (small but measurable perf win).
  */
+const _formatterCache: Record<string, Intl.NumberFormat> = {};
+
 export function formatCurrency(amount: number, currency: "USD" | "KES" = "USD"): string {
-  const symbol = currency === "USD" ? "$" : "KES ";
-  return `${symbol}${amount.toLocaleString()}`;
+  const key = currency;
+  if (!_formatterCache[key]) {
+    const opts: Intl.NumberFormatOptions = {
+      style: "currency",
+      currency: currency === "USD" ? "USD" : "KES",
+      maximumFractionDigits: 0,
+      currencyDisplay: "symbol",
+    };
+    _formatterCache[key] = new Intl.NumberFormat(undefined, opts);
+  }
+  try {
+    return _formatterCache[key].format(amount);
+  } catch {
+    // Fallback: simple localized number with currency prefix
+    const symbol = currency === "USD" ? "$" : "KES ";
+    return `${symbol}${amount.toLocaleString()}`;
+  }
 }

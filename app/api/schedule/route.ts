@@ -4,8 +4,9 @@ import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import MeetingConfirmation from "@/emails/MeetingConfirmation";
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
+import { EMAIL_CONFIG } from '@/constants/config';
 
-const ADMIN_EMAIL = "support@eaziwage.com";
+const ADMIN_EMAIL = EMAIL_CONFIG.SUPPORT_EMAIL;
 
 const scheduleSchema = z.object({
   userEmail: z.string().trim().refine(
@@ -80,7 +81,7 @@ export async function POST(request: NextRequest) {
     );
 
     await resend.emails.send({
-      from: "EaziWage <meetings@eaziwage.com>",
+      from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
       to: validatedData.userEmail,
       subject: "Meeting Confirmed - EaziWage",
       react: MeetingConfirmation({
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
     });
 
     await resend.emails.send({
-      from: "EaziWage <meetings@eaziwage.com>",
+      from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
       to: ADMIN_EMAIL,
       subject: "New Meeting Scheduled - EaziWage",
       react: MeetingConfirmation({

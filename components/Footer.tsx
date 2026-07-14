@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { EMAIL_CONFIG } from '@/constants/config';
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "./ui";
 
@@ -412,8 +413,8 @@ export default function Footer() {
               {[
                 {
                   icon: Mail,
-                  href: "mailto:support@eaziwage.com",
-                  text: "support@eaziwage.com",
+                                  href: `mailto:${EMAIL_CONFIG.SUPPORT_EMAIL}`,
+                                  text: EMAIL_CONFIG.SUPPORT_EMAIL,
                 },
                 {
                   icon: MapPin,

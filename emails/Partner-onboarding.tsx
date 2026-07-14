@@ -6,6 +6,7 @@ import {
   Link,
 } from "@react-email/components";
 import  EmailLayout  from "./EmailLayout";
+import { EMAIL_CONFIG } from '@/constants/config';
 
 interface PartnerOnboardingEmailProps {
   contactName: string;
@@ -69,8 +70,8 @@ export default function PartnerOnboardingEmail({
         <Text style={text}>
           If you have any urgent questions, please don't hesitate to reach
           out to us at{" "}
-          <Link href="mailto:partnerships@eaziwage.com" style={link}>
-            partnerships@eaziwage.com
+          <Link href={`mailto:${EMAIL_CONFIG.PARTNERSHIPS_SENDER}`} style={link}>
+            {EMAIL_CONFIG.PARTNERSHIPS_SENDER}
           </Link>
           .
         </Text>

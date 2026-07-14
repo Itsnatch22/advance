@@ -19,6 +19,7 @@ import {
 import Lottie from "lottie-react";
 import Startup from "@/public/Startup.json";
 import { GridSystem } from "@/components/grid";
+import { EMAIL_CONFIG } from '@/constants/config';
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";
 
@@ -132,10 +133,10 @@ export default function CareersPage() {
             Want early access?
           </span>
           <Link
-            href="mailto:support@eaziwage.com"
+            href={`mailto:${EMAIL_CONFIG.SUPPORT_EMAIL}`}
             className="group relative flex items-center gap-3 rounded-2xl bg-slate-900 px-8 py-4 font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-green-600"
           >
-            <span>support@eaziwage.com</span>
+            <span>{EMAIL_CONFIG.SUPPORT_EMAIL}</span>
             <ArrowUpRight
               size={20}
               className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"

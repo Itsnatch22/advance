@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
 import { escalateLimiter, checkRateLimit } from "@/lib/security/rate-limit";
+import { EMAIL_CONFIG } from '@/constants/config';
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -44,8 +45,8 @@ export async function POST(req: NextRequest) {
     }
 
     await resend.emails.send({
-      from: "Wiza Chat <noreply@eaziwage.com>",
-      to: "support@eaziwage.com",
+          from: `Wiza Chat <${EMAIL_CONFIG.SENDER_ADDRESS}>`,
+          to: EMAIL_CONFIG.SUPPORT_EMAIL,
       replyTo: email,
       subject: `Chat escalation from ${safeName}`,
       html: `

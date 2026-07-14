@@ -5,7 +5,7 @@
 
 ---
 
-## 1) Apply database migrations (High — one-time)
+## 1) Apply database migrations (High — one-time) *Done🟢*
 - Apply all new Supabase migrations in staging/production in this order:
   1. 20260714000000_campaign_schedules.sql (scheduling table + scheduled_job_id)
   2. 20260714000300_coverage_countries.sql (coverage persistence)
@@ -21,9 +21,9 @@
 
 ## 3) Webhook operational setup (High)
 - Configure and register provider webhooks:
-  - Resend -> POST /api/webhooks/resend, set RESEND_WEBHOOK_SECRET
-  - Calendly -> POST /api/webhooks (existing calendly handler), set CALENDLY_WEBHOOK_SIGNING_KEY
-- Ensure service role key in env is present for webhook handlers to update DB rows.
+  - Resend -> POST /api/webhooks/resend, set RESEND_WEBHOOK_SECRET *Added*
+  - Calendly -> POST /api/webhooks (existing calendly handler), set CALENDLY_WEBHOOK_SIGNING_KEY *Already set*
+- Ensure service role key in env is present for webhook handlers to update DB rows. *Already set*
 - Create alerting/monitoring for webhook failures (log + retry metrics).
 
 ## 4) Admin UI & Auth hardening (Medium)

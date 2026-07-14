@@ -1,6 +1,7 @@
 import { task, logger } from '@trigger.dev/sdk/v3';
 import { createClient } from '@supabase/supabase-js';
 import { generateSummary } from '@/lib/ai/gemini';
+import { EMAIL_CONFIG } from '@/constants/config';
 import type { SummarizeJobPayload } from '@/types/wiza';
 
 
@@ -80,7 +81,7 @@ export const summarizeWizaSession = task({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from:    'Wiza <wiza@eaziwage.com>',
+        from:    `Wiza <${EMAIL_CONFIG.WIZA_SENDER}>`,
           to:      send_to_email,
           subject: 'Your Wiza session summary',
           html: `

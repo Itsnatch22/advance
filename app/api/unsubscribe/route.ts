@@ -5,6 +5,7 @@ import { Resend } from "resend";
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
 import { verifyUnsubscribeToken } from "@/server/utils/unsubscribeToken";
 import UnsubscribeConfirmation from "@/emails/UnsubscribeConfirmation";
+import { EMAIL_CONFIG } from '@/constants/config';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -34,7 +35,7 @@ async function sendConfirmationEmail(email: string, product: string): Promise<vo
   }
 
   const { error } = await resend.emails.send({
-    from: "EaziWage <noreply@eaziwage.com>",
+  from: `EaziWage <${EMAIL_CONFIG.SENDER_ADDRESS}>`,
     to: email,
     subject: `Unsubscription confirmed`,
     react: UnsubscribeConfirmation({ email, product, resubscribeUrl: APP_URL }),

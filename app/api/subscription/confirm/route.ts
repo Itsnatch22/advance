@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import SubscriptionNotification from "@/emails/SubscriptionNotification";
+import { EMAIL_CONFIG } from '@/constants/config';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
     if (resend) {
       try {
         await resend.emails.send({
-          from: "EaziWage <newsletter@eaziwage.com>",
+                  from: `EaziWage <${EMAIL_CONFIG.NEWSLETTER_SENDER}>`,
           to: subscription.email,
           subject: "Welcome to EaziWage Updates! 🎉",
           react: SubscriptionNotification({ email: subscription.email }),

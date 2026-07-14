@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import SalesNotification from "@/emails/SalesNotification";
+import { EMAIL_CONFIG } from '@/constants/config';
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit"; 
 
 const salesSchema = z.object({
@@ -107,8 +108,8 @@ export async function POST(request: NextRequest) {
 
     
     await resend.emails.send({
-      from: "sales@eaziwage.com",
-      to: "support@eaziwage.com",
+          from: EMAIL_CONFIG.SALES_SENDER,
+          to: EMAIL_CONFIG.SUPPORT_EMAIL,
       subject: "New Sales Lead",
       react: SalesNotification({
         name: validatedData.name,

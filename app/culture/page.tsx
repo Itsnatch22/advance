@@ -7,6 +7,7 @@ import {
 import { ArrowUpRight, Code2, Coffee, Rocket, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import Typed from "typed.js";
+import { EMAIL_CONFIG } from '@/constants/config';
 import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";
@@ -114,10 +115,10 @@ export default function CulturePage() {
               transition={{ delay: 1.4 }}
             >
               <Link
-                href="mailto:support@eaziwage.com"
+                href={`mailto:${EMAIL_CONFIG.SUPPORT_EMAIL}`}
                 className="group inline-flex items-center gap-3 rounded-2xl bg-slate-900 px-8 py-4 font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-green-600 hover:shadow-green-500/25"
               >
-                <span>support@eaziwage.com</span>
+                <span>{EMAIL_CONFIG.SUPPORT_EMAIL}</span>
                 <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
               </Link>
             </motion.div>

@@ -10,6 +10,7 @@ import {
   Hr as InnerHr,
 } from "@react-email/components";
 import EmailLayout from "./EmailLayout";
+import { EMAIL_CONFIG } from '@/constants/config';
 
 const PRODUCT_LABELS: Record<string, string> = {
   newsletter: "Newsletter",
@@ -81,7 +82,7 @@ export default function UnsubscribeConfirmation({
                 <InnerHr className="border-slate-100 mt-6 mb-4" />
 
                 <InnerText className="text-xs text-slate-400 text-center">
-                  EaziWage · Nairobi, Kenya · support@eaziwage.com
+                  EaziWage · Nairobi, Kenya · {EMAIL_CONFIG.SUPPORT_EMAIL}
                 </InnerText>
               </InnerSection>
             </InnerContainer>

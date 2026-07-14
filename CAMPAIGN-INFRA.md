@@ -1,56 +1,32 @@
-# Campaign Infra — Updated Briefing
+# Campaign Infra — Copilot Briefing
 
-Status: recent implementation pass completed for campaigns, email delivery, webhooks, and admin audit logs. This file summarizes what's been implemented and the remaining infra/dev tasks to close the loop.
+Database is done. Migrations applied, RLS on all 7 tables, FK fixed, functions patched. This briefing is app-code only.
 
-## Implemented (already in repo)
-- Admin audit logging: `lib/admin/audit.ts` + `admin_audit_logs` migration added; campaign send now writes a `campaign.send` audit entry on completion.
-- Campaign scheduling: `supabase/migrations/20260714000000_campaign_schedules.sql` recreated (idempotent) and `email_campaign_schedules` table added with status, locking, and indexes.
-- Trigger tasks: `trigger/campaign-send.ts` updated to write provider_message_id to `email_campaign_logs` and to call `logAdminAction(...)` after a send completes.
-- Webhook dispatcher and handlers: unified `/api/webhooks/receive` + provider handlers (Resend handler implemented at `/api/webhooks/resend`); Calendly handler present. Delivery status updates map via `provider_message_id`.
-- Admin UI: lightweight admin audit viewer implemented at `/admin/audit-logs` (server-side page that reads `ADMIN_UI_TOKEN` cookie) and retention migration + cleanup function `cleanup_admin_audit_logs()` added.
+## 1. Wire audit logging into recipient-lists routes
+`logAdminAction` exists (`audit.ts`) and writes to `admin_audit_logs`. The recipient-lists routes don't call it. Add it to all three:
 
-## Remaining Action Items (priority order)
+- `POST /admin/recipient-lists` → after list insert succeeds:
+  `logAdminAction(user.id, 'recipient_list.create', { objectType: 'recipient_list', objectId: list.id, meta: { name, memberCount: emails?.length ?? 0 } })`
+- `PATCH /admin/recipient-lists/[id]` → after update succeeds:
+  `logAdminAction(user.id, 'recipient_list.update', { objectType: 'recipient_list', objectId: id, meta: { updates, emailsReplaced: !!parsed.data.emails } })`
+- `DELETE /admin/recipient-lists/[id]` → after delete succeeds, before returning 204:
+  `logAdminAction(user.id, 'recipient_list.delete', { objectType: 'recipient_list', objectId: id })`
 
-1) Recipient-lists audit wiring (Dev)
-- Add `logAdminAction` calls to recipient-list CRUD handlers as originally specified:
-  - After create: `'recipient_list.create'` with meta { name, memberCount }
-  - After update: `'recipient_list.update'` with meta { updates, emailsReplaced }
-  - After delete: `'recipient_list.delete'`
-- Keep calls fire-and-forget; they may log HTTP-visible warnings if insertion fails.
+`user` is already in scope in all three handlers via `getAuthenticatedAdmin`. Fire-and-forget is fine — don't block the response on it, but don't swallow errors silently either; `logAdminAction` already logs its own failures.
 
-2) Decide & (optionally) wire recipient_lists into send flow (Product + Dev)
-- Option A (defer): Leave `recipient_lists` as admin-managed but unused by send API (phase 2).
-- Option B (implement): Add `listId` to sendSchema and, when present, resolve recipients from `recipient_list_members` (join on `newsletter_subscriptions` if needed) before batching. Only implement if product confirms.
+## 2. Fix the FK the schema now enforces
+`recipient_list_members.subscriber_id` is now a real FK to `newsletter_subscriptions(id)`. Nothing currently writes it — both `POST` and `PATCH` build members as `{ list_id, email }` only, so it stays NULL, which is valid. No crash risk. But if you ever want list members linked back to real subscribers, that's the join point — not required for this pass, just don't be surprised it's constrained now.
 
-3) Scheduler deployment & mapping (Infra + Dev)
-- Deploy Trigger.dev jobs or configure pg_cron/external runner to poll `email_campaign_schedules`.
-- When scheduling via an external scheduler, set `scheduled_job_id` on the `email_campaigns` row if you want cross-reference to the external job.
-- Cron pattern for polling example: every minute, `SELECT * FROM email_campaign_schedules WHERE status='scheduled' AND scheduled_at <= now() ORDER BY scheduled_at LIMIT 50` then enqueue sends and set status to `queued`/`running`.
+## 3. Decide: is `recipient_lists` actually used yet?
+`newsletter/send/route.ts` never queries `recipient_lists` — it takes a raw `recipients` array or falls back to all of `newsletter_subscriptions`. The list CRUD you built has no consumer. Either:
+- (a) it's phase 2, leave it, or
+- (b) wire it now: add an optional `listId` to `sendSchema`, and when present, resolve `recipients` by joining `recipient_list_members` on that `list_id` before the batch-send loop.
 
-4) Webhook ops & secrets (Infra)
-- Register provider webhooks:
-  - Resend -> `/api/webhooks/resend`, set `RESEND_WEBHOOK_SECRET`
-  - Calendly -> existing endpoint, set `CALENDLY_WEBHOOK_SIGNING_KEY`
-- Ensure service role key is available to webhook handlers so they can update DB rows.
+Don't build (b) unless told to — flagging it so it doesn't get shipped half-done.
 
-5) Admin UI auth convergence (Security)
-- Current state: server-side audit page uses `ADMIN_UI_TOKEN` cookie check. Other admin APIs use Supabase auth + `getAuthenticatedAdmin`.
-- Recommended: migrate admin UI to the same Supabase-based auth (or implement a short-lived signed cookie with rotation) to avoid dual auth models.
+## 4. Auth model inconsistency — not blocking, but fix before this ships wider
+`admin_audit_logs` viewer (`page.tsx`) authenticates via a static `admin_token` cookie checked against `ADMIN_UI_TOKEN`. Every other admin route here (`recipient-lists`, `email_campaigns`) authenticates via Supabase auth + `system_admins` lookup. Two auth models on one product. If `ADMIN_UI_TOKEN` is a long-lived static secret with no per-user revocation, rotate it and consider migrating this page onto the same `getAuthenticatedAdmin` pattern as everything else.
 
-6) Retention & housekeeping (Infra)
-- Schedule `cleanup_admin_audit_logs()` daily via pg_cron or external scheduler. Adjust `admin_audit_logs_retention_settings.retention_days` per compliance.
-
-7) Tests & CI (Dev)
-- Add a focused integration/smoke test: create → schedule → run send (dry) → simulate webhook → assert `email_campaign_logs` and `admin_audit_logs` updated.
-- Run `tsc --noEmit` in CI after migrations are added.
-
-8) Observability (Infra/Dev)
-- Add metrics and alerts for: webhook verification failures, campaign batch failures, scheduler lag, and retention job errors.
-
-## Notes & Decisions (archival)
-- `recipient_list_members.subscriber_id` FK exists; current admin list endpoints do not populate it. If linking lists to subscribers is desired, update create/patch to resolve subscriber ids when present.
-- `newsletter/send/route.ts` still supports raw recipient arrays and falls back to `newsletter_subscriptions`. Do not change without product sign-off.
-
----
-
-If you want, I can open PRs for the recipient-list audit wiring and the optional `listId` send wiring; tell me to proceed and which option (A or B) to implement.  
+## Out of scope — do not touch
+- DB schema, RLS policies, indexes — done, don't regenerate or "improve" them.
+- `newsletter/send/route.ts` rate limiting and batch logic — untouched, working, not part of this pass.

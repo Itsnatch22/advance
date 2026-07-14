@@ -4,6 +4,7 @@ import { supabaseServer } from "@/lib/supabase/supabase-server";
 import noahKnowledge from "@/data/noah_knowledge.json";
 import type { UIMessage } from "ai";
 import { streamWizaReply, buildSystemPrompt, type AttachmentData } from "@/lib/ai/cohere";
+import { EMAIL_CONFIG, COMPANY_CONFIG } from '@/constants/config';
 
 type WebsiteSource = { title: string; route: string; filePath: string };
 type WebsiteContextChunk = { title: string; route: string; content: string };
@@ -13,8 +14,8 @@ type WebsiteContextCache = {
   mtimes: Record<string, number>;
 };
 
-const SUPPORT_EMAIL = "support@eaziwage.com";
-const CONTACT_PAGE = "https://eaziwage.com/contact";
+const SUPPORT_EMAIL = EMAIL_CONFIG.SUPPORT_EMAIL;
+const CONTACT_PAGE = `${COMPANY_CONFIG.HOMEPAGE_URL}/contact`;
 
 const websiteSources: WebsiteSource[] = [
   { title: "Homepage", route: "/", filePath: "app/page.tsx" },

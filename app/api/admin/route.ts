@@ -11,6 +11,8 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
+import { EMAIL_CONFIG } from '@/constants/config';
+
 const DANGEROUS_TAGS =
   /(<(script|iframe|object|embed|base|form)[^>]*>[\s\S]*?<\/\2>|<(script|iframe|object|embed|base|form)[^>]*\/?>)/gi;
 const EVENT_ATTRS = /\s+on\w+\s*=\s*("([^"]*)"|'([^']*)'|[^\s>]+)/gi;
@@ -120,7 +122,7 @@ export async function POST(request: NextRequest) {
       try {
         await resend.batch.send(
           batch.map((to) => ({
-            from: "EaziWage <newsletter@eaziwage.com>",
+            from: `EaziWage <${EMAIL_CONFIG.NEWSLETTER_SENDER}>`,
             to,
             subject,
             html: `<!DOCTYPE html><html><head><meta name="x-apple-disable-message-reformatting"/>${previewText ? `<meta name="description" content="${previewText}"/>` : ""}</head><body>${htmlContent}</body></html>`,

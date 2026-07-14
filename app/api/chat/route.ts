@@ -3,6 +3,7 @@ import {
   createUIMessageStreamResponse,
   type UIMessage,
 } from "ai";
+import { EMAIL_CONFIG } from '@/constants/config';
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/supabase-server";
 import {
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest): Promise<Response> {
           type: "text-delta",
           id,
           delta:
-            "Sorry, something went wrong. Please contact support@eaziwage.com",
+                      `Sorry, something went wrong. Please contact ${EMAIL_CONFIG.SUPPORT_EMAIL}`,
         });
         writer.write({ type: "text-end", id });
         writer.write({ type: "finish" });

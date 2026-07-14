@@ -12,6 +12,7 @@ import {
   Img,
 } from "@react-email/components";
 import type { ReactNode } from "react";
+import { EMAIL_CONFIG, COMPANY_CONFIG } from '@/constants/config';
 
 interface EmailLayoutProps {
   previewText: string;
@@ -56,7 +57,7 @@ export default function EmailLayout({
   showBorderBottom = true,
   showBorderTop = true,
 }: EmailLayoutProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
+  const baseUrl = COMPANY_CONFIG.HOMEPAGE_URL || process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
 
   const main = {
     backgroundColor: bgColor,
@@ -175,7 +176,7 @@ export default function EmailLayout({
                     </Link>
                   </Text>
                   <Text style={footerText}>
-                    Nairobi, Kenya · support@eaziwage.com
+                    Nairobi, Kenya · {EMAIL_CONFIG.SUPPORT_EMAIL}
                   </Text>
                 </>
               )}

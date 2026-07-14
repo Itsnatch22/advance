@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { tasks } from "@trigger.dev/sdk";
 import { generateSummary } from "@/lib/ai/gemini";
 import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
+import { EMAIL_CONFIG } from '@/constants/config';
 import type { summarizeWizaSession } from "@/trigger/wiza-summarize";
 
 // Guard required env vars at startup so errors are clear rather than cryptic
@@ -51,7 +52,7 @@ async function sendEmailDirect(to: string, summary: string): Promise<void> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Wiza <wiza@eaziwage.com>",
+      from: `Wiza <${EMAIL_CONFIG.WIZA_SENDER}>`,
       to,
       subject: "Your Wiza Financial Coaching Summary",
       html: `

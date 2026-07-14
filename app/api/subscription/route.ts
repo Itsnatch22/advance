@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
 import NewsletterConfirmation from "@/emails/NewsletterConfirmation";
+import { EMAIL_CONFIG } from '@/constants/config';
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -138,7 +139,7 @@ export async function POST(request: NextRequest) {
     if (resend) {
       try {
         await resend.emails.send({
-          from: "EaziWage <newsletter@eaziwage.com>",
+          from: `EaziWage <${EMAIL_CONFIG.NEWSLETTER_SENDER}>`,
           to: email,
           subject: "Confirm your EaziWage subscription",
           react: NewsletterConfirmation({ email, confirmUrl }),

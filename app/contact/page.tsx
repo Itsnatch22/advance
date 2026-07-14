@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
+import { EMAIL_CONFIG } from '@/constants/config';
 import { useParallax } from "@/hooks/use-parallax";
 
 /* ----------------------------- validation ----------------------------- */
@@ -206,8 +207,8 @@ export default function ContactPage() {
               <TiltContactCard
                 icon={Mail}
                 label="Email us at"
-                value="support@eaziwage.com"
-                href="mailto:support@eaziwage.com"
+                value={EMAIL_CONFIG.SUPPORT_EMAIL}
+                href={`mailto:${EMAIL_CONFIG.SUPPORT_EMAIL}`}
               />
               <TiltContactCard
                 icon={Phone}

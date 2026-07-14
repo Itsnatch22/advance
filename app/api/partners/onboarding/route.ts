@@ -4,6 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import PartnerOnboardingEmail from "@/emails/Partner-onboarding";
 import PartnerNotificationEmail from "@/emails/PartnerNotification";
+import { EMAIL_CONFIG } from '@/constants/config';
+import { checkRateLimit, contactLimiter } from '@/lib/security/rate-limit';
 
 const partnerFormSchema = z.object({
   partnerType: z.enum(["banking", "enterprise", "technology"]),
@@ -34,6 +36,12 @@ export async function POST(request: NextRequest) {
   const resend = new Resend(resendApiKey);
 
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
+    const rl = await checkRateLimit(contactLimiter, ip);
+    if (!rl.success) {
+      return NextResponse.json({ error: 'Rate limit exceeded. Please try again later.' }, { status: 429, headers: rl.headers });
+    }
+
     const body = await request.json();
 
     const validatedData = partnerFormSchema.parse(body);
@@ -68,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     const emailPromises = [
       resend.emails.send({
-        from: "EaziWage Partnerships <partnerships@eaziwage.com>",
+        from: `EaziWage Partnerships <${EMAIL_CONFIG.PARTNERSHIPS_SENDER}>`,
         to: validatedData.email,
         subject: "Partnership Application Received - EaziWage",
         react: PartnerOnboardingEmail({
@@ -78,8 +86,8 @@ export async function POST(request: NextRequest) {
       }),
 
       resend.emails.send({
-        from: "EaziWage System <noreply@eaziwage.com>",
-        to: "partnerships@eaziwage.com",
+        from: `EaziWage System <${EMAIL_CONFIG.SENDER_ADDRESS}>`,
+                to: EMAIL_CONFIG.PARTNERSHIPS_SENDER,
         subject: `New ${validatedData.partnerType} Partnership Application`,
         react: PartnerNotificationEmail({
           partnerType: validatedData.partnerType,

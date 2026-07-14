@@ -1,4 +1,5 @@
 import  EmailLayout  from "./EmailLayout";
+import { EMAIL_CONFIG } from '@/constants/config';
 import { Section, Heading, Text, Button, Link} from "@react-email/components"
 interface SubscriptionNotificationProps {
   email: string;
@@ -52,8 +53,8 @@ export default function SubscriptionNotification({
 
         <Text style={text}>
           For any questions, reach out to{" "}
-          <Link href="mailto:newsletter@eaziwage.com" style={link}>
-            newsletter@eaziwage.com
+          <Link href={`mailto:${EMAIL_CONFIG.NEWSLETTER_SENDER}`} style={link}>
+            {EMAIL_CONFIG.NEWSLETTER_SENDER}
           </Link>
           .
         </Text>
