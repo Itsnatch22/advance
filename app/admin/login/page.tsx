@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, LogIn, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import FloatingOrb from "@/components/shared/FloatingOrb";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -59,16 +60,36 @@ export default function AdminLoginPage() {
         tryExecute();
       });
 
-      const res = await fetch("/api/admin/auth/login", {
+      const precheck = await fetch("/api/admin/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, honeypot, recaptchaToken }),
+        body: JSON.stringify({ email, honeypot, recaptchaToken }),
       });
 
-      const data = await res.json();
+      const precheckData = await precheck.json();
 
-      if (!res.ok) {
-        setError(data.error || "Invalid credentials");
+      if (!precheck.ok) {
+        setError(precheckData.error || "Unable to sign in right now");
+        return;
+      }
+
+      const supabase = getSupabaseBrowserClient();
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError || !authData.user) {
+        setError("Invalid credentials");
+        return;
+      }
+
+      const meRes = await fetch("/api/admin/me");
+      const me = await meRes.json();
+
+      if (!meRes.ok || !me.isAdmin) {
+        await supabase.auth.signOut();
+        setError("This account is not authorized for admin access");
         return;
       }
 

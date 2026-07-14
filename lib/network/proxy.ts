@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { requireAdminSession } from './admin-guard'
 
 export const LOCALES = ['en-ke', 'en-tz', 'en-ug', 'en-rw'] as const;
 export type Locale = typeof LOCALES[number];
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
+
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+    return requireAdminSession(request)
+  }
 
   if (
     pathname.startsWith('/_next') ||

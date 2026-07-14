@@ -1,7 +1,7 @@
 import { proxy as proxyHandler } from "@/lib/network/proxy";
 import type { NextRequest } from 'next/server';
 
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   return proxyHandler(request);
 }
 
