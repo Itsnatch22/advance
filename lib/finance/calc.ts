@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { getNSSFConfig } from "@/constants/config";
 
 export interface Payload {
   salary: number;
@@ -14,6 +15,8 @@ export interface JsonConfig {
   personalRelief?: number;
   nssf?: {
     tier1?: number;
+    tier1Ceiling?: number;
+    tier1Rate?: number;
     tier2Rate?: number;
     tier2Cap?: number;
     employeeRate?: number;
@@ -58,10 +61,11 @@ export function calc(payload: Payload, cfg: JsonConfig) {
     nssfEmployee = gross * (cfg.nssf.employeeRate ?? 0);
     nssfEmployer = gross * (cfg.nssf.employerRate ?? 0);
   } else if (payload.country === "KE" && cfg.nssf) {
-    const tier1Ceiling = 7000;
-    const tier1Rate = 0.06;
-    const tier2Ceiling = cfg.nssf.tier2Cap ?? 36000;
-    const tier2Rate = cfg.nssf.tier2Rate ?? 0;
+    const nssfConfig = getNSSFConfig(payload.country);
+    const tier1Ceiling = cfg.nssf.tier1Ceiling ?? nssfConfig.tier1Ceiling ?? 0;
+    const tier1Rate = cfg.nssf.tier1Rate ?? nssfConfig.tier1Rate ?? 0;
+    const tier2Ceiling = cfg.nssf.tier2Cap ?? nssfConfig.tier2Cap ?? tier1Ceiling;
+    const tier2Rate = cfg.nssf.tier2Rate ?? nssfConfig.tier2Rate ?? 0;
 
     nssf1 = Math.min(gross, tier1Ceiling) * tier1Rate;
     nssf2 =

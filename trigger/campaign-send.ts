@@ -7,6 +7,7 @@ import {
   interpolate,
   buildCampaignEmailHtml,
 } from "@/lib/campaigns/utils";
+import { EMAIL_CONFIG } from "@/constants/config";
 
 const BATCH_SIZE = 100;
 
@@ -28,8 +29,9 @@ export const sendEmailCampaign = task({
       triggered_by: payload.triggered_by,
     });
 
-    // 1. Lock campaign — atomically transition from "draft"/"scheduled" to "sending"
-    const { data: campaign, error: lockError } = await supabase
+    // 1. Lock campaign. The API route may already have transitioned it to
+    // "sending" before enqueueing this job, so accept that as the lock state.
+    let { data: campaign, error: lockError } = await supabase
       .from("email_campaigns")
       .update({ status: "sending" })
       .in("status", ["draft", "scheduled"])
@@ -38,9 +40,19 @@ export const sendEmailCampaign = task({
       .single();
 
     if (lockError || !campaign) {
-      throw new Error(
-        `Campaign ${payload.campaign_id} not in sendable state or already locked`
-      );
+      const { data: lockedCampaign, error: fetchLockedError } = await supabase
+        .from("email_campaigns")
+        .select()
+        .eq("id", payload.campaign_id)
+        .eq("status", "sending")
+        .single();
+
+      if (fetchLockedError || !lockedCampaign) {
+        throw new Error(
+          `Campaign ${payload.campaign_id} not in sendable state or already locked`
+        );
+      }
+      campaign = lockedCampaign;
     }
 
     logger.info("Campaign locked for sending", {
@@ -49,11 +61,30 @@ export const sendEmailCampaign = task({
     });
 
     // 2. Fetch active confirmed subscribers
-    const { data: subscribers, error: subError } = await supabase
+    const audience = (campaign.audience_filter ?? { segment: "all" }) as {
+      segment?: string;
+      emails?: string[];
+    };
+
+    let subscriberQuery = supabase
       .from("newsletter_subscriptions")
       .select("id, email")
       .eq("status", "active")
       .not("confirmed_at", "is", null);
+
+    if (audience.segment === "manual" && audience.emails?.length) {
+      subscriberQuery = subscriberQuery.in(
+        "email",
+        audience.emails.map((email) => email.toLowerCase())
+      );
+    }
+    if (audience.segment === "recent") {
+      const since = new Date();
+      since.setDate(since.getDate() - 30);
+      subscriberQuery = subscriberQuery.gte("created_at", since.toISOString());
+    }
+
+    const { data: subscribers, error: subError } = await subscriberQuery;
 
     if (subError) {
       throw new Error(`Failed to fetch subscribers: ${subError.message}`);
@@ -141,10 +172,15 @@ export const sendEmailCampaign = task({
       // c. Send batch via Resend and update logs
       try {
         const batchResult = await resend.batch.send(
-          emailsToSend.map((e) => ({
-            from: "EaziWage <newsletter@eaziwage.com>",
+          emailsToSend.map((e, index) => ({
+            from: `EaziWage <${EMAIL_CONFIG.NEWSLETTER_SENDER}>`,
             to: e.to,
-            subject: campaign.subject,
+            subject:
+              campaign.ab_test_subject_b &&
+              campaign.ab_test_percent > 0 &&
+              (offset + index) % 100 < campaign.ab_test_percent
+                ? campaign.ab_test_subject_b
+                : campaign.subject,
             html: e.html,
           }))
         );

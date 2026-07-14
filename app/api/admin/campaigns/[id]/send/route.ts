@@ -4,6 +4,7 @@ import { createRouteHandlerClient } from "@/lib/supabase/route-handler";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { CampaignStatus } from "@/types/campaigns";
+import { logCampaignAudit } from "@/lib/admin/campaigns";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -97,6 +98,13 @@ export async function POST(
     await tasks.trigger("send-email-campaign", {
       campaign_id: id,
       triggered_by: user.id,
+    });
+
+    await logCampaignAudit(admin, {
+      campaignId: id,
+      actorId: user.id,
+      action: "campaign_send_triggered",
+      metadata: { estimated_recipients: count ?? 0 },
     });
 
     return NextResponse.json({

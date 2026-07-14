@@ -3,6 +3,7 @@
 import { useRef, type ChangeEvent } from "react";
 import { Paperclip, X, FileText } from "lucide-react";
 import { cn } from "@/lib/utils/utils";
+import { toast } from "react-hot-toast";
 
 export interface AttachedFile {
   name: string;
@@ -35,11 +36,11 @@ export function FileAttachButton({ onFile, disabled, className }: FileAttachButt
     const file = e.target.files?.[0];
     if (!file) return;
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      alert("Unsupported file type. Supported: images, PDFs, plain text.");
+      toast.error("Unsupported file type. Supported: images, PDFs, plain text.");
       return;
     }
     if (file.size > MAX_BYTES) {
-      alert("File too large. Maximum 10 MB.");
+      toast.error("File too large. Maximum 10 MB.");
       return;
     }
     const reader = new FileReader();

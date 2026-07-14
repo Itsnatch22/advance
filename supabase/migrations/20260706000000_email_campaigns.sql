@@ -36,6 +36,13 @@ CREATE TABLE IF NOT EXISTS public.email_campaigns (
   failed_count        INTEGER     NOT NULL DEFAULT 0
 );
 
+ALTER TABLE public.email_campaigns
+  ADD COLUMN IF NOT EXISTS template_key TEXT,
+  ADD COLUMN IF NOT EXISTS audience_filter JSONB NOT NULL DEFAULT '{"segment":"all"}'::jsonb,
+  ADD COLUMN IF NOT EXISTS ab_test_subject_b TEXT,
+  ADD COLUMN IF NOT EXISTS ab_test_percent INTEGER NOT NULL DEFAULT 0
+    CHECK (ab_test_percent >= 0 AND ab_test_percent <= 50);
+
 -- -------------------------------------------------------------------------
 -- email_campaign_logs
 -- -------------------------------------------------------------------------
@@ -57,6 +64,16 @@ CREATE TABLE IF NOT EXISTS public.email_campaign_logs (
   created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS public.email_campaign_audit_logs (
+  id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  campaign_id         UUID        NOT NULL
+                      REFERENCES public.email_campaigns(id) ON DELETE CASCADE,
+  actor_id            UUID,
+  action              TEXT        NOT NULL,
+  metadata            JSONB       NOT NULL DEFAULT '{}'::jsonb,
+  created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- -------------------------------------------------------------------------
 -- Indexes (performance for list + stats queries)
 -- -------------------------------------------------------------------------
@@ -74,6 +91,9 @@ CREATE INDEX IF NOT EXISTS idx_campaign_logs_recipient
 
 CREATE INDEX IF NOT EXISTS idx_campaign_logs_status
   ON public.email_campaign_logs(delivery_status);
+
+CREATE INDEX IF NOT EXISTS idx_campaign_audit_logs_campaign_id
+  ON public.email_campaign_audit_logs(campaign_id, created_at DESC);
 
 -- -------------------------------------------------------------------------
 -- Auto-update updated_at on email_campaigns
@@ -97,6 +117,7 @@ CREATE OR REPLACE TRIGGER trg_email_campaigns_updated_at
 -- -------------------------------------------------------------------------
 ALTER TABLE public.email_campaigns     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.email_campaign_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.email_campaign_audit_logs ENABLE ROW LEVEL SECURITY;
 
 -- Admins (in system_admins) can read and write campaigns
 CREATE POLICY "admins_manage_campaigns"
@@ -109,6 +130,12 @@ CREATE POLICY "admins_manage_campaigns"
 -- Admins can view delivery logs (read-only; writes use service role)
 CREATE POLICY "admins_view_campaign_logs"
   ON public.email_campaign_logs
+  FOR SELECT
+  TO authenticated
+  USING (EXISTS (SELECT 1 FROM public.system_admins WHERE user_id = auth.uid()));
+
+CREATE POLICY "admins_view_campaign_audit_logs"
+  ON public.email_campaign_audit_logs
   FOR SELECT
   TO authenticated
   USING (EXISTS (SELECT 1 FROM public.system_admins WHERE user_id = auth.uid()));

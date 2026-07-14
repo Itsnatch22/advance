@@ -15,6 +15,13 @@ export interface EmailCampaign {
   total_recipients: number | null;
   sent_count: number;
   failed_count: number;
+  template_key: string | null;
+  audience_filter: {
+    segment?: "all" | "active" | "recent" | "manual";
+    emails?: string[];
+  } | null;
+  ab_test_subject_b: string | null;
+  ab_test_percent: number;
 }
 
 export interface CampaignStats {
@@ -22,6 +29,7 @@ export interface CampaignStats {
   sent_count: number;
   failed_count: number;
   queued_count: number;
+  bounced_count: number;
   delivery_rate: number;
 }
 
@@ -32,5 +40,14 @@ export interface EmailCampaignLog {
   delivery_status: string;
   sent_at: string | null;
   error_message: string | null;
+  created_at: string;
+}
+
+export interface EmailCampaignAuditLog {
+  id: string;
+  campaign_id: string;
+  actor_id: string | null;
+  action: string;
+  metadata: Record<string, unknown>;
   created_at: string;
 }

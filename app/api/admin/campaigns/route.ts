@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
-import { createRouteHandlerClient } from "@/lib/supabase/route-handler";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 import { sanitizeCampaignHtml } from "@/lib/campaigns/utils";
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+import { getAuthenticatedAdmin, logCampaignAudit } from "@/lib/admin/campaigns";
 
 const createSchema = z.object({
   subject: z.string().min(3).max(300),
@@ -14,29 +10,16 @@ const createSchema = z.object({
   html_content: z.string().min(10).max(500_000),
   plain_text_content: z.string().max(500_000).optional(),
   scheduled_at: z.string().datetime().optional(),
+  template_key: z.string().max(80).nullable().optional(),
+  audience_filter: z
+    .object({
+      segment: z.enum(["all", "active", "recent", "manual"]).default("all"),
+      emails: z.array(z.string().email()).max(500).optional(),
+    })
+    .optional(),
+  ab_test_subject_b: z.string().min(3).max(300).nullable().optional(),
+  ab_test_percent: z.number().int().min(0).max(50).optional(),
 });
-
-async function getAuthenticatedAdmin(request: NextRequest) {
-  const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-  if (authError || !user) return { error: "Unauthorized", status: 401 as const };
-
-  const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  const { data: adminRecord, error: adminError } = await admin
-    .from("system_admins")
-    .select("id")
-    .eq("user_id", user.id)
-    .single();
-
-  if (adminError || !adminRecord) {
-    return { error: "Forbidden — admins only", status: 403 as const };
-  }
-
-  return { user, admin };
-}
 
 export async function GET(request: NextRequest) {
   const ip =
@@ -95,7 +78,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { subject, title, plain_text_content, scheduled_at } = parsed.data;
+    const {
+      subject,
+      title,
+      plain_text_content,
+      scheduled_at,
+      template_key,
+      audience_filter,
+      ab_test_subject_b,
+      ab_test_percent,
+    } = parsed.data;
     const html_content = sanitizeCampaignHtml(parsed.data.html_content);
 
     const { data: campaign, error } = await admin
@@ -106,13 +98,24 @@ export async function POST(request: NextRequest) {
         html_content,
         plain_text_content: plain_text_content ?? null,
         scheduled_at: scheduled_at ?? null,
-        status: "draft",
+        status: scheduled_at ? "scheduled" : "draft",
+        template_key: template_key ?? null,
+        audience_filter: audience_filter ?? { segment: "all" },
+        ab_test_subject_b: ab_test_subject_b ?? null,
+        ab_test_percent: ab_test_percent ?? 0,
         created_by: user.id,
       })
       .select()
       .single();
 
     if (error) throw error;
+
+    await logCampaignAudit(admin, {
+      campaignId: campaign.id,
+      actorId: user.id,
+      action: scheduled_at ? "campaign_scheduled" : "campaign_created",
+      metadata: { status: scheduled_at ? "scheduled" : "draft" },
+    });
 
     return NextResponse.json({ campaign }, { status: 201 });
   } catch (err) {

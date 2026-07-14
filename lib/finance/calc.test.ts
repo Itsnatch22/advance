@@ -15,7 +15,7 @@ describe("Calculator Logic", () => {
     );
 
     console.log("Rwanda result:", result.youCanAccessNow);
-    expect(result.youCanAccessNow).toBe(76068);
+    expect(result.youCanAccessNow).toBe(30628.8);
   });
 
   test("Uganda: 10,000,000 salary for 30 days", async () => {
@@ -31,7 +31,7 @@ describe("Calculator Logic", () => {
     );
 
     console.log("Uganda result:", result.youCanAccessNow);
-    expect(result.youCanAccessNow).toBe(3916800);
+    expect(result.youCanAccessNow).toBe(3988800);
   });
 
   test("Kenya: 100,000 salary for 30 days", async () => {

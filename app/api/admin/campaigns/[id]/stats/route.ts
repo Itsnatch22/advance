@@ -95,6 +95,15 @@ export async function GET(
 
     if (recentError) throw recentError;
 
+    const { data: audit_logs, error: auditError } = await admin
+      .from("email_campaign_audit_logs")
+      .select("*")
+      .eq("campaign_id", id)
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (auditError && auditError.code !== "42P01") throw auditError;
+
     return NextResponse.json({
       campaign,
       stats: {
@@ -106,6 +115,7 @@ export async function GET(
         delivery_rate,
       },
       recent_logs: recent_logs ?? [],
+      audit_logs: auditError?.code === "42P01" ? [] : (audit_logs ?? []),
     });
   } catch (err) {
     console.error("[campaigns/[id]/stats][GET] error:", err);

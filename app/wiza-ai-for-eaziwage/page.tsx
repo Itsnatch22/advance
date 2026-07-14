@@ -16,7 +16,7 @@ import {
   MessagesSquare,
   ChevronLeft,
 } from "lucide-react";
-import { useWizaCoachChat, type DeliveryChannel, type AttachmentData } from "@/hooks/useWizaCoachChat";
+import { useWizaChat, type DeliveryChannel, type AttachmentData } from "@/hooks/useWizaChat";
 import { VoiceButton } from "@/components/shared/VoiceButton";
 import { FileAttachButton, FilePreview, type AttachedFile } from "@/components/shared/FileAttachButton";
 import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
@@ -275,7 +275,7 @@ export default function Wiza() {
     sendMessage,
     requestSummary,
     newSession,
-  } = useWizaCoachChat();
+  } = useWizaChat({ mode: "coach" });
 
   const [input, setInput] = useState("");
   const [showSummaryModal, setShowSummaryModal] = useState(false);
@@ -319,6 +319,7 @@ export default function Wiza() {
   };
 
   const handleSummaryConfirm = async (channel: DeliveryChannel, address?: string) => {
+    if (!requestSummary) return;
     setShowSummaryModal(false);
     const msg = await requestSummary(channel, address);
     setSummaryStatus(msg);

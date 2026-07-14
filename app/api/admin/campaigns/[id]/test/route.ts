@@ -9,6 +9,7 @@ import {
   buildCampaignEmailHtml,
   interpolate,
 } from "@/lib/campaigns/utils";
+import { EMAIL_CONFIG } from "@/constants/config";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -18,7 +19,10 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 const testSchema = z.object({
-  recipient_email: z.string().email(),
+  recipient_email: z.string().email().optional(),
+  email: z.string().email().optional(),
+}).refine((value) => value.recipient_email || value.email, {
+  message: "Recipient email is required",
 });
 
 async function getAuthenticatedAdmin(request: NextRequest) {
@@ -73,7 +77,7 @@ export async function POST(
       );
     }
 
-    const { recipient_email } = parsed.data;
+    const recipient_email = parsed.data.recipient_email ?? parsed.data.email!;
 
     // Fetch campaign
     const { data: campaign, error: fetchError } = await admin
@@ -107,7 +111,7 @@ export async function POST(
     );
 
     const { error: sendError } = await resend.emails.send({
-      from: "EaziWage Test <noreply@eaziwage.com>",
+      from: `EaziWage Test <${EMAIL_CONFIG.SENDER_ADDRESS}>`,
       to: recipient_email,
       subject: `[TEST] ${campaign.subject}`,
       html: emailHtml,

@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { publicReadLimiter, checkRateLimit } from "@/lib/security/rate-limit";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-const supabase = supabaseUrl && supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey)
-  : null;
+import { supabaseServer } from "@/lib/supabase/supabase-server";
 
 const CODE_TO_NAME: Record<string, string> = {
   KE: "Kenya",
@@ -23,41 +16,41 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429, headers: rl.headers });
   }
 
-    if (!supabase) {
-      return NextResponse.json(
-        { error: "Supabase is not configured for public read access." },
-        { status: 503 }
-      );
-    }
+  try {
+    const counts: Record<string, number> = {
+      Kenya: 0,
+      Uganda: 0,
+      Tanzania: 0,
+      Rwanda: 0,
+    };
 
-    const countries = ["KE", "UG", "TZ", "RW"];
-    
-    try {
-        const results = await Promise.all(
-        countries.map((code) =>
-            supabase
-            .from("employees")
-            .select("*", { count: "exact", head: true })
-            .eq("status", "Active")
-            .eq("country", code)
-        )
-        );
+    const results = await Promise.all(
+      Object.entries(CODE_TO_NAME).map(async ([code, name]) => {
+        const { count, error } = await supabaseServer
+          .from("employees")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "Active")
+          .eq("country", code);
 
-        const counts: Record<string, number> = {};
-        countries.forEach((code, i) => {
-            const name = CODE_TO_NAME[code];
-            counts[name] = results[i].count ?? 0;
-        });
+        if (error) throw error;
+        return [name, count ?? 0] as const;
+      })
+    );
 
-        return NextResponse.json(counts, {
-            headers: {
-                "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
-            },
-        });
-    } catch (error: unknown) {
-        return NextResponse.json(
-            { error: error instanceof Error ? error.message : "Internal Server Error" },
-            { status: 500 }
-        );
-    }
+    results.forEach(([name, count]) => {
+      counts[name] = count;
+    });
+
+    return NextResponse.json(counts, {
+      headers: {
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+      },
+    });
+  } catch (error: unknown) {
+    console.error("[coverage] Query error:", error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }

@@ -8,6 +8,7 @@ import {
   type CountryCode,
 } from "@/lib/currency/currency";
 import { TiltCard } from "@/components/shared/TiltCard";
+import { PLATFORM_CONFIG } from "@/constants/config";
 
 import {
   BarChart,
@@ -227,7 +228,7 @@ export default function Calculator() {
     }
   }, [allowancesAmount]);
 
-  const feePercent = 5;
+  const feePercent = PLATFORM_CONFIG.FEE_PERCENT * 100;
   const percentOfCycle = useMemo(
     () => Math.min(100, Math.round((daysWorked / cycleDays) * 100)),
     [daysWorked]
@@ -330,7 +331,7 @@ export default function Calculator() {
       const net = Number(data.netPay ?? data.net ?? 0);
 
       const accessCap = (net * accessCapPercent) / 100;
-      const platformFee = (accessCap * 5) / 100;
+      const platformFee = (accessCap * feePercent) / 100;
       const accessibleNow = accessCap - platformFee;
 
       const mapped: CalcResult = {
@@ -563,6 +564,23 @@ export default function Calculator() {
               <p className="mt-1 font-serif text-3xl font-extrabold text-emerald-700">
                 {currencySymbol} {fmt(result.accessibleNow, locale)}
               </p>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-slate-200 bg-white/70 p-4 text-xs leading-relaxed text-slate-600">
+              <p className="mb-2 font-semibold uppercase tracking-wide text-slate-500">
+                Formula
+              </p>
+              <div className="space-y-1.5">
+                <p>
+                  Accrued earnings = gross income × days worked ÷ {cycleDays}
+                </p>
+                <p>
+                  Access cap = net earnings × {result.accessCapPercent}%
+                </p>
+                <p>
+                  Available now = access cap − platform fee ({feePercent}%)
+                </p>
+              </div>
             </div>
 
             <div className="mt-3 text-center text-xs text-slate-500">

@@ -22,10 +22,10 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils/utils";
 import {
-  useWizaWidgetChat,
+  useWizaChat,
   type PublicSession,
   type AttachmentData,
-} from "@/hooks/useWizaWidgetChat";
+} from "@/hooks/useWizaChat";
 import { VoiceButton } from "@/components/shared/VoiceButton";
 import { FileAttachButton, FilePreview, type AttachedFile } from "@/components/shared/FileAttachButton";
 import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
@@ -287,27 +287,26 @@ export default function WizaChat() {
   const {
     messages,
     sendMessage,
-    status,
+    streaming,
     error,
     regenerate,
-    isLoading,
     sessionId,
-    sessions,
+    sessions = [],
     loadingHistory,
     loadSession,
     deleteSession,
-    startNewSession,
+    newSession,
     refreshSessions,
-  } = useWizaWidgetChat();
+  } = useWizaChat({ mode: "widget" });
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, status, isOpen, isMinimized]);
+  }, [messages, streaming, isOpen, isMinimized]);
 
   useEffect(() => {
-    if (status === "ready") {
+    if (!streaming) {
       const last = messages[messages.length - 1];
       if (last && last.role !== "user") {
         const text = getMessageText(last);
@@ -317,10 +316,10 @@ export default function WizaChat() {
         }
       }
     }
-  }, [messages, status]);
+  }, [messages, streaming]);
 
   useEffect(() => {
-    if (isOpen) refreshSessions();
+    if (isOpen) refreshSessions?.();
   }, [isOpen, refreshSessions]);
 
   const toggleChat = () => {
@@ -330,7 +329,7 @@ export default function WizaChat() {
 
   const handleSend = async (e?: FormEvent) => {
     e?.preventDefault();
-    if ((!inputValue.trim() && !attachment) || isLoading) return;
+    if ((!inputValue.trim() && !attachment) || streaming) return;
     const text = inputValue;
     const file = attachment;
     setInputValue("");
@@ -341,14 +340,14 @@ export default function WizaChat() {
       ? { mimeType: file.mimeType, base64: file.base64 }
       : undefined;
     try {
-      await sendMessage({ text, attachment: att });
+      await sendMessage(text, att);
     } catch {}
   };
 
   const handleGifSelect = async (gif: GifResult) => {
     setShowGifPicker(false);
     try {
-      await sendMessage({ text: `__gif__${gif.url}` });
+      await sendMessage(`__gif__${gif.url}`);
     } catch {}
   };
 
@@ -360,7 +359,7 @@ export default function WizaChat() {
   };
 
   const handleLoadSession = async (sid: string) => {
-    await loadSession(sid);
+    await loadSession?.(sid);
     setShowHistory(false);
   };
 
@@ -406,7 +405,7 @@ export default function WizaChat() {
                     </span>
                     <button
                       onClick={() => {
-                        startNewSession();
+                        newSession();
                         setShowHistory(false);
                       }}
                       className="flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 transition-colors hover:bg-emerald-700"
@@ -434,7 +433,7 @@ export default function WizaChat() {
                           session={s}
                           active={s.id === sessionId}
                           onLoad={() => handleLoadSession(s.id)}
-                          onDelete={() => deleteSession(s.id)}
+                          onDelete={() => deleteSession?.(s.id)}
                         />
                       ))
                     )}
@@ -467,7 +466,7 @@ export default function WizaChat() {
                     </p>
                     {!isMinimized && (
                       <p className="mt-0.5 text-[10px] font-medium tracking-widest text-emerald-200 uppercase">
-                        {isLoading ? "Thinking…" : "Always online"}
+                        {streaming ? "Thinking…" : "Always online"}
                       </p>
                     )}
                   </div>
@@ -600,7 +599,7 @@ export default function WizaChat() {
                     })}
 
                     {/* Thinking indicator */}
-                    {isLoading && (
+                    {streaming && (
                       <motion.div
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -618,14 +617,14 @@ export default function WizaChat() {
                     )}
 
                     {/* Error state */}
-                    {error && !isLoading && (
+                    {error && !streaming && (
                       <div className="flex justify-center">
                         <div className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 dark:border-red-900 dark:bg-red-950/40">
                           <p className="text-xs text-red-500">
                             Something went wrong.
                           </p>
                           <button
-                            onClick={() => regenerate()}
+                            onClick={() => regenerate?.()}
                             className="flex items-center gap-1 text-xs font-semibold text-red-600 hover:underline"
                           >
                             <RefreshCcw className="h-2.5 w-2.5" /> Retry
@@ -666,13 +665,13 @@ export default function WizaChat() {
                     >
                       <FileAttachButton
                         onFile={setAttachment}
-                        disabled={isLoading}
+                        disabled={streaming}
                         className="h-7 w-7 shrink-0"
                       />
                       <button
                         type="button"
                         onClick={() => setShowGifPicker((v) => !v)}
-                        disabled={isLoading}
+                        disabled={streaming}
                         title="Send a GIF"
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-40"
                       >
@@ -682,7 +681,7 @@ export default function WizaChat() {
                         onTranscript={(t) =>
                           setInputValue((prev) => (prev ? `${prev} ${t}` : t))
                         }
-                        disabled={isLoading}
+                        disabled={streaming}
                         className="h-7 w-7 shrink-0"
                       />
                       <Input
@@ -690,12 +689,12 @@ export default function WizaChat() {
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={attachment ? "Add a caption…" : "Type a message…"}
-                        disabled={isLoading}
+                        disabled={streaming}
                         className="h-8 flex-1 border-0 bg-transparent px-0 text-sm text-slate-900 shadow-none placeholder:text-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-white"
                       />
                       <button
                         type="submit"
-                        disabled={isLoading || (!inputValue.trim() && !attachment)}
+                        disabled={streaming || (!inputValue.trim() && !attachment)}
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-600 transition-colors hover:bg-emerald-700 disabled:opacity-30"
                       >
                         <Send className="h-3.5 w-3.5 text-white" />
@@ -707,7 +706,7 @@ export default function WizaChat() {
                   <div className="flex items-center justify-between px-4 pb-2.5">
                     <button
                       onClick={() => {
-                        startNewSession();
+                        newSession();
                         setShowHistory(false);
                       }}
                       className="flex items-center gap-1 text-[9px] font-bold tracking-widest text-slate-400 uppercase transition-colors hover:text-emerald-600"

@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
-import { createRouteHandlerClient } from "@/lib/supabase/route-handler";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 import { sanitizeCampaignHtml } from "@/lib/campaigns/utils";
 import type { CampaignStatus } from "@/types/campaigns";
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+import { getAuthenticatedAdmin, logCampaignAudit } from "@/lib/admin/campaigns";
 
 const updateSchema = z.object({
   subject: z.string().min(3).max(300).optional(),
@@ -15,29 +11,17 @@ const updateSchema = z.object({
   html_content: z.string().min(10).max(500_000).optional(),
   plain_text_content: z.string().max(500_000).nullable().optional(),
   scheduled_at: z.string().datetime().nullable().optional(),
+  template_key: z.string().max(80).nullable().optional(),
+  audience_filter: z
+    .object({
+      segment: z.enum(["all", "active", "recent", "manual"]).default("all"),
+      emails: z.array(z.string().email()).max(500).optional(),
+    })
+    .nullable()
+    .optional(),
+  ab_test_subject_b: z.string().min(3).max(300).nullable().optional(),
+  ab_test_percent: z.number().int().min(0).max(50).optional(),
 });
-
-async function getAuthenticatedAdmin(request: NextRequest) {
-  const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-  if (authError || !user) return { error: "Unauthorized", status: 401 as const };
-
-  const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  const { data: adminRecord, error: adminError } = await admin
-    .from("system_admins")
-    .select("id")
-    .eq("user_id", user.id)
-    .single();
-
-  if (adminError || !adminRecord) {
-    return { error: "Forbidden — admins only", status: 403 as const };
-  }
-
-  return { user, admin };
-}
 
 export async function GET(
   request: NextRequest,
@@ -56,7 +40,7 @@ export async function GET(
   if ("error" in auth)
     return NextResponse.json({ error: auth.error }, { status: auth.status });
 
-  const { admin } = auth;
+  const { user, admin } = auth;
   const { id } = await params;
 
   try {
@@ -94,7 +78,7 @@ export async function PATCH(
   if ("error" in auth)
     return NextResponse.json({ error: auth.error }, { status: auth.status });
 
-  const { admin } = auth;
+  const { admin, user } = auth;
   const { id } = await params;
 
   try {
@@ -136,6 +120,17 @@ export async function PATCH(
       updates.plain_text_content = parsed.data.plain_text_content ?? null;
     if ("scheduled_at" in parsed.data)
       updates.scheduled_at = parsed.data.scheduled_at ?? null;
+    if ("template_key" in parsed.data)
+      updates.template_key = parsed.data.template_key ?? null;
+    if ("audience_filter" in parsed.data)
+      updates.audience_filter = parsed.data.audience_filter ?? { segment: "all" };
+    if ("ab_test_subject_b" in parsed.data)
+      updates.ab_test_subject_b = parsed.data.ab_test_subject_b ?? null;
+    if (parsed.data.ab_test_percent !== undefined)
+      updates.ab_test_percent = parsed.data.ab_test_percent;
+    if ("scheduled_at" in parsed.data) {
+      updates.status = parsed.data.scheduled_at ? "scheduled" : "draft";
+    }
 
     const { data: updated, error: updateError } = await admin
       .from("email_campaigns")
@@ -145,6 +140,13 @@ export async function PATCH(
       .single();
 
     if (updateError) throw updateError;
+
+    await logCampaignAudit(admin, {
+      campaignId: id,
+      actorId: user.id,
+      action: "campaign_updated",
+      metadata: { fields: Object.keys(updates).filter((key) => key !== "updated_at") },
+    });
 
     return NextResponse.json({ campaign: updated });
   } catch (err) {
@@ -170,7 +172,7 @@ export async function DELETE(
   if ("error" in auth)
     return NextResponse.json({ error: auth.error }, { status: auth.status });
 
-  const { admin } = auth;
+  const { user, admin } = auth;
   const { id } = await params;
 
   try {
@@ -190,6 +192,13 @@ export async function DELETE(
         { status: 409 }
       );
     }
+
+    await logCampaignAudit(admin, {
+      campaignId: id,
+      actorId: user.id,
+      action: "campaign_deleted",
+      metadata: { previous_status: campaign.status },
+    });
 
     const { error: deleteError } = await admin
       .from("email_campaigns")
