@@ -76,6 +76,12 @@ export default function NewCampaignPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [selectedList, setSelectedList] = useState<string | null>(null);
   const [importedEmails, setImportedEmails] = useState<string[]>([]);
+  const [csvFeedback, setCsvFeedback] = useState<{
+    totalLines: number;
+    invalidCount: number;
+    duplicateCount: number;
+    addedCount: number;
+  } | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -123,10 +129,13 @@ export default function NewCampaignPage() {
   }, [selectedList]);
 
   function parseCsv(text: string) {
-    return text
+    const lines = text
       .split(/\r?\n/)
-      .map((l) => l.trim())
-      .filter((l) => l && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(l));
+      // CSV of one email per line, but tolerate "email,name" style rows too
+      .map((l) => l.trim().split(",")[0].trim())
+      .filter((l) => l.length > 0);
+    const valid = lines.filter((l) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(l));
+    return { totalLines: lines.length, valid, invalidCount: lines.length - valid.length };
   }
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -135,10 +144,26 @@ export default function NewCampaignPage() {
     const reader = new FileReader();
     reader.onload = () => {
       const text = String(reader.result ?? "");
-      const emails = parseCsv(text);
-      setImportedEmails(Array.from(new Set([...importedEmails, ...emails])));
+      const { totalLines, valid, invalidCount } = parseCsv(text);
+      const existing = new Set(importedEmails);
+      const deduped = Array.from(new Set(valid));
+      const duplicateCount = deduped.filter((e) => existing.has(e)).length + (valid.length - deduped.length);
+      const merged = Array.from(new Set([...importedEmails, ...deduped]));
+
+      setImportedEmails(merged);
+      setCsvFeedback({
+        totalLines,
+        invalidCount,
+        duplicateCount,
+        addedCount: merged.length - importedEmails.length,
+      });
     };
     reader.readAsText(f);
+    e.target.value = "";
+  }
+
+  function removeImportedEmail(email: string) {
+    setImportedEmails((prev) => prev.filter((e) => e !== email));
   }
 
   async function handleSave() {
@@ -262,6 +287,33 @@ export default function NewCampaignPage() {
               <label className="block text-xs font-semibold text-slate-600">or Upload CSV</label>
               <input type="file" accept=".csv,text/csv" onChange={handleFile} className="mt-2 text-sm" />
               <p className="mt-3 text-xs text-slate-400">Files should contain one email address per line. Emails are deduplicated.</p>
+
+              {csvFeedback && (
+                <div className="mt-3 rounded-xl border border-slate-200/60 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                  Parsed {csvFeedback.totalLines} line{csvFeedback.totalLines === 1 ? "" : "s"}: added{" "}
+                  <strong className="text-emerald-700">{csvFeedback.addedCount}</strong> new,{" "}
+                  {csvFeedback.duplicateCount} duplicate{csvFeedback.duplicateCount === 1 ? "" : "s"} skipped,{" "}
+                  {csvFeedback.invalidCount} invalid row{csvFeedback.invalidCount === 1 ? "" : "s"} skipped.
+                </div>
+              )}
+
+              {importedEmails.length > 0 && (
+                <div className="mt-3 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-slate-200/60 p-2">
+                  {importedEmails.map((email) => (
+                    <div key={email} className="flex items-center justify-between gap-2 rounded-lg px-2 py-1 text-xs text-slate-600 hover:bg-slate-50">
+                      <span className="truncate">{email}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeImportedEmail(email)}
+                        className="shrink-0 text-slate-400 hover:text-red-600"
+                        aria-label={`Remove ${email}`}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Template variables */}

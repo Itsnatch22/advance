@@ -92,12 +92,25 @@ export default async function AdminAuditLogsPage({ searchParams }: { searchParam
   const logs = (data ?? []) as LogRow[];
   const total = count ?? null;
 
+  const exportParams = new URLSearchParams();
+  if (adminIdFilter) exportParams.set("admin_id", adminIdFilter);
+  if (actionFilter) exportParams.set("action", actionFilter);
+  if (objectTypeFilter) exportParams.set("object_type", objectTypeFilter);
+  if (objectIdFilter) exportParams.set("object_id", objectIdFilter);
+  if (fromDate) exportParams.set("from", fromDate);
+  if (toDate) exportParams.set("to", toDate);
+
   return (
     <div style={{ padding: 20 }}>
       <h1>Admin Audit Logs</h1>
       <p>Server-side view. Use query parameters to filter: limit, page, action, object_type, admin_id, from, to.</p>
 
-      <div style={{ marginBottom: 8, color: '#444' }}>Showing page {page + 1}{total ? ` — total ${total}` : ''}</div>
+      <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ color: '#444' }}>Showing page {page + 1}{total ? ` — total ${total}` : ''}</span>
+        <a href={`/api/admin/audit-logs/export?${exportParams.toString()}`}>
+          <button>Export CSV</button>
+        </a>
+      </div>
 
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
