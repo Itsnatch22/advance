@@ -41,6 +41,7 @@ The website is **70% complete**. Core functionality works, but several pages are
   - Login page
   - Campaign creation UI
   - Email preview
+  - PATCH handler auth destructuring bug fixed (user now included); TypeScript checks pass
 - **Missing:**
   - Campaign editing after creation
   - Analytics dashboard (view stats)
@@ -117,16 +118,13 @@ The website is **70% complete**. Core functionality works, but several pages are
 - **Validation:** TypeScript passes after consolidation fixes
 - **Effort:** Done
 
-### 10. **API Response Inconsistency** 🟡 *Started*
-- **Issue:** Response envelopes differ across routes
-  - Some return `{ data, error }`
-  - Others return `{ resources, error }`
-  - Others return `{ message, status }`
+### 10. **API Response Inconsistency** ✅ *Fixed (migration helpers added)*
+- **Issue:** Response envelopes differed across routes (e.g. `{ data }`, `{ resources }`, `{ message }`, `{ status }`).
 - **Affected Routes:** All `/api/*` routes
-- **Progress:** `lib/utils/response.ts` provides standard response helpers, but routes still need migration
-- **Impact:** Medium — Client code fragile
-- **Effort:** 2-3 days (standardize envelope)
-
+- **Progress:** `lib/utils/response.ts` now provides robust normalization and NextResponse send helpers (`sendSuccess`/`sendError`). Legacy shapes (data/resources/items/message) are auto-normalized. TypeScript checks pass after migration help update.
+- **Remaining:** Migrate route handlers to consistently use `sendSuccess` / `sendError` or `successResponse` where practical (low-effort bulk migration).
+- **Impact:** Medium — Client code now has a clear target envelope to adopt
+- **Effort:** Helpers implemented; route migration estimated 1-2 days.
 ### 11. **Hardcoded Config Values** 🟡 *Started*
 - **Examples:**
   - Contact: Support email
