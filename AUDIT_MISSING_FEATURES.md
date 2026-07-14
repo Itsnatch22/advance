@@ -113,9 +113,9 @@ The website is **70% complete**. Core functionality works, but several pages are
 ### 17. **Admin Audit Logs** ✅ Fixed🟢
 - **Status:** Implemented (DB migration + helper + API endpoint)
 - **What was done:** Added `admin_audit_logs` migration, `lib/admin/audit.ts` helper, and an admin API endpoint `POST/GET /api/admin/audit-logs` to write and query logs. The campaign send task now writes a `campaign.send` audit entry on completion.
-- **Notes / remaining operational steps:** Apply Supabase migration to create the table in staging/production. Consider adding admin UI and retention policy/indexing as next steps.
+- **Notes / remaining operational steps:** Apply Supabase migration to create the table in staging/production. Admin UI added at `/admin/audit-logs` (client page) for browsing logs. A retention/indexing migration was added to create extra indexes and a cleanup function; schedule `cleanup_admin_audit_logs()` daily (pg_cron or external scheduler) to enforce retention.
 - **Impact:** Low — Adds compliance-grade audit trail for admin actions
-- **Effort remaining:** Minimal (DB apply + optional UI)
+- **Effort remaining:** Minimal (DB apply + optional UI polishing)
 
 ---
 
