@@ -21,44 +21,64 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const recaptchaToken = await new Promise<string>((resolve, reject) => {
-        let attempts = 0;
-        const maxAttempts = 10;
+      // reCAPTCHA is a supplementary bot-mitigation on top of rate-limiting
+      // and real Supabase Auth credentials -- it should never be a hard
+      // single point of failure for getting into the admin panel. If the
+      // widget fails to load/execute for any reason (blocked script,
+      // misconfigured site key, Google outage), fall through with no token
+      // and let the server-side rate limit + honeypot carry the load.
+      let recaptchaToken: string | null = null;
+      try {
+        const recaptchaPromise = new Promise<string>((resolve, reject) => {
+          let attempts = 0;
+          const maxAttempts = 10;
 
-        const tryExecute = () => {
-          attempts++;
-          const windowWithRecaptcha = window as unknown as {
-            grecaptcha?: {
-              ready: (cb: () => void) => void;
-              execute: (
-                siteKey: string,
-                options: { action: string }
-              ) => Promise<string>;
+          const tryExecute = () => {
+            attempts++;
+            const windowWithRecaptcha = window as unknown as {
+              grecaptcha?: {
+                ready: (cb: () => void) => void;
+                execute: (
+                  siteKey: string,
+                  options: { action: string }
+                ) => Promise<string>;
+              };
             };
-          };
 
-          if (!windowWithRecaptcha.grecaptcha) {
-            if (attempts < maxAttempts) {
-              setTimeout(tryExecute, 100);
+            if (!windowWithRecaptcha.grecaptcha) {
+              if (attempts < maxAttempts) {
+                setTimeout(tryExecute, 100);
+                return;
+              }
+              reject(new Error("reCAPTCHA not loaded after multiple attempts"));
               return;
             }
-            reject(new Error("reCAPTCHA not loaded after multiple attempts"));
-            return;
-          }
 
-          const grecaptcha = windowWithRecaptcha.grecaptcha;
-          grecaptcha.ready(() => {
-            grecaptcha
-              .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!, {
-                action: "admin_login",
-              })
-              .then(resolve)
-              .catch(reject);
-          });
-        };
+            const grecaptcha = windowWithRecaptcha.grecaptcha;
+            grecaptcha.ready(() => {
+              grecaptcha
+                .execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!, {
+                  action: "admin_login",
+                })
+                .then(resolve)
+                .catch(reject);
+            });
+          };
 
-        tryExecute();
-      });
+          tryExecute();
+        });
+
+        // grecaptcha.ready()'s callback is not guaranteed to fire (e.g. a
+        // half-initialized widget after a bad site key) -- a hard timeout
+        // guarantees this never blocks the login form indefinitely.
+        const timeoutPromise = new Promise<string>((_, reject) =>
+          setTimeout(() => reject(new Error("reCAPTCHA timed out")), 4000)
+        );
+
+        recaptchaToken = await Promise.race([recaptchaPromise, timeoutPromise]);
+      } catch (recaptchaErr) {
+        console.warn("reCAPTCHA unavailable, continuing without a token:", recaptchaErr);
+      }
 
       const precheck = await fetch("/api/admin/auth/login", {
         method: "POST",
@@ -87,7 +107,7 @@ export default function AdminLoginPage() {
       const meRes = await fetch("/api/admin/me");
       const me = await meRes.json();
 
-      if (!meRes.ok || !me.isAdmin) {
+      if (!meRes.ok || !me.data?.isAdmin) {
         await supabase.auth.signOut();
         setError("This account is not authorized for admin access");
         return;

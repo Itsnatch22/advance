@@ -8,7 +8,10 @@ const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY!;
 const precheckSchema = z.object({
   email: z.string().email(),
   honeypot: z.string().optional(),
-  recaptchaToken: z.string().min(1, "reCAPTCHA token is required"),
+  // Optional: the client falls back to no token if reCAPTCHA fails to load
+  // or execute (blocked script, misconfigured site key, Google outage).
+  // Rate limiting + honeypot below carry the bot-mitigation load in that case.
+  recaptchaToken: z.string().min(1).optional().nullable(),
 });
 
 /**
@@ -37,19 +40,23 @@ export async function POST(request: NextRequest) {
       return sendError("Invalid request", 400);
     }
 
-    const recaptchaResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        secret: RECAPTCHA_SECRET_KEY,
-        response: recaptchaToken,
-      }),
-    });
+    if (recaptchaToken) {
+      const recaptchaResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          secret: RECAPTCHA_SECRET_KEY,
+          response: recaptchaToken,
+        }),
+      });
 
-    const recaptchaData = await recaptchaResponse.json();
+      const recaptchaData = await recaptchaResponse.json();
 
-    if (!recaptchaData.success || recaptchaData.score < 0.5) {
-      return sendError("reCAPTCHA verification failed", 400);
+      if (!recaptchaData.success || recaptchaData.score < 0.5) {
+        return sendError("reCAPTCHA verification failed", 400);
+      }
+    } else {
+      console.warn(`Admin login precheck for ${ip}: no reCAPTCHA token, relying on rate limit + honeypot`);
     }
 
     return sendSuccess({ ok: true });
