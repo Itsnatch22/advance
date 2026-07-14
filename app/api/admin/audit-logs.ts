@@ -20,25 +20,39 @@ export async function GET(req: Request) {
   }
 
   const url = new URL(req.url);
-  const limit = Math.min(100, Number(url.searchParams.get('limit') || 50));
+  const limit = Math.min(200, Number(url.searchParams.get('limit') || 50));
   const page = Math.max(0, Number(url.searchParams.get('page') || 0));
+  const adminIdFilter = url.searchParams.get('admin_id') || null;
+  const actionFilter = url.searchParams.get('action') || null;
+  const objectTypeFilter = url.searchParams.get('object_type') || null;
+  const objectIdFilter = url.searchParams.get('object_id') || null;
+  const fromDate = url.searchParams.get('from') || null; // ISO date
+  const toDate = url.searchParams.get('to') || null; // ISO date
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
   const from = page * limit;
   const to = from + limit - 1;
 
-  const { data, error } = await supabase
+  let query = supabase
     .from('admin_audit_logs')
-    .select('id, admin_id, action, object_type, object_id, meta, created_at')
-    .order('created_at', { ascending: false })
-    .range(from, to);
+    .select('id, admin_id, action, object_type, object_id, meta, created_at', { count: 'exact' })
+    .order('created_at', { ascending: false });
+
+  if (adminIdFilter) query = query.eq('admin_id', adminIdFilter);
+  if (actionFilter) query = query.eq('action', actionFilter);
+  if (objectTypeFilter) query = query.eq('object_type', objectTypeFilter);
+  if (objectIdFilter) query = query.eq('object_id', objectIdFilter);
+  if (fromDate) query = query.gte('created_at', fromDate);
+  if (toDate) query = query.lte('created_at', toDate);
+
+  const { data, error, count } = await query.range(from, to);
 
   if (error) {
     console.error('[admin-audit] fetch error', error);
     return NextResponse.json({ error: 'Failed to fetch logs' }, { status: 500 });
   }
 
-  return NextResponse.json({ data });
+  return NextResponse.json({ data, total: count ?? null });
 }
 
 export async function POST(req: Request) {
