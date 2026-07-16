@@ -83,7 +83,7 @@ export default function NewsletterPage() {
       </div>
 
       {/* Hero */}
-      <section className="relative mx-auto flex w-full max-w-3xl flex-col items-center px-6 pt-32 pb-24 text-center lg:pt-48 lg:pb-32">
+      <section className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-6 pt-32 pb-24 text-center lg:pt-48 lg:pb-32">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -98,7 +98,7 @@ export default function NewsletterPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl"
+          className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
         >
           Stay updated with <span className="text-green-600">EaziWage</span>
         </motion.h1>
@@ -107,7 +107,7 @@ export default function NewsletterPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.8 }}
-          className="mt-6 max-w-xl text-xl leading-relaxed text-slate-500"
+          className="mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
         >
           Get the latest news, product updates, and financial tips delivered
           straight to your inbox.
@@ -211,7 +211,7 @@ export default function NewsletterPage() {
       {/* What to expect */}
       <section className="relative z-10 mx-auto max-w-6xl px-6 py-24 lg:px-8">
         <div className="mb-16 text-center">
-          <h2 className="font-serif text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
             What to <span className="text-green-600">expect</span>
           </h2>
         </div>
@@ -220,12 +220,12 @@ export default function NewsletterPage() {
           {EXPECTATIONS.map((item) => (
             <div
               key={item.title}
-              className="rounded-3xl border border-slate-200/60 bg-white/40 p-8 text-center backdrop-blur-2xl transition-shadow duration-500 hover:shadow-xl hover:shadow-green-500/10"
+              className="group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-10 text-center backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
             >
-              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600">
+              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600 transition-transform duration-500 group-hover:scale-110">
                 <item.icon className="h-7 w-7" strokeWidth={1.5} />
               </div>
-              <h3 className="mb-3 text-lg font-bold text-slate-900">
+              <h3 className="mb-3 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-700">
                 {item.title}
               </h3>
               <p className="text-sm leading-relaxed text-slate-500">
