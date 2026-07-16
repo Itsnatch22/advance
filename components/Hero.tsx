@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import HeroStats from "./HeroStats";
 import HeroPhone from "./HeroPhone";
 import { GridSystem } from "./grid";
+import { BorderBeam } from "./ui/border-beam";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -99,7 +100,13 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="relative mb-20 w-full max-w-xl"
             >
-              <div className="group relative flex flex-col gap-3 rounded-2xl border border-slate-200/60 bg-white/50 p-2 backdrop-blur-xl transition-all duration-500 focus-within:border-green-500/30 focus-within:shadow-2xl focus-within:shadow-green-500/10 sm:flex-row">
+              <div className="group relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-slate-200/60 bg-white/50 p-2 backdrop-blur-xl transition-all duration-500 focus-within:border-green-500/30 focus-within:shadow-2xl focus-within:shadow-green-500/10 sm:flex-row">
+                <BorderBeam
+                  size={120}
+                  duration={8}
+                  colorFrom="#00B37E"
+                  colorTo="#006F42"
+                />
                 <input
                   type="email"
                   placeholder="Enter your email address"
