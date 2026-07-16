@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { Icons } from "@/constants";
+import { BentoGrid } from "@/components/ui/bento-grid";
 
 const steps = [
   {
@@ -19,6 +20,7 @@ const steps = [
     title: "Instant Disbursement",
     description:
       "Funds available within minutes through mobile money or bank transfer. No waiting periods or complex approval processes.",
+    span: "lg:col-span-2 lg:row-span-2",
   },
   {
     icon: ShieldCheck,
@@ -54,12 +56,14 @@ const steps = [
 
 const FeatureCard = ({
   feature,
+  spanClassName,
 }: {
   feature: {
     icon: React.ElementType;
     title: string;
     description: string;
   };
+  spanClassName?: string;
 }) => {
   const { rotateX, rotateY, spotlightBackground, handleMouseMove, handleMouseLeave } = useParallax();
 
@@ -69,13 +73,13 @@ const FeatureCard = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       style={{ perspective: 1000 }}
-      className="h-full"
+      className={`h-full ${spanClassName ?? ""}`}
     >
       <motion.div
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY }}
-        className="group relative h-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+        className="group relative flex h-full min-h-70 flex-col justify-center overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
       >
         <motion.div
           style={{
@@ -155,11 +159,11 @@ export default function Needs() {
           banks.
         </p>
 
-        <div className="mt-28 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <BentoGrid className="mt-28 grid-cols-1 gap-8 sm:grid-cols-2 lg:auto-rows-[17.5rem] lg:grid-cols-3">
           {steps.map((feature, i) => (
-            <FeatureCard key={i} feature={feature} />
+            <FeatureCard key={i} feature={feature} spanClassName={feature.span} />
           ))}
-        </div>
+        </BentoGrid>
       </div>
     </section>
   );
