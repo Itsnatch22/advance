@@ -4,13 +4,14 @@ import React, { useEffect, useRef } from "react";
 import {
   motion,
 } from "framer-motion";
-import { ArrowUpRight, Code2, Coffee, Rocket, Lightbulb } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Typed from "typed.js";
 import { EMAIL_CONFIG } from '@/constants/config';
 import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";
+import { Terminal, TypingAnimation, AnimatedSpan } from "@/components/ui/terminal";
 
 const FadeInText = ({ text, delay = 0 }: { text: string; delay?: number }) => (
   <motion.span
@@ -154,59 +155,46 @@ export default function CulturePage() {
             />
 
             <div className="relative z-10">
-              <div className="mb-10 flex items-center justify-between border-b border-slate-100 pb-6">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
-                    <Code2 className="h-5 w-5" />
-                  </div>
-                  <p className="font-mono text-sm font-bold text-slate-400">
-                    culture.ts
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <div className="h-3 w-3 rounded-full bg-red-100" />
-                  <div className="h-3 w-3 rounded-full bg-orange-300" />
-                  <div className="h-3 w-3 rounded-full bg-green-500" />
-                </div>
-              </div>
+              <Terminal className="h-auto max-h-none w-full max-w-none border-0 bg-transparent p-0 font-mono">
+                <TypingAnimation className="text-slate-800">
+                  &gt; whoami
+                </TypingAnimation>
 
-              <pre className="font-mono text-lg leading-relaxed text-slate-800">
-                <code>
-                  <span className="text-purple-500">const</span>{" "}
-                  <span className="text-blue-500">team</span>{" "}
-                  <span className="text-slate-400">=</span>{" "}
-                  <span className="text-slate-400">[</span>
-                  {"\n  "}
-                  <span className="text-green-600">&quot;builders&quot;</span>
-                  <span className="text-slate-400">,</span>
-                  {"\n  "}
-                  <span className="text-green-600">&quot;dreamers&quot;</span>
-                  <span className="text-slate-400">,</span>
-                  {"\n  "}
-                  <span className="text-green-600">
-                    &quot;problem solvers&quot;
-                  </span>
-                  {"\n"}
-                  <span className="text-slate-400">]</span>
-                  {"\n\n"}
-                  <div className="flex items-center gap-3 text-blue-500">
-                    <Rocket className="h-4 w-4" /> <span>ship</span>
-                    <span className="text-slate-400">()</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-blue-500">
-                    <Lightbulb className="h-4 w-4" /> <span>learn</span>
-                    <span className="text-slate-400">()</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-blue-500">
-                    <Coffee className="h-4 w-4" /> <span>coffee</span>
-                    <span className="text-slate-400">()</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-blue-500">
-                    <span>repeat</span>
-                    <span className="text-slate-400">()</span>
-                  </div>
-                </code>
-              </pre>
+                <AnimatedSpan className="text-green-600">
+                  <span>✔ a small team building EaziWage</span>
+                </AnimatedSpan>
+
+                <TypingAnimation className="mt-4 text-slate-800">
+                  &gt; cat team.json
+                </TypingAnimation>
+
+                <AnimatedSpan className="text-blue-500">
+                  <span>&quot;builders&quot;,</span>
+                </AnimatedSpan>
+                <AnimatedSpan className="text-blue-500">
+                  <span>&quot;dreamers&quot;,</span>
+                </AnimatedSpan>
+                <AnimatedSpan className="text-blue-500">
+                  <span>&quot;problem solvers&quot;</span>
+                </AnimatedSpan>
+
+                <TypingAnimation className="mt-4 text-slate-800">
+                  &gt; ./ship.sh
+                </TypingAnimation>
+
+                <AnimatedSpan className="text-green-600">
+                  <span>✔ ship()</span>
+                </AnimatedSpan>
+                <AnimatedSpan className="text-green-600">
+                  <span>✔ learn()</span>
+                </AnimatedSpan>
+                <AnimatedSpan className="text-green-600">
+                  <span>✔ coffee()</span>
+                </AnimatedSpan>
+                <AnimatedSpan className="text-slate-400">
+                  <span>↻ repeat()</span>
+                </AnimatedSpan>
+              </Terminal>
             </div>
 
             <div className="absolute bottom-0 left-0 h-2 w-0 bg-green-600 transition-all duration-1000 group-hover:w-full" />
