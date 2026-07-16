@@ -14,6 +14,7 @@ import {
   Briefcase,
   CheckCircle2,
 } from "lucide-react";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 /* ----------------------------- validation ----------------------------- */
 
@@ -165,8 +166,9 @@ export default function PartnerOnboardingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           onSubmit={handleSubmit(onSubmit)}
-          className="rounded-3xl bg-white p-8 shadow-2xl sm:p-12 dark:bg-neutral-900"
+          className="relative overflow-hidden rounded-3xl bg-white p-8 shadow-2xl sm:p-12 dark:bg-neutral-900"
         >
+          <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={150} duration={8} />
           <div className="space-y-8">
             {/* Partner Type */}
             <FormField

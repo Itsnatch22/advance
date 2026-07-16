@@ -23,6 +23,7 @@ import Link from "next/link";
 import { EMAIL_CONFIG } from '@/constants/config';
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "./ui";
+import { BorderBeam } from "./ui/border-beam";
 import { OPEN_COOKIE_PREFERENCES_EVENT } from "./CookieBanner";
 
 const FOUNDING_YEAR = 2025;
@@ -147,8 +148,9 @@ export default function Footer() {
 
               <form
                 onSubmit={handleSubmit}
-                className="flex flex-col gap-3 sm:flex-row sm:gap-4"
+                className="relative flex flex-col gap-3 rounded-2xl sm:flex-row sm:gap-4"
               >
+                <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={100} duration={8} />
                 {/* Honeypot field */}
                 <input
                   type="text"

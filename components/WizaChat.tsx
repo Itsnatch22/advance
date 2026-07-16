@@ -29,6 +29,7 @@ import {
 import { VoiceButton } from "@/components/shared/VoiceButton";
 import { FileAttachButton, FilePreview, type AttachedFile } from "@/components/shared/FileAttachButton";
 import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 type PublicChatPart = {
   type: string;
@@ -110,8 +111,9 @@ function EscalateForm({ query, onDone }: { query: string; onDone: () => void }) 
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-2 space-y-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 dark:border-slate-700 dark:bg-slate-800/60"
+      className="relative mt-2 space-y-2 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 dark:border-slate-700 dark:bg-slate-800/60"
     >
+      <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={60} duration={8} />
       <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
         Leave your details and our support team will follow up:
       </p>
@@ -661,8 +663,9 @@ export default function WizaChat() {
 
                     <form
                       onSubmit={handleSend}
-                      className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-2 py-1 transition-colors focus-within:border-emerald-400 dark:border-slate-700 dark:bg-slate-800 dark:focus-within:border-emerald-600"
+                      className="relative flex items-center gap-1.5 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 px-2 py-1 transition-colors focus-within:border-emerald-400 dark:border-slate-700 dark:bg-slate-800 dark:focus-within:border-emerald-600"
                     >
+                      <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={50} duration={8} />
                       <FileAttachButton
                         onFile={setAttachment}
                         disabled={streaming}

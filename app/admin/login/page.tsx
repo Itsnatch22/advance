@@ -6,6 +6,7 @@ import { AlertCircle, LogIn, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import FloatingOrb from "@/components/shared/FloatingOrb";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -138,7 +139,8 @@ export default function AdminLoginPage() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <div className="rounded-3xl border border-slate-200/60 bg-white/40 p-10 shadow-2xl shadow-green-500/5 backdrop-blur-xl">
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/40 p-10 shadow-2xl shadow-green-500/5 backdrop-blur-xl">
+            <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={120} duration={8} />
             {/* Header */}
             <div className="mb-10">
               <div className="mb-6 flex items-center gap-3">

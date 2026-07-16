@@ -21,6 +21,7 @@ const salesSchema = z.object({
 type SalesFormData = z.infer<typeof salesSchema>;
 
 import { useParallax } from "@/hooks/use-parallax";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 const TiltInfoCard = ({
   icon: Icon,
@@ -252,8 +253,9 @@ export default function SalesPage() {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-8 rounded-[3rem] bg-white/40 p-12 shadow-2xl backdrop-blur-3xl lg:p-16"
+              className="relative space-y-8 overflow-hidden rounded-[3rem] bg-white/40 p-12 shadow-2xl backdrop-blur-3xl lg:p-16"
             >
+              <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={150} duration={8} />
               <div className="space-y-6">
                 <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
                   Get Your Custom <span className="text-green-600">Demo</span>
