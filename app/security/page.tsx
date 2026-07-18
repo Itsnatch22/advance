@@ -174,7 +174,7 @@ export default function SecurityPage() {
           className="top-[-10%] right-[10%]"
         />
         <FloatingOrb
-          color="bg-slate-200"
+          color="bg-emerald-100"
           delay={2}
           className="bottom-[10%] left-[10%]"
         />
