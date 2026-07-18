@@ -39,9 +39,8 @@ export async function GET() {
   }
 
   const { count, error } = await supabase
-    .from("employers")
-    .select("*", { count: "exact", head: true })
-    .eq("status", "approved");
+    .from("approved_employers_public")
+    .select("*", { count: "exact", head: true });
 
   if (error) {
     return sendError(error.message, 500);

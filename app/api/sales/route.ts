@@ -26,9 +26,8 @@ export async function GET() {
   }
 
   const { count, error } = await supabaseAdmin
-    .from("employers")
-    .select("*", { count: "exact", head: true })
-    .eq("status", "approved");
+    .from("approved_employers_public")
+    .select("*", { count: "exact", head: true });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

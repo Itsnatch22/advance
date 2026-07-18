@@ -178,7 +178,7 @@ export default function Coverage() {
   useEffect(() => {
     fetch("/api/coverage")
     .then((r) => r.json())
-    .then(setUserCounts)
+    .then((data) => setUserCounts(data.counts))
     .catch(() => {});
   }, []);
 
