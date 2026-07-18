@@ -113,7 +113,7 @@ export default function SalesPage() {
   useEffect(() => {
     fetch("/api/contact")
       .then((r) => r.json())
-      .then((d) => setEmployerCount(d.count))
+      .then((d) => setEmployerCount(d.data?.count))
       .catch(() => {});
   }, []);
 
