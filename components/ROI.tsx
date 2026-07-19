@@ -429,9 +429,11 @@ export default function ROI() {
               <Calculator size={14} className="animate-pulse" />
               <span>Investment Return</span>
             </motion.div>
-            <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+            <h2 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl">
               A wellbeing benefit with <br />
-              <span className="text-green-600">measurable outcomes</span>
+              <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+                measurable outcomes
+              </span>
             </h2>
           </div>
 
@@ -605,7 +607,9 @@ export default function ROI() {
             <div className="space-y-6">
               <h3 className="font-serif text-3xl font-bold text-slate-900">
                 Why forward-thinking HR teams{" "}
-                <span className="text-green-600">trust EaziWage</span>
+                <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+                  trust EaziWage
+                </span>
               </h3>
               <p className="text-lg leading-relaxed text-slate-500">
                 Accessing earned wages isn't just about financial flexibility —
