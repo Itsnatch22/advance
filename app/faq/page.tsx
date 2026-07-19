@@ -4,21 +4,17 @@ import React, { useState } from "react";
 import {
   HelpCircle,
   Search,
-  ChevronDown,
   Users,
   Building2,
   CreditCard,
   Shield,
   Clock,
 } from "lucide-react";
-import {
-  motion,
-  AnimatePresence,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import { Input } from "../../components/ui/input";
 import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
-import { TiltCard } from "@/components/shared/TiltCard";
+import { FAQCard } from "@/components/shared/FAQCard";
 
 type FAQItem = {
   q: string;
@@ -193,69 +189,6 @@ const faqs: Record<CategoryId, FAQItem[]> = {
   ],
 };
 
-const FAQItemCard = ({
-  faq,
-  isOpen,
-  toggle,
-}: {
-  faq: FAQItem;
-  isOpen: boolean;
-  toggle: () => void;
-}) => {
-  return (
-    <motion.div style={{ perspective: 1000 }} className="w-full">
-      <TiltCard
-        className={`group relative overflow-hidden rounded-[2rem] border border-slate-200/60 transition-all duration-500 ${
-          isOpen
-            ? "bg-white shadow-2xl ring-1 shadow-green-500/10 ring-green-500/20"
-            : "bg-white/40 backdrop-blur-2xl hover:bg-white"
-        }`}
-      >
-        <button
-          onClick={toggle}
-          className="relative z-10 flex w-full items-center justify-between p-8 text-left"
-        >
-          <span
-            className={`text-xl font-bold tracking-tight transition-colors duration-300 ${isOpen ? "text-green-700" : "text-slate-900"}`}
-          >
-            {faq.q}
-          </span>
-          <div
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-500 ${
-              isOpen
-                ? "rotate-180 bg-green-600 text-white"
-                : "bg-slate-100 text-slate-500 group-hover:bg-green-500 group-hover:text-white"
-            }`}
-          >
-            <ChevronDown size={20} />
-          </div>
-        </button>
-
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className="px-8 pb-8">
-                <div className="mb-8 h-px w-full bg-slate-100" />
-                <p className="text-lg leading-relaxed text-slate-500">
-                  {faq.a}
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div
-          className={`absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 ${isOpen ? "w-full" : "group-hover:w-full"}`}
-        />
-      </TiltCard>
-    </motion.div>
-  );
-};
-
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState<CategoryId>("general");
   const [searchQuery, setSearchQuery] = useState("");
@@ -312,7 +245,9 @@ export default function FAQPage() {
             className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
           >
             Frequently Asked{" "}
-            <span className="text-green-600">Questions</span>
+            <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+              Questions
+            </span>
           </motion.h1>
 
           <motion.p
@@ -384,12 +319,13 @@ export default function FAQPage() {
           )}
 
           <div className="space-y-6">
-            {filteredFaqs.map((faq, _i) => (
-              <FAQItemCard
+            {filteredFaqs.map((faq) => (
+              <FAQCard
                 key={faq.q}
-                faq={faq}
+                question={faq.q}
+                answer={faq.a}
                 isOpen={!!openItems[faq.q]}
-                toggle={() => toggleItem(faq.q)}
+                onToggle={() => toggleItem(faq.q)}
               />
             ))}
           </div>

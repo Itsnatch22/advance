@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  motion,
-  AnimatePresence,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Clock3,
   Wallet,
@@ -15,7 +12,6 @@ import {
   Lightbulb,
   BarChart3,
   Repeat,
-  ArrowRight,
   Sparkles,
 } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/Carousel";
@@ -23,6 +19,7 @@ import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
 import UI from "./UI";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { TiltCard } from "@/components/shared/TiltCard";
+import { FAQCard } from "@/components/shared/FAQCard";
 
 const reasons = [
   {
@@ -154,9 +151,11 @@ export default function EmployeesClient() {
               <Sparkles size={14} className="animate-pulse" />
               <span>For Employees</span>
             </motion.div>
-            <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+            <h2 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl">
               Why employees choose{" "}
-              <span className="text-green-600">Eaziwage</span>
+              <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+                Eaziwage
+              </span>
             </h2>
             <p className="mx-auto mt-6 max-w-3xl text-xl text-slate-500">
               A practical well-being lever that pays for itself.
@@ -201,9 +200,11 @@ export default function EmployeesClient() {
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
               Your Journey
             </motion.div>
-            <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+            <h2 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl">
               Your Financial{" "}
-              <span className="text-green-600">Empowerment Journey</span>
+              <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+                Empowerment Journey
+              </span>
             </h2>
             <p className="mx-auto mt-6 max-w-3xl text-xl text-slate-500">
               Awareness → Empowerment → Growth — a smarter way to handle money
@@ -249,9 +250,11 @@ export default function EmployeesClient() {
               <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
               Versatile Solution
             </motion.div>
-            <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+            <h2 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl">
               Versatility across{" "}
-              <span className="text-green-600">jobs & sectors</span>
+              <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+                jobs & sectors
+              </span>
             </h2>
             <p className="mt-6 text-xl text-slate-500">
               Real Kenyan contexts: retail, banking, hospitality, logistics,
@@ -273,61 +276,24 @@ export default function EmployeesClient() {
               Support
             </motion.div>
             <h2 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl">
-              Frequently Asked <span className="text-green-600">Questions</span>
+              Frequently Asked{" "}
+              <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
+                Questions
+              </span>
             </h2>
           </div>
 
           <div className="space-y-6">
             {faqs.map((faq, index) => (
-              <motion.div
+              <FAQCard
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className={`group relative overflow-hidden rounded-4xl border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-all duration-500 ${
-                  openIndex === index
-                    ? "shadow-2xl ring-1 shadow-green-500/10 ring-green-500/20"
-                    : "hover:bg-white"
-                }`}
-              >
-                <button
-                  onClick={() =>
-                    setOpenIndex(openIndex === index ? null : index)
-                  }
-                  className="flex w-full items-center justify-between text-left"
-                >
-                  <span
-                    className={`text-xl font-bold tracking-tight transition-colors duration-300 ${openIndex === index ? "text-green-700" : "text-slate-900"}`}
-                  >
-                    {faq.question}
-                  </span>
-                  <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-500 ${
-                      openIndex === index
-                        ? "rotate-90 bg-green-600 text-white"
-                        : "bg-slate-100 text-slate-500 group-hover:bg-green-500 group-hover:text-white"
-                    }`}
-                  >
-                    <ArrowRight size={20} />
-                  </div>
-                </button>
-                <AnimatePresence>
-                  {openIndex === index && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                      <div className="mt-8 border-t border-slate-100 pt-8">
-                        <p className="text-lg leading-relaxed text-slate-500">
-                          {faq.answer}
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                question={faq.question}
+                answer={faq.answer}
+                isOpen={openIndex === index}
+                onToggle={() =>
+                  setOpenIndex(openIndex === index ? null : index)
+                }
+              />
             ))}
           </div>
         </div>
