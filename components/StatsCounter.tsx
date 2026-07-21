@@ -48,7 +48,7 @@ export default function StatsCounter() {
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-3">
           {[
             {
-              label: "Targeted Customers",
+              label: "Targeted Employees",
               value: stats.targeted_customers,
               suffix: "+",
             },
@@ -60,7 +60,7 @@ export default function StatsCounter() {
             {
               label: "Annual Advances (USD)",
               value: stats.annual_advances / 1000000,
-              suffix: "M",
+              suffix: "K",
               prefix: "$",
             },
           ].map((item, i) => (
