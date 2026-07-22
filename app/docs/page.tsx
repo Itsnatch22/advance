@@ -236,7 +236,7 @@ function DocsGrid() {
             <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
               <section.icon className="h-8 w-8" strokeWidth={1.5} />
             </div>
-            <h3 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-700">
+            <h3 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-600">
               {section.title}
             </h3>
             <p className="mb-8 text-lg leading-relaxed text-slate-500">
@@ -297,7 +297,7 @@ function DevPerksGrid() {
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600 transition-transform duration-500 group-hover:scale-110">
               <perk.icon className="h-7 w-7" strokeWidth={1.5} />
             </div>
-            <h3 className="mb-3 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-700">
+            <h3 className="mb-3 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-600">
               {perk.title}
             </h3>
             <p className="text-sm leading-relaxed text-slate-500">

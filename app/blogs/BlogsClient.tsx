@@ -169,7 +169,7 @@ const TiltResourceCard = ({ resource }: TiltResourceCardProps) => {
             </div>
           </div>
 
-          <h3 className="mb-4 line-clamp-3 font-serif text-xl leading-tight font-bold text-slate-900 transition-colors group-hover:text-green-700">
+          <h3 className="mb-4 line-clamp-3 font-serif text-xl leading-tight font-bold text-slate-900 transition-colors group-hover:text-green-600">
             {resource.title}
           </h3>
 
@@ -452,7 +452,7 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
                   <div className="absolute top-1/2 right-6 -translate-y-1/2">
                     <RefreshCw
                       size={20}
-                      className="animate-spin text-green-500"
+                      className="animate-spin text-green-600"
                     />
                   </div>
                 )}

@@ -85,7 +85,7 @@ const PricingCard = ({
             </div>
           </div>
 
-          <h3 className="mb-3 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-700">
+          <h3 className="mb-3 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-600">
             {card.title}
           </h3>
           <p className="text-sm leading-relaxed text-slate-500">{card.desc}</p>

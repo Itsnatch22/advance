@@ -118,7 +118,7 @@ const CountryCard = ({
             />
           </div>
 
-          <h3 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-700">
+          <h3 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-600">
             {country.name}
           </h3>
 

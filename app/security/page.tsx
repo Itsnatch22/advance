@@ -125,7 +125,7 @@ const VaultDoor = ({
           >
             <ShieldCheck
               size={48}
-              className={`text-green-500 transition-opacity duration-500 ${isOpen ? "opacity-100" : "opacity-50"}`}
+              className={`text-green-600 transition-opacity duration-500 ${isOpen ? "opacity-100" : "opacity-50"}`}
             />
           </motion.div>
         </motion.div>
@@ -301,7 +301,7 @@ export default function SecurityPage() {
                               >
                                 <CheckCircle2
                                   size={16}
-                                  className="shrink-0 text-green-500"
+                                  className="shrink-0 text-green-600"
                                 />
                                 <span>{detail}</span>
                               </li>
@@ -359,9 +359,9 @@ export default function SecurityPage() {
             <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-green-500/20 blur-[80px]" />
 
             <div className="relative z-10">
-              <Database size={48} className="mx-auto mb-8 text-green-500" />
+              <Database size={48} className="mx-auto mb-8 text-green-600" />
               <h2 className="mb-6 font-serif text-3xl font-bold text-white md:text-4xl">
-                Your Data Stays <span className="text-green-500">Yours</span>
+                Your Data Stays <span className="text-green-600">Yours</span>
               </h2>
               <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400">
                 We believe in absolute data sovereignty. We do not sell, rent,

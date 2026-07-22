@@ -32,7 +32,7 @@ export function FeatureCard({
       <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-green-50/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-green-900/10" />
       <div className="relative">
         <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 transition-transform duration-300 group-hover:scale-110 dark:bg-green-900/30">
-          <Icon className="h-6 w-6 text-green-700 dark:text-green-400" />
+          <Icon className="h-6 w-6 text-green-600 dark:text-green-400" />
         </div>
         <h3 className="mb-3 text-xl font-bold text-gray-900 dark:text-white">
           {title}

@@ -272,7 +272,7 @@ export default function SalesPage() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="mb-8 overflow-hidden rounded-2xl border border-green-100 bg-green-50 p-5 text-green-700"
+                      className="mb-8 overflow-hidden rounded-2xl border border-green-100 bg-green-50 p-5 text-green-600"
                     >
                       <div className="flex items-center gap-3">
                         <CheckCircle2 size={20} className="shrink-0" />

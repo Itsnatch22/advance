@@ -32,7 +32,7 @@ export function FAQCard({ question, answer, isOpen, onToggle }: FAQCardProps) {
         >
           <span
             className={`text-xl font-bold tracking-tight transition-colors duration-300 ${
-              isOpen ? "text-green-700" : "text-slate-900"
+              isOpen ? "text-green-600" : "text-slate-900"
             }`}
           >
             {question}

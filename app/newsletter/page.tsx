@@ -126,12 +126,12 @@ export default function NewsletterPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mb-4 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-left text-green-700"
+                className="mb-4 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-left text-green-600"
               >
                 <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" strokeWidth={2} />
                 <div>
                   <p className="text-sm font-medium">Check your inbox!</p>
-                  <p className="mt-0.5 text-xs text-green-700/70">
+                  <p className="mt-0.5 text-xs text-green-600/70">
                     We sent a confirmation link to your email. Click it to
                     complete your subscription.
                   </p>
@@ -227,7 +227,7 @@ export default function NewsletterPage() {
               <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600 transition-transform duration-500 group-hover:scale-110">
                 <item.icon className="h-7 w-7" strokeWidth={1.5} />
               </div>
-              <h3 className="mb-3 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-700">
+              <h3 className="mb-3 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-600">
                 {item.title}
               </h3>
               <p className="text-sm leading-relaxed text-slate-500">
@@ -249,7 +249,7 @@ export default function NewsletterPage() {
         </p>
         <Link
           href="/blogs"
-          className="group inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-700 shadow-sm transition-all duration-300 hover:border-green-200 hover:text-green-700"
+          className="group inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-700 shadow-sm transition-all duration-300 hover:border-green-200 hover:text-green-600"
         >
           <span>Visit the blog</span>
           <ArrowUpRight

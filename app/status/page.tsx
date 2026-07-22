@@ -149,7 +149,7 @@ function getServiceIcon(key: string) {
 
 function StatusIcon({ status, className = "h-5 w-5" }: { status: APIStatus; className?: string }) {
   switch (status) {
-    case "healthy": return <CheckCircle2 className={`${className} text-green-500`} />;
+    case "healthy": return <CheckCircle2 className={`${className} text-green-600`} />;
     case "degraded": return <AlertCircle className={`${className} text-yellow-500`} />;
     case "down": return <XCircle className={`${className} text-red-500`} />;
     default: return <HelpCircle className={`${className} text-zinc-400`} />;

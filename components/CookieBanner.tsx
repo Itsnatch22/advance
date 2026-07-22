@@ -110,7 +110,7 @@ const CookieBanner = () => {
 
             {view === "banner" ? (
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-500/20 text-green-500 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-500/20 text-green-600 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
                   <Cookie className="h-6 w-6" />
                 </div>
 
@@ -168,7 +168,7 @@ const CookieBanner = () => {
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-500/10 text-green-500">
+                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-500/10 text-green-600">
                         <ShieldCheck className="h-4 w-4" />
                       </div>
                       <div>
@@ -189,7 +189,7 @@ const CookieBanner = () => {
 
                   <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-500/10 text-green-500">
+                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-500/10 text-green-600">
                         <BarChart3 className="h-4 w-4" />
                       </div>
                       <div>

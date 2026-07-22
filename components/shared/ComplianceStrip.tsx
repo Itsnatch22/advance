@@ -21,7 +21,7 @@ export function ComplianceStrip({ items, className }: ComplianceStripProps) {
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 py-8 text-center text-[0.75rem] text-gray-700 sm:gap-x-6 sm:text-sm dark:text-white">
         {items.map((item, index) => (
           <div key={index} className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 shrink-0 text-green-500" />
+            <ShieldCheck className="h-4 w-4 shrink-0 text-green-600" />
             <span>{item.text}</span>
           </div>
         ))}

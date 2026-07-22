@@ -85,7 +85,7 @@ const WorkStepCard = ({
             <div className="absolute inset-0 -z-10 rounded-2xl bg-green-400/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
           </div>
 
-          <h3 className="mb-4 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-700">
+          <h3 className="mb-4 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-600">
             {step.title}
           </h3>
           <p className="text-sm leading-relaxed text-slate-500">

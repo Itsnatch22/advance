@@ -178,7 +178,7 @@ export default function EmployersClient() {
                     <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
                       <item.icon className="h-8 w-8" strokeWidth={1.5} />
                     </div>
-                    <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-700">
+                    <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-600">
                       {item.title}
                     </h3>
                     <p className="text-lg leading-relaxed text-slate-500">{item.desc}</p>
@@ -230,7 +230,7 @@ export default function EmployersClient() {
                     <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
                       <item.icon className="h-8 w-8" strokeWidth={1.5} />
                     </div>
-                    <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-700">
+                    <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-600">
                       {item.title}
                     </h3>
                     <p className="text-lg leading-relaxed text-slate-500">{item.desc}</p>

@@ -84,7 +84,7 @@ export default function HeroStats() {
           key={label}
           className="flex flex-col items-center gap-2 text-center"
         >
-          <Icon className="h-5 w-5 text-green-500" />
+          <Icon className="h-5 w-5 text-green-600" />
           <span className="text-2xl font-black tracking-tight text-slate-900">
             {value}
           </span>

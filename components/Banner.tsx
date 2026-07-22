@@ -29,7 +29,7 @@ export default function Banner() {
           {/* CTA */}
           <Link
             href={`${process.env.NEXT_PUBLIC_DASHBOARD_APP_URL || "https://app.eaziwage.com"}/register`}
-            className="group hidden items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-widest backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-green-700 sm:flex"
+            className="group hidden items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-widest backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-green-600 sm:flex"
           >
             Get started
             <ArrowRight size={11} className="transition-transform duration-300 group-hover:translate-x-0.5" />
