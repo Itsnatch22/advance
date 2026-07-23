@@ -16,7 +16,7 @@ export default function Integrations() {
       <div className="grid gap-6 lg:grid-cols-2 lg:items-center">
         <div className="rounded-3xl border border-gray-200 bg-white p-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold font-serif text-gray-900">
               Integrations & employer controls
             </h3>
             <Settings className="h-6 w-6 text-green-600" />
@@ -54,7 +54,7 @@ export default function Integrations() {
         </div>
 
         <div className="rounded-3xl border border-gray-200 bg-white p-6">
-          <h4 className="text-lg font-semibold text-gray-900">
+          <h4 className="text-lg font-semibold font-serif text-gray-900">
             Transparent to your team
           </h4>
           <div className="mt-4 grid grid-cols-2 gap-4">
