@@ -50,7 +50,7 @@ const reasons = [
   {
     icon: CheckCircle2,
     title: "Transparent fees",
-    desc: "Flat USD 2 + Application 5%—clearly shown before you confirm.",
+    desc: "Flat USD 0.8 + Application 5%—clearly shown before you confirm.",
   },
 ];
 
@@ -80,7 +80,7 @@ const rolloutPlans = [
 const complianceItems = [
   { text: "Regulated partners • Pan-Africa Ready framework" },
   { text: "ODPC-compliant data handling" },
-  { text: "Transparent pricing (USD 2 + 5%)" },
+  { text: "Transparent pricing (USD 0.8 + 5%)" },
   { text: "Auto-settlement via payroll" },
 ];
 

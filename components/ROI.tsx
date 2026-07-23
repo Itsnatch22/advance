@@ -597,7 +597,7 @@ export default function ROI() {
             </div>
 
             <p className="mt-8 text-center text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-              Pricing: Flat USD 2 + 5% application fee.{" "}
+              Pricing: Flat USD 0.8 + 5% application fee.{" "}
               <span className="text-green-600">0% Interest.</span>
             </p>
           </TiltROICard>
