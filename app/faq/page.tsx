@@ -114,7 +114,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "Will employees see their individual transactions?",
-      a: "Employers only see aggregated data — total advances, average amounts, usage rates, etc. Individual employee transactions and balances are kept private to protect employee confidentiality.",
+      a: "Employers only see aggregated program-level data — total advances, average amounts, and overall utilization across the company. Individual usage breakdowns aren't currently tracked at all, for anyone — including EaziWage internally. Employees can see their own transaction history and balance in their own dashboard.",
     },
     {
       q: "What happens during payroll processing?",
@@ -150,7 +150,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "Can my employer see my transactions?",
-      a: "No. Employers only see aggregated statistics — they cannot see individual employee advances, balances, or transaction history. Your financial privacy is fully protected.",
+      a: "No. Employers only see aggregated statistics — they cannot see individual employee balances or transaction history. Your financial privacy is fully protected.",
     },
     {
       q: "What security measures protect my account?",
