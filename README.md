@@ -95,14 +95,8 @@ npm run type-check   # Run TypeScript type checking
 - 🌍 Pan-African coverage (Kenya, Tanzania, Uganda, Rwanda)
 - 💰 Instant wage access for employees
 - 📊 Real-time analytics dashboards
-- 🔐 Secure authentication with NextAuth
-- 🎨 Dark mode support
 - 📱 Fully responsive design
 - ♿ Accessibility focused
-
-## 🚦 Recent Refactoring
-
-See [REFACTORING_SUMMARY.md](./REFACTORING_SUMMARY.md) for details on recent code improvements.
 
 ## 📄 License
 

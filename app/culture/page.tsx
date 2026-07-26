@@ -157,7 +157,7 @@ export default function CulturePage() {
             <div className="relative z-10">
               <Terminal className="h-auto max-h-none w-full max-w-none border-0 bg-transparent p-0 font-mono">
                 <TypingAnimation className="text-slate-800">
-                  &gt; whoami
+                  &gt; whoarewe
                 </TypingAnimation>
 
                 <AnimatedSpan className="text-green-600">

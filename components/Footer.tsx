@@ -222,7 +222,7 @@ export default function Footer() {
                 </div>
 
                 <div>
-                  <p className="text-sm font-semibold text-white sm:text-base">
+                  <p className="text-sm font-semibold font-serif text-white sm:text-base">
                     Built to work within Kenya&apos;s regulated payment
                     environment.
                   </p>
