@@ -58,7 +58,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "How is EaziWage different from payday loans?",
-      a: "Unlike payday loans which charge 30-120% APR interest and create debt, EaziWage has zero interest and only charges a small flat fee (3.5-6.5%). There's no debt created, no credit check, and no impact on your credit score.",
+      a: "Unlike payday loans which charge 30-120% APR interest and create debt, EaziWage has zero interest and only charges a small flat fee (3.5-5%). There's no debt created, no credit check, and no impact on your credit score.",
     },
     {
       q: "Do I need good credit to use EaziWage?",
@@ -84,7 +84,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "When do I pay back the advance?",
-      a: "The advance amount plus fee is automatically deducted from your next paycheck. You don't need to do anything — it's completely automatic. No separate payments, no reminders, no hassle.",
+      a: "The advance amount plus our fees are automatically deducted from your next paycheck. You don't need to do anything — it's completely automatic. No separate payments, no reminders, no hassle.",
     },
     {
       q: "Can I take multiple advances?",
@@ -124,7 +124,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
   fees: [
     {
       q: "What are EaziWage's fees?",
-      a: "Fees range from 3.5% to 6.5% per advance, depending on you and your employer's risk profile. The exact fee is always shown before you confirm any transaction — no surprises. We provide nudges to reduce advancement fees so that you're in control.",
+      a: "Fees range from 3.5% to 5% per advance and 3.5% to 6.5%.8 transaction fee per advance, depending on you and your employer's risk profile. The exact fee is always shown before you confirm any transaction — no surprises. We provide nudges to reduce advancement fees so that you're in control.",
     },
     {
       q: "Are there any hidden fees?",
@@ -132,7 +132,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "How is my fee rate determined?",
-      a: "Your fee depends on two factors: (1) Your employer's risk score based on sector, employee retention rate, and compliance, and (2) Your personal risk score based on tenure, advance history, and repayment record. Good usage habits can lower your fee over time.",
+      a: "Your fee depends on two factors: (1) Your employer's risk score based on sector, employee retention rate, and compliance, and (2) Your personal risk score based on tenure, advance history, and tax compliance status. Good usage habits can lower your fee over time.",
     },
     {
       q: "Is there interest on advances?",
@@ -172,7 +172,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "Is there a mobile app?",
-      a: "Yes! EaziWage is available as a mobile application. All features are available across all platforms with real-time sync. The EaziWage team is developing a mobile app for iOS and Android.",
+      a: "There is a dedicated roadmap for development already, no release date confirmed yet. In the meantime, the web app works well on mobile browsers, so you're not stuck waiting.",
     },
     {
       q: "What if my Mobile Wallet provider is down?",
