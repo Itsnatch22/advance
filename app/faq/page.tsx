@@ -216,11 +216,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState<CategoryId>("general");
   const [searchQuery, setSearchQuery] = useState("");
-  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
-
-  const toggleItem = (q: string) => {
-    setOpenItems((prev) => ({ ...prev, [q]: !prev[q] }));
-  };
+  const [openItems, setOpenItems] = useState<number | null>(0);
 
   const filteredFaqs: FAQItem[] = searchQuery
     ? Object.values(faqs)
@@ -343,13 +339,13 @@ export default function FAQPage() {
           )}
 
           <div className="space-y-6">
-            {filteredFaqs.map((faq) => (
+            {filteredFaqs.map((faq, index) => (
               <FAQCard
-                key={faq.q}
+                key={index}
                 question={faq.q}
                 answer={faq.a}
-                isOpen={!!openItems[faq.q]}
-                onToggle={() => toggleItem(faq.q)}
+                isOpen={openItems === index}
+                onToggle={() => setOpenItems(openItems === index ? null : index)}
               />
             ))}
           </div>
