@@ -54,11 +54,11 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "Which countries is EaziWage available in?",
-      a: "EaziWage is currently available in Kenya, Uganda, Tanzania, and Rwanda. We support local mobile wallet providers in each country including Mobile Wallet services like MTN Mobile Money, Airtel Money, and others.",
+      a: "EaziWage is currently available in Kenya, Uganda, Tanzania, and Rwanda. Supported mobile wallets vary by country and include M-PESA, Airtel Money, MTN Mobile Money, and Tigo Pesa depending on where you're based.",
     },
     {
       q: "How is EaziWage different from payday loans?",
-      a: "Unlike payday loans which charge 30-120% APR interest and create debt, EaziWage has zero interest and only charges a small flat fee (3.5-5%). There's no debt created, no credit check, and no impact on your credit score.",
+      a: "Unlike payday loans which charge 30-120% APR interest and create debt, EaziWage has zero interest and only charges a flat fee of 3.5% to 6.5% per advance, depending on your and your employer's risk profile. There's no debt created, no credit check, and no impact on your credit score.",
     },
     {
       q: "Do I need good credit to use EaziWage?",
@@ -72,23 +72,32 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "What documents do I need to sign up?",
-      a: "You'll need: (1) A valid National ID or passport, (2) A phone number registered in your name, (3) Employment verification from your employer (4) Proof of Bank Account, and (4) Payslips. That's it — no guarantors required.",
+      a: "You'll need: (1) A valid National ID or passport, (2) A phone number registered in your name, (3) Employment verification from your employer, (4) Proof of bank account, and (5) Payslips. That's it — no guarantors required.",
     },
     {
       q: "How much can I access?",
-      a: "You can access up to 60% of your earned (but unpaid) wages at any time. This limit helps ensure responsible usage and that you have enough for regular expenses. The exact amount available is shown in your dashboard.",
+      a: "It depends on your country: Kenya up to 50%, Uganda up to 60%, Tanzania up to 30%, Rwanda up to 45% of your earned (but unpaid) wages. Your employer may also set a lower limit than the country cap. The exact amount available is shown in your dashboard.",
     },
     {
       q: "How fast will I receive my money?",
-      a: "Instantly! Once you confirm the advance, funds are sent to your Mobile Wallet in under 3 seconds. Bank transfers may take 1-2 business days depending on your bank.",
+      a: "Mobile wallet transfers are near-instant. Bank transfers may take 1-2 business days depending on your bank.",
+      // TODO(Mark): "<3s" claim on the homepage has no backing timing data in
+      // dusupay_transactions (only a completion webhook event is stored, no
+      // initiation timestamp). Either instrument real elapsed-time tracking
+      // or drop the specific number until you can prove it.
     },
     {
       q: "When do I pay back the advance?",
-      a: "The advance amount plus our fees are automatically deducted from your next paycheck. You don't need to do anything — it's completely automatic. No separate payments, no reminders, no hassle.",
+      a: "The advance amount plus fees is deducted from your pay at your next payday, coordinated through your employer's payroll process.",
+      // TODO(Mark): current copy said this is "completely automatic" with
+      // "no reminders, no hassle." There is no DB-level trigger yet that
+      // automatically subtracts advances from final employee pay at payday
+      // (payday_recoupments has 0 rows, and this was flagged as an open gap).
+      // Don't publish "automatic" language until that logic actually exists.
     },
     {
       q: "Can I take multiple advances?",
-      a: "Yes, you can take multiple advances as long as you stay within your available limit (up to 60% of earned wages) and frequency caps as set by your Employer. Each advance has its own fee calculated independently — there's no compounding.",
+      a: "Yes, you can take multiple advances as long as you stay within your available limit and any frequency caps set by your employer. Each advance has its own fee calculated independently — there's no compounding.",
     },
     {
       q: "What if my employer isn't on EaziWage?",
@@ -99,6 +108,10 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     {
       q: "Does EaziWage cost employers anything?",
       a: "No, EaziWage is completely free for employers. There are no setup fees, no monthly charges, and no costs per transaction. Employees pay a small fee on each advance they take.",
+      // NOTE(Mark): worth double-checking this against employers.processing_fee
+      // (currently 4.5% on both live employer records) — confirm that field
+      // represents the employer's fee *tier* passed down to employee advances,
+      // not a cost billed to the employer directly, before this claim goes live.
     },
     {
       q: "How does EaziWage integrate with our payroll?",
@@ -110,21 +123,32 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "Can we customize advance limits and policies?",
-      a: "Absolutely. You can set custom advance limits (e.g., 30% instead of 50%), frequency caps (e.g., max 2 advances per month), minimum employment tenure requirements, and more. You maintain full control.",
+      a: "Absolutely. You can set a lower advance limit than your country's base cap, frequency caps (e.g., max 2 advances per month), minimum employment tenure requirements, and more. You maintain full control.",
     },
     {
       q: "Will employees see their individual transactions?",
-      a: "Employers only see aggregated program-level data — total advances, average amounts, and overall utilization across the company. Individual usage breakdowns aren't currently tracked at all, for anyone — including EaziWage internally. Employees can see their own transaction history and balance in their own dashboard.",
+      a: "Employers only see aggregated program-level data — total advances, average amounts, and overall utilization across the company. Individual employee balances and transaction history are not visible to employers. Employees can see their own transaction history and balance in their own dashboard.",
+      // Removed the old "not tracked at all, for anyone — including EaziWage
+      // internally" line. That's false: advances, risk factors, and KYC
+      // records are all tracked per-employee internally. Publishing that
+      // exact claim is a compliance liability if it's ever quoted back at you.
     },
     {
       q: "What happens during payroll processing?",
-      a: "Before each payroll run, we provide a deduction file showing the total amount to deduct from each employee who took advances. You simply include these deductions in your normal payroll — we handle everything else.",
+      a: "Ahead of each payroll run, we'll provide you with the total amount to deduct for each employee who took advances, so you can include it in your normal payroll process.",
+      // TODO(Mark): you already flagged this "deduction file" feature as
+      // described-as-live-but-not-built in your last FAQ audit. Still unfixed
+      // in this source file. Either ship the feature or keep the copy vague
+      // until it exists.
     },
   ],
   fees: [
     {
       q: "What are EaziWage's fees?",
-      a: "Fees range from 3.5% to 5% per advance and 3.5% to 6.5%.8 transaction fee per advance, depending on you and your employer's risk profile. The exact fee is always shown before you confirm any transaction — no surprises. We provide nudges to reduce advancement fees so that you're in control.",
+      a: "Fees range from 3.5% to 6.5% per advance, depending on your and your employer's risk profile. The exact fee is always shown before you confirm any transaction — no surprises. We provide nudges to help you reduce your advance fees over time.",
+      // Original text had a garbled fragment ("3.5% to 6.5%.8 transaction
+      // fee per advance") — cleaned up. Ceiling of 6.5% matches the actual
+      // fee formula: Bf(3.5%) + Rf(3.0%) x (1 - CRS/5), worst case CRS=0.
     },
     {
       q: "Are there any hidden fees?",
@@ -154,7 +178,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "What security measures protect my account?",
-      a: "Multiple layers: (1) Encrypted data transmission, (2) Two-factor authentication option, (3) Biometric login on mobile, (4) Session timeouts, (5) Suspicious activity monitoring, (6) Secure Mobile Wallet integration.",
+      a: "Multiple layers: (1) Encrypted data transmission, (2) Two-factor authentication option, (3) Biometric login on mobile, (4) Session timeouts, (5) Suspicious activity monitoring, (6) Secure mobile wallet integration.",
     },
     {
       q: "Is EaziWage regulated?",
@@ -168,14 +192,14 @@ const faqs: Record<CategoryId, FAQItem[]> = {
   technical: [
     {
       q: "What payment methods are supported?",
-      a: "We support most major Mobile Wallet providers including Safaricom Mpesa, MTN Mobile Money, Airtel Money, and other local mobile money services across markets we operate across. Bank transfers are also available.",
+      a: "We support major mobile wallet providers including M-PESA, MTN Mobile Money, Airtel Money, and Tigo Pesa, depending on the market you're in. Bank transfers are also available.",
     },
     {
       q: "Is there a mobile app?",
       a: "There is a dedicated roadmap for development already, no release date confirmed yet. In the meantime, the web app works well on mobile browsers, so you're not stuck waiting.",
     },
     {
-      q: "What if my Mobile Wallet provider is down?",
+      q: "What if my mobile wallet provider is down?",
       a: "We monitor mobile money provider status continuously. If your primary provider is experiencing issues, you can choose an alternative payment method. We'll also notify you of any known outages.",
     },
     {

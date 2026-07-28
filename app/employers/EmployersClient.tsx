@@ -83,7 +83,7 @@ const faqs = [
   {
     question: "How does Eaziwage integrate with our existing payroll system?",
     answer:
-      "Eaziwage seamlessly integrates with most major payroll systems through secure APIs. We also support CSV uploads for manual payroll systems. Our integration team will work closely with your HR and IT departments to ensure a smooth setup process.",
+      "Eaziwage is built to integrate with major payroll systems through secure APIs, and we support CSV uploads for employers using manual payroll processes. Our team works directly with your HR and IT departments during setup to configure the integration that fits your systems.",
   },
   {
     question:
@@ -95,13 +95,13 @@ const faqs = [
     question:
       "How does Eaziwage ensure the security and privacy of employee data?",
     answer:
-      "Eaziwage prioritizes data security and privacy. We comply with all relevant data protection regulations, including ODPC guidelines. Employee data is encrypted both in transit and at rest, and we implement strict access controls to ensure that only authorized personnel can access sensitive information.",
+      "Eaziwage prioritizes data security and privacy. Employee data is encrypted both in transit and at rest, and we implement strict access controls so only authorized personnel can access sensitive information. We are working toward formal compliance with ODPC data protection guidelines.",
   },
   {
     question:
       "Can we customize the Eaziwage platform to align with our company policies?",
     answer:
-      "Yes, Eaziwage offers a range of customization options to align with your company policies. You can set withdrawal limits, approval workflows, and define which employee groups have access to the service. Our platform is designed to be flexible to meet the unique needs of your organization.",
+      "Yes, Eaziwage offers customization to align with your company policies. You can set withdrawal limits, cooldown periods, and approval workflows, with the option to enable or disable access on a per-employee basis. Our platform is designed to be flexible to meet the unique needs of your organization.",
   },
 ];
 

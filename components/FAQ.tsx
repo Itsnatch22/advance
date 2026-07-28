@@ -16,12 +16,12 @@ const faqs = [
   {
     question: "Who can use EaziWage?",
     answer:
-      "Our solution targets Kenyan employees across sectors; eligibility is determined by payroll data and work history.",
+      "Our solution targets employees in Kenya, Uganda, Tanzania and Rwanda across sectors; eligibility is determined by payroll data and work history.",
   },
   {
     question: "What security measures are considered?",
     answer:
-      "Industry-standard encryption, PCI-DSS-aligned practices, and regular audits.",
+      "All sensitive account and contact information — including bank account numbers and phone numbers — is stored encrypted, not in plaintext. Authentication credentials, password reset tokens, and MFA backup codes are hashed, never stored in readable form. Admin actions are tracked through an internal audit log, and platform activity is monitored for suspicious logins and fraud signals in real time.",
   },
   {
     question: "Are there any fees associated with using EaziWage?",
@@ -30,8 +30,7 @@ const faqs = [
   },
   {
     question: "How to get started?",
-    answer:
-      "For employers: integrate with your payroll. For employees: download the app or use the web portal to request funds.",
+    answer: "For employers: Visit the EaziWage Dashboard and register your company. For employees: Register through the EaziWage register page using your company's code, provided by your employer. If your employer isn't on EaziWage yet, you can still register and refer them — we'll reach out to get them onboarded.",
   },
 ];
 
