@@ -35,8 +35,8 @@ const categories: {
   icon: React.ElementType;
 }[] = [
   { id: "general", label: "General", icon: HelpCircle },
-  { id: "employees", label: "For Employees", icon: Users },
   { id: "employers", label: "For Employers", icon: Building2 },
+  { id: "employees", label: "For Employees", icon: Users },
   { id: "fees", label: "Fees & Pricing", icon: CreditCard },
   { id: "security", label: "Security & Privacy", icon: Shield },
   { id: "technical", label: "Technical", icon: Clock },
@@ -119,7 +119,7 @@ const faqs: Record<CategoryId, FAQItem[]> = {
     },
     {
       q: "How long does implementation take?",
-      a: "Most employers are live within 1-2 weeks. This includes company verification, payroll integration setup, and employee onboarding. We provide dedicated support throughout the process.",
+      a: "Most employers are live within the first hour after onboarding. This includes company verification, payroll integration setup, and employee onboarding. We provide dedicated support throughout the process.",
     },
     {
       q: "Can we customize advance limits and policies?",
