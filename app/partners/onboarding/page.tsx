@@ -219,7 +219,7 @@ export default function PartnerOnboardingPage() {
                       <input
                         type="radio"
                         value={type.value}
-                        {...register("partnerType")}
+                        {...register("partnerType" as const)}
                         className="peer sr-only"
                         id={`partnerType-${type.value}`}
                       />
@@ -242,7 +242,7 @@ export default function PartnerOnboardingPage() {
               >
                 <input
                   type="text"
-                  {...register("companyName")}
+                  {...register("companyName" as const)}
                   className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="Your company name"
                 />
@@ -251,7 +251,7 @@ export default function PartnerOnboardingPage() {
               <FormField label="Industry" error={errors.industry?.message}>
                 <input
                   type="text"
-                  {...register("industry")}
+                  {...register("industry" as const)}
                   className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="E.g., Retail, Banking, Tech"
                 />
@@ -267,7 +267,7 @@ export default function PartnerOnboardingPage() {
               >
                 <input
                   type="text"
-                  {...register("contactName")}
+                  {...register("contactName" as const)}
                   className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="Your name"
                 />
@@ -276,7 +276,7 @@ export default function PartnerOnboardingPage() {
               <FormField label="Job Title" error={errors.jobTitle?.message}>
                 <input
                   type="text"
-                  {...register("jobTitle")}
+                  {...register("jobTitle" as const)}
                   className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="Head of Partnerships"
                 />
@@ -291,7 +291,7 @@ export default function PartnerOnboardingPage() {
               >
                 <input
                   type="email"
-                  {...register("email")}
+                  {...register("email" as const)}
                   className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="you@company.com"
                 />
@@ -304,7 +304,7 @@ export default function PartnerOnboardingPage() {
               >
                 <input
                   type="tel"
-                  {...register("phone")}
+                  {...register("phone" as const)}
                   className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="+254 712 345 678"
                 />
@@ -317,7 +317,7 @@ export default function PartnerOnboardingPage() {
               error={errors.companySize?.message}
             >
               <select
-                {...register("companySize")}
+                {...register("companySize" as const)}
                 className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
               >
                 <option value="" disabled>
@@ -337,7 +337,7 @@ export default function PartnerOnboardingPage() {
               error={errors.message?.message}
             >
               <textarea
-                {...register("message")}
+                {...register("message" as const)}
                 rows={5}
                 className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                 placeholder="How would you like to partner with EaziWage? What value can we create together?"
@@ -348,7 +348,7 @@ export default function PartnerOnboardingPage() {
             <FormField label="Pitch deck (optional)" error={undefined}>
               <input
                 type="url"
-                {...register("pitchDeckLink")}
+                {...register("pitchDeckLink" as const)}
                 className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                 placeholder="https:// (link to your pitch deck)"
               />
@@ -358,7 +358,7 @@ export default function PartnerOnboardingPage() {
             <div className="flex items-start gap-3">
               <input
                 type="checkbox"
-                {...register("consent")}
+                {...register("consent" as const)}
                 id="consent"
                 className="mt-1 h-4 w-4 rounded border-neutral-300 text-emerald-600 focus:ring-emerald-600"
               />
@@ -368,7 +368,7 @@ export default function PartnerOnboardingPage() {
             </div>
 
             {/* Honeypot field (hidden) */}
-            <input type="text" {...register("website")} className="sr-only" aria-hidden />
+            <input type="text" {...register("website" as const)} className="sr-only" aria-hidden />
 
             {/* Submit Button */}
             <motion.button
