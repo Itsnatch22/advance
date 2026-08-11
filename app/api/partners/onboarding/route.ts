@@ -8,7 +8,7 @@ import { EMAIL_CONFIG } from '@/constants/config';
 import { checkRateLimit, contactLimiter } from '@/lib/security/rate-limit';
 
 const partnerFormSchema = z.object({
-  partnerType: z.enum(["banking", "enterprise", "technology"]),
+  partnerType: z.enum(["banking", "enterprise", "technology", "investor", "suppliers", "others"]),
   companyName: z.string().min(2),
   industry: z.string().min(2),
   contactName: z.string().min(2),
@@ -17,6 +17,12 @@ const partnerFormSchema = z.object({
   jobTitle: z.string().min(2),
   companySize: z.enum(["1-50", "51-200", "201-1000", "1001-5000", "5000+"]),
   message: z.string().min(20),
+  // Optional pitch deck link (if provided)
+  pitchDeckLink: z.string().url().optional(),
+  // Honeypot field: should be empty
+  website: z.string().optional(),
+  // Consent checkbox must be true
+  consent: z.boolean().refine((v) => v === true, { message: "You must agree to the privacy policy" }),
 });
 
 const supabase =
@@ -44,7 +50,15 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    // Honeypot anti-spam: if website field is filled, silently reject
+    if (body?.website && typeof body.website === 'string' && body.website.trim() !== '') {
+      return NextResponse.json({ error: 'Spam detected' }, { status: 400 });
+    }
+
     const validatedData = partnerFormSchema.parse(body);
+
+    // Persist core fields; include pitchDeckLink & consent in the saved message for record
+    const fullMessage = `${validatedData.message}\n\nPitch deck: ${validatedData.pitchDeckLink ?? 'N/A'}\nConsent: ${validatedData.consent ? 'agreed' : 'not agreed'}`;
 
     const { data: partnerData, error: dbError } = await supabase
       .from("partner_applications")
@@ -58,7 +72,7 @@ export async function POST(request: NextRequest) {
           phone: validatedData.phone,
           job_title: validatedData.jobTitle,
           company_size: validatedData.companySize,
-          message: validatedData.message,
+          message: fullMessage,
           status: "pending",
           created_at: new Date().toISOString(),
         },

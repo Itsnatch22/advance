@@ -76,8 +76,16 @@ export default function PartnerOnboardingPage() {
     handleSubmit,
     formState: { errors },
     reset,
+    setFocus,
   } = useForm<PartnerFormData>({
     resolver: zodResolver(partnerFormSchema),
+    defaultValues: {
+      partnerType: "banking",
+      companySize: "",
+      consent: false,
+      website: "",
+      pitchDeckLink: "",
+    },
   });
 
   const onSubmit = async (data: PartnerFormData) => {
@@ -89,13 +97,26 @@ export default function PartnerOnboardingPage() {
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) throw new Error("Failed to submit");
+      const payload = await response.json();
 
+      if (!response.ok) {
+        const message = payload?.error ?? "Failed to submit";
+        // If validation errors returned, focus first field with error
+        if (payload?.details && Array.isArray(payload.details) && payload.details.length > 0) {
+          const first = payload.details[0];
+          if (first?.path && first.path.length) {
+            setFocus(String(first.path[0]));
+          }
+        }
+        throw new Error(message);
+      }
+
+      toast.success(payload?.message ?? "Application submitted successfully");
       setIsSuccess(true);
       reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting form:", error);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(error?.message ?? "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -176,33 +197,35 @@ export default function PartnerOnboardingPage() {
               error={errors.partnerType?.message}
               icon={Briefcase}
             >
-              <div className="grid gap-4 sm:grid-cols-3">
-                {[
-                  { value: "banking", label: "Banking Institution" },
-                  { value: "enterprise", label: "Enterprise Employer" },
-                  { value: "technology", label: "Technology Provider" },
-                  { value: "investor", label: "Investor" },
-                  { value: "suppliers", label: "Suppliers" },
-                  { value: "others", label: "Others" },
-                ].map((type) => (
-                  <label
-                    key={type.value}
-                    className="group relative cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      value={type.value}
-                      {...register("partnerType")}
-                      className="peer sr-only"
-                    />
-                    <div className="rounded-xl border-2 border-neutral-200 bg-white p-4 text-center transition peer-checked:border-emerald-600 peer-checked:bg-emerald-50 hover:border-emerald-300 dark:border-neutral-700 dark:bg-neutral-800 dark:peer-checked:border-emerald-600 dark:peer-checked:bg-emerald-900/20">
-                      <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                        {type.label}
-                      </p>
-                    </div>
-                  </label>
-                ))}
-              </div>
+              <fieldset className="grid gap-4 sm:grid-cols-3" aria-label="Partner type">
+                  <legend className="sr-only">Partner type</legend>
+                  {[
+                    { value: "banking", label: "Banking Institution" },
+                    { value: "enterprise", label: "Enterprise Employer" },
+                    { value: "technology", label: "Technology Provider" },
+                    { value: "investor", label: "Investor" },
+                    { value: "suppliers", label: "Suppliers" },
+                    { value: "others", label: "Others" },
+                  ].map((type) => (
+                    <label
+                      key={type.value}
+                      className="group relative cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        value={type.value}
+                        {...register("partnerType")}
+                        className="peer sr-only"
+                        id={`partnerType-${type.value}`}
+                      />
+                      <div className="rounded-xl border-2 border-neutral-200 bg-white p-4 text-center transition peer-checked:border-emerald-600 peer-checked:bg-emerald-50 hover:border-emerald-300 dark:border-neutral-700 dark:bg-neutral-800 dark:peer-checked:border-emerald-600 dark:peer-checked:bg-emerald-900/20">
+                        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                          {type.label}
+                        </p>
+                      </div>
+                    </label>
+                  ))}
+                </fieldset>
             </FormField>
 
             {/* Company Info */}
@@ -292,7 +315,9 @@ export default function PartnerOnboardingPage() {
                 {...register("companySize")}
                 className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
               >
-                <option value="">Select company size</option>
+                <option value="" disabled>
+                  Select company size
+                </option>
                 <option value="1-50">1-50 employees</option>
                 <option value="51-200">51-200 employees</option>
                 <option value="201-1000">201-1,000 employees</option>
@@ -313,6 +338,32 @@ export default function PartnerOnboardingPage() {
                 placeholder="How would you like to partner with EaziWage? What value can we create together?"
               />
             </FormField>
+
+            {/* Optional: Pitch deck link */}
+            <FormField label="Pitch deck (optional)" error={undefined}>
+              <input
+                type="url"
+                {...register("pitchDeckLink")}
+                className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                placeholder="https:// (link to your pitch deck)"
+              />
+            </FormField>
+
+            {/* Consent & Honeypot */}
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                {...register("consent")}
+                id="consent"
+                className="mt-1 h-4 w-4 rounded border-neutral-300 text-emerald-600 focus:ring-emerald-600"
+              />
+              <label htmlFor="consent" className="text-sm text-neutral-700 dark:text-neutral-300">
+                I agree to the <a href="/privacy" className="text-emerald-600 underline">privacy policy</a> and that EaziWage may contact me regarding this application.
+              </label>
+            </div>
+
+            {/* Honeypot field (hidden) */}
+            <input type="text" {...register("website")} className="sr-only" aria-hidden />
 
             {/* Submit Button */}
             <motion.button
