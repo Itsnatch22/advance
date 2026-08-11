@@ -56,7 +56,7 @@ export default function SalesNotification({
           Please follow up promptly to engage this lead and explore potential opportunities.
         </Text>
 
-        <Button style={button} href={`${baseUrl}/admin`}>
+        <Button style={button} href={`${baseUrl}`}>
           Go to Dashboard
         </Button>
       </Section>

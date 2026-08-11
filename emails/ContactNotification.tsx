@@ -22,7 +22,7 @@ export default function ContactNotification({
   message,
   submittedAt,
 }: ContactNotificationProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.eaziwage.com";
 
   return (
     <EmailLayout
@@ -71,7 +71,7 @@ export default function ContactNotification({
           Please review the submission and follow up accordingly.
         </Text>
 
-        <Button style={button} href={`${baseUrl}/admin`}>
+        <Button style={button} href={`${baseUrl}`}>
           Go to Dashboard
         </Button>
       </Section>
