@@ -110,7 +110,8 @@ export default function PartnerOnboardingPage() {
         if (payload?.details && Array.isArray(payload.details) && payload.details.length > 0) {
           const first = payload.details[0];
           if (first?.path && first.path.length) {
-            setFocus(String(first.path[0]));
+          // cast to a form field key — server returns path entries as strings
+          setFocus(first.path[0] as unknown as keyof PartnerFormData);
           }
         }
         throw new Error(message);
