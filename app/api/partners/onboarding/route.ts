@@ -57,9 +57,30 @@ export async function POST(request: NextRequest) {
 
     const validatedData = partnerFormSchema.parse(body);
 
-    // Persist core fields; include pitchDeckLink & consent in the saved message for record
-    const fullMessage = `${validatedData.message}\n\nPitch deck: ${validatedData.pitchDeckLink ?? 'N/A'}\nConsent: ${validatedData.consent ? 'agreed' : 'not agreed'}`;
+    // Verify reCAPTCHA if available
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    if (recaptchaSecret) {
+      const token = validatedData.recaptchaToken;
+      if (!token) {
+        return NextResponse.json({ error: 'reCAPTCHA token missing' }, { status: 400 });
+      }
 
+      const recaptchaRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ secret: recaptchaSecret, response: token }),
+      });
+
+      const recaptchaJson = await recaptchaRes.json();
+      // For v3, check score >= 0.5; for v2, success === true
+      const passed = recaptchaJson.success && (typeof recaptchaJson.score === 'undefined' || recaptchaJson.score >= 0.5);
+      if (!passed) {
+        console.error('reCAPTCHA failed', recaptchaJson);
+        return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 });
+      }
+    }
+
+    // Persist core fields including dedicated columns for pitch_deck_url and consent
     const { data: partnerData, error: dbError } = await supabase
       .from("partner_applications")
       .insert([
@@ -72,7 +93,9 @@ export async function POST(request: NextRequest) {
           phone: validatedData.phone,
           job_title: validatedData.jobTitle,
           company_size: validatedData.companySize,
-          message: fullMessage,
+          message: validatedData.message,
+          pitch_deck_url: validatedData.pitchDeckLink ?? null,
+          consent: validatedData.consent,
           status: "pending",
           created_at: new Date().toISOString(),
         },
@@ -96,6 +119,7 @@ export async function POST(request: NextRequest) {
         react: PartnerOnboardingEmail({
           contactName: validatedData.contactName,
           companyName: validatedData.companyName,
+          pitchDeckLink: validatedData.pitchDeckLink ?? null,
         }),
       }),
 
@@ -113,6 +137,8 @@ export async function POST(request: NextRequest) {
           phone: validatedData.phone,
           companySize: validatedData.companySize,
           message: validatedData.message,
+          pitchDeckLink: validatedData.pitchDeckLink ?? null,
+          consent: validatedData.consent,
         }),
       }),
     ];

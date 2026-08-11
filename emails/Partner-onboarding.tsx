@@ -11,6 +11,7 @@ import { EMAIL_CONFIG } from '@/constants/config';
 interface PartnerOnboardingEmailProps {
   contactName: string;
   companyName: string;
+  pitchDeckLink?: string | null;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
@@ -18,6 +19,7 @@ const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
 export default function PartnerOnboardingEmail({
   contactName,
   companyName,
+  pitchDeckLink,
 }: PartnerOnboardingEmailProps) {
   return (
     <EmailLayout
@@ -71,6 +73,14 @@ export default function PartnerOnboardingEmail({
         <Button style={button} href={baseUrl}>
           Learn More About EaziWage
         </Button>
+
+        {pitchDeckLink ? (
+          <Section style={highlightBox}>
+            <Text style={highlightText}><strong>Thanks — we received your pitch deck</strong></Text>
+            <Text style={text}>You included a pitch deck link. Our partnerships team may review it before reaching out.</Text>
+            <Text style={text}><a href={pitchDeckLink}>{pitchDeckLink}</a></Text>
+          </Section>
+        ) : null}
 
         <Text style={text}>
           If you have any urgent questions, please don't hesitate to reach

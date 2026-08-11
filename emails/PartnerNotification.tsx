@@ -13,6 +13,8 @@ interface PartnerNotificationEmailProps {
   phone: string;
   companySize: string;
   message: string;
+  pitchDeckLink?: string | null;
+  consent: boolean;
 }
 
 export default function PartnerNotificationEmail({
@@ -25,6 +27,8 @@ export default function PartnerNotificationEmail({
   phone,
   companySize,
   message,
+  pitchDeckLink,
+  consent,
 }: PartnerNotificationEmailProps) {
   return (
     <EmailLayout
@@ -46,6 +50,10 @@ export default function PartnerNotificationEmail({
           <Text style={text}><strong>Email:</strong> {email}</Text>
           <Text style={text}><strong>Phone:</strong> {phone}</Text>
           <Text style={text}><strong>Company Size:</strong> {companySize}</Text>
+          {pitchDeckLink ? (
+            <Text style={text}><strong>Pitch Deck:</strong> <a href={pitchDeckLink}>{pitchDeckLink}</a></Text>
+          ) : null}
+          <Text style={text}><strong>Consent Given:</strong> {consent ? 'Yes' : 'No'}</Text>
         </Section>
 
         <Text style={text}><strong>Message:</strong></Text>
