@@ -35,15 +35,20 @@ const corporatePartners = [
 /* -------------------------- components -------------------------- */
 
 const TiltLogoCard = ({ src }: { src: string }) => {
+  // Derive a friendly alt from the filename for better accessibility
+  const raw = src.split("/").pop() ?? "partner";
+  const name = raw.split(".")[0].replace(/[-_]/g, " ");
+  const altText = `${name.charAt(0).toUpperCase() + name.slice(1)} logo`;
+
   return (
-    <motion.div style={{ perspective: 1000 }} className="h-28">
-      <TiltCard className="group relative flex h-full items-center justify-center rounded-2xl border border-slate-200/60 bg-white/50 p-6 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10">
+    <motion.div style={{ perspective: 1000 }} className="h-36 sm:h-40">
+      <TiltCard className="group relative flex h-full items-center justify-center rounded-2xl border border-slate-200/60 bg-white/60 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10">
         <Image
           src={src}
-          alt="partner logo"
-          width={120}
-          height={40}
-          className="relative z-10 h-10 w-auto object-contain opacity-40 grayscale transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0"
+          alt={altText}
+          width={200}
+          height={80}
+          className="relative z-10 h-16 w-auto object-contain opacity-80 transition-all duration-500 group-hover:opacity-100"
         />
         <div className="absolute bottom-0 left-0 h-1 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
       </TiltCard>
