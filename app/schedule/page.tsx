@@ -17,6 +17,7 @@ const CALENDLY_LINKS = {
   user_to_admin: "https://calendly.com/mark-eaziwage/admin-calls",
   partner_onboarding: "https://calendly.com/joel-eaziwage/user-consultation",
   sales_demo: "https://calendly.com/jason94-crawford/30min",
+  strategy_session: "https://calendly.com/mark-eaziwage/strategy-session",
 } as const;
 
 type MeetingType = keyof typeof CALENDLY_LINKS;

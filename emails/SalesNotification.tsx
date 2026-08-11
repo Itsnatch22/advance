@@ -8,7 +8,7 @@ interface SalesNotificationProps {
   message: string;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.eaziwage.com";
 
 export default function SalesNotification({
   name,
