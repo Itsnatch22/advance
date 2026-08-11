@@ -34,6 +34,14 @@ const partnerFormSchema = z.object({
   message: z
     .string()
     .min(20, "Please provide more details (at least 20 characters)"),
+  // Optional pitch deck link
+  pitchDeckLink: z.string().url().optional(),
+  // Honeypot
+  website: z.string().optional(),
+  // Consent
+  consent: z.boolean().refine((v) => v === true, { message: "You must agree to the privacy policy" }),
+  // Optional reCAPTCHA token (client may provide)
+  recaptchaToken: z.string().optional(),
 });
 
 type PartnerFormData = z.infer<typeof partnerFormSchema>;
@@ -81,10 +89,7 @@ export default function PartnerOnboardingPage() {
     resolver: zodResolver(partnerFormSchema),
     defaultValues: {
       partnerType: "banking",
-      companySize: "",
       consent: false,
-      website: "",
-      pitchDeckLink: "",
     },
   });
 
@@ -358,7 +363,7 @@ export default function PartnerOnboardingPage() {
                 className="mt-1 h-4 w-4 rounded border-neutral-300 text-emerald-600 focus:ring-emerald-600"
               />
               <label htmlFor="consent" className="text-sm text-neutral-700 dark:text-neutral-300">
-                I agree to the <a href="/privacy" className="text-emerald-600 underline">privacy policy</a> and that EaziWage may contact me regarding this application.
+                I agree to the <a href="/privacy-policy.pdf" className="text-emerald-600 underline">privacy policy</a> and that EaziWage may contact me regarding this application.
               </label>
             </div>
 
