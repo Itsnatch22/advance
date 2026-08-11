@@ -23,11 +23,30 @@ export type Career = {
   skills: string[];
   apply_link: string | null;
   apply_email: string;
+  // Back-compat field (DB trigger keeps this in sync). New logic should use `status`.
   is_open: boolean;
   is_featured: boolean;
   posted_date: string;
   closing_date: string | null;
+  // New fields from DB migration
+  status: "open" | "closed" | "archived";
+  experience_level: "entry" | "mid" | "senior" | "lead" | null;
 };
+
+export const experienceLevels: Array<{
+  value: "entry" | "mid" | "senior" | "lead";
+  label: string;
+}> = [
+  { value: "entry", label: "Entry" },
+  { value: "mid", label: "Mid" },
+  { value: "senior", label: "Senior" },
+  { value: "lead", label: "Lead" },
+];
+
+export function formatExperienceLevel(level: Career["experience_level"]) {
+  if (!level) return null;
+  return experienceLevels.find((l) => l.value === level)?.label ?? level;
+}
 
 export const departments: Array<{
   value: CareerDepartment;

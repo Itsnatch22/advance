@@ -15,6 +15,7 @@ import {
   type Career,
   formatDepartment,
   formatEmploymentType,
+  formatExperienceLevel,
   getApplyHref,
 } from "../types";
 
@@ -28,10 +29,10 @@ async function getCareer(id: string) {
   const { data, error } = await supabaseUser
     .from("careers")
     .select(
-      "id,title,department,employment_type,location,country,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
+      "id,title,department,employment_type,location,country,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date,status,experience_level"
     )
     .eq("id", id)
-    .eq("is_open", true)
+    .eq("status", "open")
     .maybeSingle();
 
   if (error) {
@@ -105,8 +106,8 @@ export default async function CareerDetailPage({
           Back to careers
         </Link>
 
-        <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
-          <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
+        <section className="rounded-4xl border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
+          <div className="rounded-[1.625rem] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
               <BriefcaseBusiness className="h-3.5 w-3.5" strokeWidth={1.8} />
               {formatDepartment(career.department)}
@@ -120,6 +121,9 @@ export default async function CareerDetailPage({
                 <div className="mt-6 flex flex-wrap gap-4 text-sm font-semibold text-slate-500">
                   <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
                     {formatEmploymentType(career.employment_type)}
+                  </span>
+                  <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                    {career.experience_level ? formatExperienceLevel(career.experience_level) : "Not specified"}
                   </span>
                   <span className="inline-flex items-center gap-2">
                     <MapPin
@@ -142,7 +146,7 @@ export default async function CareerDetailPage({
                 </div>
               </div>
 
-              <Link
+              <a
                 href={applyHref}
                 target={isExternalApply ? "_blank" : undefined}
                 rel={isExternalApply ? "noopener noreferrer" : undefined}
@@ -152,7 +156,7 @@ export default async function CareerDetailPage({
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/12 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 group-hover:-translate-y-0.5">
                   <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
                 </span>
-              </Link>
+              </a>
             </div>
 
             <p className="mt-10 max-w-3xl text-lg leading-relaxed text-slate-600">
@@ -170,8 +174,8 @@ export default async function CareerDetailPage({
             <DetailSection title="Requirements" items={career.requirements} />
           </div>
 
-          <aside className="h-fit rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-xl shadow-slate-900/5">
-            <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5">
+          <aside className="h-fit rounded-4xl border border-slate-200/70 bg-white/75 p-1.5 shadow-xl shadow-slate-900/5">
+            <div className="rounded-[1.625rem] bg-white p-6 ring-1 ring-slate-900/5">
               <h2 className="text-xl font-black tracking-tight text-slate-900">
                 Skills
               </h2>
@@ -201,8 +205,8 @@ export default async function CareerDetailPage({
 
 function DetailSection({ title, items }: { title: string; items: string[] }) {
   return (
-    <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-xl shadow-slate-900/5">
-      <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-8">
+    <section className="rounded-4xl border border-slate-200/70 bg-white/75 p-1.5 shadow-xl shadow-slate-900/5">
+      <div className="rounded-[1.625rem] bg-white p-6 ring-1 ring-slate-900/5 sm:p-8">
         <h2 className="text-2xl font-black tracking-tight text-slate-900">
           {title}
         </h2>

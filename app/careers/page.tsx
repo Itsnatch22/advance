@@ -25,9 +25,9 @@ async function getOpenCareers() {
   const { data, error } = await supabaseUser
     .from("careers")
     .select(
-      "id,title,department,employment_type,location,country,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
+      "id,title,department,employment_type,location,country,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date,status,experience_level"
     )
-    .eq("is_open", true)
+    .eq("status", "open")
     .order("is_featured", { ascending: false })
     .order("posted_date", { ascending: false });
 
