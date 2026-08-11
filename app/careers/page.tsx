@@ -1,302 +1,137 @@
-"use client";
-
-import React, { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import type { Metadata } from "next";
+import { AlertCircle, ArrowUpRight, BriefcaseBusiness } from "lucide-react";
 import Link from "next/link";
-import {
-  ArrowUpRight,
-  Code2,
-  Palette,
-  Sparkles,
-  TrendingUp,
-  Users,
-  Zap,
-} from "lucide-react";
-import Lottie from "lottie-react";
-import Startup from "@/public/Startup.json";
 import { GridSystem } from "@/components/grid";
-import { EMAIL_CONFIG } from '@/constants/config';
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
-import { useParallax } from "@/hooks/use-parallax";
+import { supabaseUser } from "@/lib/supabase/server";
+import { CareersListClient } from "./CareersListClient";
+import type { Career } from "./types";
 
-const TiltCard = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  const {
-    rotateX,
-    rotateY,
-    spotlightBackground,
-    handleMouseMove,
-    handleMouseLeave,
-  } = useParallax();
+export const dynamic = "force-dynamic";
 
-  return (
-    <motion.div style={{ perspective: 1000 }} className="h-full">
-      <motion.div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{ rotateX, rotateY }}
-        className={`group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10 ${className}`}
-      >
-        <motion.div
-          style={{
-            background: spotlightBackground,
-          }}
-          className="pointer-events-none absolute inset-0"
-        />
-        {children}
-        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
-      </motion.div>
-    </motion.div>
-  );
+export const metadata: Metadata = {
+  title: "Careers",
+  description:
+    "Join EaziWage and help build trusted earned wage access for African workplaces.",
+  openGraph: {
+    title: "Careers at EaziWage",
+    description:
+      "Explore open roles across engineering, design, creativity, and growth at EaziWage.",
+    url: "https://eaziwage.com/careers",
+  },
 };
 
-export default function CareersPage() {
-  const containerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
+async function getOpenCareers() {
+  const { data, error } = await supabaseUser
+    .from("careers")
+    .select(
+      "id,title,department,employment_type,location,country,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
+    )
+    .eq("is_open", true)
+    .order("is_featured", { ascending: false })
+    .order("posted_date", { ascending: false });
 
-  const yHero = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  if (error) {
+    return { careers: [] as Career[], error: error.message };
+  }
+
+  return { careers: (data ?? []) as Career[], error: null };
+}
+
+export default async function CareersPage() {
+  const { careers, error } = await getOpenCareers();
+  const featuredCount = careers.filter((career) => career.is_featured).length;
 
   return (
-    <GridSystem variant="dots" opacity={0.03} className="min-h-screen bg-white">
-      {/* Immersive Background */}
+    <GridSystem
+      variant="dots"
+      opacity={0.03}
+      className="min-h-screen bg-white pt-16"
+    >
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
           delay={0}
-          className="top-[-10%] left-[10%]"
+          className="top-[-8%] left-[8%]"
         />
         <FloatingOrb
           color="bg-emerald-100"
           delay={2}
-          className="right-[10%] bottom-[10%]"
+          className="right-[6%] bottom-[12%]"
         />
       </div>
 
-      {/* Hero Section */}
-      <motion.section
-        ref={containerRef}
-        style={{ y: yHero, opacity: opacityHero }}
-        className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-6 py-40 text-center"
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative mb-16 h-64 w-64 lg:h-80 lg:w-80"
-        >
-          <div className="absolute -inset-10 rounded-full bg-green-500/10 blur-3xl" />
-          <Lottie animationData={Startup} loop className="relative z-10" />
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
-        >
-          Careers launching <br />
-          <span className="text-green-600">soon</span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 1 }}
-          className="mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
-        >
-          We&apos;re building something meaningful — tools that help people
-          access their money faster. <br className="hidden lg:block" />
-          If you&apos;re sharp, curious, and allergic to mid work, you&apos;ll
-          fit right in.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="mt-12 flex flex-col items-center gap-6 sm:flex-row"
-        >
-          <span className="text-sm font-bold tracking-widest text-slate-400 uppercase">
-            Want early access?
-          </span>
-          <Link
-            href={`mailto:${EMAIL_CONFIG.SUPPORT_EMAIL}`}
-            className="group relative flex items-center gap-3 rounded-2xl bg-slate-900 px-8 py-4 font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-green-600"
-          >
-            <span>{EMAIL_CONFIG.SUPPORT_EMAIL}</span>
-            <ArrowUpRight
-              size={20}
-              className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
-            />
-          </Link>
-        </motion.div>
-      </motion.section>
-
-      {/* Open Roles Section */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
-        <div className="mb-24 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
-          >
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
-            Open Roles
-          </motion.div>
-          <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-            What we&apos;re <span className="text-green-600">building for</span>
-          </h2>
-          <p className="mx-auto mt-6 max-w-3xl text-xl text-slate-500">
-            We&apos;re assembling a small, ambitious team. If you ship fast,
-            think deeply, and care about impact — let&apos;s talk.
+      <section className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 px-6 py-24 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-28">
+        <div>
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
+            <BriefcaseBusiness className="h-3.5 w-3.5" strokeWidth={1.8} />
+            Careers
+          </div>
+          <h1 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
+            Build workplace finance that earns trust
+          </h1>
+          <p className="mt-8 max-w-2xl text-xl leading-relaxed text-slate-500">
+            Join a small team building safer earned wage access for employers
+            and workers across Africa.
           </p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="#open-roles"
+              className="group inline-flex items-center justify-center gap-3 rounded-full bg-slate-900 py-2.5 pr-2.5 pl-6 font-bold text-white shadow-xl shadow-slate-900/10 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-green-600 active:scale-[0.98]"
+            >
+              View open roles
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/12 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 group-hover:-translate-y-0.5">
+                <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
+              </span>
+            </Link>
+          </div>
         </div>
 
-        <OpenRolesGrid />
-      </section>
-
-      {/* Why Join Section */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
-        <div className="mb-24 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
-          >
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
-            Why EaziWage
-          </motion.div>
-          <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-            What you&apos;ll <span className="text-green-600">get here</span>
-          </h2>
+        <div className="rounded-[2rem] border border-slate-200/70 bg-white/65 p-1.5 shadow-2xl shadow-slate-900/5">
+          <div className="rounded-[calc(2rem-0.375rem)] bg-white p-7 ring-1 ring-slate-900/5 sm:p-9">
+            <div className="grid gap-5">
+              <Metric label="Open roles" value={careers.length.toString()} />
+              <Metric label="Featured roles" value={featuredCount.toString()} />
+              <Metric label="Departments" value="4" />
+            </div>
+            <div className="mt-8 rounded-[1.5rem] bg-green-50 p-5 text-sm leading-relaxed text-green-900 ring-1 ring-green-500/10">
+              We keep the team focused and practical. Every role here maps to
+              work we need in production, market growth, or customer trust.
+            </div>
+          </div>
         </div>
-
-        <PerksGrid />
       </section>
+
+      {error ? <CareersError message={error} /> : null}
+
+      <div id="open-roles">
+        <CareersListClient careers={careers} />
+      </div>
     </GridSystem>
   );
 }
 
-function OpenRolesGrid() {
-  const roles = [
-    {
-      icon: Code2,
-      title: "Development",
-      description:
-        "Full-stack engineers building scalable fintech infrastructure. TypeScript, React, Node.js, payment integrations.",
-      tags: ["Frontend", "Backend", "APIs"],
-    },
-    {
-      icon: Palette,
-      title: "Design",
-      description:
-        "Product designers crafting intuitive experiences for financial wellness. User research, prototyping, design systems.",
-      tags: ["UI/UX", "Product", "Branding"],
-    },
-    {
-      icon: Sparkles,
-      title: "Creativity",
-      description:
-        "Brand storytellers and content creators. Social strategy, copywriting, visual content that resonates across Africa.",
-      tags: ["Content", "Marketing", "Brand"],
-    },
-    {
-      icon: TrendingUp,
-      title: "Growth",
-      description:
-        "Growth hackers and partnership builders. Scale user acquisition, optimize funnels, forge strategic partnerships.",
-      tags: ["Marketing", "Partnerships", "Analytics"],
-    },
-  ];
-
+function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:gap-10">
-      {roles.map((role, _index) => (
-        <TiltCard key={role.title}>
-          <div className="relative z-10">
-            <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
-              <role.icon className="h-8 w-8" strokeWidth={1.5} />
-            </div>
-            <h3 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-600">
-              {role.title}
-            </h3>
-            <p className="mb-8 text-lg leading-relaxed text-slate-500">
-              {role.description}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {role.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-xl bg-slate-50 px-4 py-1.5 text-xs font-bold tracking-widest text-slate-400 uppercase ring-1 ring-slate-200 transition-all duration-300 ring-inset group-hover:bg-green-600 group-hover:text-white group-hover:ring-green-600"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </TiltCard>
-      ))}
+    <div className="flex items-center justify-between gap-6 rounded-[1.4rem] bg-slate-50 px-5 py-4 ring-1 ring-slate-200/70">
+      <span className="text-sm font-bold text-slate-500">{label}</span>
+      <span className="font-serif text-4xl font-black text-slate-900">
+        {value}
+      </span>
     </div>
   );
 }
 
-function PerksGrid() {
-  const perks = [
-    {
-      icon: Zap,
-      title: "Ship Fast",
-      description: "No bureaucracy. Ideas to production in days, not quarters.",
-    },
-    {
-      icon: Users,
-      title: "Small Team",
-      description: "Your work matters. Every contribution shapes the product.",
-    },
-    {
-      icon: TrendingUp,
-      title: "Real Impact",
-      description:
-        "Build tools that help millions across Africa manage money better.",
-    },
-    {
-      icon: Sparkles,
-      title: "Ownership",
-      description: "Equity stakes. You share in what we build together.",
-    },
-  ];
-
+function CareersError({ message }: { message: string }) {
   return (
-    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-      {perks.map((perk, _index) => (
-        <TiltCard key={perk.title} className="p-10">
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600 transition-transform duration-500 group-hover:scale-110">
-              <perk.icon className="h-7 w-7" strokeWidth={1.5} />
-            </div>
-            <h3 className="mb-3 text-xl font-bold text-slate-900 transition-colors group-hover:text-green-600">
-              {perk.title}
-            </h3>
-            <p className="text-sm leading-relaxed text-slate-500">
-              {perk.description}
-            </p>
-          </div>
-        </TiltCard>
-      ))}
-    </div>
+    <section className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="flex items-start gap-4 rounded-[2rem] border border-red-200 bg-red-50 p-6 text-red-950">
+        <AlertCircle className="mt-1 h-5 w-5 shrink-0" strokeWidth={1.8} />
+        <div>
+          <h2 className="font-bold">Unable to load roles</h2>
+          <p className="mt-1 text-sm leading-relaxed text-red-800">{message}</p>
+        </div>
+      </div>
+    </section>
   );
 }

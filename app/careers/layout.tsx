@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Join the team building Africa's most trusted workplace finance platform. We're hiring engineers, designers, growth hackers, and creators.",
   openGraph: {
-    title: "Careers at EaziWage — Build Fintech That Matters",
+    title: "Careers at EaziWage - Build Fintech That Matters",
     description:
       "Ship fast, own your work, and help millions of African workers access their money on demand. Small team, real impact.",
   },
