@@ -96,6 +96,7 @@ export async function POST(request: NextRequest) {
           message: validatedData.message,
           pitch_deck_url: validatedData.pitchDeckLink ?? null,
           consent: validatedData.consent,
+          consent_given_at: validatedData.consent ? new Date().toISOString() : null,
           status: "pending",
           created_at: new Date().toISOString(),
         },

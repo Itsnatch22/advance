@@ -7,9 +7,12 @@ BEGIN;
 
 ALTER TABLE public.partner_applications
   ADD COLUMN IF NOT EXISTS pitch_deck_url TEXT,
-  ADD COLUMN IF NOT EXISTS consent BOOLEAN NOT NULL DEFAULT FALSE;
+  ADD COLUMN IF NOT EXISTS consent BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS consent_given_at TIMESTAMPTZ NULL;
 
 -- Index to help queries that filter by consent
 CREATE INDEX IF NOT EXISTS idx_partner_applications_consent ON public.partner_applications (consent);
+-- Optional index for consent timestamp queries
+CREATE INDEX IF NOT EXISTS idx_partner_applications_consent_given_at ON public.partner_applications (consent_given_at);
 
 COMMIT;
