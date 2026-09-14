@@ -33,6 +33,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <a href="/admin/campaigns" className="transition-colors hover:text-emerald-700">
               Campaigns
             </a>
+            <a href="/admin/careers/applications" className="transition-colors hover:text-emerald-700">
+              Careers
+            </a>
             <button
               type="button"
               onClick={handleSignOut}

@@ -17,7 +17,7 @@ const CALENDLY_LINKS = {
   user_to_admin: "https://calendly.com/mark-eaziwage/admin-calls",
   partner_onboarding: "https://calendly.com/joel-eaziwage/user-consultation",
   sales_demo: "https://calendly.com/jason94-crawford/30min",
-  strategy_session: "https://calendly.com/mark-eaziwage/strategy-session",
+  strategy_session: "https://calendly.com/eaziwage-support/strategy-session",
 } as const;
 
 type MeetingType = keyof typeof CALENDLY_LINKS;
@@ -172,6 +172,12 @@ export default function SchedulePage() {
                       label: "Partner Onboarding",
                       icon: Clock,
                       desc: "For potential financial or tech partners",
+                    },
+                    {
+                      id: "strategy_session",
+                      label: "Strategy Session",
+                      icon: ArrowRight,
+                      desc: "For a focused planning conversation with our team",
                     },
                   ].map((type) => (
                     <button

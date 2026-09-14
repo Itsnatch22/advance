@@ -8,6 +8,7 @@ import {
   MapPin,
   Sparkles,
 } from "lucide-react";
+import MagneticButton from "@/components/ui/magnetic-button";
 import {
   type Career,
   type CareerDepartment,
@@ -16,6 +17,8 @@ import {
   employmentTypes,
   formatEmploymentType,
   getApplyHref,
+  formatLocation,
+  formatSalary,
 } from "./types";
 import { useMemo, useState } from "react";
 
@@ -182,7 +185,7 @@ function CareerCard({ career }: { career: Career }) {
               </span>
             </div>
 
-            <Link href={`/careers/${career.id}`} className="group/title">
+            <Link href={`/careers/${career.slug}`} className="group/title">
               <h3 className="text-2xl font-black tracking-tight text-slate-900 transition-colors duration-300 group-hover/title:text-green-700 sm:text-3xl">
                 {career.title}
               </h3>
@@ -191,10 +194,16 @@ function CareerCard({ career }: { career: Career }) {
             <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold text-slate-500">
               <span className="inline-flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-green-600" strokeWidth={1.8} />
-                {career.country
-                  ? `${career.location}, ${career.country}`
-                  : career.location}
+                {formatLocation(career)}
               </span>
+
+              {/** Salary display */}
+              {formatSalary(career) ? (
+                <span className="inline-flex items-center gap-2 text-slate-600">
+                  <span className="font-semibold">{formatSalary(career)}</span>
+                </span>
+              ) : null}
+
               {career.closing_date ? (
                 <span className="inline-flex items-center gap-2">
                   <Clock3
@@ -213,12 +222,12 @@ function CareerCard({ career }: { career: Career }) {
 
           <div className="flex shrink-0 flex-col gap-3 sm:flex-row xl:flex-col">
             <Link
-              href={`/careers/${career.id}`}
+              href={`/careers/${career.slug}`}
               className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-green-200 hover:bg-green-50 hover:text-green-700 active:scale-[0.98]"
             >
               View role
             </Link>
-            <Link
+            <MagneticButton
               href={applyHref}
               target={isExternalApply ? "_blank" : undefined}
               rel={isExternalApply ? "noopener noreferrer" : undefined}
@@ -228,7 +237,7 @@ function CareerCard({ career }: { career: Career }) {
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/12 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/apply:translate-x-1 group-hover/apply:-translate-y-0.5">
                 <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
               </span>
-            </Link>
+            </MagneticButton>
           </div>
         </div>
       </div>

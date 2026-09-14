@@ -97,6 +97,14 @@ export const escalateLimiter = new Ratelimit({
   prefix: "ratelimit:escalate",
 });
 
+/** Career applications — 3 submissions per hour per IP/email pair */
+export const careerApplicationLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(3, "1 h"),
+  analytics: true,
+  prefix: "ratelimit:careers:applications",
+});
+
 /** Public read APIs (resources, fx, gifs, stats) — 120 per minute per IP */
 export const publicReadLimiter = new Ratelimit({
   redis,

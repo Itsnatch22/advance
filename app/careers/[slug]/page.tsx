@@ -9,29 +9,31 @@ import {
   MapPin,
 } from "lucide-react";
 import { GridSystem } from "@/components/grid";
-import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { supabaseUser } from "@/lib/supabase/server";
 import {
   type Career,
   formatDepartment,
   formatEmploymentType,
   getApplyHref,
+  formatLocation,
+  formatSalary,
 } from "../types";
+import { buildJobPostingJsonLd } from "../job-posting";
+import MagneticButton from "@/components/ui/magnetic-button";
 
 export const dynamic = "force-dynamic";
 
 type CareerDetailPageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 };
 
-async function getCareer(id: string) {
+async function getCareer(slug: string) {
   const { data, error } = await supabaseUser
     .from("careers")
     .select(
-      "id,title,department,employment_type,location,country,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
+      "id,slug,title,department,employment_type,city,country_code,work_mode,salary_min,salary_max,currency_code,is_stipend,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
     )
-    .eq("id", id)
-    .eq("is_open", true)
+    .eq("slug", slug)
     .maybeSingle();
 
   if (error) {
@@ -44,8 +46,8 @@ async function getCareer(id: string) {
 export async function generateMetadata({
   params,
 }: CareerDetailPageProps): Promise<Metadata> {
-  const { id } = await params;
-  const career = await getCareer(id);
+  const { slug } = await params;
+  const career = await getCareer(slug);
 
   if (!career) {
     return {
@@ -59,7 +61,7 @@ export async function generateMetadata({
     openGraph: {
       title: `${career.title} at EaziWage`,
       description: career.description,
-      url: `https://eaziwage.com/careers/${career.id}`,
+      url: `https://eaziwage.com/careers/${career.slug}`,
     },
   };
 }
@@ -67,8 +69,8 @@ export async function generateMetadata({
 export default async function CareerDetailPage({
   params,
 }: CareerDetailPageProps) {
-  const { id } = await params;
-  const career = await getCareer(id);
+  const { slug } = await params;
+  const career = await getCareer(slug);
 
   if (!career) {
     notFound();
@@ -76,25 +78,20 @@ export default async function CareerDetailPage({
 
   const applyHref = getApplyHref(career);
   const isExternalApply = Boolean(career.apply_link);
+  const jobPostingJsonLd = buildJobPostingJsonLd(career);
 
   return (
     <GridSystem
       variant="dots"
       opacity={0.03}
-      className="min-h-screen bg-white pt-16"
+      className="min-h-[100dvh] bg-white pt-16"
     >
-      <div className="pointer-events-none absolute inset-0">
-        <FloatingOrb
-          color="bg-green-100"
-          delay={0}
-          className="top-[-8%] left-[8%]"
+      {jobPostingJsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
         />
-        <FloatingOrb
-          color="bg-emerald-100"
-          delay={2}
-          className="right-[6%] bottom-[20%]"
-        />
-      </div>
+      ) : null}
 
       <main className="relative z-10 mx-auto max-w-5xl px-6 py-20 lg:px-8 lg:py-24">
         <Link
@@ -121,28 +118,35 @@ export default async function CareerDetailPage({
                   <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
                     {formatEmploymentType(career.employment_type)}
                   </span>
+
                   <span className="inline-flex items-center gap-2">
-                    <MapPin
-                      className="h-4 w-4 text-green-600"
-                      strokeWidth={1.8}
-                    />
-                    {career.country
-                      ? `${career.location}, ${career.country}`
-                      : career.location}
-                  </span>
-                  {career.closing_date ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Clock3
+                      <MapPin
                         className="h-4 w-4 text-green-600"
                         strokeWidth={1.8}
                       />
-                      Closes {formatDate(career.closing_date)}
-                    </span>
+                      {formatLocation(career)}
+                  </span>
+
+                  {/** Salary display */}
+                  {formatSalary(career) ? (
+                      <span className="inline-flex items-center gap-2 text-slate-600">
+                        <span className="font-semibold">{formatSalary(career)}</span>
+                      </span>
+                  ) : null}
+
+                  {career.closing_date ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Clock3
+                          className="h-4 w-4 text-green-600"
+                          strokeWidth={1.8}
+                        />
+                        Closes {formatDate(career.closing_date)}
+                      </span>
                   ) : null}
                 </div>
               </div>
 
-              <Link
+              <MagneticButton
                 href={applyHref}
                 target={isExternalApply ? "_blank" : undefined}
                 rel={isExternalApply ? "noopener noreferrer" : undefined}
@@ -152,7 +156,7 @@ export default async function CareerDetailPage({
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/12 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 group-hover:-translate-y-0.5">
                   <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
                 </span>
-              </Link>
+              </MagneticButton>
             </div>
 
             <p className="mt-10 max-w-3xl text-lg leading-relaxed text-slate-600">
