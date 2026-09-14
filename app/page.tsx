@@ -10,6 +10,7 @@ import Coverage from "@/components/Coverage";
 import Marquee from "@/components/Marquee";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import WordReveal from "@/components/WordReveal";
+import System from "@/components/System";
 
 export default function HomePage() {
   return (
@@ -20,6 +21,7 @@ export default function HomePage() {
         <WordReveal />
         <ProblemStatement />
         <Works />
+        <System />
         <StatsCounter />
         <Needs />
         <Pricing />
