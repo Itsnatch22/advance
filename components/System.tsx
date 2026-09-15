@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type SystemTab = {
   id: "admins" | "employers" | "employees";
@@ -36,8 +36,27 @@ const systemTabs: SystemTab[] = [
 
 export default function System() {
   const [activeTab, setActiveTab] = useState<SystemTab["id"]>("admins");
-  const activeSystem =
-    systemTabs.find((tab) => tab.id === activeTab) ?? systemTabs[0];
+  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+
+  useEffect(() => {
+    systemTabs.forEach((tab) => {
+      const videoEl = videoRefs.current[tab.id];
+      if (!videoEl) return;
+
+      if (tab.id === activeTab) {
+        // Restart or ensure playing immediately on tab switch
+        videoEl.currentTime = 0;
+        const playPromise = videoEl.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            // Autoplay prevention or interrupted by rapid switching
+          });
+        }
+      } else {
+        videoEl.pause();
+      }
+    });
+  }, [activeTab]);
 
   return (
     <section
@@ -114,29 +133,47 @@ export default function System() {
         </div>
 
         <motion.div
-          key={activeSystem.id}
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          id={`${activeSystem.id}-panel`}
-          role="tabpanel"
-          aria-labelledby={`${activeSystem.id}-tab`}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
           className="mx-auto mt-16 max-w-7xl"
         >
-          <div className="group relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-slate-950 shadow-2xl">
-            <video
-              key={activeSystem.id}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              aria-label={activeSystem.description}
-              className="aspect-video w-full object-contain transition-transform duration-700 group-hover:scale-[1.02]"
-            >
-              <source src={activeSystem.video} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+          <div className="group relative aspect-video w-full overflow-hidden rounded-[2.5rem] border border-slate-200 bg-slate-950 shadow-2xl">
+            {systemTabs.map((tab) => {
+              const isActive = tab.id === activeTab;
+
+              return (
+                <div
+                  key={tab.id}
+                  id={`${tab.id}-panel`}
+                  role="tabpanel"
+                  aria-labelledby={`${tab.id}-tab`}
+                  aria-hidden={!isActive}
+                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ease-in-out ${
+                    isActive
+                      ? "pointer-events-auto z-10 opacity-100"
+                      : "pointer-events-none z-0 opacity-0"
+                  }`}
+                >
+                  <video
+                    ref={(el) => {
+                      videoRefs.current[tab.id] = el;
+                    }}
+                    autoPlay={tab.id === "admins"}
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    aria-label={tab.description}
+                    className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.02]"
+                  >
+                    <source src={tab.video} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              );
+            })}
           </div>
         </motion.div>
       </div>
