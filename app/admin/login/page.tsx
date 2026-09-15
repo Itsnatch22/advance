@@ -101,7 +101,8 @@ export default function AdminLoginPage() {
       });
 
       if (authError || !authData.user) {
-        setError("Invalid credentials");
+        console.error("Supabase Auth Error:", authError, "Auth Data:", authData);
+        setError(authError?.message || "Invalid credentials");
         return;
       }
 
@@ -109,8 +110,9 @@ export default function AdminLoginPage() {
       const me = await meRes.json();
 
       if (!meRes.ok || !me.data?.isAdmin) {
+        console.error("Admin verification failed:", me);
         await supabase.auth.signOut();
-        setError("This account is not authorized for admin access");
+        setError(me?.error || "This account is not authorized for admin access");
         return;
       }
 

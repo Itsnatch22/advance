@@ -144,9 +144,9 @@ export function CareersListClient({ careers }: CareersListClientProps) {
           </div>
 
           {!hasAnyRoles ? (
-            <EmptyState title="No open roles right now" />
+            <EmptyState title="There aren't any available roles at the moment" />
           ) : filteredCareers.length === 0 ? (
-            <EmptyState title="No open roles right now" />
+            <EmptyState title="There aren't any available roles at the moment" />
           ) : (
             <div className="grid gap-5">
               {filteredCareers.map((career) => (
@@ -252,7 +252,8 @@ function EmptyState({ title }: { title: string }) {
         {title}
       </h3>
       <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-slate-500">
-        Check back soon. We update this page as new roles open.
+        There aren&apos;t any available roles at the moment. Please check back
+        regularly for updates.
       </p>
     </div>
   );
