@@ -1,10 +1,10 @@
 export type CareerDepartment =
   | "engineering"
-|"product & design"
-| "growth & marketing"
+|"product_design"
+| "growth_marketing"
 | "operations"
 | "finance"
-| "people & culture";
+| "people_culture";
 
 export type CareerEmploymentType =
   | "full-time"
@@ -112,13 +112,13 @@ export const departments: Array<{
       "Web (Frontend & Backend) & Mobile Build and Maintenance, Infrastructure, Security.",
   },
   {
-    value: "product & design",
+    value: "product_design",
     label: "Product & Design",
     summary:
       "Product Manager, UI/UX, Research & Product Design.",
   },
   {
-    value: "growth & marketing",
+    value: "growth_marketing",
     label: "Growth & Marketing",
     summary: "Marketing, Growth, Partnerships, Content & Social Media.",
   },
@@ -134,7 +134,7 @@ export const departments: Array<{
     summary: "Accounting, Financial Operations, Budgeting & Reporting."
   },
   {
-    value: "people & culture",
+    value: "people_culture",
     label: "People & Culture",
     summary: "Human Resource, Recruitment & Employee Experience."
   }
