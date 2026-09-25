@@ -1,8 +1,10 @@
 export type CareerDepartment =
-  | "development"
-  | "design"
-  | "creativity"
-  | "growth";
+  | "engineering"
+|"product & design"
+| "growth & marketing"
+| "operations"
+| "finance"
+| "people & culture";
 
 export type CareerEmploymentType =
   | "full-time"
@@ -104,28 +106,38 @@ export const departments: Array<{
   summary: string;
 }> = [
   {
-    value: "development",
-    label: "Development",
+    value: "engineering",
+    label: "Engineering",
     summary:
-      "Engineers building reliable fintech rails for earned wage access.",
+      "Web (Frontend & Backend) & Mobile build and maintenance, Infrastructure, Security.",
   },
   {
-    value: "design",
-    label: "Design",
+    value: "product & design",
+    label: "Product & Design",
     summary:
-      "Product and brand thinkers shaping clear workplace finance tools.",
+      "Product Manager, UI/UX, Research & Product Design.",
   },
   {
-    value: "creativity",
-    label: "Creativity",
-    summary: "Storytellers helping workers and employers understand EaziWage.",
+    value: "growth & marketing",
+    label: "Growth & Marketing",
+    summary: "Marketing, Growth, Partnerships, Content & Social Media.",
   },
   {
-    value: "growth",
-    label: "Growth",
+    value: "operations",
+    label: "Operations",
     summary:
-      "Operators opening new markets, partnerships, and acquisition loops.",
+      "Customer Support, Compliance, Administration & Internal Operations.",
   },
+  {
+    value: "finance",
+    label: "Finance",
+    summary: "Accounting, Financial Operations, Budgeting & Reporting."
+  },
+  {
+    value: "people & culture",
+    label: "People & Culture",
+    summary: "Human Resource, Recruitment & Employee Experience."
+  }
 ];
 
 export const employmentTypes: Array<{
