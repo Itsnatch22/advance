@@ -109,7 +109,7 @@ export const departments: Array<{
     value: "engineering",
     label: "Engineering",
     summary:
-      "Web (Frontend & Backend) & Mobile build and maintenance, Infrastructure, Security.",
+      "Web (Frontend & Backend) & Mobile Build and Maintenance, Infrastructure, Security.",
   },
   {
     value: "product & design",
