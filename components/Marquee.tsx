@@ -24,7 +24,7 @@ export default function Marquee() {
           viewport={{ once: true }}
           className="mb-28 text-center text-xs font-bold tracking-[0.35em] text-slate-500 uppercase"
         >
-          Designed for the region&apos;s most trusted institutions
+          Designed for the region&apos;s trusted institutions
         </motion.p>
 
         <div className="relative">
