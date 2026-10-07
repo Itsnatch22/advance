@@ -41,6 +41,9 @@ async function getOpenCareers() {
 export default async function CareersPage() {
   const { careers, error } = await getOpenCareers();
   const featuredCount = careers.filter((career) => career.is_featured).length;
+  const departmentCount = new Set(
+    careers.map((career) => career.department)
+  ).size;
 
   return (
     <GridSystem
@@ -92,7 +95,7 @@ export default async function CareersPage() {
             <div className="grid gap-5">
               <Metric label="Open roles" value={careers.length.toString()} />
               <Metric label="Featured roles" value={featuredCount.toString()} />
-              <Metric label="Departments" value="4" />
+              <Metric label="Departments" value={departmentCount.toString()} />
             </div>
             <div className="mt-8 rounded-[1.5rem] bg-green-50 p-5 text-sm leading-relaxed text-green-900 ring-1 ring-green-500/10">
               We keep the team focused and practical. Every role here maps to

@@ -30,7 +30,7 @@ type EmploymentFilter = "all" | CareerEmploymentType;
 
 export function CareersListClient({ careers }: CareersListClientProps) {
   const [selectedDepartment, setSelectedDepartment] =
-    useState<CareerDepartment>("development");
+    useState<CareerDepartment>("engineering");
   const [selectedType, setSelectedType] = useState<EmploymentFilter>("all");
 
   const totalOpenRoles = careers.length;
