@@ -274,10 +274,24 @@ export default function FAQPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 1 }}
-            className="mx-auto mt-8 mb-16 max-w-2xl text-xl text-slate-500"
+            className="mx-auto mt-8 max-w-2xl text-xl text-slate-500"
           >
             Real answers. No support tickets required.
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+            className="mt-8 mb-16"
+          >
+            <a
+              href="/help"
+              className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100"
+            >
+              Visit the Help Center
+            </a>
+          </motion.div>
 
           {/* SEARCH */}
           <motion.div
