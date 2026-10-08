@@ -78,11 +78,9 @@ export default function Footer() {
 
   return (
     <footer className="relative overflow-hidden border-t border-slate-800/60 bg-linear-to-b from-slate-900 via-slate-950 to-slate-900">
-      {/* Enhanced ambient glow effects */}
       <div className="absolute top-0 left-0 h-96 w-96 rounded-full bg-emerald-600/5 blur-3xl"></div>
       <div className="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-green-500/5 blur-3xl"></div>
 
-      {/* Newsletter section - enhanced card treatment */}
       <div className="relative border-b border-slate-800/60 pt-12 sm:pt-16">
         <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8">
           <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
@@ -100,7 +98,6 @@ export default function Footer() {
               </p>
             </div>
             <div>
-              {/* Status Messages */}
               <AnimatePresence mode="wait">
                 {status === "success" && (
                   <motion.div
@@ -339,6 +336,7 @@ export default function Footer() {
               {[
                 { name: "Blogs", href: "blogs" },
                 { name: "Documentation", href: "docs" },
+                { name: "Help Center", href: "help" },
               ].map((link, index) => (
                 <li key={index}>
                   <Link
