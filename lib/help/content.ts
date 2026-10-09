@@ -2,6 +2,76 @@ import { type HelpArticle, helpFrontmatterSchema } from "@/lib/help/schema";
 
 export const helpArticles: HelpArticle[] = [
   {
+    slug: "register-for-ewa",
+    title: "Employee registration and onboarding for Earned Wage Access (EWA)",
+    description:
+    "Learn how to register for Earned Wage Access (EWA) and complete the onboarding process to access your earned wages before payday.",
+    audience: "employees",
+    category: "onboarding",
+    countries: ["all", "KE", "UG", "TZ", "RW"],
+    errorCodes: ["KYC-201", "KYC-503", "ACC-401"],
+    synonyms: ["ewa registration", "onboarding process", "earnings access", "early wage access"],
+    related: ["verify-profile", "complete-onboarding", "get-started"],
+    urgent: false,
+    lastVerified: new Date("2026-10-09"),
+    sections: [
+      {
+        heading: "Getting started with EaziWage",
+        body:
+          "To register for EWA, you need to complete the onboarding process, which includes verifying your identity and linking your bank account or mobile money wallet.",
+      },
+      {
+        heading: "Required information",
+        body: "Required information includes your personal details, employment information, and valid identification documents.",
+      },
+      {
+        heading: "Verification process",
+        body:
+          "The verification process is instant as the system auto refreshes when the admin approves or reject the uploaded documents. You will receive notifications about the status of your verification.",
+      },
+      {
+        heading: "Common issues during registration",
+        body:
+          "Common issues during registration may include mismatched personal information, expired identification documents, or technical difficulties with the app. If you encounter any issues, contact support for assistance.",
+      }
+    ]
+  },
+  {
+    slug: "employer-registration-for-ewa",
+    title: "Set up your company for Earned Wage Access (EWA)",
+    description:
+      "Learn how to configure your employer account, verify company details, and prepare your team to access earned wages before payday.",
+    audience: "employers",
+    category: "onboarding",
+    countries: ["all", "KE", "UG", "TZ", "RW"],
+    errorCodes: ["KYC-201", "KYC-503", "ACC-401"],
+    synonyms: ["employer onboarding", "company setup", "payroll access", "employee wage access"],
+    related: ["manage-team-earnings", "approve-advance-requests", "review-payroll"],
+    urgent: false,
+    lastVerified: new Date("2026-10-09"),
+    sections: [
+      {
+        heading: "Set up your employer profile",
+        body:
+          "As an employer, you first create your company profile, confirm payroll details, and connect the account that will manage employee wage access approvals.",
+      },
+      {
+        heading: "Company and payroll information",
+        body: "You will need your legal company name, payroll setup details, employee roster information, and a valid business contact for verification and support.",
+      },
+      {
+        heading: "Approval and verification workflow",
+        body:
+          "After submission, the system reviews your company details and sends status updates as your onboarding is approved or requires additional information before employees can request advances.",
+      },
+      {
+        heading: "Common onboarding checks",
+        body:
+          "Typical issues include incomplete payroll setup, mismatched company details, or pending employee verification. Resolve these quickly to keep the approval flow moving for your team.",
+      }
+    ]
+  },
+  {
     slug: "request-advance",
     title: "Request a wage advance",
     description:
