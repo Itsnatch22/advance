@@ -2,7 +2,7 @@ import { type HelpArticle, helpFrontmatterSchema } from "@/lib/help/schema";
 
 export const helpArticles: HelpArticle[] = [
   {
-    slug: "register-for-ewa",
+    slug: "employee-registration-for-ewa",
     title: "Employee registration and onboarding for Earned Wage Access (EWA)",
     description:
     "Learn how to register for Earned Wage Access (EWA) and complete the onboarding process to access your earned wages before payday.",
