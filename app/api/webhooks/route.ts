@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
   try {
     await Promise.all([
       resend.emails.send({
-            from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
+        from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
         to: email,
         cc: SUPPORT_CC_EMAILS,
         subject: "Meeting Confirmed - EaziWage",
@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
         }),
       }),
       resend.emails.send({
-            from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
+        from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
         to: ADMIN_EMAIL,
         cc: SUPPORT_CC_EMAILS,
         subject: "New Meeting Scheduled - EaziWage",
