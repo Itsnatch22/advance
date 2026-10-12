@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
           from: `Wiza Chat <${EMAIL_CONFIG.SENDER_ADDRESS}>`,
           to: EMAIL_CONFIG.SUPPORT_EMAIL,
+          cc: EMAIL_CONFIG.SUPPORT_CC_EMAILS,
       replyTo: email,
       subject: `Chat escalation from ${safeName}`,
       html: `

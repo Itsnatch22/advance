@@ -7,11 +7,9 @@ import MeetingConfirmation from "@/emails/MeetingConfirmation";
 import { logAdminAction } from "@/lib/admin/audit";
 
 const ADMIN_EMAIL = EMAIL_CONFIG.SUPPORT_EMAIL;
+const SUPPORT_CC_EMAILS = EMAIL_CONFIG.SUPPORT_CC_EMAILS;
 
-// Calendly webhook events fire for every event type in the account, not just
-// the three used on /schedule. If a payload's utm_content doesn't match one
-// of these, we still log it (so nothing silently disappears) but flag it
-// rather than guessing.
+
 const KNOWN_MEETING_TYPES = [
   "user_to_admin",
   "sales_demo",
@@ -28,11 +26,6 @@ const supabaseAdmin =
     ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
     : null;
 
-// Calendly's v2 webhook signature: header is "t=<unix_ts>,v1=<hex_hmac>".
-// The signed content is `${t}.${rawBody}`, HMAC-SHA256'd with the signing
-// key from the webhook subscription (Calendly dashboard -> webhook ->
-// signing key). This MUST run against the raw request body text, not a
-// re-serialized JSON.parse(...) of it, or the signature will never match.
 function verifyCalendlySignature(
   rawBody: string,
   signatureHeader: string | null,
@@ -50,8 +43,6 @@ function verifyCalendlySignature(
   const signature = parts.v1;
   if (!timestamp || !signature) return false;
 
-  // Reject requests where the signed timestamp is stale (protects against
-  // replaying a captured webhook payload). 5 minute tolerance.
   const timestampMs = Number(timestamp) * 1000;
   if (!Number.isFinite(timestampMs) || Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000) {
     return false;
@@ -210,6 +201,7 @@ export async function POST(request: NextRequest) {
         react: MeetingConfirmation({
           userEmail: email,
           adminEmail: ADMIN_EMAIL,
+          cc: SUPPORT_CC_EMAILS,
           meetingType,
           scheduledAt: scheduledDate,
         }),
@@ -221,6 +213,7 @@ export async function POST(request: NextRequest) {
         react: MeetingConfirmation({
           userEmail: email,
           adminEmail: ADMIN_EMAIL,
+          cc: SUPPORT_CC_EMAILS,
           meetingType,
           scheduledAt: scheduledDate,
         }),

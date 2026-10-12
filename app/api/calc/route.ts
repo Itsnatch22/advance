@@ -174,7 +174,7 @@ export async function POST(req: Request) {
       });
 
     if (insertError) {
-      console.error("❌ Supabase insert error (wage_calculations):", {
+      console.error(" Supabase insert error (wage_calculations):", {
         message: insertError.message,
         code: insertError.code,
         country,
@@ -197,7 +197,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(response);
   } catch (err: { message?: string } | unknown) {
-    console.error("❌ /api/calc failed:", err);
+    console.error("/api/calc failed:", err);
 
     const errorMessage = err instanceof Error ? err.message : "server error";
     return NextResponse.json(

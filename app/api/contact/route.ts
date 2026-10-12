@@ -32,6 +32,7 @@ const supabase =
     : null;
 
 const SUPPORT_EMAIL = EMAIL_CONFIG.SUPPORT_EMAIL;
+const SUPPORT_CC_EMAILS = EMAIL_CONFIG.SUPPORT_CC_EMAILS;
 
 export async function GET() {
   if (!supabase) {
@@ -106,6 +107,7 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({
         from: `EaziWage Contact <${SUPPORT_EMAIL}>`,
         to: SUPPORT_EMAIL,
+        cc: SUPPORT_CC_EMAILS,
         replyTo: email,
         subject: `[Contact Form] ${subject}`,
         react: ContactNotification({

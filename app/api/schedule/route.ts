@@ -7,6 +7,7 @@ import { checkRateLimit, rateLimiter } from "@/lib/security/rate-limit";
 import { EMAIL_CONFIG } from '@/constants/config';
 
 const ADMIN_EMAIL = EMAIL_CONFIG.SUPPORT_EMAIL;
+const SUPPORT_CC_EMAILS = EMAIL_CONFIG.SUPPORT_CC_EMAILS;
 
 const scheduleSchema = z.object({
   userEmail: z.string().trim().refine(
@@ -62,6 +63,7 @@ export async function POST(request: NextRequest) {
     const { error: dbError } = await supabaseAdmin.from("meeting_logs").insert({
       user_email: validatedData.userEmail,
       admin_email: ADMIN_EMAIL,
+      cc_emails: SUPPORT_CC_EMAILS.join(","),
       meeting_type: validatedData.meetingType,
       calendly_event_id: validatedData.calendlyEventId,
       scheduled_at: validatedData.scheduledAt,
@@ -87,6 +89,7 @@ export async function POST(request: NextRequest) {
       react: MeetingConfirmation({
         userEmail: validatedData.userEmail,
         adminEmail: ADMIN_EMAIL,
+        cc: SUPPORT_CC_EMAILS,
         meetingType: validatedData.meetingType,
         scheduledAt: scheduledDate,
       }),
@@ -99,6 +102,7 @@ export async function POST(request: NextRequest) {
       react: MeetingConfirmation({
         userEmail: validatedData.userEmail,
         adminEmail: ADMIN_EMAIL,
+        cc: SUPPORT_CC_EMAILS,
         meetingType: validatedData.meetingType,
         scheduledAt: scheduledDate,
       }),

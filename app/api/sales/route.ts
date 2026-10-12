@@ -109,6 +109,7 @@ export async function POST(request: NextRequest) {
     await resend.emails.send({
           from: EMAIL_CONFIG.SALES_SENDER,
           to: EMAIL_CONFIG.SUPPORT_EMAIL,
+          cc: EMAIL_CONFIG.SUPPORT_CC_EMAILS,
       subject: "New Sales Lead",
       react: SalesNotification({
         name: validatedData.name,

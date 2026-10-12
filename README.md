@@ -2,7 +2,7 @@
 
 A Next.js 16 application providing earned wage access for employees across Africa.
 
-## 🚀 Tech Stack
+## Tech Stack
 
 - **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
@@ -17,7 +17,7 @@ A Next.js 16 application providing earned wage access for employees across Afric
 
 ## 📁 Project Structure
 
-```
+``` text
 ├── app/                          # Next.js App Router pages
 │   ├── (dashboards)/            # Dashboard routes
 │   ├── employees/               # Employee pages
@@ -102,13 +102,9 @@ npm run type-check   # Run TypeScript type checking
 
 ISC
 
-## 🤝 Contributing
-
-Contributions are welcome! Please read our contributing guidelines before submitting PRs.
-
 ## 📞 Contact
 
-- Email: support@eaziwage.com
+- Email: `support@eaziwage.com`
 - Location: Westlands, Nairobi
 
 ---
