@@ -85,11 +85,11 @@ export async function POST(request: NextRequest) {
     await resend.emails.send({
       from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
       to: validatedData.userEmail,
+      cc: SUPPORT_CC_EMAILS,
       subject: "Meeting Confirmed - EaziWage",
       react: MeetingConfirmation({
         userEmail: validatedData.userEmail,
         adminEmail: ADMIN_EMAIL,
-        cc: SUPPORT_CC_EMAILS,
         meetingType: validatedData.meetingType,
         scheduledAt: scheduledDate,
       }),
@@ -98,11 +98,11 @@ export async function POST(request: NextRequest) {
     await resend.emails.send({
       from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
       to: ADMIN_EMAIL,
+      cc: SUPPORT_CC_EMAILS,
       subject: "New Meeting Scheduled - EaziWage",
       react: MeetingConfirmation({
         userEmail: validatedData.userEmail,
         adminEmail: ADMIN_EMAIL,
-        cc: SUPPORT_CC_EMAILS,
         meetingType: validatedData.meetingType,
         scheduledAt: scheduledDate,
       }),

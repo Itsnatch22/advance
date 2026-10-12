@@ -4,7 +4,6 @@ import  EmailLayout  from "./EmailLayout";
 interface MeetingConfirmationProps {
   userEmail: string;
   adminEmail: string;
-  cc?: string[];
   meetingType: string;
   scheduledAt: string;
 }
@@ -16,7 +15,6 @@ export default function MeetingConfirmation({
   adminEmail,
   meetingType,
   scheduledAt,
-  cc
 }: MeetingConfirmationProps) {
   return (
     <EmailLayout
@@ -46,11 +44,6 @@ export default function MeetingConfirmation({
           <Text style={highlightText}>
             <strong>Participants:</strong> {userEmail} & {adminEmail}
           </Text>
-          {cc && cc.length > 0 && (
-            <Text style={highlightText}>
-              <strong>CC:</strong> {cc.join(", ")}
-            </Text>
-          )}
         </Section>
 
         <Text style={text}>

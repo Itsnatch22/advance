@@ -26,6 +26,11 @@ const supabaseAdmin =
     ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
     : null;
 
+// Calendly's v2 webhook signature: header is "t=<unix_ts>,v1=<hex_hmac>".
+// The signed content is `${t}.${rawBody}`, HMAC-SHA256'd with the signing
+// key from the webhook subscription (Calendly dashboard -> webhook ->
+// signing key). This MUST run against the raw request body text, not a
+// re-serialized JSON.parse(...) of it, or the signature will never match.
 function verifyCalendlySignature(
   rawBody: string,
   signatureHeader: string | null,
@@ -197,11 +202,11 @@ export async function POST(request: NextRequest) {
       resend.emails.send({
             from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
         to: email,
+        cc: SUPPORT_CC_EMAILS,
         subject: "Meeting Confirmed - EaziWage",
         react: MeetingConfirmation({
           userEmail: email,
           adminEmail: ADMIN_EMAIL,
-          cc: SUPPORT_CC_EMAILS,
           meetingType,
           scheduledAt: scheduledDate,
         }),
@@ -209,11 +214,11 @@ export async function POST(request: NextRequest) {
       resend.emails.send({
             from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
         to: ADMIN_EMAIL,
+        cc: SUPPORT_CC_EMAILS,
         subject: "New Meeting Scheduled - EaziWage",
         react: MeetingConfirmation({
           userEmail: email,
           adminEmail: ADMIN_EMAIL,
-          cc: SUPPORT_CC_EMAILS,
           meetingType,
           scheduledAt: scheduledDate,
         }),

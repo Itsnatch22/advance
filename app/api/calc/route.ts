@@ -174,7 +174,7 @@ export async function POST(req: Request) {
       });
 
     if (insertError) {
-      console.error(" Supabase insert error (wage_calculations):", {
+      console.error("Supabase insert error (wage_calculations):", {
         message: insertError.message,
         code: insertError.code,
         country,
