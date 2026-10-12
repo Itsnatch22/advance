@@ -85,7 +85,6 @@ export async function POST(request: NextRequest) {
     await resend.emails.send({
       from: `EaziWage <${EMAIL_CONFIG.MEETINGS_SENDER}>`,
       to: validatedData.userEmail,
-      cc: SUPPORT_CC_EMAILS,
       subject: "Meeting Confirmed - EaziWage",
       react: MeetingConfirmation({
         userEmail: validatedData.userEmail,
