@@ -1,16 +1,19 @@
 "use client";
 import { ChevronLeft } from "lucide-react";
 import { usePhoneCurrency } from "@/hooks/use-phone-currency";
-
-const REQUEST_KES = 4_200;
-const FEE_RATE = 0.01;
+import {
+  DISBURSED_AMOUNT_KES,
+  FEE_RATE,
+  PLATFORM_FEE_KES,
+  REQUESTED_AMOUNT_KES,
+  SALARY_DEDUCTION_KES,
+  TRANSACTION_COST_KES,
+  TRANSACTION_COST_USD,
+} from "./transaction";
 const MAX_KES = 9_200;
 
 export default function Screen2() {
   const { fmt, mobileMoney } = usePhoneCurrency();
-
-  const fee = Math.round(REQUEST_KES * FEE_RATE);
-  const received = REQUEST_KES - fee;
 
   return (
     <div className="flex h-full flex-col bg-[#F8F9F7] px-5 py-3">
@@ -24,11 +27,11 @@ export default function Screen2() {
 
       {/* Amount */}
       <div className="mb-5 text-center">
-        <p className="text-[10px] uppercase tracking-widest text-[#6B7280]">
+        <p className="text-[10px] tracking-widest text-[#6B7280] uppercase">
           Request amount
         </p>
         <p className="my-2 text-4xl font-bold text-[#0A0A0A]">
-          {fmt(REQUEST_KES)}
+          {fmt(REQUESTED_AMOUNT_KES)}
         </p>
 
         {/* +/− with mini track */}
@@ -53,16 +56,30 @@ export default function Screen2() {
         <div className="flex items-center justify-between py-1">
           <span className="text-xs text-[#6B7280]">You receive</span>
           <span className="text-sm font-semibold text-[#0A0A0A]">
-            {fmt(received)}
+            {fmt(DISBURSED_AMOUNT_KES)}
           </span>
         </div>
         <div className="flex items-center justify-between py-1">
-          <span className="text-xs text-[#6B7280]">Fee</span>
+          <span className="text-xs text-[#6B7280]">
+            Fee ({FEE_RATE * 100}%)
+          </span>
           <span className="text-sm font-semibold text-[#0A0A0A]">
-            {fmt(fee)} (1%)
+            {fmt(PLATFORM_FEE_KES)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between py-1">
+          <span className="text-xs text-[#6B7280]">Transaction cost</span>
+          <span className="text-right text-xs font-semibold text-[#0A0A0A]">
+            ${TRANSACTION_COST_USD.toFixed(2)} (~{fmt(TRANSACTION_COST_KES)})
           </span>
         </div>
         <div className="my-2 h-px bg-[#E5E7EB]" />
+        <div className="flex items-center justify-between py-1">
+          <span className="text-xs text-[#6B7280]">Salary deduction</span>
+          <span className="text-sm font-semibold text-[#0A0A0A]">
+            {fmt(SALARY_DEDUCTION_KES)}
+          </span>
+        </div>
         <div className="flex items-center justify-between py-1">
           <span className="text-xs text-[#6B7280]">To</span>
           <span className="text-sm font-semibold text-[#0A0A0A]">

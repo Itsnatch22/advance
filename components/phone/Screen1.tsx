@@ -2,6 +2,11 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { usePhoneCurrency } from "@/hooks/use-phone-currency";
+import {
+  FEE_RATE,
+  TRANSACTION_COST_KES,
+  TRANSACTION_COST_USD,
+} from "./transaction";
 
 export default function Screen1() {
   const { fmt } = usePhoneCurrency();
@@ -11,7 +16,7 @@ export default function Screen1() {
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <p className="text-[10px] uppercase tracking-widest text-[#6B7280]">
+          <p className="text-[10px] tracking-widest text-[#6B7280] uppercase">
             Good morning,
           </p>
           <p className="text-[15px] font-bold text-[#0A0A0A]">James</p>
@@ -24,10 +29,10 @@ export default function Screen1() {
 
       {/* Balance Card */}
       <div className="mb-3 rounded-2xl bg-[#0A0A0A] p-4 text-white">
-        <p className="mb-2 text-[10px] uppercase tracking-widest text-white/50">
+        <p className="mb-2 text-[10px] tracking-widest text-white/50 uppercase">
           Earned this period
         </p>
-        <p className="text-3xl font-bold leading-none">{fmt(18_400)}</p>
+        <p className="text-3xl leading-none font-bold">{fmt(18_400)}</p>
         <p className="mt-1 text-[11px] text-white/60">
           of {fmt(24_000)} total salary
         </p>
@@ -66,12 +71,17 @@ export default function Screen1() {
             <p className="mb-0.5 text-[9px] leading-tight text-[#6B7280]">
               {label}
             </p>
-            <p className="text-[11px] font-semibold leading-tight text-[#0A0A0A]">
+            <p className="text-[11px] leading-tight font-semibold text-[#0A0A0A]">
               {value}
             </p>
           </div>
         ))}
       </div>
+
+      <p className="mt-3 text-center text-[9px] text-[#6B7280]">
+        {FEE_RATE * 100}% fee · ${TRANSACTION_COST_USD.toFixed(2)} transaction
+        cost (~{fmt(TRANSACTION_COST_KES)})
+      </p>
     </div>
   );
 }

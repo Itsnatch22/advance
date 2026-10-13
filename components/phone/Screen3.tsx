@@ -1,8 +1,14 @@
 "use client";
 import { motion } from "framer-motion";
 import { usePhoneCurrency } from "@/hooks/use-phone-currency";
-
-const SENT_KES = 4_200;
+import {
+  DISBURSED_AMOUNT_KES,
+  FEE_RATE,
+  PLATFORM_FEE_KES,
+  SALARY_DEDUCTION_KES,
+  TRANSACTION_COST_KES,
+  TRANSACTION_COST_USD,
+} from "./transaction";
 
 export default function Screen3() {
   const { fmt, mobileMoney } = usePhoneCurrency();
@@ -57,14 +63,37 @@ export default function Screen3() {
       </div>
 
       {/* Amount */}
-      <p className="text-4xl font-bold text-[#0A0A0A]">{fmt(SENT_KES)} Sent</p>
-      <p className="mt-1 text-sm text-[#6B7280]">
-        to {mobileMoney} ending 234
+      <p className="text-4xl font-bold text-[#0A0A0A]">
+        {fmt(DISBURSED_AMOUNT_KES)} Sent
       </p>
+      <p className="mt-1 text-sm text-[#6B7280]">to {mobileMoney} ending 234</p>
       <p className="mt-2 text-xs text-[#6B7280]">2 seconds ago</p>
 
+      <div className="mt-4 w-full rounded-xl bg-[#F3F4F6] px-4 py-2">
+        <div className="flex items-center justify-between py-1">
+          <span className="text-xs text-[#6B7280]">
+            Fee ({FEE_RATE * 100}%)
+          </span>
+          <span className="text-xs font-semibold text-[#0A0A0A]">
+            {fmt(PLATFORM_FEE_KES)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between py-1">
+          <span className="text-xs text-[#6B7280]">Transaction cost</span>
+          <span className="text-right text-xs font-semibold text-[#0A0A0A]">
+            ${TRANSACTION_COST_USD.toFixed(2)} (~{fmt(TRANSACTION_COST_KES)})
+          </span>
+        </div>
+        <div className="flex items-center justify-between border-t border-[#E5E7EB] py-2">
+          <span className="text-xs text-[#6B7280]">Salary deduction</span>
+          <span className="text-xs font-semibold text-[#0A0A0A]">
+            {fmt(SALARY_DEDUCTION_KES)}
+          </span>
+        </div>
+      </div>
+
       {/* Action buttons */}
-      <div className="mt-8 flex w-full flex-col gap-3">
+      <div className="mt-4 flex w-full flex-col gap-3">
         <button className="w-full rounded-xl border border-[#E5E7EB] bg-transparent py-3">
           <span className="text-sm font-semibold text-[#0A0A0A]">
             View Receipt

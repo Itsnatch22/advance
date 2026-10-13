@@ -415,8 +415,8 @@ export default function Footer() {
               {[
                 {
                   icon: Mail,
-                                  href: `mailto:${EMAIL_CONFIG.SUPPORT_EMAIL}`,
-                                  text: EMAIL_CONFIG.SUPPORT_EMAIL,
+                  href: `mailto:${EMAIL_CONFIG.SUPPORT_EMAIL}`,
+                  text: EMAIL_CONFIG.SUPPORT_EMAIL,
                 },
                 {
                   icon: MapPin,
@@ -473,17 +473,6 @@ export default function Footer() {
               <Cookie className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2} />
               <span>Cookie Preferences</span>
             </button>
-
-            <Link
-              href="/status"
-              className="group flex items-center gap-2 rounded-lg bg-slate-800/30 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700/50 transition-all duration-300 hover:bg-emerald-500/10 hover:text-emerald-400 hover:ring-emerald-500/30 sm:text-sm"
-            >
-              <Shield
-                className="h-3 w-3 animate-pulse text-emerald-500 sm:h-3.5 sm:w-3.5"
-                strokeWidth={2}
-              />
-              <span>Eaziwage Status</span>
-            </Link>
           </div>
         </div>
       </div>
