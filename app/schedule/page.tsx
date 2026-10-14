@@ -16,7 +16,7 @@ import FloatingOrb from "@/components/shared/FloatingOrb";
 const CALENDLY_LINKS = {
   user_to_admin: "https://calendly.com/mark-eaziwage/admin-calls",
   partner_onboarding: "https://calendly.com/joel-eaziwage/user-consultation",
-  sales_demo: "https://calendly.com/jason94-crawford/30min",
+  sales_demo: "https://calendly.com/jason-eaziwage/sales-demo",
   strategy_session: "https://calendly.com/eaziwage-support/strategy-session",
 } as const;
 
