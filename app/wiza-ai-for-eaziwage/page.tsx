@@ -29,18 +29,44 @@ function RichText({ text }: { text: string }) {
   return (
     <>
       {text.split("\n").map((line, i) => {
-        const parts = line.split(/(\*\*.*?\*\*)/g);
+        const parts = line.split(
+          /(\*\*.*?\*\*|\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g
+        );
         return (
           <span key={i} className="mb-1.5 block last:mb-0">
-            {parts.map((p, j) =>
-              p.startsWith("**") && p.endsWith("**") ? (
-                <strong key={j} className="font-semibold">
-                  {p.slice(2, -2)}
-                </strong>
-              ) : (
-                p
-              )
-            )}
+            {parts.map((p, j) => {
+              if (p.startsWith("**") && p.endsWith("**")) {
+                return (
+                  <strong key={j} className="font-semibold">
+                    {p.slice(2, -2)}
+                  </strong>
+                );
+              }
+
+              const link = p.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+              if (link) {
+                try {
+                  const url = new URL(link[2]);
+                  if (url.protocol === "https:" || url.protocol === "http:") {
+                    return (
+                      <a
+                        key={j}
+                        href={url.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-700 underline decoration-emerald-500/40 underline-offset-2 hover:text-emerald-600 dark:text-emerald-300 dark:hover:text-emerald-200"
+                      >
+                        {link[1]}
+                      </a>
+                    );
+                  }
+                } catch {
+                  return p;
+                }
+              }
+
+              return p;
+            })}
           </span>
         );
       })}
@@ -398,6 +424,10 @@ export default function Wiza() {
                   label: "No Auth Required",
                   desc: "Anyone can try Wiza, no authentication required.",
                 },
+                {
+                  label: "Web-informed answers",
+                  desc: "For current public questions, Wiza can search the web and link its sources.",
+                },
               ].map(({ label, desc }, i) => (
                 <motion.div
                   key={label}
@@ -691,14 +721,14 @@ export default function Wiza() {
             </TiltCard>
             <div className="text-center">
               <p className="mt-4 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-                By using Wiza, you agree to our{" "}
+                By using Wiza, you agree to how{" "}
                 <Link
                   href="/wiza-ai-for-eaziwage/ai-terms"
                   className="font-medium text-emerald-700 underline-offset-4 hover:underline dark:text-emerald-400"
                 >
-                  Terms of Service
+                  EaziWage uses AI
                 </Link>{" "}
-                and{" "}
+                and our{" "}
                 <Link
                   href="/wiza-ai-for-eaziwage/ai-privacy"
                   className="font-medium text-emerald-700 underline-offset-4 hover:underline dark:text-emerald-400"

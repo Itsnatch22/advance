@@ -66,6 +66,7 @@ const sections: LegalSection[] = [
     title: "5. AI processing and conversation storage",
     paragraphs: [
       "To generate a response, your message and relevant conversation context are sent to Google’s generative AI service. If you attach a file, its content may also be sent for processing. For signed-in users, relevant account details described above may be included in the information used to prepare a response. Avoid submitting information that is not needed for your question.",
+      "When a question benefits from current public information, Wiza may use Google Search grounding to find and cite publicly available web sources. Search queries are generated from the conversation to retrieve relevant information. Wiza is instructed not to include names, account details, or other personal financial information in search queries, but you should avoid including information that is not needed for your question.",
       "For visitors who are not signed in, Wiza uses the conversation held in the current browser page to provide context for follow-up messages. The Wiza coach does not create a persistent chat history for those guest conversations. If you choose email or SMS delivery of a guest summary, the conversation is processed to create the summary and the requested summary is sent through the relevant provider.",
       "For signed-in users, Wiza stores conversation messages and session details in EaziWage's Supabase-hosted database so the service can maintain the account conversation and generate or deliver summaries. A summary may also be saved with the relevant session. Account chat records are handled under EaziWage's applicable data-retention and account-management processes.",
       "Google and other providers process data under their own terms and privacy practices. We do not promise that a provider will use or retain data in a particular way beyond the protections and settings applicable to our service arrangement. Please consult the relevant provider information for details.",
@@ -81,7 +82,7 @@ const sections: LegalSection[] = [
       {
         heading: "Service providers",
         paragraphs: [
-          "Wiza uses service providers to operate its features. Depending on what you use, relevant information may be processed by Google for AI responses; Supabase for signed-in account conversation storage; Resend for requested email summaries; Africa's Talking for requested SMS summaries; Trigger.dev for processing certain signed-in summary-delivery requests; and Vercel for website analytics when you have consented. Providers receive information needed to perform their services and may process it under their own terms and our applicable arrangements.",
+          "Wiza uses service providers to operate its features. Depending on what you use, relevant information may be processed by Google for AI responses and, when useful, Google Search grounding; Supabase for signed-in account conversation storage; Resend for requested email summaries; Africa's Talking for requested SMS summaries; Trigger.dev for processing certain signed-in summary-delivery requests; and Vercel for website analytics when you have consented. Providers receive information needed to perform their services and may process it under their own terms and our applicable arrangements.",
         ],
       },
       {
