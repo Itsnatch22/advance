@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import {
   Bot,
   User,
@@ -427,267 +428,286 @@ export default function Wiza() {
             viewport={{ once: true }}
             transition={{ delay: 0.32 }}
           >
-          <TiltCard className="flex h-168 flex-col rounded-[2.5rem] border-slate-200/60 shadow-2xl">
-            {/* Summary modal overlay */}
-            {showSummaryModal && (
-              <SummaryModal
-                onConfirm={handleSummaryConfirm}
-                onCancel={() => setShowSummaryModal(false)}
-              />
-            )}
+            <TiltCard className="flex h-168 flex-col rounded-[2.5rem] border-slate-200/60 shadow-2xl">
+              {/* Summary modal overlay */}
+              {showSummaryModal && (
+                <SummaryModal
+                  onConfirm={handleSummaryConfirm}
+                  onCancel={() => setShowSummaryModal(false)}
+                />
+              )}
 
-            {/* Header */}
-            <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 dark:bg-white">
-                    <Bot className="h-5 w-5 text-emerald-400 dark:text-emerald-600" />
+              {/* Header */}
+              <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 dark:bg-white">
+                      <Bot className="h-5 w-5 text-emerald-400 dark:text-emerald-600" />
+                    </div>
+                    <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-900" />
                   </div>
-                  <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-900" />
-                </div>
-                <div>
-                  <p className="mb-0.5 text-sm leading-none font-semibold text-slate-900 dark:text-white">
-                    Wiza
-                  </p>
-                  <div className="flex items-center gap-1.5">
-                    <motion.span
-                      className="h-1.5 w-1.5 rounded-full bg-emerald-500"
-                      animate={{ opacity: streaming ? [1, 0.4, 1] : 1 }}
-                      transition={{ repeat: Infinity, duration: 1 }}
-                    />
-                    {conversationStartedAt && (
-                      <>
-                        <span className="text-[10px] text-slate-300 dark:text-slate-600">
-                          ·
-                        </span>
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                          Started{" "}
-                          {formatConversationTimestamp(conversationStartedAt)}
-                        </p>
-                      </>
-                    )}
-                    <p className="text-[10px] font-semibold tracking-widest text-emerald-600 uppercase dark:text-emerald-400">
-                      {streaming ? "Thinking…" : "Ready"}
+                  <div>
+                    <p className="mb-0.5 text-sm leading-none font-semibold text-slate-900 dark:text-white">
+                      Wiza
                     </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1">
-                {messages.length > 0 && !streaming && (
-                  <button
-                    onClick={() => setShowSummaryModal(true)}
-                    title="Get session summary"
-                    className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-50 hover:text-emerald-600 dark:hover:bg-slate-800"
-                  >
-                    <FileText size={16} />
-                  </button>
-                )}
-                <button
-                  onClick={newSession}
-                  title="New conversation"
-                  className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
-                >
-                  <RefreshCcw size={16} />
-                </button>
-              </div>
-            </div>
-
-            {/* Summary status toast */}
-            <AnimatePresence>
-              {summaryStatus && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  className="mx-4 mt-3 flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-2.5 dark:bg-emerald-950"
-                >
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                  <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                    {summaryStatus}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Messages */}
-            <div className="flex-1 space-y-4 overflow-y-auto scroll-smooth px-5 py-5">
-              {isEmpty ? (
-                <div className="flex h-full min-h-80 flex-col items-center justify-center px-8 text-center">
-                  <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800">
-                    <Bot className="h-8 w-8 text-slate-300 dark:text-slate-600" />
-                  </div>
-                  <h4 className="mb-2 text-base font-semibold text-slate-800 dark:text-slate-200">
-                    How can Wiza help you today?
-                  </h4>
-                  <p className="mb-6 text-sm leading-relaxed text-slate-400 dark:text-slate-500">
-                    Try me! Ask about salary breakdowns, budget tips, or
-                    spending habits.
-                  </p>
-                  {/* Quick-start prompts */}
-                  <div className="w-full space-y-2">
-                    {[
-                      "How much of my salary can I access right now?",
-                      "Help me survive till payday",
-                      "Is it safe to request an advance today?",
-                    ].map((prompt) => (
-                      <button
-                        key={prompt}
-                        onClick={() => sendMessage(prompt)}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-left text-sm text-slate-600 transition-all hover:border-emerald-400 hover:bg-emerald-50/50 hover:text-emerald-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-400"
-                      >
-                        {prompt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <AnimatePresence initial={false}>
-                  {messages.map((msg) => (
-                    <motion.div
-                      key={msg.id}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                    >
-                      <div
-                        className={`flex max-w-[85%] items-end gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
-                      >
-                        {/* Avatar */}
-                        <div
-                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                            msg.role === "user"
-                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
-                              : "bg-slate-900 text-emerald-400 dark:bg-white dark:text-emerald-600"
-                          }`}
-                        >
-                          {msg.role === "user" ? (
-                            <User size={14} />
-                          ) : (
-                            <Bot size={14} />
-                          )}
-                        </div>
-
-                        {/* Bubble */}
-                        <div
-                          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                            msg.role === "user"
-                              ? "rounded-br-sm bg-emerald-600 text-white"
-                              : "rounded-bl-sm border border-slate-100 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                          }`}
-                        >
-                          {msg.pending && !msg.content ? (
-                            <TypingCursor />
-                          ) : (
-                            <>
-                              <MessageContent text={msg.content} />
-                              {msg.pending && <TypingCursor />}
-                            </>
-                          )}
-                          <p
-                            className={`mt-2 text-[10px] font-medium ${
-                              msg.role === "user"
-                                ? "text-emerald-50/80"
-                                : "text-slate-400 dark:text-slate-500"
-                            }`}
-                          >
-                            {formatMessageTimestamp(msg.createdAt)}
+                    <div className="flex items-center gap-1.5">
+                      <motion.span
+                        className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+                        animate={{ opacity: streaming ? [1, 0.4, 1] : 1 }}
+                        transition={{ repeat: Infinity, duration: 1 }}
+                      />
+                      {conversationStartedAt && (
+                        <>
+                          <span className="text-[10px] text-slate-300 dark:text-slate-600">
+                            ·
+                          </span>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                            Started{" "}
+                            {formatConversationTimestamp(conversationStartedAt)}
                           </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              )}
+                        </>
+                      )}
+                      <p className="text-[10px] font-semibold tracking-widest text-emerald-600 uppercase dark:text-emerald-400">
+                        {streaming ? "Thinking…" : "Ready"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-              {/* Error banner */}
-              <AnimatePresence>
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.97 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-2.5 dark:border-red-900 dark:bg-red-950/50"
+                <div className="flex items-center gap-1">
+                  {messages.length > 0 && !streaming && (
+                    <button
+                      onClick={() => setShowSummaryModal(true)}
+                      title="Get session summary"
+                      className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-50 hover:text-emerald-600 dark:hover:bg-slate-800"
+                    >
+                      <FileText size={16} />
+                    </button>
+                  )}
+                  <button
+                    onClick={newSession}
+                    title="New conversation"
+                    className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                   >
-                    <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
-                    <p className="text-sm text-red-600 dark:text-red-400">
-                      {error}
+                    <RefreshCcw size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Summary status toast */}
+              <AnimatePresence>
+                {summaryStatus && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="mx-4 mt-3 flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-2.5 dark:bg-emerald-950"
+                  >
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                      {summaryStatus}
                     </p>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <div ref={chatEndRef} />
-            </div>
+              {/* Messages */}
+              <div className="flex-1 space-y-4 overflow-y-auto scroll-smooth px-5 py-5">
+                {isEmpty ? (
+                  <div className="flex h-full min-h-80 flex-col items-center justify-center px-8 text-center">
+                    <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800">
+                      <Bot className="h-8 w-8 text-slate-300 dark:text-slate-600" />
+                    </div>
+                    <h4 className="mb-2 text-base font-semibold text-slate-800 dark:text-slate-200">
+                      How can Wiza help you today?
+                    </h4>
+                    <p className="mb-6 text-sm leading-relaxed text-slate-400 dark:text-slate-500">
+                      Try me! Ask about salary breakdowns, budget tips, or
+                      spending habits.
+                    </p>
+                    {/* Quick-start prompts */}
+                    <div className="w-full space-y-2">
+                      {[
+                        "How much of my salary can I access right now?",
+                        "Help me survive till payday",
+                        "Is it safe to request an advance today?",
+                      ].map((prompt) => (
+                        <button
+                          key={prompt}
+                          onClick={() => sendMessage(prompt)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-left text-sm text-slate-600 transition-all hover:border-emerald-400 hover:bg-emerald-50/50 hover:text-emerald-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-400"
+                        >
+                          {prompt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <AnimatePresence initial={false}>
+                    {messages.map((msg) => (
+                      <motion.div
+                        key={msg.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                      >
+                        <div
+                          className={`flex max-w-[85%] items-end gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+                        >
+                          {/* Avatar */}
+                          <div
+                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+                              msg.role === "user"
+                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                                : "bg-slate-900 text-emerald-400 dark:bg-white dark:text-emerald-600"
+                            }`}
+                          >
+                            {msg.role === "user" ? (
+                              <User size={14} />
+                            ) : (
+                              <Bot size={14} />
+                            )}
+                          </div>
 
-            {/* Input */}
-            <div className="border-t border-slate-100 px-4 pt-2 pb-4 dark:border-slate-800">
-              {/* File preview */}
-              {attachment && (
-                <div className="mb-2">
-                  <FilePreview file={attachment} onRemove={() => setAttachment(null)} />
-                </div>
-              )}
+                          {/* Bubble */}
+                          <div
+                            className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                              msg.role === "user"
+                                ? "rounded-br-sm bg-emerald-600 text-white"
+                                : "rounded-bl-sm border border-slate-100 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                            }`}
+                          >
+                            {msg.pending && !msg.content ? (
+                              <TypingCursor />
+                            ) : (
+                              <>
+                                <MessageContent text={msg.content} />
+                                {msg.pending && <TypingCursor />}
+                              </>
+                            )}
+                            <p
+                              className={`mt-2 text-[10px] font-medium ${
+                                msg.role === "user"
+                                  ? "text-emerald-50/80"
+                                  : "text-slate-400 dark:text-slate-500"
+                              }`}
+                            >
+                              {formatMessageTimestamp(msg.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                )}
 
-              {/* GIF picker */}
-              <div className="relative">
+                {/* Error banner */}
                 <AnimatePresence>
-                  {showGifPicker && (
-                    <GifPicker
-                      onSelect={handleGifSelect}
-                      onClose={() => setShowGifPicker(false)}
-                      position="above"
-                    />
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.97 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-2.5 dark:border-red-900 dark:bg-red-950/50"
+                    >
+                      <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
+                      <p className="text-sm text-red-600 dark:text-red-400">
+                        {error}
+                      </p>
+                    </motion.div>
                   )}
                 </AnimatePresence>
+
+                <div ref={chatEndRef} />
               </div>
+
+              {/* Input */}
+              <div className="border-t border-slate-100 px-4 pt-2 pb-4 dark:border-slate-800">
+                {/* File preview */}
+                {attachment && (
+                  <div className="mb-2">
+                  <FilePreview file={attachment} onRemove={() => setAttachment(null)} />
+                  </div>
+                )}
+
+                {/* GIF picker */}
+                <div className="relative">
+                  <AnimatePresence>
+                    {showGifPicker && (
+                      <GifPicker
+                        onSelect={handleGifSelect}
+                        onClose={() => setShowGifPicker(false)}
+                        position="above"
+                      />
+                    )}
+                  </AnimatePresence>
+                </div>
 
               <form onSubmit={handleSubmit} className="relative flex items-center gap-2 rounded-2xl">
                 <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={60} duration={8} />
-                {/* Toolbar buttons */}
-                <div className="flex items-center gap-1">
-                  <FileAttachButton
-                    onFile={setAttachment}
+                  {/* Toolbar buttons */}
+                  <div className="flex items-center gap-1">
+                    <FileAttachButton
+                      onFile={setAttachment}
+                      disabled={streaming}
+                      className="h-10 w-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowGifPicker((v) => !v)}
+                      disabled={streaming}
+                      title="Send a GIF"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-40"
+                    >
+                    <span className="text-[11px] font-bold tracking-tight">GIF</span>
+                    </button>
+                    <VoiceButton
+                    onTranscript={(t) => setInput((prev) => (prev ? `${prev} ${t}` : t))}
+                      disabled={streaming}
+                      className="h-10 w-10"
+                    />
+                  </div>
+
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  placeholder={attachment ? "Add a caption…" : "Ask Wiza anything…"}
                     disabled={streaming}
-                    className="h-10 w-10"
+                    className="flex-1 rounded-xl border border-transparent bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none disabled:opacity-50 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-emerald-600"
                   />
                   <button
-                    type="button"
-                    onClick={() => setShowGifPicker((v) => !v)}
-                    disabled={streaming}
-                    title="Send a GIF"
-                    className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-40"
+                    type="submit"
+                    disabled={streaming || (!input.trim() && !attachment)}
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors hover:bg-emerald-600 disabled:opacity-30 dark:bg-white dark:text-slate-900 dark:hover:bg-emerald-500 dark:hover:text-white"
                   >
-                    <span className="text-[11px] font-bold tracking-tight">GIF</span>
+                    <Send size={16} />
                   </button>
-                  <VoiceButton
-                    onTranscript={(t) => setInput((prev) => (prev ? `${prev} ${t}` : t))}
-                    disabled={streaming}
-                    className="h-10 w-10"
-                  />
-                </div>
-
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder={attachment ? "Add a caption…" : "Ask Wiza anything…"}
-                  disabled={streaming}
-                  className="flex-1 rounded-xl border border-transparent bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none disabled:opacity-50 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-emerald-600"
-                />
-                <button
-                  type="submit"
-                  disabled={streaming || (!input.trim() && !attachment)}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors hover:bg-emerald-600 disabled:opacity-30 dark:bg-white dark:text-slate-900 dark:hover:bg-emerald-500 dark:hover:text-white"
+                </form>
+              </div>
+            </TiltCard>
+            <div className="text-center">
+              <p className="mt-4 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                By using Wiza, you agree to our{" "}
+                <Link
+                  href="/wiza-ai-for-eaziwage/ai-terms"
+                  className="font-medium text-emerald-700 underline-offset-4 hover:underline dark:text-emerald-400"
                 >
-                  <Send size={16} />
-                </button>
-              </form>
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="/wiza-ai-for-eaziwage/ai-privacy"
+                  className="font-medium text-emerald-700 underline-offset-4 hover:underline dark:text-emerald-400"
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </p>
             </div>
-          </TiltCard>
           </motion.div>
         </div>
       </div>

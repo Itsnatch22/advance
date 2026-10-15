@@ -1,422 +1,1413 @@
-# Codebase Improvement Recommendations
-
-Generated from a targeted audit of the current Next.js App Router codebase, with extra attention to the new careers application flow, frontend quality, accessibility, security, and maintainability.
-
-## Design Read
-
-This is a public fintech marketing site plus operational admin tooling for EaziWage. Treat public pages as trust-first, conversion-focused product surfaces with a restrained premium visual language. Treat admin pages as dense operational tools where clarity, predictable controls, and fast repeated workflows matter more than decorative motion.
-
-Recommended dials:
-
-- `DESIGN_VARIANCE: 5` for product and careers pages, using targeted evolution instead of a full redesign.
-- `MOTION_INTENSITY: 3` for forms and admin surfaces, reserving richer motion for marketing storytelling.
-- `VISUAL_DENSITY: 5` for public product pages and `8` for admin pages.
-
-## Highest Priority
-
-### 1. Move Career Application Submission Behind a Server Route completed✅
-
-Current signal:
-
-- `app/careers/[slug]/apply/ApplicationForm.tsx` uploads resumes and inserts into `career_applications` directly from the browser Supabase client.
-- The documented RLS model allows anonymous inserts, which is useful, but the client still owns file naming, payload shape, and submission timing.
-
-Recommended change:
-
-- Create `app/api/careers/[slug]/applications/route.ts`.
-- Validate the full payload with `zod`.
-- Add a dedicated `careerApplicationLimiter` in `lib/security/rate-limit.ts`.
-- Perform the insert server-side.
-- Prefer signed upload URLs or a server-mediated upload path for resumes.
-- Add server-side checks that the career exists and `is_open = true`.
-
-Why:
-
-- Gives one hardened place for anti-abuse, validation, audit logging, consent timestamps, storage path rules, and future email notifications.
-- Prevents clients from submitting arbitrary snapshots or malformed URLs.
-
-Acceptance checks:
-
-- Invalid file type, oversize file, closed role, duplicate rapid submissions, and missing consent all fail with clear errors.
-- A successful submission creates exactly one application row and one resume object.
-
-### 2. Add Route-Level Loading and Error Boundaries for Dynamic Career Segments completed✅
-
-Current signal:
-
-- Existing boundaries: `app/loading.tsx`, `app/error.tsx`, `app/careers/loading.tsx`, `app/careers/error.tsx`.
-- Missing segment-specific boundaries for `app/careers/[slug]/` and `app/careers/[slug]/apply/`.
-
-Recommended change:
-
-- Add:
-  - `app/careers/[slug]/loading.tsx`
-  - `app/careers/[slug]/error.tsx`
-  - `app/careers/[slug]/apply/loading.tsx`
-  - `app/careers/[slug]/apply/error.tsx`
-
-Why:
-
-- The detail and apply pages fetch dynamic Supabase data. Segment-level boundaries keep failures local, improve perceived speed, and match App Router best practice.
-
-Acceptance checks:
-
-- Slow career fetches show skeletons that match the final layout.
-- Supabase failures render an actionable retry state without taking down the whole careers section.
-
-### 3. Tighten Image Remote Patterns
-
-Current signal:
-
-- `next.config.ts` allows all `https` and all `http` image hosts via `hostname: "**"`.
-
-Recommended change:
-
-- Replace the wildcard allowlist with explicit production image domains.
-- Remove `http` unless a known required source cannot serve HTTPS.
-- Keep `img-src` CSP aligned with the same set of approved hosts.
-
-Why:
-
-- Reduces image proxy abuse, avoids mixed-content risk, and makes the production asset policy auditable.
-
-Acceptance checks:
-
-- All first-party assets still render.
-- External logos, GIFs, and campaign images render only from approved domains.
-
-### 4. Rationalize Motion and Icon Libraries
-
-Current signal:
-
-- The codebase uses both `framer-motion` and `motion/react`.
-- The codebase uses both `lucide-react` and `@tabler/icons-react`.
-
-Recommended change:
-
-- Pick one motion import path for new work. Prefer `motion/react` for new components, then migrate opportunistically.
-- Pick one primary icon family for product UI. Since Lucide is already widespread, either formalize Lucide as the project standard or intentionally migrate to Tabler/Radix for thinner strokes.
-- Document icon stroke width and button icon sizing in a short design-system note.
-
-Why:
-
-- Reduces bundle drift and visual inconsistency.
-- Makes future component reviews simpler.
-
-Acceptance checks:
-
-- New components do not introduce a third icon set.
-- Buttons, badges, and form states use consistent icon sizing and stroke weight.
-
-## Product and UX Improvements
-
-### 5. Create a Careers Admin Review Flow completed✅
-
-Current signal:
-
-- The career application feature intentionally leaves admin review out of scope.
-
-Recommended change:
-
-- Add an authenticated admin page for `career_applications`.
-- Include filters by role, status, submission date, and candidate search.
-- Add status transitions: `submitted`, `reviewing`, `shortlisted`, `rejected`, `hired`.
-- Add an audit trail for status changes.
-- Add resume access through signed URLs rather than public storage URLs.
-
-Why:
-
-- The application intake is useful only when the team can triage candidates securely and consistently.
-
-Acceptance checks:
-
-- Admins can review applications without exposing resumes publicly.
-- Every status change records actor, timestamp, old status, and new status.
-
-### 6. Improve Application Form Ergonomics completed✅
-
-Current signal:
-
-- The apply form has required fields, file validation, upload status, success, and error states.
-- It does not yet use shared form primitives or schema validation.
-
-Recommended change:
-
-- Extract reusable `FormField`, `FileUploadField`, and `ConsentCheckbox` components.
-- Use `react-hook-form` plus `zod` for typed validation.
-- Add per-field inline errors instead of one global error for every validation failure.
-- Preserve selected file state visually and support keyboard removal.
-- Add helper text for allowed file types and size before the user selects a file.
-
-Why:
-
-- Improves accessibility and makes future forms cheaper to build.
-
-Acceptance checks:
-
-- Form can be completed fully with keyboard only.
-- Screen readers announce validation errors next to the relevant field.
-- Submit button communicates upload and submit stages without layout shift.
-
-### 7. Add Candidate Confirmation Email completed✅
-
-Current signal:
-
-- Contact and partner flows already use Resend email patterns.
-- Career application submission currently has only an in-page success message.
-
-Recommended change:
-
-- Add a candidate confirmation email and internal hiring notification after server-side submission.
-- Reuse existing email config conventions.
-- Include role title, submitted timestamp, and next steps.
-
-Why:
-
-- Gives applicants confidence and alerts the hiring team without needing to poll the database.
-
-Acceptance checks:
-
-- Email failure does not roll back the application insert.
-- Email errors are logged with enough context for operations.
-
-### 8. Add Structured Data to Careers completed✅
-
-Recommended change:
-
-- Add `JobPosting` JSON-LD on `app/careers/[slug]/page.tsx`.
-- Include title, description, employment type, hiring organization, applicant location requirements if relevant, job location, date posted, valid through, and salary when present.
-
-Why:
-
-- Improves search engine understanding of job pages and helps preserve SEO value after the route change from `[id]` to `[slug]`.
-
-Acceptance checks:
-
-- Rich results validation passes for open roles.
-- Closed roles either omit `JobPosting` or set a valid expiry strategy.
-
-## Engineering Quality
-
-### 9. Add a Public API Protection Matrix
-
-Current signal:
-
-- Many public endpoints use rate limiting.
-- Some routes use generic `rateLimiter` even when named limiters exist.
-- There is no obvious single document mapping each endpoint to auth, validation, rate limit, and abuse controls.
-
-Recommended change:
-
-- Create a docs table for every `app/api/**/route.ts` endpoint:
-  - Method
-  - Auth requirement
-  - Validation schema
-  - Rate limiter
-  - External side effects
-  - Logging/audit behavior
-  - CORS policy
-
-Why:
-
-- This app has contact, sales, AI, admin, campaign, upload, webhook, and subscription endpoints. A matrix makes gaps visible before they become production incidents.
-
-Acceptance checks:
-
-- Every public POST has validation and a rate limiter.
-- Every admin endpoint has an auth guard and audit behavior where it mutates data.
-- Webhooks document signature verification.
-
-### 10. Revisit CSP and Inline Script Policy
-
-Current signal:
-
-- `next.config.ts` sets CSP headers globally.
-- `script-src` includes `'unsafe-inline'` and `'unsafe-eval'`.
-
-Recommended change:
-
-- Move toward nonce-based scripts where practical.
-- Keep development-only allowances out of production.
-- Document each third-party domain and the feature that requires it.
-
-Why:
-
-- EaziWage handles financial and applicant data. A stricter CSP is a high-value security improvement.
-
-Acceptance checks:
-
-- Production pages load without CSP violations.
-- Removing an approved script domain has a documented owner and feature impact.
-
-### 11. Strengthen Environment Configuration Boundaries
-
-Current signal:
-
-- `env.ts` validates many required variables.
-- Some route files still read `process.env` directly and create service clients locally.
-
-Recommended change:
-
-- Centralize server-only config access through `getEnv()`.
-- Add a separate optional-env helper for integrations that can degrade gracefully.
-- Prefer shared Supabase service helpers rather than repeated `createClient` setup inside routes.
-
-Why:
-
-- Reduces inconsistent failure behavior and makes deployments easier to reason about.
-
-Acceptance checks:
-
-- Server routes do not duplicate service-role client construction.
-- Missing optional integrations return controlled 503s or disable only the affected feature.
-
-### 12. Convert Plain Content Images to `next/image`
-
-Current signal:
-
-- Plain `<img>` appears in app and component files where content images are rendered.
-
-Recommended change:
-
-- Use `next/image` for content images.
-- Keep raw `<img>` only where it is necessary, such as generated email HTML, third-party GIF picker internals, or browser APIs that require it.
-
-Why:
-
-- Improves LCP, sizing stability, image optimization, and accessibility review.
-
-Acceptance checks:
-
-- Public pages do not introduce layout shift from unsized content images.
-- Exceptions are documented with comments or kept inside clearly isolated utility components.
-
-## Visual System Improvements
-
-### 13. Define a Small EaziWage UI Surface Guide
-
-Recommended change:
-
-- Add `docs/DESIGN_SYSTEM_NOTES.md` or extend the existing docs with:
-  - Primary accent: EaziWage green.
-  - Neutral scale usage.
-  - Corner radius rules for buttons, inputs, cards, and shells.
-  - Motion duration and easing tokens.
-  - Form field anatomy.
-  - Admin density rules.
-
-Why:
-
-- The codebase already has polished pieces, but patterns are repeated by hand. A short guide prevents drift.
-
-Acceptance checks:
-
-- New pages can be reviewed against concrete tokens instead of taste alone.
-- Marketing pages and admin pages have distinct density rules.
-
-### 14. Replace Decorative Orbs on Form-Heavy Pages completed✅
-
-Current signal:
-
-- `FloatingOrb` appears on careers and application pages.
-
-Recommended change:
-
-- Keep decorative motion for brand/marketing sections.
-- On application, auth, admin, and payment-like flows, reduce visual noise and prioritize stable form hierarchy.
-- Use subtle grid, spacing, and clear status panels rather than animated background objects.
-
-Why:
-
-- Form completion benefits from calmer surroundings, especially on mobile and lower-power devices.
-
-Acceptance checks:
-
-- Application pages pass reduced-motion review.
-- No animated background element competes with field focus, error state, or submit feedback.
-
-### 15. Replace `min-h-screen` with `min-h-[100dvh]` on Viewport-Filling Pages
-
-Current signal:
-
-- Multiple pages use `min-h-screen`.
-
-Recommended change:
-
-- For viewport-filling layouts, use `min-h-[100dvh]` to avoid mobile browser chrome jumps.
-
-Why:
-
-- More stable on mobile Safari and modern mobile browsers.
-
-Acceptance checks:
-
-- Hero, auth, loading, not-found, and form pages do not jump when the mobile browser address bar changes.
-
-## Testing and Verification
-
-### 16. Add Tests Around Careers Helpers and Submission Flow
-
-Recommended change:
-
-- Unit test `formatLocation`, `formatSalary`, `formatDepartment`, and `getApplyHref`.
-- Add route handler tests for the future server-side application endpoint.
-- Add an E2E happy path for applying to an open role and a blocked path for a closed role.
-
-Why:
-
-- The career flow touches routing, Supabase data, storage, validation, consent, and candidate-facing UX.
-
-Acceptance checks:
-
-- Slug routes are covered.
-- External `apply_link` roles do not show internal form behavior.
-- Closed roles cannot be submitted through the UI or API.
-
-### 17. Add Build, Type, Lint, and Accessibility Gates to PR Checks
-
-Current signal:
-
-- Scripts exist for `build`, `lint`, `type-check`, and `test`.
-
-Recommended change:
-
-- Document and enforce the expected local verification sequence:
-  - `npm run type-check`
-  - `npm run lint`
-  - `npm run test`
-  - `npm run build`
-- Add Playwright or equivalent browser checks for high-value public flows.
-- Add axe checks for forms, nav, dialogs, and admin tables.
-
-Why:
-
-- This app has enough surface area that regressions will otherwise hide in route-specific code.
-
-Acceptance checks:
-
-- CI blocks merges on type, lint, unit test, and production build failures.
-- Core public flows are covered in browser-level tests.
-
-## Suggested Implementation Order
-
-1. Server-side career applications endpoint with rate limiting and validation.
-2. Careers detail/apply loading and error boundaries.
-3. Resume storage access model review, preferably signed URLs.
-4. Careers admin review workflow.
-5. Image domain allowlist and CSP tightening.
-6. Design system notes for tokens, forms, motion, and admin density.
-7. Motion/icon library standardization.
-8. Careers structured data and route helper tests.
-9. Public API protection matrix.
-10. Accessibility and E2E coverage for application, contact, sales, and admin login flows.
-
-## Quick Wins
-
-- Replace `min-h-screen` with `min-h-[100dvh]` on careers, auth, loading, and not-found pages.
-- Add helper text under the resume upload field before file selection.
-- Add segment-level `loading.tsx` and `error.tsx` for career detail/apply routes.
-- Add `careerApplicationLimiter` instead of reusing a generic limiter.
-- Narrow `next.config.ts` image domains.
-- Add `JobPosting` JSON-LD to open career detail pages.
-- Document the chosen icon family and motion import path.
+## Integrate the <LogoLoop /> component from React Bits
+
+You are helping integrate an open-source React component into an existing application.
+
+### Component: LogoLoop
+### Variant: JavaScript + CSS
+
+
+---
+
+### Usage Example
+```jsx
+import LogoLoop from './LogoLoop';
+import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss } from 'react-icons/si';
+
+const techLogos = [
+  { node: <SiReact />, title: "React", href: "https://react.dev", hoverColor: "#61dafb" },
+  { node: <SiNextdotjs />, title: "Next.js", href: "https://nextjs.org" },
+  { node: <SiTypescript />, title: "TypeScript", href: "https://www.typescriptlang.org", hoverColor: "#3178c6" },
+  { node: <SiTailwindcss />, title: "Tailwind CSS", href: "https://tailwindcss.com", hoverColor: "#38bdf8" },
+];
+
+const imageLogos = [
+  { src: "/logos/company1.png", alt: "Company 1", href: "https://company1.com" },
+  { src: "/logos/company2.png", alt: "Company 2", href: "https://company2.com" },
+  { src: "/logos/company3.png", alt: "Company 3", href: "https://company3.com" },
+];
+
+function App() {
+  return (
+    <div style={{ height: '200px', position: 'relative', overflow: 'hidden' }}>
+      <LogoLoop
+        logos={techLogos}
+        speed={100}
+        direction="left"
+        logoHeight={48}
+        gap={56}
+        hoverSpeed={0}
+        scaleOnHover
+        ariaLabel="Technology partners"
+      />
+
+      <LogoLoop
+        logos={techLogos}
+        layout="orbit"
+        bend={0.6}
+        magnify={0.6}
+        labels="hover"
+        muted={0.5}
+      />
+
+      <LogoLoop logos={imageLogos} direction="up" focus={0.5} step />
+    </div>
+  );
+}
+```
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| logos | LogoItem[] | required | Logos to show. Each item is either { node } for any React node, like an icon, or { src, alt } for an image. Both accept an optional title, href and hoverColor, the brand color a logo takes on when hovered. |
+| speed | number | 120 | Speed in pixels per second. Negative values reverse the direction. |
+| direction | 'left' | 'right' | 'up' | 'down' | 'left' | Which way the logos travel. |
+| width | number | string | '100%' | Width of the loop. |
+| logoHeight | number | 28 | Height of each logo in pixels. |
+| gap | number | 32 | Space between logos in pixels. |
+| hoverSpeed | number | undefined | Speed while the loop is hovered or a logo has keyboard focus. 0 pauses it and a small value slows it down. By default it pauses. |
+| pauseOnHover | boolean | undefined | Set to false to keep full speed on hover. Ignored when hoverSpeed is set. |
+| fadeOut | boolean | true | Fades the logos out softly at both ends. It is a transparent mask, so it works on any background. |
+| fadeOutWidth | number | 0.12 | Size of each fade as a fraction of the length, from 0 to 0.5. |
+| scaleOnHover | boolean | false | Grows the hovered logo slightly. |
+| layout | 'line' | 'wave' | 'arc' | 'orbit' | 'line' | Path the logos travel along: a straight line, a wave, an arc, or a ring that turns in 3D. |
+| bend | number | 0.5 | How strongly the path bends, from -1 to 1. It sets the height of the wave, the curve of the arc or the tilt of the orbit. Negative values flip it. |
+| focus | number | 0 | A lens in the middle, from 0 to 1. Logos grow and make room as they pass the center while the outer ones dim. |
+| magnify | number | 0 | Dock-style magnification under the cursor, from 0 to 1. Nearby logos move aside to make room. |
+| tiltX | number | 0 | Tilts the loop back or forward in 3D, in degrees. |
+| tiltY | number | 0 | Turns the loop to the side in 3D, in degrees. |
+| step | boolean | false | Moves one logo at a time and pauses, centering each logo in turn. Speed sets the pace. |
+| muted | number | 0 | Greys out and dims the logos until one is hovered or centered, from 0 to 1. |
+| labels | 'none' | 'inline' | 'below' | 'hover' | 'none' | Shows each logo's title beside it, below it, or as a small caption when it is hovered or centered. |
+| draggable | boolean | true | Lets people drag or swipe the loop and fling it. Links still open with a normal click. |
+| scrollBoost | number | 0 | Speeds the loop up while the page scrolls and reverses it when scrolling up, from 0 to 1. |
+| intro | boolean | true | Logos fade and rise in from left to right the first time the loop comes into view. |
+| renderItem | (item: LogoItem, key: React.Key) => React.ReactNode | undefined | Custom render function for each logo, for full control over how it looks. |
+| ariaLabel | string | 'Partner logos' | Accessible name for the loop. |
+| className | string | undefined | Extra class names for the container. |
+| style | React.CSSProperties | undefined | Inline styles for the container. |
+
+### Full Component Source
+```jsx
+'use client';
+
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import './LogoLoop.css';
+
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
+const SMOOTH_TAU = 0.25;
+const GLIDE_TAU = 0.8;
+const DRAG_THRESHOLD = 6;
+const MAX_FLING = 4000;
+const INTRO_TIME = 0.7;
+const INTRO_STAGGER = 0.45;
+const HALF_SQRT_PI = Math.sqrt(Math.PI) / 2;
+
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+const toCssLength = value => (typeof value === 'number' ? `${value}px` : (value ?? undefined));
+
+const erf = x => {
+  const a = Math.abs(x);
+  const t = 1 / (1 + 0.3275911 * a);
+  const y =
+    1 -
+    ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-a * a);
+  return x < 0 ? -y : y;
+};
+
+const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+const smootherstep = t => t * t * t * (t * (t * 6 - 15) + 10);
+
+const fadeMask = (size, vertical) => {
+  const span = clamp(size, 0, 0.5) * 100;
+  if (span <= 0) return undefined;
+  const stops = [];
+  for (let i = 0; i <= 12; i++) {
+    stops.push(`rgba(0,0,0,${smootherstep(i / 12).toFixed(4)}) ${((span * i) / 12).toFixed(3)}%`);
+  }
+  for (let i = 12; i >= 0; i--) {
+    stops.push(`rgba(0,0,0,${smootherstep(i / 12).toFixed(4)}) ${(100 - (span * i) / 12).toFixed(3)}%`);
+  }
+  return `linear-gradient(${vertical ? 'to bottom' : 'to right'}, ${stops.join(', ')})`;
+};
+
+const rotationMatrix = (degX, degY) => {
+  const a = (degX * Math.PI) / 180;
+  const b = (degY * Math.PI) / 180;
+  const ca = Math.cos(a);
+  const sa = Math.sin(a);
+  const cb = Math.cos(b);
+  const sb = Math.sin(b);
+  return [cb, 0, sb, sa * sb, ca, -sa * cb, -ca * sb, sa, ca * cb];
+};
+
+const unproject = (m, depth, sx, sy) => {
+  const den = m[8] * depth - m[2] * sx - m[5] * sy;
+  if (den <= 1e-6) return null;
+  const t = (m[8] * depth) / den;
+  if (t <= 0) return null;
+  const qx = t * sx;
+  const qy = t * sy;
+  const qz = depth * (1 - t);
+  return [m[0] * qx + m[3] * qy + m[6] * qz, m[1] * qx + m[4] * qy + m[7] * qz];
+};
+
+const project = (m, depth, px, py) => {
+  const k = depth / (depth - (m[6] * px + m[7] * py));
+  return [(m[0] * px + m[1] * py) * k, (m[3] * px + m[4] * py) * k];
+};
+
+const createEngine = (root, track, config, setLayout) => {
+  const query = typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  const st = {
+    offset: 0,
+    velocity: 0,
+    period: 0,
+    length: 0,
+    box: [0, 0],
+    items: [],
+    snaps: [],
+    pitch: 0,
+    crossMax: 0,
+    sizeMax: 0,
+    tipMax: 0,
+    geo: null,
+    layout: { copies: 2, primary: 0 },
+    hovered: false,
+    focused: false,
+    pointer: null,
+    pointerInside: false,
+    mag: 0,
+    magU: 0,
+    magReady: false,
+    drag: null,
+    glide: false,
+    suppressUntil: 0,
+    pressedAt: -1e9,
+    move: null,
+    hold: 0,
+    seek: null,
+    scrollVel: 0,
+    scrollY: window.scrollY,
+    scrollT: 0,
+    visible: typeof IntersectionObserver === 'undefined',
+    introStart: -1,
+    introDone: !config.current.intro,
+    itemMode: false,
+    active: null,
+    raf: 0,
+    last: 0,
+    reduced: !!query?.matches,
+    destroyed: false
+  };
+
+  const collect = () => {
+    const items = [];
+    Array.from(track.children).forEach((list, copy) => {
+      Array.from(list.children).forEach((el, index) => {
+        items.push({
+          el,
+          copy,
+          index,
+          content: el.children[0] || null,
+          tip: el.children[1] || null,
+          center: 0,
+          size: 0,
+          cross: 0,
+          t: '',
+          o: '',
+          v: '',
+          z: '',
+          s: '',
+          p: ''
+        });
+      });
+    });
+    st.items = items;
+    st.active = null;
+  };
+
+  const clearItems = () => {
+    for (const it of st.items) {
+      it.el.style.transform = '';
+      it.el.style.opacity = '';
+      it.el.style.visibility = '';
+      it.el.style.zIndex = '';
+      if (it.content) it.content.style.transform = '';
+      if (it.tip) it.tip.style.transform = '';
+      it.t = it.o = it.v = it.z = it.s = it.p = '';
+    }
+  };
+
+  const geometry = () => {
+    const cfg = config.current;
+    const L = st.length;
+    const P = st.period;
+    const hc = st.crossMax;
+    const w = st.sizeMax;
+    const bend = clamp(cfg.bend, -1, 1);
+    const geo = {
+      mode: cfg.layout,
+      shift: 0,
+      uMin: -L / 2 - w,
+      uMax: L / 2 + w,
+      lead: 0,
+      focus: clamp(cfg.focus, 0, 1) * 0.9,
+      focusSigma: Math.max(40, L * 0.18),
+      magnify: clamp(cfg.magnify, 0, 1),
+      magSigma: Math.max(hc * 1.4, st.pitch * 1.1),
+      amp: 0,
+      k: 0,
+      R: 0,
+      sign: 1,
+      limit: 0,
+      C: 0,
+      alpha: 0,
+      depth: 0,
+      pf: 1,
+      tilted: false,
+      tiltX: 0,
+      tiltY: 0,
+      m: [1, 0, 0, 0, 1, 0, 0, 0, 1],
+      persp: 0
+    };
+    let pad = cfg.scaleOnHover ? hc * 0.1 : 0;
+    const lens = (1 + geo.focus) * (1 + geo.magnify) - 1;
+    if (geo.mode === 'wave') {
+      geo.amp = bend * (hc * 0.6 + L * 0.035);
+      geo.k = (2 * Math.PI) / Math.max(1, L / 1.25);
+      pad += Math.abs(geo.amp) + (lens * hc) / 2 + hc * 0.08;
+    } else if (geo.mode === 'arc' && Math.abs(bend) > 0.005) {
+      const edge = Math.abs(bend) * (Math.PI / 4);
+      const R = L / 2 / Math.sin(edge);
+      const sag = R * (1 - Math.cos(edge));
+      geo.R = R;
+      geo.sign = Math.sign(bend);
+      geo.shift = sag / 2;
+      geo.limit = Math.PI * 0.6;
+      const reach = R * Math.min(Math.PI / 2, Math.asin(Math.min(1, (L / 2 + w) / R))) + w;
+      geo.uMin = -reach;
+      geo.uMax = reach;
+      pad += sag / 2 + (w / 2) * Math.sin(edge) + (lens * hc) / 2;
+    } else if (geo.mode === 'orbit') {
+      const R = Math.max(40, L * 0.43 - w * 0.2);
+      const k = Math.max(1, Math.round((2 * Math.PI * R) / P));
+      const alpha = Math.sign(bend) * Math.atan2(Math.abs(bend) * Math.max(hc * 2, R * 0.36), R);
+      const depth = R * 5;
+      const pf = depth / (depth - R * Math.cos(alpha));
+      const pb = depth / (depth + R * Math.cos(alpha));
+      const yf = R * Math.sin(alpha) * pf;
+      const yb = -R * Math.sin(alpha) * pb;
+      const grow = (1 + lens) * (cfg.scaleOnHover ? 1.2 : 1);
+      const lo = Math.min(yf - (hc * pf * grow) / 2, yb - (hc * pb) / 2);
+      const hi = Math.max(yf + (hc * pf * grow) / 2, yb + (hc * pb) / 2);
+      geo.R = R;
+      geo.C = k * P;
+      geo.alpha = alpha;
+      geo.depth = depth;
+      geo.pf = pf;
+      geo.shift = (lo + hi) / 2;
+      geo.uMin = -geo.C / 2;
+      geo.uMax = geo.C / 2;
+      pad = Math.max(0, (hi - lo) / 2 - hc / 2);
+    } else {
+      pad += (lens * hc) / 2;
+    }
+    if (cfg.labels === 'hover') pad += cfg.vertical ? st.tipMax : hc * 0.2 + Math.max(11, hc * 0.26) * 1.3;
+    const tx = clamp(cfg.tiltX, -60, 60);
+    const ty = clamp(cfg.tiltY, -60, 60);
+    if (Math.abs(tx) > 0.01 || Math.abs(ty) > 0.01) {
+      geo.tilted = true;
+      geo.tiltX = tx;
+      geo.tiltY = ty;
+      geo.m = rotationMatrix(tx, ty);
+      geo.persp = Math.max(L, 480) * 1.3;
+      const edge = L / 2 + w;
+      const along = s => {
+        const p = cfg.vertical ? unproject(geo.m, geo.persp, 0, s) : unproject(geo.m, geo.persp, s, 0);
+        if (!p) return Math.sign(s) * L * 4;
+        return clamp(cfg.vertical ? p[1] : p[0], -L * 4, L * 4);
+      };
+      const a = along(-edge);
+      const b = along(edge);
+      geo.uMin = Math.min(geo.uMin, a, b) - w;
+      geo.uMax = Math.max(geo.uMax, a, b) + w;
+      const band = hc / 2 + pad;
+      let reach = band;
+      for (const u of [a, b, 0]) {
+        for (const v of [-band, band]) {
+          const q = cfg.vertical ? project(geo.m, geo.persp, v, u) : project(geo.m, geo.persp, u, v);
+          reach = Math.max(reach, Math.abs(cfg.vertical ? q[0] : q[1]));
+        }
+      }
+      pad = reach - hc / 2;
+    }
+    const extra = cfg.links ? 2 : 0;
+    geo.lead = (Math.max(0, Math.ceil((-geo.uMin - L / 2) / P)) + extra) * P;
+    const copies = Math.max(2, Math.ceil((geo.uMax + L / 2 + geo.lead) / P) + 2 + (extra ? 1 : 0));
+    const primary = Math.min(copies - 1, Math.floor((geo.lead + L / 2) / P));
+    st.geo = geo;
+    root.style.setProperty('--logoloop-pad', `${Math.ceil(pad)}px`);
+    root.style.perspective = geo.tilted ? `${geo.persp}px` : '';
+    track.style.transformOrigin = geo.tilted ? (cfg.vertical ? `50% ${L / 2}px` : `${L / 2}px 50%`) : '';
+    if (copies !== st.layout.copies || primary !== st.layout.primary) {
+      st.layout = { copies, primary };
+      setLayout(st.layout);
+    }
+  };
+
+  const measure = () => {
+    const cfg = config.current;
+    const lists = track.children;
+    if (!lists.length || !st.items.length) {
+      st.period = 0;
+      return;
+    }
+    if (cfg.vertical) {
+      const parentHeight = root.parentElement?.clientHeight ?? 0;
+      if (parentHeight > 0 && root.style.height !== `${Math.ceil(parentHeight)}px`) {
+        root.style.height = `${Math.ceil(parentHeight)}px`;
+      }
+    } else if (root.style.height) {
+      root.style.height = '';
+    }
+    track.style.transform = 'none';
+    clearItems();
+    const rootRect = root.getBoundingClientRect();
+    const k = root.offsetWidth ? rootRect.width / root.offsetWidth || 1 : 1;
+    const trackRect = track.getBoundingClientRect();
+    const origin = cfg.vertical ? trackRect.top : trackRect.left;
+    let crossMax = 0;
+    let sizeMax = 0;
+    let tipMax = 0;
+    for (const it of st.items) {
+      const r = it.el.getBoundingClientRect();
+      it.center = ((cfg.vertical ? r.top + r.height / 2 : r.left + r.width / 2) - origin) / k;
+      it.size = (cfg.vertical ? r.height : r.width) / k;
+      it.cross = (cfg.vertical ? r.width : r.height) / k;
+      crossMax = Math.max(crossMax, it.cross);
+      sizeMax = Math.max(sizeMax, it.size);
+      if (it.tip && it.copy === 0) tipMax = Math.max(tipMax, it.tip.offsetWidth);
+    }
+    const a = lists[0].getBoundingClientRect();
+    const b = lists[1] ? lists[1].getBoundingClientRect() : null;
+    st.period = (b ? (cfg.vertical ? b.top - a.top : b.left - a.left) : cfg.vertical ? a.height : a.width) / k;
+    const cs = getComputedStyle(root);
+    st.box = [root.offsetWidth, root.offsetHeight];
+    st.length = cfg.vertical
+      ? root.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
+      : root.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    st.crossMax = crossMax;
+    st.sizeMax = sizeMax;
+    st.tipMax = tipMax + crossMax * 0.25;
+    const first = st.items.filter(it => it.copy === 0);
+    st.pitch = first.length ? st.period / first.length : st.period;
+    st.snaps = first.map(it => it.center);
+    st.itemMode = false;
+    if (st.period <= 0) return;
+    geometry();
+  };
+
+  const pointerU = () => {
+    const geo = st.geo;
+    if (!st.pointer || !geo) return null;
+    const cfg = config.current;
+    let sx = st.pointer[0] - st.box[0] / 2;
+    let sy = st.pointer[1] - st.box[1] / 2;
+    if (geo.tilted) {
+      const p = unproject(geo.m, geo.persp, sx, sy);
+      if (!p) return null;
+      sx = p[0];
+      sy = p[1];
+    }
+    const s = cfg.vertical ? sy : sx;
+    if (geo.mode === 'arc' && geo.R) return geo.R * Math.asin(clamp(s / geo.R, -1, 1));
+    if (geo.mode === 'orbit') return Math.asin(clamp(s / (geo.R * geo.pf), -1, 1));
+    return s;
+  };
+
+  const snapTarget = (from, dir) => {
+    const P = st.period;
+    const base = st.length / 2 + (st.geo?.lead ?? 0);
+    let best = null;
+    for (const c of st.snaps) {
+      const s = c - base;
+      const candidate = dir > 0 ? s + P * Math.ceil((from + 0.5 - s) / P) : s + P * Math.floor((from - 0.5 - s) / P);
+      if (best === null || (dir > 0 ? candidate < best : candidate > best)) best = candidate;
+    }
+    return best ?? from;
+  };
+
+  const nearestSnap = value => {
+    const P = st.period;
+    const base = st.length / 2 + (st.geo?.lead ?? 0);
+    let best = value;
+    let dist = Infinity;
+    for (const c of st.snaps) {
+      const s = c - base;
+      const candidate = s + P * Math.round((value - s) / P);
+      if (Math.abs(candidate - value) < dist) {
+        dist = Math.abs(candidate - value);
+        best = candidate;
+      }
+    }
+    return best;
+  };
+
+  const startMove = (target, duration) => {
+    st.move = { from: st.offset, delta: target - st.offset, t: 0, dur: duration };
+  };
+
+  const stepTiming = speed => {
+    const cycle = st.pitch / Math.max(1, Math.abs(speed));
+    const move = clamp(cycle * 0.55, 0.35, 0.9);
+    return { move, hold: Math.max(0.35, cycle - move) };
+  };
+
+  const write = (it, key, prop, value, target) => {
+    if (it[key] !== value) {
+      it[key] = value;
+      target.style[prop] = value;
+    }
+  };
+
+  const render = now => {
+    const cfg = config.current;
+    const geo = st.geo;
+    const L = st.length;
+    const half = L / 2;
+    const T = -st.offset - geo.lead;
+    const lineT = cfg.vertical
+      ? `translate3d(0px, ${T.toFixed(2)}px, 0px)`
+      : `translate3d(${T.toFixed(2)}px, 0px, 0px)`;
+    track.style.transform = geo.tilted ? `rotateX(${geo.tiltX}deg) rotateY(${geo.tiltY}deg) ${lineT}` : lineT;
+    const introRunning = st.introStart >= 0;
+    const elapsed = introRunning ? (now - st.introStart) / 1000 : 0;
+    const lensFocus = geo.mode === 'orbit' ? clamp(cfg.focus, 0, 1) * 0.9 : geo.focus;
+    const lensMag = geo.magnify * st.mag;
+    const cursorActive = lensMag > 0 && st.mag > 0.5 && geo.mode !== 'orbit';
+    const wantsActive = cfg.focus > 0 || cfg.step || cursorActive;
+    const needItems = geo.mode !== 'line' || lensFocus > 0 || lensMag > 0.0005 || introRunning;
+    if (!needItems && st.itemMode) clearItems();
+    st.itemMode = needItems;
+    if (!needItems && !wantsActive) {
+      if (st.active) {
+        st.active.el.removeAttribute('data-active');
+        st.active = null;
+      }
+      return;
+    }
+    let best = null;
+    let bestDist = Infinity;
+    for (const it of st.items) {
+      const u = T + it.center - half;
+      let x = u;
+      let y = 0;
+      let rot = 0;
+      let scale = 1;
+      let opacity = 1;
+      let z = '';
+      let hidden = false;
+      let dist = Math.abs(u);
+      if (geo.mode === 'orbit') {
+        if (u < -geo.C / 2 || u >= geo.C / 2) {
+          hidden = true;
+        } else {
+          const th = (2 * Math.PI * u) / geo.C;
+          const Z = geo.R * Math.cos(th);
+          const p = geo.depth / (geo.depth - Z * Math.cos(geo.alpha));
+          x = geo.R * Math.sin(th) * p;
+          y = Z * Math.sin(geo.alpha) * p - geo.shift;
+          scale = p;
+          if (lensFocus > 0) scale *= 1 + lensFocus * Math.exp(-((th / 0.55) ** 2));
+          if (lensMag > 0) {
+            const span = (geo.magSigma * 2 * Math.PI) / geo.C;
+            scale *= 1 + lensMag * Math.max(0, Math.cos(th)) * Math.exp(-(((th - st.magU) / span) ** 2));
+          }
+          const facing = (Math.cos(th) + 1) / 2;
+          opacity = 0.25 + 0.75 * facing * facing;
+          z = String(Math.round(facing * 1000));
+          dist = Math.cos(th) > 0 ? Math.abs(th) * geo.R : Infinity;
+        }
+      } else {
+        let w = u;
+        if (lensFocus > 0) {
+          const kf = w / geo.focusSigma;
+          scale *= 1 + lensFocus * Math.exp(-kf * kf);
+          opacity *= 1 - 0.45 * lensFocus * (1 - Math.exp(-((u / (geo.focusSigma * 1.8)) ** 2)));
+          w += lensFocus * geo.focusSigma * HALF_SQRT_PI * erf(kf);
+        }
+        const near = Math.abs(w - st.magU);
+        if (lensMag > 0) {
+          const km = (w - st.magU) / geo.magSigma;
+          scale *= 1 + lensMag * Math.exp(-km * km);
+          w += lensMag * geo.magSigma * HALF_SQRT_PI * erf(km);
+        }
+        x = w;
+        if (geo.mode === 'wave') {
+          y = geo.amp * Math.sin(geo.k * w);
+          rot = (Math.atan(geo.amp * geo.k * Math.cos(geo.k * w)) * 90) / Math.PI;
+        } else if (geo.mode === 'arc' && geo.R) {
+          const phi = w / geo.R;
+          if (Math.abs(phi) > geo.limit) hidden = true;
+          x = geo.R * Math.sin(phi);
+          y = geo.sign * (geo.R * (1 - Math.cos(phi)) - geo.shift);
+          rot = (geo.sign * phi * 180) / Math.PI;
+        }
+        dist = cursorActive ? near : Math.abs(x);
+      }
+      if (introRunning && !hidden) {
+        const pos = clamp((x + half) / Math.max(1, L), 0, 1);
+        const e = easeOut(clamp((elapsed - pos * INTRO_STAGGER) / INTRO_TIME, 0, 1));
+        opacity *= e;
+        y += (1 - e) * 14;
+      }
+      if (wantsActive && !hidden && dist < bestDist) {
+        bestDist = dist;
+        best = it;
+      }
+      if (!needItems) continue;
+      const along = x - u;
+      const t = hidden
+        ? ''
+        : `${cfg.vertical ? `translate3d(${y.toFixed(2)}px, ${along.toFixed(2)}px, 0px)` : `translate3d(${along.toFixed(2)}px, ${y.toFixed(2)}px, 0px)`}${
+            rot ? ` rotate(${(cfg.vertical ? -rot : rot).toFixed(2)}deg)` : ''
+          }`;
+      write(it, 't', 'transform', t, it.el);
+      write(it, 'o', 'opacity', hidden ? '0' : opacity > 0.999 ? '' : opacity.toFixed(3), it.el);
+      write(it, 'v', 'visibility', hidden ? 'hidden' : '', it.el);
+      write(it, 'z', 'zIndex', z, it.el);
+      if (it.content)
+        write(it, 's', 'transform', Math.abs(scale - 1) < 0.0005 ? '' : `scale(${scale.toFixed(4)})`, it.content);
+      if (it.tip) {
+        const lift = ((scale - 1) * it.cross) / 2;
+        write(
+          it,
+          'p',
+          'transform',
+          Math.abs(lift) < 0.05
+            ? ''
+            : cfg.vertical
+              ? `translateX(${lift.toFixed(2)}px)`
+              : `translateY(${lift.toFixed(2)}px)`,
+          it.tip
+        );
+      }
+    }
+    const active = best && bestDist < Math.max(best.size, st.pitch) / 2 + 1 ? best : null;
+    if (active !== st.active) {
+      st.active?.el.removeAttribute('data-active');
+      active?.el.setAttribute('data-active', '');
+      st.active = active;
+    }
+  };
+
+  const frame = now => {
+    st.raf = 0;
+    if (st.destroyed || !st.geo || st.period <= 0) return;
+    const cfg = config.current;
+    const dt = st.last ? clamp((now - st.last) / 1000, 0, 0.1) : 0;
+    st.last = now;
+    const P = st.period;
+    let busy = false;
+    if (st.introStart === -1 && !st.introDone && st.visible) {
+      if (cfg.intro && !st.reduced) {
+        st.introStart = now;
+      } else {
+        st.introDone = true;
+      }
+      root.removeAttribute('data-intro');
+    }
+    if (st.introStart >= 0) {
+      if ((now - st.introStart) / 1000 >= INTRO_TIME + INTRO_STAGGER) {
+        st.introStart = -2;
+        st.introDone = true;
+      } else {
+        busy = true;
+      }
+    }
+    const travel = Math.sign(cfg.speed) || 1;
+    const paused = st.focused || (st.hovered && cfg.hoverValue !== undefined);
+    const pausedSpeed = st.focused ? 0 : (cfg.hoverValue ?? 0);
+    let target = st.reduced ? 0 : paused ? pausedSpeed * travel * cfg.dirSign : cfg.speed * cfg.dirSign;
+    if (cfg.scrollBoost > 0 && !st.reduced) {
+      st.scrollVel *= Math.exp(-dt / 0.18);
+      if (Math.abs(st.scrollVel) > 1) busy = true;
+      target += clamp(st.scrollVel * cfg.scrollBoost, -3000, 3000) * travel * cfg.dirSign;
+    }
+    if (st.drag?.active) {
+      busy = true;
+    } else if (st.seek) {
+      st.seek.t = Math.min(1, st.seek.t + dt / st.seek.dur);
+      st.offset = st.seek.from + st.seek.delta * easeInOut(st.seek.t);
+      st.velocity = 0;
+      if (st.seek.t >= 1) st.seek = null;
+      busy = true;
+    } else if (st.move) {
+      st.move.t = Math.min(1, st.move.t + dt / st.move.dur);
+      st.offset = st.move.from + st.move.delta * easeInOut(st.move.t);
+      st.velocity = 0;
+      busy = true;
+      if (st.move.t >= 1) {
+        st.move = null;
+        st.hold = stepTiming(paused ? pausedSpeed : cfg.speed).hold;
+      }
+    } else if (cfg.step && !st.reduced) {
+      const speed = paused ? pausedSpeed : cfg.speed;
+      st.velocity = 0;
+      if (speed) {
+        busy = true;
+        st.hold -= dt;
+        if (st.hold <= 0) {
+          const dir = Math.sign(speed) * cfg.dirSign;
+          startMove(snapTarget(st.offset, dir), stepTiming(speed).move);
+        }
+      }
+    } else {
+      const tau = st.glide ? GLIDE_TAU : SMOOTH_TAU;
+      st.velocity += (target - st.velocity) * (1 - Math.exp(-dt / tau));
+      if (st.glide && Math.abs(st.velocity - target) < 2) st.glide = false;
+      if (Math.abs(st.velocity - target) < 0.01) st.velocity = target;
+      st.offset += st.velocity * dt;
+      if (st.velocity !== 0 || target !== 0) busy = true;
+    }
+    if (!st.focused && !st.seek && !st.drag?.active) {
+      const wrapped = ((st.offset % P) + P) % P;
+      if (st.move) st.move.from += wrapped - st.offset;
+      st.offset = wrapped;
+    }
+    const wantMag = cfg.magnify > 0 && st.pointerInside && !st.reduced ? 1 : 0;
+    if (st.mag !== wantMag) {
+      st.mag += (wantMag - st.mag) * (1 - Math.exp(-dt / (wantMag ? 0.12 : 0.25)));
+      if (Math.abs(wantMag - st.mag) < 0.002) st.mag = wantMag;
+      busy = true;
+    }
+    const pu = st.mag > 0 ? pointerU() : null;
+    if (pu !== null) {
+      if (!st.magReady) {
+        st.magU = pu;
+        st.magReady = true;
+      }
+      const next = st.magU + (pu - st.magU) * (1 - Math.exp(-dt / 0.06));
+      if (Math.abs(next - pu) > 0.05) busy = true;
+      st.magU = Math.abs(next - pu) > 0.05 ? next : pu;
+    } else if (st.mag === 0) {
+      st.magReady = false;
+    }
+    render(now);
+    if (busy && st.visible && !st.destroyed) st.raf = requestAnimationFrame(frame);
+  };
+
+  const wake = () => {
+    if (st.raf || st.destroyed || !st.visible) return;
+    st.last = 0;
+    st.raf = requestAnimationFrame(frame);
+  };
+
+  const local = e => {
+    const r = root.getBoundingClientRect();
+    const k = root.offsetWidth ? r.width / root.offsetWidth || 1 : 1;
+    return [(e.clientX - r.left) / k, (e.clientY - r.top) / k];
+  };
+
+  const dragScale = () => {
+    const geo = st.geo;
+    if (!geo) return 1;
+    if (geo.mode === 'orbit') return geo.C / (2 * Math.PI * geo.R * geo.pf);
+    const pu = pointerU();
+    if (pu === null || geo.focus <= 0) return 1;
+    const kf = pu / geo.focusSigma;
+    return 1 / (1 + geo.focus * Math.exp(-kf * kf));
+  };
+
+  const onEnter = e => {
+    st.hovered = true;
+    if (e.pointerType !== 'touch') {
+      st.pointerInside = true;
+      st.pointer = local(e);
+    }
+    wake();
+  };
+
+  const onLeave = () => {
+    st.hovered = false;
+    st.pointerInside = false;
+    wake();
+  };
+
+  const onDown = e => {
+    st.pressedAt = performance.now();
+    if (!config.current.draggable || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    const [x, y] = local(e);
+    if (e.pointerType !== 'touch') st.pointer = [x, y];
+    st.drag = { id: e.pointerId, x, y, active: false, samples: [], scale: dragScale(), anchor: 0, offset: 0 };
+  };
+
+  const onMove = e => {
+    const cfg = config.current;
+    if (e.pointerType !== 'touch') {
+      st.pointer = local(e);
+      st.pointerInside = true;
+    }
+    const d = st.drag;
+    if (d && e.pointerId === d.id) {
+      const [x, y] = local(e);
+      const along = cfg.vertical ? y - d.y : x - d.x;
+      const across = cfg.vertical ? x - d.x : y - d.y;
+      if (!d.active) {
+        if (Math.abs(along) < DRAG_THRESHOLD) return wake();
+        if (Math.abs(across) > Math.abs(along)) {
+          st.drag = null;
+          return wake();
+        }
+        d.active = true;
+        d.anchor = along;
+        d.offset = st.offset;
+        st.move = null;
+        st.seek = null;
+        st.glide = false;
+        st.velocity = 0;
+        try {
+          root.setPointerCapture(e.pointerId);
+        } catch {}
+        root.setAttribute('data-dragging', '');
+      }
+      const next = d.offset - (along - d.anchor) * d.scale;
+      const P = st.period || 1;
+      st.offset = ((next % P) + P) % P;
+      d.offset += st.offset - next;
+      const now = performance.now();
+      d.samples.push([now, along]);
+      while (d.samples.length > 2 && now - d.samples[0][0] > 100) d.samples.shift();
+    }
+    wake();
+  };
+
+  const endDrag = (e, cancelled) => {
+    const d = st.drag;
+    if (!d || e.pointerId !== d.id) return;
+    st.drag = null;
+    if (!d.active) return;
+    root.removeAttribute('data-dragging');
+    try {
+      root.releasePointerCapture(e.pointerId);
+    } catch {}
+    const cfg = config.current;
+    const now = performance.now();
+    st.suppressUntil = now + 400;
+    let v = 0;
+    const s = d.samples;
+    if (!cancelled && s.length > 1) {
+      const [t0, a0] = s[0];
+      const [t1, a1] = s[s.length - 1];
+      if (t1 > t0 && now - t1 < 80) v = clamp((-(a1 - a0) / (t1 - t0)) * 1000 * d.scale, -MAX_FLING, MAX_FLING);
+    }
+    if (cfg.step && !st.reduced) {
+      const target = nearestSnap(st.offset + v * 0.35);
+      startMove(target, clamp(0.3 + Math.abs(target - st.offset) / 1800, 0.3, 0.8));
+      st.velocity = 0;
+    } else {
+      st.velocity = v;
+      st.glide = Math.abs(v) > 30;
+    }
+    wake();
+  };
+
+  const onUp = e => endDrag(e, false);
+  const onCancel = e => endDrag(e, true);
+
+  const onClick = e => {
+    if (performance.now() < st.suppressUntil) {
+      e.preventDefault();
+      e.stopPropagation();
+      st.suppressUntil = 0;
+    }
+  };
+
+  const onDragStart = e => {
+    if (config.current.draggable) e.preventDefault();
+  };
+
+  const onFocusIn = e => {
+    const target = e.target;
+    if (performance.now() - st.pressedAt < 800) return;
+    st.focused = true;
+    const it = st.items.find(item => item.el.contains(target));
+    if (it && st.geo) {
+      const u = -st.offset - st.geo.lead + it.center - st.length / 2;
+      const comfortable = st.geo.mode === 'orbit' ? 1 : Math.max(0, st.length / 2 - it.size);
+      if (Math.abs(u) > comfortable) {
+        st.move = null;
+        st.seek = { from: st.offset, delta: u, t: 0, dur: clamp(0.35 + Math.abs(u) / 2000, 0.35, 0.8) };
+      }
+    }
+    wake();
+  };
+
+  const onFocusOut = e => {
+    if (root.contains(e.relatedTarget)) return;
+    st.focused = false;
+    wake();
+  };
+
+  const onRootScroll = () => {
+    if (root.scrollLeft || root.scrollTop) {
+      root.scrollLeft = 0;
+      root.scrollTop = 0;
+    }
+  };
+
+  const onScroll = () => {
+    const now = performance.now();
+    const y = window.scrollY;
+    if (st.scrollT && now > st.scrollT) {
+      const v = ((y - st.scrollY) / (now - st.scrollT)) * 1000;
+      st.scrollVel += (clamp(v, -6000, 6000) - st.scrollVel) * 0.5;
+    }
+    st.scrollY = y;
+    st.scrollT = now;
+    if (config.current.scrollBoost > 0) wake();
+  };
+
+  const onMotion = () => {
+    st.reduced = !!query?.matches;
+    wake();
+  };
+
+  root.addEventListener('pointerenter', onEnter);
+  root.addEventListener('pointerleave', onLeave);
+  root.addEventListener('pointerdown', onDown);
+  root.addEventListener('pointermove', onMove);
+  root.addEventListener('pointerup', onUp);
+  root.addEventListener('pointercancel', onCancel);
+  root.addEventListener('lostpointercapture', onCancel);
+  root.addEventListener('click', onClick, true);
+  root.addEventListener('dragstart', onDragStart);
+  root.addEventListener('focusin', onFocusIn);
+  root.addEventListener('focusout', onFocusOut);
+  root.addEventListener('scroll', onRootScroll);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  query?.addEventListener?.('change', onMotion);
+
+  let resizeObserver = null;
+  const observed = new Set();
+  const refresh = () => {
+    collect();
+    measure();
+    if (resizeObserver) {
+      const first = track.children[0];
+      for (const el of [root, first]) {
+        if (el && !observed.has(el)) {
+          resizeObserver.observe(el);
+          observed.add(el);
+        }
+      }
+    }
+    st.last = 0;
+    if (st.raf) cancelAnimationFrame(st.raf);
+    st.raf = 0;
+    if (st.geo && st.period > 0) frame(performance.now());
+  };
+
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(() => {
+      measure();
+      if (st.geo && st.period > 0) render(performance.now());
+      wake();
+    });
+  } else {
+    window.addEventListener('resize', refresh);
+  }
+
+  let intersection = null;
+  if (typeof IntersectionObserver !== 'undefined') {
+    intersection = new IntersectionObserver(
+      entries => {
+        const entry = entries[entries.length - 1];
+        st.visible = entry.isIntersecting;
+        if (st.visible) wake();
+      },
+      { threshold: 0.1 }
+    );
+    intersection.observe(root);
+  }
+
+  const onVisibility = () => {
+    if (!document.hidden) wake();
+  };
+  document.addEventListener('visibilitychange', onVisibility);
+
+  const destroy = () => {
+    st.destroyed = true;
+    if (st.raf) cancelAnimationFrame(st.raf);
+    root.removeEventListener('pointerenter', onEnter);
+    root.removeEventListener('pointerleave', onLeave);
+    root.removeEventListener('pointerdown', onDown);
+    root.removeEventListener('pointermove', onMove);
+    root.removeEventListener('pointerup', onUp);
+    root.removeEventListener('pointercancel', onCancel);
+    root.removeEventListener('lostpointercapture', onCancel);
+    root.removeEventListener('click', onClick, true);
+    root.removeEventListener('dragstart', onDragStart);
+    root.removeEventListener('focusin', onFocusIn);
+    root.removeEventListener('focusout', onFocusOut);
+    root.removeEventListener('scroll', onRootScroll);
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', refresh);
+    document.removeEventListener('visibilitychange', onVisibility);
+    query?.removeEventListener?.('change', onMotion);
+    resizeObserver?.disconnect();
+    intersection?.disconnect();
+  };
+
+  return { refresh, wake, destroy, state: st };
+};
+
+export const LogoLoop = memo(
+  ({
+    logos,
+    speed = 120,
+    direction = 'left',
+    width = '100%',
+    logoHeight = 28,
+    gap = 32,
+    pauseOnHover,
+    hoverSpeed,
+    fadeOut = true,
+    fadeOutWidth = 0.12,
+    scaleOnHover = false,
+    layout = 'line',
+    bend = 0.5,
+    focus = 0,
+    magnify = 0,
+    tiltX = 0,
+    tiltY = 0,
+    step = false,
+    muted = 0,
+    labels = 'none',
+    draggable = true,
+    scrollBoost = 0,
+    intro = true,
+    renderItem,
+    ariaLabel = 'Partner logos',
+    className,
+    style
+  }) => {
+    const rootRef = useRef(null);
+    const trackRef = useRef(null);
+    const engineRef = useRef(null);
+    const [{ copies, primary }, setLayout] = useState({ copies: 3, primary: 1 });
+    const [introPending] = useState(intro);
+
+    const vertical = direction === 'up' || direction === 'down';
+    const config = useRef(null);
+    config.current = {
+      speed,
+      dirSign: (vertical ? direction === 'up' : direction !== 'right') ? 1 : -1,
+      hoverValue: hoverSpeed !== undefined ? hoverSpeed : pauseOnHover === false ? undefined : 0,
+      vertical,
+      layout,
+      bend,
+      focus,
+      magnify,
+      tiltX,
+      tiltY,
+      step,
+      draggable,
+      scrollBoost,
+      intro,
+      scaleOnHover,
+      labels,
+      links: logos.some(item => item.href)
+    };
+
+    useIsomorphicLayoutEffect(() => {
+      const engine = createEngine(rootRef.current, trackRef.current, config, setLayout);
+      engineRef.current = engine;
+      return () => {
+        engine.destroy();
+        engineRef.current = null;
+      };
+    }, []);
+
+    useIsomorphicLayoutEffect(() => {
+      engineRef.current?.refresh();
+    }, [
+      copies,
+      primary,
+      logos,
+      vertical,
+      logoHeight,
+      gap,
+      labels,
+      layout,
+      bend,
+      focus,
+      magnify,
+      tiltX,
+      tiltY,
+      scaleOnHover
+    ]);
+
+    useEffect(() => {
+      engineRef.current?.wake();
+    });
+
+    const lists = useMemo(
+      () =>
+        Array.from({ length: copies }, (_, copyIndex) => {
+          const isPrimary = copyIndex === primary;
+          return (
+            <ul className="logoloop__list" key={copyIndex} role="list" aria-hidden={isPrimary ? undefined : true}>
+              {logos.map((item, itemIndex) => {
+                const key = `${copyIndex}-${itemIndex}`;
+                const isNode = 'node' in item;
+                const visual = renderItem ? (
+                  renderItem(item, key)
+                ) : isNode ? (
+                  <span className="logoloop__node" aria-hidden={!!item.href && !item.ariaLabel}>
+                    {item.node}
+                  </span>
+                ) : (
+                  <img
+                    src={item.src}
+                    srcSet={item.srcSet}
+                    sizes={item.sizes}
+                    width={item.width}
+                    height={item.height}
+                    alt={item.alt ?? ''}
+                    title={item.title}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                  />
+                );
+                const text = (labels === 'inline' || labels === 'below') && item.title ? item.title : null;
+                const inner = (
+                  <>
+                    {visual}
+                    {text && (
+                      <span className="logoloop__label" aria-hidden={!isNode && !!item.alt}>
+                        {text}
+                      </span>
+                    )}
+                  </>
+                );
+                const name = isNode ? (item.ariaLabel ?? item.title) : (item.alt ?? item.title);
+                return (
+                  <li
+                    className="logoloop__item"
+                    key={key}
+                    role="listitem"
+                    data-color={item.hoverColor ? '' : undefined}
+                    style={item.hoverColor ? { '--logoloop-item-color': item.hoverColor } : undefined}
+                  >
+                    {item.href ? (
+                      <a
+                        className="logoloop__content"
+                        href={item.href}
+                        aria-label={name || 'logo link'}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        draggable={false}
+                        tabIndex={isPrimary ? undefined : -1}
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <div className="logoloop__content">{inner}</div>
+                    )}
+                    {labels === 'hover' && item.title && (
+                      <span className="logoloop__tip" aria-hidden="true">
+                        {item.title}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          );
+        }),
+      [copies, primary, logos, renderItem, labels]
+    );
+
+    const mask = fadeOut ? fadeMask(fadeOutWidth, vertical) : undefined;
+    const amount = clamp(muted, 0, 1);
+
+    const containerStyle = {
+      width: vertical
+        ? toCssLength(width) === '100%'
+          ? undefined
+          : toCssLength(width)
+        : (toCssLength(width) ?? '100%'),
+      '--logoloop-gap': `${gap}px`,
+      '--logoloop-logoHeight': `${logoHeight}px`,
+      ...(amount > 0 && {
+        '--logoloop-gray': Math.min(1, amount * 2).toFixed(3),
+        '--logoloop-dim': (1 - amount * 0.6).toFixed(3)
+      }),
+      ...(mask && { WebkitMaskImage: mask, maskImage: mask }),
+      ...style
+    };
+
+    const rootClassName = [
+      'logoloop',
+      vertical ? 'logoloop--vertical' : 'logoloop--horizontal',
+      scaleOnHover && 'logoloop--scale-hover',
+      className
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    return (
+      <div
+        ref={rootRef}
+        className={rootClassName}
+        style={containerStyle}
+        role="region"
+        aria-label={ariaLabel}
+        data-intro={introPending ? '' : undefined}
+        data-draggable={draggable ? '' : undefined}
+        data-muted={amount > 0 ? '' : undefined}
+        data-labels={labels !== 'none' ? labels : undefined}
+      >
+        <div className="logoloop__track" ref={trackRef}>
+          {lists}
+        </div>
+      </div>
+    );
+  }
+);
+
+LogoLoop.displayName = 'LogoLoop';
+
+export default LogoLoop;
+
+```
+
+### Component CSS
+```css
+.logoloop {
+  --logoloop-gap: 32px;
+  --logoloop-logoHeight: 28px;
+  --logoloop-pad: 0px;
+  position: relative;
+  overflow: hidden;
+  overflow: clip;
+  padding-top: var(--logoloop-pad);
+  padding-bottom: var(--logoloop-pad);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.logoloop--vertical {
+  display: inline-block;
+  height: 100%;
+  padding: 0 var(--logoloop-pad);
+}
+
+.logoloop[data-draggable] {
+  cursor: grab;
+  touch-action: pan-y pinch-zoom;
+}
+
+.logoloop--vertical[data-draggable] {
+  touch-action: pan-x pinch-zoom;
+}
+
+.logoloop[data-dragging],
+.logoloop[data-dragging] * {
+  cursor: grabbing;
+}
+
+.logoloop__track {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.logoloop--vertical .logoloop__track {
+  flex-direction: column;
+  width: 100%;
+  height: max-content;
+}
+
+.logoloop__list {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.logoloop--vertical .logoloop__list {
+  flex-direction: column;
+}
+
+.logoloop__item {
+  position: relative;
+  flex: 0 0 auto;
+  margin-right: var(--logoloop-gap);
+  font-size: var(--logoloop-logoHeight);
+  line-height: 1;
+}
+
+.logoloop--vertical .logoloop__item {
+  margin-right: 0;
+  margin-bottom: var(--logoloop-gap);
+}
+
+.logoloop[data-intro] .logoloop__item {
+  opacity: 0;
+}
+
+.logoloop__content {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--logoloop-logoHeight) * 0.3);
+  border-radius: 4px;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    opacity 0.35s ease,
+    filter 0.35s ease,
+    color 0.35s ease;
+}
+
+.logoloop[data-labels='below'] .logoloop__content {
+  flex-direction: column;
+  gap: calc(var(--logoloop-logoHeight) * 0.22);
+}
+
+.logoloop__content:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.logoloop__node {
+  display: inline-flex;
+  align-items: center;
+}
+
+.logoloop__item img {
+  display: block;
+  width: auto;
+  height: var(--logoloop-logoHeight);
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.logoloop__node,
+.logoloop__item img {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logoloop--scale-hover .logoloop__item:hover img,
+.logoloop--scale-hover .logoloop__item:hover .logoloop__node {
+  transform: scale(1.2);
+}
+
+.logoloop__label {
+  font-size: max(12px, calc(var(--logoloop-logoHeight) * 0.5));
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.logoloop[data-labels='below'] .logoloop__label {
+  font-size: max(11px, calc(var(--logoloop-logoHeight) * 0.26));
+  font-weight: 500;
+  letter-spacing: 0;
+  opacity: 0.72;
+}
+
+.logoloop__tip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-top: calc(var(--logoloop-logoHeight) * 0.2);
+  font-size: max(11px, calc(var(--logoloop-logoHeight) * 0.26));
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  translate: -50% 4px;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    translate 0.25s ease;
+}
+
+.logoloop--vertical .logoloop__tip {
+  top: 50%;
+  left: 100%;
+  margin-top: 0;
+  margin-left: calc(var(--logoloop-logoHeight) * 0.25);
+  translate: 4px -50%;
+}
+
+.logoloop__item:hover .logoloop__tip,
+.logoloop__item:focus-within .logoloop__tip,
+.logoloop__item[data-active] .logoloop__tip {
+  opacity: 0.8;
+  translate: -50% 0;
+}
+
+.logoloop--vertical .logoloop__item:hover .logoloop__tip,
+.logoloop--vertical .logoloop__item:focus-within .logoloop__tip,
+.logoloop--vertical .logoloop__item[data-active] .logoloop__tip {
+  translate: 0 -50%;
+}
+
+.logoloop[data-muted] .logoloop__content {
+  filter: grayscale(var(--logoloop-gray, 1));
+  opacity: var(--logoloop-dim, 0.5);
+}
+
+.logoloop[data-muted] .logoloop__item:hover .logoloop__content,
+.logoloop[data-muted] .logoloop__item:focus-within .logoloop__content,
+.logoloop[data-muted] .logoloop__item[data-active] .logoloop__content {
+  filter: none;
+  opacity: 1;
+}
+
+.logoloop__item[data-color]:hover .logoloop__content,
+.logoloop__item[data-color]:focus-within .logoloop__content,
+.logoloop__item[data-color][data-active] .logoloop__content {
+  color: var(--logoloop-item-color);
+}
+
+.logoloop:not([data-muted]) .logoloop__item:not([data-color]) a.logoloop__content:hover {
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logoloop__content,
+  .logoloop__node,
+  .logoloop__item img,
+  .logoloop__tip {
+    transition: none;
+  }
+}
+
+```
+
+### Integration Instructions
+1. Install any listed dependencies.
+2. Copy the component source into the appropriate directory in the project.
+3. Import the CSS file alongside the component.
+4. Import and render the component using the usage example above as a starting point.
+5. Adjust props as needed for the specific use case — refer to the props table for all available options.
+
+### More from React Bits
+The full library index, including everything reactbits.dev offers, is at https://reactbits.dev/llms.txt — fetch it if this component is not the right fit or the project needs more pieces.
