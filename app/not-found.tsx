@@ -1,50 +1,37 @@
-"use client";
-
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-linear-to-b from-green-50 to-white px-6 text-center">
-      <motion.h1
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="text-8xl font-extrabold text-green-600"
-      >
-        404
-      </motion.h1>
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-        className="mt-4 text-2xl font-semibold text-gray-900 md:text-3xl"
-      >
-        Page Not Found
-      </motion.h2>
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.6 }}
-        className="mt-2 max-w-md text-gray-600"
-      >
-        Oops 👀 The page you&apos;re looking for doesn&apos;t exist or has been
-        moved. Don&apos;t worry, we&apos;ll get you back on track.
-      </motion.p>
-      <div className="mt-6 flex gap-4">
-        <Link
-          href="/"
-          className="rounded-xl bg-green-600 px-6 py-3 text-white shadow-md transition hover:bg-green-700"
+    <main className="flex min-h-[60dvh] items-center justify-center bg-linear-to-b from-green-50/70 via-white to-white px-6 py-32 text-center dark:from-emerald-950/30 dark:via-slate-950 dark:to-slate-950">
+      <section aria-labelledby="not-found-title" className="mx-auto max-w-xl">
+        <p className="font-mono text-sm font-semibold tracking-[0.2em] text-green-700 dark:text-emerald-400">
+          ERROR 404
+        </p>
+        <h1
+          id="not-found-title"
+          className="mt-4 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl dark:text-white"
         >
-          Back Home
-        </Link>
-        <Link
-          href="/contact"
-          className="rounded-xl border border-green-600 px-6 py-3 text-green-600 transition hover:bg-green-50"
-        >
-          Contact Support
-        </Link>
-      </div>
-    </div>
+          This page isn&apos;t here
+        </h1>
+        <p className="mx-auto mt-4 max-w-md text-base leading-7 text-slate-600 dark:text-slate-300">
+          The address may be incorrect, or the page may have moved. Choose where
+          you&apos;d like to go next.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/"
+            className="inline-flex min-h-12 items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 active:scale-[0.98] dark:bg-emerald-600 dark:hover:bg-emerald-500"
+          >
+            Return home
+          </Link>
+          <Link
+            href="/contact"
+            className="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-800 transition-colors hover:border-green-300 hover:bg-green-50 hover:text-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 active:scale-[0.98] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-emerald-500/50 dark:hover:bg-slate-800"
+          >
+            Contact support
+          </Link>
+        </div>
+      </section>
+    </main>
   );
 }
