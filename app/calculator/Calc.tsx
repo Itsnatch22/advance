@@ -26,11 +26,9 @@ type Country = "KE" | "UG" | "TZ" | "RW";
 
 const countryAllowances: Record<Country, { key: string; label: string }[]> = {
   KE: [
-    { key: "otherRemuneration", label: "Other Remuneration" },
-    { key: "mealAllowance", label: "Meal Allowance" },
-    { key: "nightAllowance", label: "Night Out Allowance" },
-    { key: "pensionCover", label: "Pension Cover" },
-    { key: "medicalCover", label: "Medical Cover" },
+    { key: "otherRemuneration", label: "Other Taxable Cash Earnings" },
+    { key: "mealAllowance", label: "Taxable Meal Allowance" },
+    { key: "nightAllowance", label: "Taxable Night-out Allowance" },
   ],
   UG: [
     { key: "otherRemuneration", label: "Other Remuneration (Employer)" },
@@ -57,11 +55,17 @@ type CalcResult = {
   success: boolean;
   accruedGross: number;
   netMonthly: number;
+  taxableIncome?: number;
+  cashShortfall?: number;
   accessCapPercent: number;
   accessCap: number;
   platformFee: number;
   accessibleNow: number;
   deductions: Deductions;
+  employerContributions?: Deductions;
+  ruleVersion?: string;
+  effectiveFrom?: string;
+  engineVersion?: string;
   payee: number;
 };
 
@@ -74,8 +78,8 @@ const currencyAccessConfig: Record<Country, { accessCapPercent: number }> = {
 
 const fmt = (n: number, locale = "en-KE") =>
   new Intl.NumberFormat(locale, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: locale === "en-KE" ? 2 : 0,
+    maximumFractionDigits: 2,
   }).format(Number(n || 0));
 
 const formatNumberInput = (value: string) => {
@@ -153,9 +157,7 @@ const WageGraph = ({
           />
           <YAxis
             tick={{ fontSize: 11, fill: "#64748b" }}
-            tickFormatter={(v) =>
-              `${currencySymbol} ${fmt(v, locale).slice(0, -3)}k`
-            }
+            tickFormatter={(v) => `${currencySymbol} ${Math.round(v / 1000)}k`}
             axisLine={false}
             tickLine={false}
             width={80}
@@ -183,7 +185,6 @@ const WageGraph = ({
 export default function Calculator() {
   const [country, setCountry] = useState<Country>("KE");
   const [salary, setSalary] = useState<number | "">("");
-  const cycleDays = 30;
 
   const [daysWorked, setDaysWorked] = useState<number>(0);
   const [result, setResult] = useState<CalcResult | null>(null);
@@ -192,6 +193,13 @@ export default function Calculator() {
     Record<string, boolean>
   >({});
   const [allowancesAmount, setAllowancesAmount] = useState<
+    Record<string, number | "">
+  >({});
+  const [pensionableEarnings, setPensionableEarnings] = useState<number | "">(
+    ""
+  );
+  const [residentForTax, setResidentForTax] = useState(false);
+  const [allowableDeductions, setAllowableDeductions] = useState<
     Record<string, number | "">
   >({});
 
@@ -207,6 +215,7 @@ export default function Calculator() {
     const d = new Date(asOfDate);
     return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
   }, [asOfDate]);
+  const cycleDays = country === "KE" ? maxDays : 30;
 
   useEffect(() => {
     if (!asOfDate) return;
@@ -231,7 +240,7 @@ export default function Calculator() {
   const feePercent = PLATFORM_CONFIG.FEE_PERCENT * 100;
   const percentOfCycle = useMemo(
     () => Math.min(100, Math.round((daysWorked / cycleDays) * 100)),
-    [daysWorked]
+    [daysWorked, cycleDays]
   );
 
   const buildPayload = () => {
@@ -254,6 +263,24 @@ export default function Calculator() {
       feePercent,
       flatFee: 25,
       allowances,
+      ...(country === "KE"
+        ? {
+            pensionableEarnings:
+              pensionableEarnings === "" ? undefined : pensionableEarnings,
+            residentForTax,
+            allowableDeductions: {
+              pensionContributions: Number(
+                allowableDeductions.pensionContributions || 0
+              ),
+              mortgageInterest: Number(
+                allowableDeductions.mortgageInterest || 0
+              ),
+              postRetirementMedicalFund: Number(
+                allowableDeductions.postRetirementMedicalFund || 0
+              ),
+            },
+          }
+        : {}),
     };
   };
 
@@ -320,8 +347,13 @@ export default function Calculator() {
         default:
           deductions = {
             "NSSF (Tier1+Tier2)": (data.nssf1 ?? 0) + (data.nssf2 ?? 0),
-            "SHIF/NHIF": data.shif ?? data.nhif ?? 0,
+            SHIF: data.shif ?? data.nhif ?? 0,
             "Housing Levy": data.housingLevy ?? data.ahl ?? 0,
+            "Pension contributions":
+              data.employeeDeductions?.pensionContributions ?? 0,
+            "Mortgage interest": data.employeeDeductions?.mortgageInterest ?? 0,
+            "Post-retirement medical fund":
+              data.employeeDeductions?.postRetirementMedicalFund ?? 0,
             PAYE: payeAmount,
           };
       }
@@ -338,11 +370,24 @@ export default function Calculator() {
         success: true,
         accruedGross: gross,
         netMonthly: net,
+        taxableIncome: data.taxableIncome,
+        cashShortfall: data.cashShortfall,
         accessCapPercent,
         accessCap,
         platformFee,
         accessibleNow,
         deductions,
+        employerContributions:
+          country === "KE"
+            ? {
+                "NSSF (Employer)": data.employerContributions?.nssf ?? 0,
+                "Housing Levy (Employer)":
+                  data.employerContributions?.housingLevy ?? 0,
+              }
+            : undefined,
+        ruleVersion: data.ruleVersion,
+        effectiveFrom: data.effectiveFrom,
+        engineVersion: data.engineVersion,
         payee: payeAmount,
       };
 
@@ -356,6 +401,9 @@ export default function Calculator() {
     setCountry(code);
     setAllowancesChecked({});
     setAllowancesAmount({});
+    setPensionableEarnings("");
+    setResidentForTax(false);
+    setAllowableDeductions({});
     setResult(null);
     setSalary("");
 
@@ -387,7 +435,7 @@ export default function Calculator() {
             aria-label={`Select ${f.code}`}
             className={`h-11 w-11 overflow-hidden rounded-full border-2 transition-all duration-300 ${
               country === f.code
-                ? "scale-110 border-emerald-600 shadow-md shadow-emerald-500/20 ring-2 ring-emerald-500/20"
+                ? "scale-110 border-emerald-600 shadow-md ring-2 shadow-emerald-500/20 ring-emerald-500/20"
                 : "border-slate-200 opacity-60 hover:opacity-100"
             }`}
           >
@@ -413,7 +461,7 @@ export default function Calculator() {
         id="salary-input"
         type="text"
         placeholder="e.g. 60,000"
-        className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 sm:text-base"
+        className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-all duration-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 sm:text-base"
         value={salary ? formatNumberInput(salary.toString()) : ""}
         onChange={(e) => {
           const raw = e.target.value.replace(/,/g, "");
@@ -432,7 +480,9 @@ export default function Calculator() {
           className="mt-5"
         >
           <p className="mb-2.5 text-sm font-semibold text-slate-700">
-            Other Contributions
+            {country === "KE"
+              ? "Cash Earnings / Allowances"
+              : "Other Contributions"}
           </p>
           {countryAllowances[country].map((a) => (
             <div
@@ -461,7 +511,7 @@ export default function Calculator() {
                 type="text"
                 placeholder="Amount"
                 aria-label={`Enter amount for ${a.label}`}
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 sm:text-base"
+                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 transition-all duration-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 sm:text-base"
                 value={
                   allowancesAmount[a.key]
                     ? formatNumberInput(allowancesAmount[a.key]!.toString())
@@ -479,6 +529,91 @@ export default function Calculator() {
           ))}
         </motion.div>
       </AnimatePresence>
+
+      {country === "KE" && (
+        <div className="mt-5 space-y-3 rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
+          <p className="text-sm font-semibold text-slate-700">
+            Kenya payroll assumptions
+          </p>
+          <label className="block text-sm text-slate-600">
+            Pensionable monthly earnings (optional; defaults to gross earnings)
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="Defaults to salary plus allowances"
+              className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+              value={
+                pensionableEarnings === ""
+                  ? ""
+                  : formatNumberInput(pensionableEarnings.toString())
+              }
+              onChange={(event) => {
+                const raw = event.target.value.replace(/,/g, "");
+                setPensionableEarnings(raw === "" ? "" : Number(raw));
+              }}
+            />
+          </label>
+          <label className="flex items-start gap-2 text-sm text-slate-600">
+            <input
+              type="checkbox"
+              className="mt-1 accent-emerald-600"
+              checked={residentForTax}
+              onChange={(event) => setResidentForTax(event.target.checked)}
+            />
+            <span>
+              I am eligible for Kenyan resident personal relief (KES 2,400 per
+              month).
+            </span>
+          </label>
+          {[
+            {
+              key: "pensionContributions",
+              label:
+                "Additional qualifying pension contribution (KES 30,000 combined limit)",
+            },
+            {
+              key: "mortgageInterest",
+              label: "Eligible mortgage interest (KES 30,000 monthly limit)",
+            },
+            {
+              key: "postRetirementMedicalFund",
+              label:
+                "Post-retirement medical fund contribution (KES 15,000 monthly limit)",
+            },
+          ].map((item) => (
+            <label key={item.key} className="block text-sm text-slate-600">
+              {item.label} (monthly)
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="0"
+                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                value={
+                  allowableDeductions[item.key]
+                    ? formatNumberInput(
+                        allowableDeductions[item.key]!.toString()
+                      )
+                    : ""
+                }
+                onChange={(event) => {
+                  const raw = event.target.value.replace(/,/g, "");
+                  setAllowableDeductions((current) => ({
+                    ...current,
+                    [item.key]: raw === "" ? "" : Number(raw),
+                  }));
+                }}
+              />
+            </label>
+          ))}
+          <p className="text-xs leading-relaxed text-slate-500">
+            Allowances entered here are treated as taxable cash earnings; enter
+            only any taxable portion. Non-cash benefits, employer pension or
+            medical cover, insurance relief, bonuses and irregular payroll need
+            separate review. Part-period results are prorated estimates, and
+            wage access is not a verified withdrawable balance.
+          </p>
+        </div>
+      )}
 
       {/* Days Slider */}
       <div className="mt-5">
@@ -533,6 +668,14 @@ export default function Calculator() {
               {[
                 { label: "Net Earnings", value: result.netMonthly },
                 { label: "Accrued Earnings", value: result.accruedGross },
+                ...(country === "KE" && result.taxableIncome !== undefined
+                  ? [
+                      {
+                        label: "Taxable Employment Income",
+                        value: result.taxableIncome,
+                      },
+                    ]
+                  : []),
                 {
                   label: `Access Cap (${result.accessCapPercent}%)`,
                   value: result.accessCap,
@@ -558,28 +701,32 @@ export default function Calculator() {
             </div>
 
             <div className="mt-4 rounded-xl border border-emerald-200 bg-white/70 p-4 text-center ring-1 ring-emerald-500/10">
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">
+              <p className="text-xs font-semibold tracking-wider text-emerald-600 uppercase">
                 You Can Access Now
               </p>
               <p className="mt-1 font-serif text-3xl font-extrabold text-emerald-700">
                 {currencySymbol} {fmt(result.accessibleNow, locale)}
               </p>
             </div>
+            {!!result.cashShortfall && result.cashShortfall > 0 && (
+              <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-800">
+                Calculated deductions exceed this period&apos;s gross earnings
+                by {currencySymbol} {fmt(result.cashShortfall, locale)}. Net pay
+                is shown as zero; actual deduction handling requires payroll
+                review.
+              </p>
+            )}
 
             <div className="mt-4 rounded-xl border border-slate-200 bg-white/70 p-4 text-xs leading-relaxed text-slate-600">
-              <p className="mb-2 font-semibold uppercase tracking-wide text-slate-500">
+              <p className="mb-2 font-semibold tracking-wide text-slate-500 uppercase">
                 Formula
               </p>
               <div className="space-y-1.5">
                 <p>
                   Accrued earnings = gross income × days worked ÷ {cycleDays}
                 </p>
-                <p>
-                  Access cap = net earnings × {result.accessCapPercent}%
-                </p>
-                <p>
-                  Available now = access cap − platform fee ({feePercent}%)
-                </p>
+                <p>Access cap = net earnings × {result.accessCapPercent}%</p>
+                <p>Available now = access cap − platform fee ({feePercent}%)</p>
               </div>
             </div>
 
@@ -594,6 +741,34 @@ export default function Calculator() {
                 )
                 .join(" | ")}
             </div>
+
+            {result.employerContributions &&
+              Object.values(result.employerContributions).some(
+                (amount) => amount > 0
+              ) && (
+                <div className="mt-2 text-center text-xs text-slate-500">
+                  <span className="font-semibold text-slate-600">
+                    Employer contributions (not deducted) →{" "}
+                  </span>
+                  {Object.entries(result.employerContributions)
+                    .map(
+                      ([key, val]) =>
+                        `${key}: ${currencySymbol} ${fmt(val, locale)}`
+                    )
+                    .join(" | ")}
+                </div>
+              )}
+            {result.ruleVersion && (
+              <p className="mt-2 text-center text-[11px] text-slate-400">
+                Rules {result.ruleVersion}
+                {result.effectiveFrom
+                  ? ` · effective ${result.effectiveFrom}`
+                  : ""}
+                {result.engineVersion
+                  ? ` · engine ${result.engineVersion}`
+                  : ""}
+              </p>
+            )}
 
             <WageGraph
               result={result}

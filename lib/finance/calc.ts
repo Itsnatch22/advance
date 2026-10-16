@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { getNSSFConfig } from "@/constants/config";
+
+const CALC_ENGINE_VERSION = "2.0.0";
 
 export interface Payload {
   salary: number;
@@ -9,6 +10,13 @@ export interface Payload {
   country: string;
 
   allowances?: Record<string, number>;
+  pensionableEarnings?: number;
+  residentForTax?: boolean;
+  allowableDeductions?: {
+    pensionContributions?: number;
+    mortgageInterest?: number;
+    postRetirementMedicalFund?: number;
+  };
 }
 
 export interface JsonConfig {
@@ -23,7 +31,20 @@ export interface JsonConfig {
     employerRate?: number;
   };
   shif?: { flat?: number; rate?: number };
-  housing?: { rate?: number };
+  housing?: { rate?: number; employerRate?: number };
+  paye?: { brackets?: { upTo: number; rate: number }[] };
+  allowableDeductions?: {
+    pensionMonthlyLimit?: number;
+    mortgageInterestMonthlyLimit?: number;
+    postRetirementMedicalMonthlyLimit?: number;
+  };
+  meta?: {
+    description?: string;
+    lastUpdated?: string;
+    source?: string;
+    rulesVersion?: string;
+    effectiveFrom?: string;
+  };
   rssb?: {
     pension?: { employeeRate?: number; employerRate?: number };
     medical?: { employeeRate?: number; employerRate?: number };
@@ -31,18 +52,60 @@ export interface JsonConfig {
   };
   sdl?: { employerRate?: number };
   wcf?: { employerRate?: number };
-  paye?: { brackets?: { upTo: number; rate: number }[] };
   lst?: { bands?: { upTo: number; tax: number }[] };
   accessCapPercent?: number;
   platformFeePercent?: number;
   earnedWageCapPercent?: number;
 }
 
+export interface CalcResult {
+  success: boolean;
+  country: string;
+  gross: number;
+  accruedGross: number;
+  totalAllowances: number;
+  pensionableEarnings?: number;
+  taxableIncome: number;
+  nssfEmployee: number;
+  nssfEmployer: number;
+  nssf1: number;
+  nssf2: number;
+  totalNSSF: number;
+  rssb: Record<string, number>;
+  totalRSSB: number;
+  shif: number;
+  housingLevy: number;
+  housingLevyEmployer?: number;
+  employerContributions?: Record<string, number>;
+  employeeDeductions?: Record<string, number>;
+  allowableDeductionBreakdown?: Record<string, number>;
+  cashShortfall: number;
+  ruleVersion?: string;
+  effectiveFrom?: string;
+  engineVersion: string;
+  sdl: number;
+  wcf: number;
+  payeBeforeRelief: number;
+  personalRelief: number;
+  payeAfterRelief: number;
+  lst: number;
+  netPay: number;
+  earnedWage: number;
+  accessCap: number;
+  platformFee: number;
+  youCanAccessNow: number;
+  remittances: Record<string, number>;
+}
+
 /**
  * Core dynamic calculation engine
  */
-export function calc(payload: Payload, cfg: JsonConfig) {
+export function calc(payload: Payload, cfg: JsonConfig): CalcResult {
   const { salary, daysWorked, cycleDays, allowances = {} } = payload;
+
+  if (payload.country === "KE") {
+    return calcKenyaPayroll(payload, cfg);
+  }
 
   const totalAllowances = Object.values(allowances).reduce(
     (a, b) => a + (b || 0),
@@ -54,25 +117,12 @@ export function calc(payload: Payload, cfg: JsonConfig) {
 
   let nssfEmployee = 0;
   let nssfEmployer = 0;
-  let nssf1 = 0;
-  let nssf2 = 0;
+  const nssf1 = 0;
+  const nssf2 = 0;
 
   if (cfg.nssf?.employeeRate) {
     nssfEmployee = gross * (cfg.nssf.employeeRate ?? 0);
     nssfEmployer = gross * (cfg.nssf.employerRate ?? 0);
-  } else if (payload.country === "KE" && cfg.nssf) {
-    const nssfConfig = getNSSFConfig(payload.country);
-    const tier1Ceiling = cfg.nssf.tier1Ceiling ?? nssfConfig.tier1Ceiling ?? 0;
-    const tier1Rate = cfg.nssf.tier1Rate ?? nssfConfig.tier1Rate ?? 0;
-    const tier2Ceiling = cfg.nssf.tier2Cap ?? nssfConfig.tier2Cap ?? tier1Ceiling;
-    const tier2Rate = cfg.nssf.tier2Rate ?? nssfConfig.tier2Rate ?? 0;
-
-    nssf1 = Math.min(gross, tier1Ceiling) * tier1Rate;
-    nssf2 =
-      Math.max(0, Math.min(gross, tier2Ceiling) - tier1Ceiling) * tier2Rate;
-
-    nssfEmployee = nssf1 + nssf2;
-    nssfEmployer = nssfEmployee;
   }
 
   const totalNSSF = nssfEmployee + nssfEmployer;
@@ -139,10 +189,12 @@ export function calc(payload: Payload, cfg: JsonConfig) {
   return {
     success: true,
     country: payload.country,
+    engineVersion: CALC_ENGINE_VERSION,
     gross,
     accruedGross: gross,
     totalAllowances,
     taxableIncome,
+    cashShortfall: 0,
     nssfEmployee,
     nssfEmployer,
     nssf1,
@@ -176,18 +228,327 @@ export function calc(payload: Payload, cfg: JsonConfig) {
 
 function calcPAYE(taxable: number, brackets: { upTo: number; rate: number }[]) {
   if (!brackets.length) return 0;
+  taxable = Math.max(0, taxable);
   let tax = 0;
   let last = 0;
-  for (const b of brackets) {
+  for (const [index, b] of brackets.entries()) {
     if (taxable > b.upTo) {
       tax += (b.upTo - last) * b.rate;
       last = b.upTo;
+      if (index === brackets.length - 1) {
+        tax += (taxable - last) * b.rate;
+      }
     } else {
       tax += (taxable - last) * b.rate;
       break;
     }
   }
   return Math.round(tax * 100) / 100;
+}
+
+function calcPAYECents(
+  taxableCents: number,
+  brackets: { upTo: number; rate: number }[]
+) {
+  let taxCents = 0;
+  let previousLimitCents = 0;
+  const incomeCents = Math.max(0, taxableCents);
+
+  brackets.forEach((bracket, index) => {
+    const limitCents = toCents(bracket.upTo);
+    const upperLimitCents =
+      index === brackets.length - 1
+        ? Math.max(incomeCents, limitCents)
+        : limitCents;
+    const bandEndCents = Math.min(incomeCents, upperLimitCents);
+    if (bandEndCents > previousLimitCents) {
+      taxCents += calculatePercentCents(
+        bandEndCents - previousLimitCents,
+        bracket.rate
+      );
+    }
+    previousLimitCents = limitCents;
+  });
+
+  return taxCents;
+}
+
+function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
+  const nssfConfig = cfg.nssf;
+  const housingConfig = cfg.housing;
+  const shifConfig = cfg.shif;
+  const limits = cfg.allowableDeductions;
+  const brackets = cfg.paye?.brackets;
+
+  if (
+    !nssfConfig?.tier1Ceiling ||
+    nssfConfig.tier1Rate === undefined ||
+    nssfConfig.tier2Rate === undefined ||
+    !nssfConfig.tier2Cap ||
+    shifConfig?.rate === undefined ||
+    housingConfig?.rate === undefined ||
+    housingConfig.employerRate === undefined ||
+    cfg.personalRelief === undefined ||
+    !brackets?.length ||
+    limits?.pensionMonthlyLimit === undefined ||
+    limits.mortgageInterestMonthlyLimit === undefined ||
+    limits.postRetirementMedicalMonthlyLimit === undefined
+  ) {
+    throw new Error("Kenya statutory payroll configuration is incomplete");
+  }
+  if (
+    [
+      nssfConfig.tier1Ceiling,
+      nssfConfig.tier1Rate,
+      nssfConfig.tier2Rate,
+      nssfConfig.tier2Cap,
+      shifConfig.rate,
+      housingConfig.rate,
+      housingConfig.employerRate,
+      cfg.personalRelief,
+      limits.pensionMonthlyLimit,
+      limits.mortgageInterestMonthlyLimit,
+      limits.postRetirementMedicalMonthlyLimit,
+    ].some((value) => !Number.isFinite(value) || value < 0) ||
+    brackets.some(
+      (bracket) =>
+        !Number.isFinite(bracket.upTo) ||
+        !Number.isFinite(bracket.rate) ||
+        bracket.upTo < 0 ||
+        bracket.rate < 0
+    )
+  ) {
+    throw new Error(
+      "Kenya statutory payroll configuration contains invalid values"
+    );
+  }
+
+  const { salary, daysWorked, cycleDays, allowances = {} } = payload;
+  if (
+    !Number.isFinite(salary) ||
+    salary < 0 ||
+    !Number.isFinite(daysWorked) ||
+    daysWorked < 0 ||
+    !Number.isFinite(cycleDays) ||
+    cycleDays <= 0 ||
+    daysWorked > cycleDays
+  ) {
+    throw new Error("Invalid Kenya payroll inputs");
+  }
+
+  const allowanceValues = Object.values(allowances);
+  if (
+    allowanceValues.some((amount) => !Number.isFinite(amount) || amount < 0)
+  ) {
+    throw new Error("Allowances must be finite, non-negative amounts");
+  }
+
+  const totalAllowances = allowanceValues.reduce(
+    (sum, amount) => sum + amount,
+    0
+  );
+  const monthlyGross = salary + totalAllowances;
+  const cycleFactor = daysWorked / cycleDays;
+  const grossCents = toCents(monthlyGross * cycleFactor);
+  const gross = fromCents(grossCents);
+  const pensionableMonthly = payload.pensionableEarnings ?? monthlyGross;
+  const tier1CeilingCents = toCents(nssfConfig.tier1Ceiling);
+  const tier2CapCents = toCents(nssfConfig.tier2Cap);
+
+  if (
+    !Number.isFinite(pensionableMonthly) ||
+    pensionableMonthly < 0 ||
+    pensionableMonthly > monthlyGross ||
+    tier2CapCents < tier1CeilingCents
+  ) {
+    throw new Error("Invalid pensionable earnings or NSSF tier limits");
+  }
+
+  const pensionableEarnings = fromCents(
+    toCents(pensionableMonthly * cycleFactor)
+  );
+  const pensionableCents = toCents(pensionableEarnings);
+  const nssfTier1Cents = calculatePercentCents(
+    Math.min(pensionableCents, tier1CeilingCents),
+    nssfConfig.tier1Rate
+  );
+  const nssfTier2Cents = calculatePercentCents(
+    Math.max(0, Math.min(pensionableCents, tier2CapCents) - tier1CeilingCents),
+    nssfConfig.tier2Rate
+  );
+  const nssfEmployeeCents = nssfTier1Cents + nssfTier2Cents;
+  const nssfEmployerCents = nssfEmployeeCents;
+  const shifCents = calculatePercentCents(grossCents, shifConfig.rate);
+  const housingCents = calculatePercentCents(grossCents, housingConfig.rate);
+  const housingEmployerCents = calculatePercentCents(
+    grossCents,
+    housingConfig.employerRate
+  );
+
+  const requestedDeductions = payload.allowableDeductions ?? {};
+  if (
+    Object.values(requestedDeductions).some(
+      (amount) => !Number.isFinite(amount) || amount < 0
+    )
+  ) {
+    throw new Error(
+      "Allowable deductions must be finite, non-negative amounts"
+    );
+  }
+  const proratedDeductions = {
+    pensionContributions: prorateAmount(
+      requestedDeductions.pensionContributions ?? 0,
+      cycleFactor
+    ),
+    mortgageInterest: prorateAmount(
+      requestedDeductions.mortgageInterest ?? 0,
+      cycleFactor
+    ),
+    postRetirementMedicalFund: prorateAmount(
+      requestedDeductions.postRetirementMedicalFund ?? 0,
+      cycleFactor
+    ),
+  };
+
+  const pensionLimitCents = toCents(limits.pensionMonthlyLimit * cycleFactor);
+  const allowableMortgageCents = Math.min(
+    toCents(proratedDeductions.mortgageInterest),
+    toCents(limits.mortgageInterestMonthlyLimit * cycleFactor)
+  );
+  const allowableMedicalFundCents = Math.min(
+    toCents(proratedDeductions.postRetirementMedicalFund),
+    toCents(limits.postRetirementMedicalMonthlyLimit * cycleFactor)
+  );
+  const allowablePensionCents = Math.min(
+    pensionLimitCents,
+    nssfEmployeeCents + toCents(proratedDeductions.pensionContributions)
+  );
+  const allowableDeductionCents =
+    allowablePensionCents +
+    shifCents +
+    housingCents +
+    allowableMortgageCents +
+    allowableMedicalFundCents;
+  const taxableIncomeCents = Math.max(0, grossCents - allowableDeductionCents);
+  const taxableIncome = fromCents(taxableIncomeCents);
+  const payeBeforeRelief = fromCents(
+    calcPAYECents(taxableIncomeCents, brackets)
+  );
+  const personalRelief = payload.residentForTax ? cfg.personalRelief : 0;
+  const payeAfterRelief = fromCents(
+    Math.max(0, toCents(payeBeforeRelief) - toCents(personalRelief))
+  );
+
+  const employeeDeductions = {
+    nssf: fromCents(nssfEmployeeCents),
+    shif: fromCents(shifCents),
+    housingLevy: fromCents(housingCents),
+    pensionContributions: proratedDeductions.pensionContributions,
+    mortgageInterest: proratedDeductions.mortgageInterest,
+    postRetirementMedicalFund: proratedDeductions.postRetirementMedicalFund,
+    paye: payeAfterRelief,
+  };
+  const totalEmployeeDeductionsCents = Object.values(employeeDeductions).reduce(
+    (sum, amount) => sum + toCents(amount),
+    0
+  );
+  const cashShortfallCents = Math.max(
+    0,
+    totalEmployeeDeductionsCents - grossCents
+  );
+  const netPay = fromCents(
+    Math.max(0, grossCents - totalEmployeeDeductionsCents)
+  );
+  const earnedWage = fromCents(toCents((netPay / cycleDays) * daysWorked));
+  const accessCap = fromCents(
+    calculatePercentCents(toCents(earnedWage), cfg.accessCapPercent ?? 0.6)
+  );
+  const platformFee = fromCents(
+    calculatePercentCents(toCents(accessCap), cfg.platformFeePercent ?? 0.05)
+  );
+
+  return {
+    success: true,
+    country: payload.country,
+    engineVersion: CALC_ENGINE_VERSION,
+    gross,
+    accruedGross: gross,
+    totalAllowances: fromCents(toCents(totalAllowances * cycleFactor)),
+    pensionableEarnings,
+    taxableIncome,
+    cashShortfall: fromCents(cashShortfallCents),
+    nssfEmployee: fromCents(nssfEmployeeCents),
+    nssfEmployer: fromCents(nssfEmployerCents),
+    nssf1: fromCents(nssfTier1Cents),
+    nssf2: fromCents(nssfTier2Cents),
+    totalNSSF: fromCents(nssfEmployeeCents + nssfEmployerCents),
+    rssb: {
+      pensionEmployee: 0,
+      pensionEmployer: 0,
+      medicalEmployee: 0,
+      medicalEmployer: 0,
+      maternityEmployee: 0,
+      maternityEmployer: 0,
+    },
+    totalRSSB: 0,
+    shif: fromCents(shifCents),
+    housingLevy: fromCents(housingCents),
+    housingLevyEmployer: fromCents(housingEmployerCents),
+    employerContributions: {
+      nssf: fromCents(nssfEmployerCents),
+      housingLevy: fromCents(housingEmployerCents),
+    },
+    employeeDeductions,
+    allowableDeductionBreakdown: {
+      nssf: fromCents(nssfEmployeeCents),
+      shif: fromCents(shifCents),
+      housingLevy: fromCents(housingCents),
+      pensionContributions: fromCents(
+        Math.max(0, allowablePensionCents - nssfEmployeeCents)
+      ),
+      mortgageInterest: fromCents(allowableMortgageCents),
+      postRetirementMedicalFund: fromCents(allowableMedicalFundCents),
+    },
+    ruleVersion: cfg.meta?.rulesVersion,
+    effectiveFrom: cfg.meta?.effectiveFrom,
+    sdl: 0,
+    wcf: 0,
+    payeBeforeRelief,
+    personalRelief: fromCents(toCents(personalRelief)),
+    payeAfterRelief,
+    lst: 0,
+    netPay,
+    earnedWage,
+    accessCap,
+    platformFee,
+    youCanAccessNow: accessCap,
+    remittances: {
+      NSSF: fromCents(nssfEmployeeCents),
+      SHIF: fromCents(shifCents),
+      Housing: fromCents(housingCents),
+      PAYE: payeAfterRelief,
+      "Pension contributions": proratedDeductions.pensionContributions,
+      "Mortgage interest": proratedDeductions.mortgageInterest,
+      "Post-retirement medical fund":
+        proratedDeductions.postRetirementMedicalFund,
+    },
+  };
+}
+
+function toCents(amount: number) {
+  return Math.round(amount * 100);
+}
+
+function fromCents(amount: number) {
+  return amount / 100;
+}
+
+function calculatePercentCents(amountCents: number, rate: number) {
+  return Math.round((amountCents * Math.round(rate * 10000)) / 10000);
+}
+
+function prorateAmount(amount: number, factor: number) {
+  return fromCents(toCents(amount * factor));
 }
 
 function calcLST(gross: number, bands: { upTo: number; tax: number }[]) {
@@ -241,6 +602,8 @@ export async function readCountryConfig(countryCode: string) {
     lastUpdated:
       parsed.meta?.lastUpdated || new Date().toISOString().split("T")[0],
     description: parsed.meta?.description || "",
+    rulesVersion: parsed.meta?.rulesVersion,
+    effectiveFrom: parsed.meta?.effectiveFrom,
   };
 
   const deductions = [];

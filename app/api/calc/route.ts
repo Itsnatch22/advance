@@ -1,67 +1,68 @@
-
 export const runtime = "nodejs";
 import { NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
 import { z } from "zod";
-import { calc, type JsonConfig } from "@/lib/finance/calc";
+import { calc, readCountryConfig } from "@/lib/finance/calc";
 import { supabaseAdmin } from "@/lib/supabase/supabase";
 import { calcLimiter, checkRateLimit } from "@/lib/security/rate-limit";
-import { COOKIE_CONSENT_NAME, getCookieFromHeader, parseConsentValue } from "@/lib/consent";
+import {
+  COOKIE_CONSENT_NAME,
+  getCookieFromHeader,
+  parseConsentValue,
+} from "@/lib/consent";
 
-const payloadSchema = z.object({
-  salary: z.number().finite().nonnegative(),
-  daysWorked: z.number().finite().nonnegative(),
-  cycleDays: z.number().finite().positive(),
-  allowances: z.record(z.string(), z.number().finite()).optional(),
-});
+const payloadSchema = z
+  .object({
+    salary: z.number().finite().nonnegative(),
+    daysWorked: z.number().finite().nonnegative(),
+    cycleDays: z.number().finite().positive(),
+    allowances: z
+      .record(z.string(), z.number().finite().nonnegative())
+      .optional(),
+    pensionableEarnings: z.number().finite().nonnegative().optional(),
+    residentForTax: z.boolean().optional(),
+    allowableDeductions: z
+      .object({
+        pensionContributions: z.number().finite().nonnegative().optional(),
+        mortgageInterest: z.number().finite().nonnegative().optional(),
+        postRetirementMedicalFund: z.number().finite().nonnegative().optional(),
+      })
+      .optional(),
+  })
+  .superRefine((payload, context) => {
+    const monthlyGross =
+      payload.salary +
+      Object.values(payload.allowances ?? {}).reduce(
+        (sum, amount) => sum + amount,
+        0
+      );
+    if (
+      payload.pensionableEarnings !== undefined &&
+      payload.pensionableEarnings > monthlyGross
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Pensionable earnings cannot exceed gross earnings",
+        path: ["pensionableEarnings"],
+      });
+    }
 
-
-async function readCountryConfig(country: string): Promise<JsonConfig> {
-  const rawCode = (country || "").toUpperCase();
-
-  const CONFIG_PATHS = {
-    KE: path.join(process.cwd(), "data", "calcke.json"),
-    UG: path.join(process.cwd(), "data", "calcug.json"),
-    TZ: path.join(process.cwd(), "data", "calctz.json"),
-    RW: path.join(process.cwd(), "data", "calcrw.json"),
-  } as const;
-
-  let filePath: string;
-  switch (rawCode) {
-    case "KE":
-      filePath = CONFIG_PATHS.KE;
-      break;
-    case "UG":
-      filePath = CONFIG_PATHS.UG;
-      break;
-    case "TZ":
-      filePath = CONFIG_PATHS.TZ;
-      break;
-    case "RW":
-      filePath = CONFIG_PATHS.RW;
-      break;
-    default:
-      filePath = CONFIG_PATHS.KE;
-      break;
-  }
-
-  try {
-    const raw = await fs.readFile(filePath, "utf8");
-    const parsed = JSON.parse(raw) as JsonConfig;
-    return parsed;
-  } catch (err: unknown) {
-    console.error("Failed reading config file:", err);
-    throw new Error("Missing or unreadable config file");
-  }
-}
-
+    const employeeDeductions = Object.values(
+      payload.allowableDeductions ?? {}
+    ).reduce((sum, amount) => sum + (amount ?? 0), 0);
+    if (employeeDeductions > monthlyGross) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Additional employee deductions cannot exceed gross earnings",
+        path: ["allowableDeductions"],
+      });
+    }
+  });
 
 const locationCache = new Map<
   string,
   { expires: number; value: { country: string | null; city: string | null } }
 >();
-const LOCATION_CACHE_TTL = 5 * 60 * 1000; 
+const LOCATION_CACHE_TTL = 5 * 60 * 1000;
 
 async function getLocationFromIP(ip: string) {
   if (!ip || ip === "unknown" || ip.startsWith("127.")) {
@@ -107,32 +108,31 @@ async function getLocationFromIP(ip: string) {
   }
 }
 
-
-
 export async function POST(req: Request) {
   try {
-
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       req.headers.get("x-real-ip") ??
       "unknown";
 
     const rl = await checkRateLimit(calcLimiter, ip);
-    if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429, headers: rl.headers });
+    if (!rl.success)
+      return NextResponse.json(
+        { error: "Rate limit exceeded" },
+        { status: 429, headers: rl.headers }
+      );
 
     const device = req.headers.get("user-agent") ?? "unknown";
 
-
-
     const cookieHeader = req.headers.get("cookie") || "";
-    const consent = parseConsentValue(getCookieFromHeader(cookieHeader, COOKIE_CONSENT_NAME));
+    const consent = parseConsentValue(
+      getCookieFromHeader(cookieHeader, COOKIE_CONSENT_NAME)
+    );
     const hasConsent = consent?.analytics === true;
-
 
     const location = hasConsent
       ? await getLocationFromIP(ip)
       : { country: null, city: null };
-
 
     const { searchParams } = new URL(req.url);
     const country = (searchParams.get("country") || "KE").toUpperCase();
@@ -140,26 +140,30 @@ export async function POST(req: Request) {
     const rawBody = await req.json();
     const parsed = payloadSchema.safeParse(rawBody);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid input", details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+    if (country === "KE" && parsed.data.daysWorked > parsed.data.cycleDays) {
+      return NextResponse.json(
+        {
+          error: "Invalid input",
+          details: {
+            daysWorked: ["Days worked cannot exceed cycle days"],
+          },
+        },
+        { status: 400 }
+      );
     }
     const payload = { ...parsed.data, country };
 
     const cfg = await readCountryConfig(country);
 
-    
     const result = calc(payload, cfg);
 
-    const deductions =
-      result.nssfEmployee +
-      result.rssb.pensionEmployee +
-      result.rssb.medicalEmployee +
-      result.rssb.maternityEmployee +
-      result.shif +
-      result.housingLevy +
-      result.payeAfterRelief +
-      result.lst;
+    const deductions = result.gross - result.netPay;
 
-    
     const { error: insertError } = await supabaseAdmin
       .from("wage_calculations")
       .insert({
@@ -183,9 +187,7 @@ export async function POST(req: Request) {
       });
       // Analytics write failure — do not fail the request
     }
-    
 
-    
     const response = {
       ...result,
       _meta: {

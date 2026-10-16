@@ -2,17 +2,22 @@
   "country": "KE",
   "personalRelief": 2400,
   "nssf": {
-    "tier1": 420,
-    "tier1Ceiling": 7000,
+    "tier1Ceiling": 9000,
     "tier1Rate": 0.06,
     "tier2Rate": 0.06,
-    "tier2Cap": 72000
+    "tier2Cap": 108000
   },
   "shif": {
     "rate": 0.0275
   },
   "housing": {
-    "rate": 0.015
+    "rate": 0.015,
+    "employerRate": 0.015
+  },
+  "allowableDeductions": {
+    "pensionMonthlyLimit": 30000,
+    "mortgageInterestMonthlyLimit": 30000,
+    "postRetirementMedicalMonthlyLimit": 15000
   },
   "paye": {
     "brackets": [
@@ -27,8 +32,10 @@
   "platformFeePercent": 0.05,
   "earnedWageCapPercent": 0.6,
   "meta": {
-    "description": "Kenya PAYE, NSSF, SHIF, Housing Levy config aligned to Income Tax Act Cap 470, NSSF Act 2013, Social Health Insurance Act 2023, and Finance Act 2023.",
-    "lastUpdated": "2025-11-06",
-    "source": "EaziWage XLSX model and statutory matrix."
+    "description": "Monthly Kenya payroll estimate using the NSSF Year 4 2026 schedule, KRA PAYE bands, SHIF, and Affordable Housing Levy parameters. Validate rules against official guidance before production payroll use.",
+    "lastUpdated": "2026-10-16",
+    "rulesVersion": "ke-2026-year4-v1",
+    "effectiveFrom": "2026-02",
+    "source": "KRA PAYE guidance; NSSF Year 4 (2026) employer notice; Kenya Law Social Health Insurance Regulations, 2024, as amended."
   }
 }
