@@ -25,6 +25,19 @@ export function useParallax() {
   );
 
   function handleMouseMove(event: MouseEvent<HTMLElement>) {
+    const supportsHover = window.matchMedia(
+      "(hover: hover) and (pointer: fine)"
+    ).matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (!supportsHover || prefersReducedMotion) {
+      x.set(0);
+      y.set(0);
+      return;
+    }
+
     const rect = event.currentTarget.getBoundingClientRect();
     x.set((event.clientX - rect.left) / rect.width - 0.5);
     y.set((event.clientY - rect.top) / rect.height - 0.5);

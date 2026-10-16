@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
@@ -9,18 +9,6 @@ import {
 } from "@/lib/currency/currency";
 import { TiltCard } from "@/components/shared/TiltCard";
 import { PLATFORM_CONFIG } from "@/constants/config";
-
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  Cell,
-  TooltipProps,
-} from "recharts";
 
 type Country = "KE" | "UG" | "TZ" | "RW";
 
@@ -88,100 +76,6 @@ const formatNumberInput = (value: string) => {
   return Intl.NumberFormat("en-KE").format(Number(numeric));
 };
 
-const WageGraph = ({
-  result,
-  currencySymbol,
-  locale,
-}: {
-  result: CalcResult;
-  currencySymbol: string;
-  locale: string;
-}) => {
-  const data = [
-    { name: "Net Pay", value: result.netMonthly },
-    { name: "Accrued", value: result.accruedGross },
-    { name: "Access Cap", value: result.accessCap },
-    { name: "Available", value: result.accessibleNow, isKey: true },
-  ];
-
-  const CustomTooltip = ({
-    active,
-    payload,
-    label,
-  }: TooltipProps<number, string>) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="rounded-xl border border-emerald-100 bg-white p-3 text-sm shadow-lg ring-1 ring-slate-900/5">
-          <p className="font-semibold text-emerald-700">{label}</p>
-          <p className="text-slate-600">
-            <span className="font-medium">{currencySymbol}</span>{" "}
-            {fmt(payload[0].value ?? 0, locale)}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className="mt-7 h-72 w-full rounded-xl border border-slate-200 bg-slate-50 p-4"
-    >
-      <h4 className="mb-3 text-center text-sm font-semibold text-slate-700">
-        Visual Breakdown
-      </h4>
-      <ResponsiveContainer width="100%" height="85%">
-        <BarChart
-          data={data}
-          margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
-        >
-          <defs>
-            <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0.2} />
-            </linearGradient>
-            <linearGradient id="keyBarGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#2dd4bf" stopOpacity={0.9} />
-              <stop offset="95%" stopColor="#059669" stopOpacity={0.4} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.4} />
-          <XAxis
-            dataKey="name"
-            tick={{ fontSize: 11, fill: "#64748b" }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fontSize: 11, fill: "#64748b" }}
-            tickFormatter={(v) => `${currencySymbol} ${Math.round(v / 1000)}k`}
-            axisLine={false}
-            tickLine={false}
-            width={80}
-          />
-          <Tooltip
-            content={<CustomTooltip />}
-            cursor={{ fill: "rgba(16, 185, 129, 0.06)" }}
-          />
-          <Bar dataKey="value" radius={[8, 8, 2, 2]}>
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={
-                  entry.isKey ? "url(#keyBarGradient)" : "url(#barGradient)"
-                }
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </motion.div>
-  );
-};
-
 export default function Calculator() {
   const [country, setCountry] = useState<Country>("KE");
   const [salary, setSalary] = useState<number | "">("");
@@ -189,6 +83,7 @@ export default function Calculator() {
   const [daysWorked, setDaysWorked] = useState<number>(0);
   const [result, setResult] = useState<CalcResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const calculationVersion = useRef(0);
 
   const [allowancesChecked, setAllowancesChecked] = useState<
     Record<string, boolean>
@@ -229,14 +124,19 @@ export default function Calculator() {
   }, [maxDays]);
 
   useEffect(() => {
-    if (!salary) setResult(null);
-  }, [salary]);
-
-  useEffect(() => {
-    if (Object.values(allowancesAmount).every((v) => v === "")) {
-      setResult(null);
-    }
-  }, [allowancesAmount]);
+    calculationVersion.current += 1;
+    setResult(null);
+    setIsCalculating(false);
+  }, [
+    country,
+    salary,
+    daysWorked,
+    allowancesChecked,
+    allowancesAmount,
+    pensionableEarnings,
+    residentForTax,
+    allowableDeductions,
+  ]);
 
   const feePercent = PLATFORM_CONFIG.FEE_PERCENT * 100;
   const percentOfCycle = useMemo(
@@ -293,6 +193,7 @@ export default function Calculator() {
     }
 
     const payload = buildPayload();
+    const requestVersion = ++calculationVersion.current;
 
     setIsCalculating(true);
     try {
@@ -302,6 +203,8 @@ export default function Calculator() {
         body: JSON.stringify(payload),
       });
 
+      if (requestVersion !== calculationVersion.current) return;
+
       if (!res.ok) {
         toast.error(
           "The calculation could not be completed. Please try again."
@@ -310,6 +213,8 @@ export default function Calculator() {
       }
 
       const data = await res.json();
+      if (requestVersion !== calculationVersion.current) return;
+
       if (!data.success) {
         toast.error(
           "The calculation could not be completed. Please try again."
@@ -411,11 +316,15 @@ export default function Calculator() {
 
       setResult(mapped);
     } catch {
-      toast.error(
-        "Could not connect to the calculator. Check your connection and try again."
-      );
+      if (requestVersion === calculationVersion.current) {
+        toast.error(
+          "Could not connect to the calculator. Check your connection and try again."
+        );
+      }
     } finally {
-      setIsCalculating(false);
+      if (requestVersion === calculationVersion.current) {
+        setIsCalculating(false);
+      }
     }
   };
 
@@ -919,12 +828,6 @@ export default function Calculator() {
                   )}
                 </div>
               </details>
-
-              <WageGraph
-                result={result}
-                currencySymbol={currencySymbol}
-                locale={locale}
-              />
             </motion.section>
           </AnimatePresence>
         ) : (
