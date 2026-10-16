@@ -65,7 +65,7 @@ export default function Integrations() {
             />
             <SmallCard
               title="Application fee"
-              value="UpTo 5%"
+              value="UpTo 6%"
               icon={<BadgeCheck className="h-5 w-5" />}
             />
             <SmallCard

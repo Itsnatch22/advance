@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { EMAIL_CONFIG } from '@/constants/config';
+import { EMAIL_CONFIG } from "@/constants/config";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "./ui";
 import { BorderBeam } from "./ui/border-beam";
@@ -147,7 +147,12 @@ export default function Footer() {
                 onSubmit={handleSubmit}
                 className="relative flex flex-col gap-3 rounded-2xl sm:flex-row sm:gap-4"
               >
-                <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={100} duration={8} />
+                <BorderBeam
+                  colorFrom="#00B37E"
+                  colorTo="#006F42"
+                  size={100}
+                  duration={8}
+                />
                 {/* Honeypot field */}
                 <input
                   type="text"
@@ -219,7 +224,7 @@ export default function Footer() {
                 </div>
 
                 <div>
-                  <p className="text-sm font-semibold font-serif text-white sm:text-base">
+                  <p className="font-serif text-sm font-semibold text-white sm:text-base">
                     Built to work within Kenya&apos;s regulated payment
                     environment.
                   </p>
@@ -320,11 +325,14 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800/50 text-slate-400 ring-1 ring-slate-700/50 transition-all duration-300 hover:bg-emerald-500/10 hover:text-emerald-400 hover:ring-emerald-500/30"
                 >
-                  <social.icon className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                  <social.icon
+                    className="h-4 w-4"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
                 </motion.a>
               ))}
             </div>
-
           </div>
 
           {/* Product - enhanced link styling */}
@@ -384,18 +392,20 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3.5">
               {[
-                { name: "Data Policy", href: "/data.pdf" },
-                { name: "ABC Policy", href: "/corruption.pdf" },
-                { name: "Code of Ethics", href: "/ethics.pdf" },
-                { name: "Gifts Policy", href: "/gifts.pdf" },
-                { name: "AML & CFT Policy", href: "/money.pdf" },
-                { name: "Whistleblowing Policy", href: "/whistleblow.pdf" },
-                { name: "Terms of Service", href: "/terms.pdf" },
+                { name: "Data Policy", href: "/data-privacy-protection" },
+                { name: "ABC Policy", href: "/antibribery-&-corruption" },
+                { name: "Code of Ethics", href: "/code-of-ethics" },
+                {
+                  name: "Gifts Policy",
+                  href: "/gifts-hospitality-entertainment",
+                },
+                { name: "AML & CFT Policy", href: "/aml-&-cft" },
+                { name: "Whistleblowing Policy", href: "/whistleblowing" },
+                { name: "Terms of Service", href: "/terms-of-service" },
               ].map((link, index) => (
                 <li key={index}>
                   <Link
                     href={link.href}
-                    target="_blank"
                     className="group inline-flex items-center gap-2 text-sm text-slate-400 transition-colors duration-200 hover:text-emerald-400 sm:text-base"
                   >
                     <span className="h-px w-0 bg-emerald-400 transition-all duration-300 group-hover:w-4"></span>
@@ -451,7 +461,8 @@ export default function Footer() {
         {/* Bottom Bar - enhanced layout and styling */}
         <div className="mt-12 flex flex-col items-center justify-between gap-5 border-t border-slate-800/60 pt-8 sm:mt-16 sm:pt-10 md:flex-row">
           <p className="text-center text-xs text-slate-500 sm:text-sm md:text-left">
-            &copy; {FOUNDING_YEAR} - {currentYear ?? ""} EaziWage. All Rights Reserved
+            &copy; {FOUNDING_YEAR} - {currentYear ?? ""} EaziWage. All Rights
+            Reserved
           </p>
 
           <div className="flex items-center gap-2 text-xs text-slate-500 sm:text-sm">
@@ -467,7 +478,9 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => window.dispatchEvent(new Event(OPEN_COOKIE_PREFERENCES_EVENT))}
+              onClick={() =>
+                window.dispatchEvent(new Event(OPEN_COOKIE_PREFERENCES_EVENT))
+              }
               className="group flex items-center gap-2 rounded-lg bg-slate-800/30 px-3 py-1.5 text-xs text-slate-400 ring-1 ring-slate-700/50 transition-all duration-300 hover:bg-emerald-500/10 hover:text-emerald-400 hover:ring-emerald-500/30 sm:text-sm"
             >
               <Cookie className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2} />

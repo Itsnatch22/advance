@@ -16,7 +16,7 @@ const countries = [
     flag: "/flag/KE.png",
     providers: ["M-PESA", "Airtel Money"],
     currency: "KES",
-    cap: 50,
+    cap: 60,
   },
   {
     name: "Uganda",
