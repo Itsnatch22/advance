@@ -17,6 +17,7 @@ import {
   Trash2,
   Plus,
   Clock,
+  ChevronLeft,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,7 +28,11 @@ import {
   type AttachmentData,
 } from "@/hooks/useWizaChat";
 import { VoiceButton } from "@/components/shared/VoiceButton";
-import { FileAttachButton, FilePreview, type AttachedFile } from "@/components/shared/FileAttachButton";
+import {
+  FileAttachButton,
+  FilePreview,
+  type AttachedFile,
+} from "@/components/shared/FileAttachButton";
 import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
 import { BorderBeam } from "@/components/ui/border-beam";
 
@@ -70,7 +75,13 @@ function MessageContent({ text }: { text: string }) {
   return <p className="whitespace-pre-wrap">{clean}</p>;
 }
 
-function EscalateForm({ query, onDone }: { query: string; onDone: () => void }) {
+function EscalateForm({
+  query,
+  onDone,
+}: {
+  query: string;
+  onDone: () => void;
+}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
@@ -113,7 +124,12 @@ function EscalateForm({ query, onDone }: { query: string; onDone: () => void }) 
       onSubmit={handleSubmit}
       className="relative mt-2 space-y-2 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 dark:border-slate-700 dark:bg-slate-800/60"
     >
-      <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={60} duration={8} />
+      <BorderBeam
+        colorFrom="#00B37E"
+        colorTo="#006F42"
+        size={60}
+        duration={8}
+      />
       <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
         Leave your details and our support team will follow up:
       </p>
@@ -134,14 +150,20 @@ function EscalateForm({ query, onDone }: { query: string; onDone: () => void }) 
         className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none dark:border-slate-600 dark:bg-slate-900 dark:text-white"
       />
       {err && (
-        <p className="text-[10px] text-red-500">Failed to send. Please try again.</p>
+        <p className="text-[10px] text-red-500">
+          Failed to send. Please try again.
+        </p>
       )}
       <button
         type="submit"
         disabled={sending || !name.trim() || !email.trim()}
         className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-emerald-600 py-1.5 text-xs font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-40"
       >
-        {sending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+        {sending ? (
+          <Loader2 className="h-3 w-3 animate-spin" />
+        ) : (
+          <Send className="h-3 w-3" />
+        )}
         {sending ? "Sending…" : "Send to support"}
       </button>
     </form>
@@ -278,6 +300,7 @@ export default function WizaChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [attachment, setAttachment] = useState<AttachedFile | null>(null);
   const [showGifPicker, setShowGifPicker] = useState(false);
@@ -285,6 +308,15 @@ export default function WizaChat() {
   const [escalateDismissed, setEscalateDismissed] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 639px)");
+    const updateMobile = () => setIsMobile(mediaQuery.matches);
+
+    updateMobile();
+    mediaQuery.addEventListener("change", updateMobile);
+    return () => mediaQuery.removeEventListener("change", updateMobile);
+  }, []);
 
   const {
     messages,
@@ -367,10 +399,10 @@ export default function WizaChat() {
 
   const CHAT_W = 370;
   const HIST_W = 250;
-  const totalW = showHistory ? CHAT_W + HIST_W : CHAT_W;
+  const totalW = showHistory && !isMobile ? CHAT_W + HIST_W : CHAT_W;
 
   return (
-    <div className="fixed right-6 bottom-6 z-50 flex flex-col items-end select-none">
+    <div className="fixed right-2 bottom-2 z-50 flex flex-col items-end select-none sm:right-6 sm:bottom-6">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -380,13 +412,27 @@ export default function WizaChat() {
               opacity: 1,
               scale: 1,
               y: 0,
-              width: isMinimized ? 260 : totalW,
-              height: isMinimized ? "auto" : 460,
+              width: isMobile
+                ? "calc(100vw - 1rem)"
+                : isMinimized
+                  ? 260
+                  : totalW,
+              height: isMinimized
+                ? "auto"
+                : isMobile
+                  ? "min(460px, calc(100dvh - 5.5rem))"
+                  : 460,
             }}
             exit={{ opacity: 0, scale: 0.85, y: 24 }}
             transition={{ type: "spring", damping: 26, stiffness: 320 }}
-            className="mb-4 flex overflow-hidden rounded-[22px] border border-slate-200 bg-white shadow-[0_32px_80px_-12px_rgba(0,0,0,0.18)] dark:border-slate-800 dark:bg-slate-900"
-            style={{ minWidth: isMinimized ? 260 : CHAT_W }}
+            className={cn(
+              "mb-2 flex max-h-[calc(100dvh-5.5rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_32px_80px_-12px_rgba(0,0,0,0.18)] sm:mb-4 sm:rounded-[22px] dark:border-slate-800 dark:bg-slate-900",
+              isMobile && showHistory ? "flex-col" : "flex-row"
+            )}
+            style={{
+              minWidth: isMobile ? 0 : isMinimized ? 260 : CHAT_W,
+              maxWidth: isMobile ? "calc(100vw - 1rem)" : undefined,
+            }}
           >
             {/* ── History sidebar ── */}
             <AnimatePresence>
@@ -394,33 +440,48 @@ export default function WizaChat() {
                 <motion.div
                   key="sidebar"
                   initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: HIST_W, opacity: 1 }}
+                  animate={{ width: isMobile ? "100%" : HIST_W, opacity: 1 }}
                   exit={{ width: 0, opacity: 0 }}
                   transition={{ type: "spring", damping: 28, stiffness: 340 }}
-                  className="flex flex-col overflow-hidden border-r border-slate-100 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-950/50"
-                  style={{ width: HIST_W, minWidth: HIST_W }}
+                  className="flex min-h-0 flex-col overflow-hidden border-r border-slate-100 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-950/50"
+                  style={{
+                    width: isMobile ? "100%" : HIST_W,
+                    minWidth: isMobile ? 0 : HIST_W,
+                    height: isMobile ? "100%" : undefined,
+                  }}
                 >
                   {/* Sidebar header */}
-                  <div className="flex items-center justify-between border-b border-slate-100 px-3.5 py-3 dark:border-slate-800">
+                  <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-3.5 py-3 dark:border-slate-800">
                     <span className="text-xs font-semibold tracking-widest text-slate-600 uppercase dark:text-slate-300">
                       History
                     </span>
-                    <button
-                      onClick={() => {
-                        newSession();
-                        setShowHistory(false);
-                      }}
-                      className="flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 transition-colors hover:bg-emerald-700"
-                    >
-                      <Plus className="h-3 w-3 text-white" />
-                      <span className="text-[10px] font-bold tracking-wider text-white uppercase">
-                        New
-                      </span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {isMobile && (
+                        <button
+                          onClick={() => setShowHistory(false)}
+                          className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
+                        >
+                          <ChevronLeft className="h-3.5 w-3.5" />
+                          Chat
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          newSession();
+                          setShowHistory(false);
+                        }}
+                        className="flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 transition-colors hover:bg-emerald-700"
+                      >
+                        <Plus className="h-3 w-3 text-white" />
+                        <span className="text-[10px] font-bold tracking-wider text-white uppercase">
+                          New
+                        </span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Session list */}
-                  <div className="flex-1 space-y-1 overflow-y-auto px-2 py-2">
+                  <div className="min-h-0 flex-1 space-y-1 overflow-y-auto px-2 py-2">
                     {sessions.length === 0 ? (
                       <div className="flex h-32 flex-col items-center justify-center px-4 text-center">
                         <MessageSquare className="mb-2 h-6 w-6 text-slate-300" />
@@ -446,8 +507,11 @@ export default function WizaChat() {
 
             {/* ── Main chat panel ── */}
             <div
-              className="flex min-w-0 flex-1 flex-col"
-              style={{ width: CHAT_W }}
+              className={cn(
+                "flex min-h-0 min-w-0 flex-1 flex-col",
+                isMobile && showHistory && "hidden"
+              )}
+              style={{ width: isMobile ? "100%" : CHAT_W }}
             >
               {/* Header */}
               <div className="flex items-center justify-between bg-emerald-700 px-4 py-3 dark:bg-emerald-800">
@@ -523,7 +587,7 @@ export default function WizaChat() {
                   {/* Messages */}
                   <div
                     ref={scrollRef}
-                    className="flex-1 space-y-4 overflow-y-auto scroll-smooth px-4 py-4"
+                    className="min-h-0 flex-1 space-y-4 overflow-y-auto scroll-smooth px-3 py-3 sm:px-4 sm:py-4"
                   >
                     {messages.map((m) => {
                       const text = getMessageText(m);
@@ -566,7 +630,7 @@ export default function WizaChat() {
                             </div>
                             <div
                               className={cn(
-                                "rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
+                                "min-w-0 rounded-2xl px-3 py-2.5 text-sm leading-relaxed [overflow-wrap:anywhere] break-words",
                                 isUser
                                   ? "rounded-br-sm bg-emerald-600 text-white shadow-sm shadow-emerald-500/20"
                                   : "rounded-bl-sm border border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
@@ -637,7 +701,7 @@ export default function WizaChat() {
                   </div>
 
                   {/* Input */}
-                  <div className="border-t border-slate-100 px-3 pt-2 pb-3 dark:border-slate-800">
+                  <div className="shrink-0 border-t border-slate-100 px-2 pt-2 pb-2 sm:px-3 sm:pb-3 dark:border-slate-800">
                     {/* File preview */}
                     {attachment && (
                       <div className="mb-2">
@@ -663,9 +727,14 @@ export default function WizaChat() {
 
                     <form
                       onSubmit={handleSend}
-                      className="relative flex items-center gap-1.5 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 px-2 py-1 transition-colors focus-within:border-emerald-400 dark:border-slate-700 dark:bg-slate-800 dark:focus-within:border-emerald-600"
+                      className="relative flex min-w-0 items-center gap-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 px-1.5 py-1 transition-colors focus-within:border-emerald-400 sm:gap-1.5 sm:px-2 dark:border-slate-700 dark:bg-slate-800 dark:focus-within:border-emerald-600"
                     >
-                      <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={50} duration={8} />
+                      <BorderBeam
+                        colorFrom="#00B37E"
+                        colorTo="#006F42"
+                        size={50}
+                        duration={8}
+                      />
                       <FileAttachButton
                         onFile={setAttachment}
                         disabled={streaming}
@@ -678,7 +747,9 @@ export default function WizaChat() {
                         title="Send a GIF"
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-40"
                       >
-                        <span className="text-[9px] font-bold tracking-tight">GIF</span>
+                        <span className="text-[9px] font-bold tracking-tight">
+                          GIF
+                        </span>
                       </button>
                       <VoiceButton
                         onTranscript={(t) =>
@@ -691,13 +762,17 @@ export default function WizaChat() {
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder={attachment ? "Add a caption…" : "Type a message…"}
+                        placeholder={
+                          attachment ? "Add a caption…" : "Type a message…"
+                        }
                         disabled={streaming}
-                        className="h-8 flex-1 border-0 bg-transparent px-0 text-sm text-slate-900 shadow-none placeholder:text-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-white"
+                        className="h-8 min-w-0 flex-1 border-0 bg-transparent px-0 text-xs text-slate-900 shadow-none placeholder:text-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 sm:text-sm dark:text-white"
                       />
                       <button
                         type="submit"
-                        disabled={streaming || (!inputValue.trim() && !attachment)}
+                        disabled={
+                          streaming || (!inputValue.trim() && !attachment)
+                        }
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-600 transition-colors hover:bg-emerald-700 disabled:opacity-30"
                       >
                         <Send className="h-3.5 w-3.5 text-white" />
@@ -706,7 +781,7 @@ export default function WizaChat() {
                   </div>
 
                   {/* Footer */}
-                  <div className="flex items-center justify-between px-4 pb-2.5">
+                  <div className="flex items-center justify-between px-3 pb-2.5 sm:px-4">
                     <button
                       onClick={() => {
                         newSession();

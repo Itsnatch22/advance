@@ -17,9 +17,17 @@ import {
   MessagesSquare,
   ChevronLeft,
 } from "lucide-react";
-import { useWizaChat, type DeliveryChannel, type AttachmentData } from "@/hooks/useWizaChat";
+import {
+  useWizaChat,
+  type DeliveryChannel,
+  type AttachmentData,
+} from "@/hooks/useWizaChat";
 import { VoiceButton } from "@/components/shared/VoiceButton";
-import { FileAttachButton, FilePreview, type AttachedFile } from "@/components/shared/FileAttachButton";
+import {
+  FileAttachButton,
+  FilePreview,
+  type AttachedFile,
+} from "@/components/shared/FileAttachButton";
 import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { TiltCard } from "@/components/shared/TiltCard";
@@ -182,7 +190,12 @@ function SummaryModal({
         animate={{ scale: 1, opacity: 1 }}
         className="relative mx-6 w-full max-w-xs overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900"
       >
-        <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={60} duration={8} />
+        <BorderBeam
+          colorFrom="#00B37E"
+          colorTo="#006F42"
+          size={60}
+          duration={8}
+        />
         <AnimatePresence mode="wait">
           {step === "channel" ? (
             <motion.div
@@ -251,7 +264,9 @@ function SummaryModal({
                 )}
               </div>
               <h3 className="mb-1 font-semibold text-slate-900 dark:text-white">
-                {isEmail ? "Where should we email it?" : "What's your phone number?"}
+                {isEmail
+                  ? "Where should we email it?"
+                  : "What's your phone number?"}
               </h3>
               <p className="mb-5 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
                 {isEmail
@@ -347,7 +362,10 @@ export default function Wiza() {
     }
   };
 
-  const handleSummaryConfirm = async (channel: DeliveryChannel, address?: string) => {
+  const handleSummaryConfirm = async (
+    channel: DeliveryChannel,
+    address?: string
+  ) => {
     if (!requestSummary) return;
     setShowSummaryModal(false);
     const msg = await requestSummary(channel, address);
@@ -359,15 +377,23 @@ export default function Wiza() {
   const conversationStartedAt = messages[0]?.createdAt ?? null;
 
   return (
-    <section className="relative overflow-hidden bg-white py-24 dark:bg-slate-950">
+    <section className="relative overflow-hidden bg-white py-16 sm:py-24 dark:bg-slate-950">
       {/* Ambient orbs */}
       <div className="pointer-events-none absolute inset-0">
-        <FloatingOrb color="bg-emerald-100" delay={0} className="right-[5%] top-[-10%]" />
-        <FloatingOrb color="bg-green-100" delay={2} className="left-[5%] bottom-[10%]" />
+        <FloatingOrb
+          color="bg-emerald-100"
+          delay={0}
+          className="top-[-10%] right-[5%]"
+        />
+        <FloatingOrb
+          color="bg-green-100"
+          delay={2}
+          className="bottom-[10%] left-[5%]"
+        />
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid items-start gap-16 lg:grid-cols-2 lg:gap-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid min-w-0 items-start gap-10 lg:grid-cols-2 lg:gap-24">
           {/* ── Left: copy ─────────────────────────────────────────────── */}
           <div className="relative z-10 lg:sticky lg:top-24">
             <motion.div
@@ -383,7 +409,7 @@ export default function Wiza() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="mb-5 font-serif text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl dark:text-white"
+              className="mb-5 font-serif text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl dark:text-white"
             >
               Meet Wiza. <br />
               Your AI Financial{" "}
@@ -397,7 +423,7 @@ export default function Wiza() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.08 }}
-              className="mb-10 max-w-lg text-lg leading-relaxed text-slate-600 dark:text-slate-400"
+              className="mb-8 max-w-lg text-base leading-relaxed text-slate-600 sm:mb-10 sm:text-lg dark:text-slate-400"
             >
               Instant calculations. Playful insights. Real talk about your
               money. Wiza turns salary questions into interactive financial
@@ -453,12 +479,13 @@ export default function Wiza() {
 
           {/* ── Right: chat widget ────────────────────────────────────── */}
           <motion.div
+            className="min-w-0"
             initial={{ opacity: 0, scale: 0.96 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.32 }}
           >
-            <TiltCard className="flex h-168 flex-col rounded-[2.5rem] border-slate-200/60 shadow-2xl">
+            <TiltCard className="flex h-[min(42rem,calc(100dvh-7rem))] min-h-[30rem] w-full min-w-0 flex-col rounded-2xl border-slate-200/60 shadow-2xl sm:h-[42rem] sm:min-h-0 sm:rounded-[2.5rem]">
               {/* Summary modal overlay */}
               {showSummaryModal && (
                 <SummaryModal
@@ -468,8 +495,8 @@ export default function Wiza() {
               )}
 
               {/* Header */}
-              <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
-                <div className="flex items-center gap-3">
+              <div className="flex shrink-0 items-center justify-between gap-2 border-b border-slate-100 px-3 py-3 sm:px-5 sm:py-4 dark:border-slate-800">
+                <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                   <div className="relative">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 dark:bg-white">
                       <Bot className="h-5 w-5 text-emerald-400 dark:text-emerald-600" />
@@ -488,10 +515,10 @@ export default function Wiza() {
                       />
                       {conversationStartedAt && (
                         <>
-                          <span className="text-[10px] text-slate-300 dark:text-slate-600">
+                          <span className="hidden text-[10px] text-slate-300 sm:inline dark:text-slate-600">
                             ·
                           </span>
-                          <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                          <p className="hidden text-[10px] text-slate-500 sm:block dark:text-slate-400">
                             Started{" "}
                             {formatConversationTimestamp(conversationStartedAt)}
                           </p>
@@ -542,9 +569,9 @@ export default function Wiza() {
               </AnimatePresence>
 
               {/* Messages */}
-              <div className="flex-1 space-y-4 overflow-y-auto scroll-smooth px-5 py-5">
+              <div className="min-h-0 flex-1 space-y-4 overflow-y-auto scroll-smooth px-3 py-4 sm:px-5 sm:py-5">
                 {isEmpty ? (
-                  <div className="flex h-full min-h-80 flex-col items-center justify-center px-8 text-center">
+                  <div className="flex h-full min-h-72 flex-col items-center justify-center px-2 text-center sm:min-h-80 sm:px-8">
                     <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800">
                       <Bot className="h-8 w-8 text-slate-300 dark:text-slate-600" />
                     </div>
@@ -602,7 +629,7 @@ export default function Wiza() {
 
                           {/* Bubble */}
                           <div
-                            className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                            className={`min-w-0 rounded-2xl px-3 py-2.5 text-sm leading-relaxed [overflow-wrap:anywhere] break-words sm:px-4 sm:py-3 ${
                               msg.role === "user"
                                 ? "rounded-br-sm bg-emerald-600 text-white"
                                 : "rounded-bl-sm border border-slate-100 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
@@ -653,11 +680,14 @@ export default function Wiza() {
               </div>
 
               {/* Input */}
-              <div className="border-t border-slate-100 px-4 pt-2 pb-4 dark:border-slate-800">
+              <div className="shrink-0 border-t border-slate-100 px-2 pt-2 pb-3 sm:px-4 sm:pb-4 dark:border-slate-800">
                 {/* File preview */}
                 {attachment && (
                   <div className="mb-2">
-                  <FilePreview file={attachment} onRemove={() => setAttachment(null)} />
+                    <FilePreview
+                      file={attachment}
+                      onRemove={() => setAttachment(null)}
+                    />
                   </div>
                 )}
 
@@ -674,28 +704,40 @@ export default function Wiza() {
                   </AnimatePresence>
                 </div>
 
-              <form onSubmit={handleSubmit} className="relative flex items-center gap-2 rounded-2xl">
-                <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={60} duration={8} />
+                <form
+                  onSubmit={handleSubmit}
+                  className="relative flex min-w-0 items-center gap-1 rounded-2xl sm:gap-2"
+                >
+                  <BorderBeam
+                    colorFrom="#00B37E"
+                    colorTo="#006F42"
+                    size={60}
+                    duration={8}
+                  />
                   {/* Toolbar buttons */}
                   <div className="flex items-center gap-1">
                     <FileAttachButton
                       onFile={setAttachment}
                       disabled={streaming}
-                      className="h-10 w-10"
+                      className="h-9 w-9 sm:h-10 sm:w-10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowGifPicker((v) => !v)}
                       disabled={streaming}
                       title="Send a GIF"
-                      className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-40"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-40 sm:h-10 sm:w-10"
                     >
-                    <span className="text-[11px] font-bold tracking-tight">GIF</span>
+                      <span className="text-[11px] font-bold tracking-tight">
+                        GIF
+                      </span>
                     </button>
                     <VoiceButton
-                    onTranscript={(t) => setInput((prev) => (prev ? `${prev} ${t}` : t))}
+                      onTranscript={(t) =>
+                        setInput((prev) => (prev ? `${prev} ${t}` : t))
+                      }
                       disabled={streaming}
-                      className="h-10 w-10"
+                      className="h-9 w-9 sm:h-10 sm:w-10"
                     />
                   </div>
 
@@ -705,14 +747,16 @@ export default function Wiza() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                  placeholder={attachment ? "Add a caption…" : "Ask Wiza anything…"}
+                    placeholder={
+                      attachment ? "Add a caption…" : "Ask Wiza anything…"
+                    }
                     disabled={streaming}
-                    className="flex-1 rounded-xl border border-transparent bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none disabled:opacity-50 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-emerald-600"
+                    className="min-w-0 flex-1 rounded-xl border border-transparent bg-slate-50 px-2 py-3 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none disabled:opacity-50 sm:px-4 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-emerald-600"
                   />
                   <button
                     type="submit"
                     disabled={streaming || (!input.trim() && !attachment)}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors hover:bg-emerald-600 disabled:opacity-30 dark:bg-white dark:text-slate-900 dark:hover:bg-emerald-500 dark:hover:text-white"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors hover:bg-emerald-600 disabled:opacity-30 sm:h-10 sm:w-10 dark:bg-white dark:text-slate-900 dark:hover:bg-emerald-500 dark:hover:text-white"
                   >
                     <Send size={16} />
                   </button>
