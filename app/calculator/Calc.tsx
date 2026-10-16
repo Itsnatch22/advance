@@ -315,20 +315,14 @@ export default function Calculator() {
           deductions = {
             LST: data.lst ?? 0,
             "NSSF (Employee)": data.nssfEmployee ?? 0,
-            "NSSF (Employer)": data.nssfEmployer ?? 0,
             PAYE: payeAmount,
           };
           break;
 
         case "TZ":
           const nhifEmployee = data.nhifEmployee ?? data.shif ?? 0;
-          const nhifEmployer = data.nhifEmployer ?? 0;
           deductions = {
-            "SDL (Employer)": data.sdl ?? 0,
-            "WCF (Employer)": data.wcf ?? 0,
-            "NHIF (Employer)": nhifEmployer,
             "NHIF (Employee)": nhifEmployee,
-            "NSSF (Employer)": data.nssfEmployer ?? 0,
             "NSSF (Employee)": data.nssfEmployee ?? 0,
             PAYE: payeAmount,
           };
@@ -365,6 +359,27 @@ export default function Calculator() {
       const accessCap = (net * accessCapPercent) / 100;
       const platformFee = (accessCap * feePercent) / 100;
       const accessibleNow = accessCap - platformFee;
+      const employerContributions: Deductions =
+        country === "KE"
+          ? {
+              "NSSF (Employer)": data.employerContributions?.nssf ?? 0,
+              "Housing Levy (Employer)":
+                data.employerContributions?.housingLevy ?? 0,
+            }
+          : country === "UG"
+            ? { "NSSF (Employer)": data.nssfEmployer ?? 0 }
+            : country === "TZ"
+              ? {
+                  "NSSF (Employer)": data.nssfEmployer ?? 0,
+                  "SDL (Employer)": data.sdl ?? 0,
+                  "WCF (Employer)": data.wcf ?? 0,
+                }
+              : {
+                  "RSSB Pension (Employer)": data.rssb?.pensionEmployer ?? 0,
+                  "RSSB Medical (Employer)": data.rssb?.medicalEmployer ?? 0,
+                  "RSSB Maternity (Employer)":
+                    data.rssb?.maternityEmployer ?? 0,
+                };
 
       const mapped: CalcResult = {
         success: true,
@@ -377,14 +392,7 @@ export default function Calculator() {
         platformFee,
         accessibleNow,
         deductions,
-        employerContributions:
-          country === "KE"
-            ? {
-                "NSSF (Employer)": data.employerContributions?.nssf ?? 0,
-                "Housing Levy (Employer)":
-                  data.employerContributions?.housingLevy ?? 0,
-              }
-            : undefined,
+        employerContributions,
         ruleVersion: data.ruleVersion,
         effectiveFrom: data.effectiveFrom,
         engineVersion: data.engineVersion,
@@ -416,13 +424,26 @@ export default function Calculator() {
   const locale = currencyDetails.localeStr;
 
   return (
-    <TiltCard className="mx-auto w-full max-w-sm p-6 ring-1 ring-slate-900/5 sm:max-w-md md:max-w-lg">
-      <h2 className="mb-5 text-center font-serif text-3xl font-bold tracking-tight text-slate-900">
+    <TiltCard className="mx-auto w-full max-w-6xl p-5 ring-1 ring-slate-900/5 sm:p-7">
+      <h2 className="mb-2 text-center font-serif text-3xl font-bold tracking-tight text-slate-900">
         Wage Access Calculator
       </h2>
+      <p className="mb-5 text-center text-sm text-slate-500">
+        Estimate pay and available wage access for{" "}
+        <span className="font-semibold text-slate-700">{country}</span>
+        {" · "}
+        {currencyDetails.code} · Monthly
+        <span className="mt-1 block text-xs">
+          Changing country clears the figures entered for the current country.
+        </span>
+      </p>
 
       {/* Country Selector */}
-      <div className="mb-6 flex items-center justify-center gap-4">
+      <div
+        className="mb-6 flex items-center justify-center gap-4"
+        role="group"
+        aria-label="Choose calculator country"
+      >
         {[
           { code: "KE", flag: "/flag/KE.png" },
           { code: "UG", flag: "/flag/UG.png" },
@@ -433,6 +454,7 @@ export default function Calculator() {
             key={f.code}
             onClick={() => handleCountryChange(f.code as Country)}
             aria-label={`Select ${f.code}`}
+            aria-pressed={country === f.code}
             className={`h-11 w-11 overflow-hidden rounded-full border-2 transition-all duration-300 ${
               country === f.code
                 ? "scale-110 border-emerald-600 shadow-md ring-2 shadow-emerald-500/20 ring-emerald-500/20"
@@ -450,334 +472,389 @@ export default function Calculator() {
         ))}
       </div>
 
-      {/* Salary Input */}
-      <label
-        htmlFor="salary-input"
-        className="text-sm font-medium text-slate-700"
-      >
-        Gross Monthly Salary ({currencySymbol})
-      </label>
-      <input
-        id="salary-input"
-        type="text"
-        placeholder="e.g. 60,000"
-        className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-all duration-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 sm:text-base"
-        value={salary ? formatNumberInput(salary.toString()) : ""}
-        onChange={(e) => {
-          const raw = e.target.value.replace(/,/g, "");
-          setSalary(raw === "" ? "" : Number(raw));
-        }}
-      />
-
-      {/* Contributions */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={country}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mt-5"
-        >
-          <p className="mb-2.5 text-sm font-semibold text-slate-700">
-            {country === "KE"
-              ? "Cash Earnings / Allowances"
-              : "Other Contributions"}
-          </p>
-          {countryAllowances[country].map((a) => (
-            <div
-              key={a.key}
-              className="mb-2 flex flex-wrap items-center gap-3 transition-all duration-300"
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.9fr)]">
+        <div className="space-y-5">
+          <section
+            aria-labelledby="earnings-heading"
+            className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
+          >
+            <h3
+              id="earnings-heading"
+              className="mb-4 text-sm font-semibold text-slate-800"
             >
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="accent-emerald-600"
-                  checked={!!allowancesChecked[a.key]}
-                  onChange={(e) => {
-                    setAllowancesChecked((s) => ({
-                      ...s,
-                      [a.key]: e.target.checked,
-                    }));
-                    if (!e.target.checked) {
-                      setAllowancesAmount((s) => ({ ...s, [a.key]: "" }));
-                    }
-                  }}
-                />
-                <span className="text-sm text-slate-600">{a.label}</span>
-              </label>
-              <input
-                id={`allowance-${a.key}`}
-                type="text"
-                placeholder="Amount"
-                aria-label={`Enter amount for ${a.label}`}
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 transition-all duration-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 sm:text-base"
-                value={
-                  allowancesAmount[a.key]
-                    ? formatNumberInput(allowancesAmount[a.key]!.toString())
-                    : ""
-                }
-                disabled={!allowancesChecked[a.key]}
-                onChange={(e) =>
-                  setAllowancesAmount((s) => {
-                    const raw = e.target.value.replace(/,/g, "");
-                    return { ...s, [a.key]: raw === "" ? "" : Number(raw) };
-                  })
-                }
-              />
-            </div>
-          ))}
-        </motion.div>
-      </AnimatePresence>
-
-      {country === "KE" && (
-        <div className="mt-5 space-y-3 rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
-          <p className="text-sm font-semibold text-slate-700">
-            Kenya payroll assumptions
-          </p>
-          <label className="block text-sm text-slate-600">
-            Pensionable monthly earnings (optional; defaults to gross earnings)
+              Earnings and pay period
+            </h3>
+            {/* Salary Input */}
+            <label
+              htmlFor="salary-input"
+              className="text-sm font-medium text-slate-700"
+            >
+              Gross Monthly Salary ({currencySymbol})
+            </label>
             <input
+              id="salary-input"
               type="text"
-              inputMode="numeric"
-              placeholder="Defaults to salary plus allowances"
-              className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-              value={
-                pensionableEarnings === ""
-                  ? ""
-                  : formatNumberInput(pensionableEarnings.toString())
-              }
-              onChange={(event) => {
-                const raw = event.target.value.replace(/,/g, "");
-                setPensionableEarnings(raw === "" ? "" : Number(raw));
+              placeholder="e.g. 60,000"
+              className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-all duration-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 sm:text-base"
+              value={salary ? formatNumberInput(salary.toString()) : ""}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/,/g, "");
+                setSalary(raw === "" ? "" : Number(raw));
               }}
             />
-          </label>
-          <label className="flex items-start gap-2 text-sm text-slate-600">
-            <input
-              type="checkbox"
-              className="mt-1 accent-emerald-600"
-              checked={residentForTax}
-              onChange={(event) => setResidentForTax(event.target.checked)}
-            />
-            <span>
-              I am eligible for Kenyan resident personal relief (KES 2,400 per
-              month).
-            </span>
-          </label>
-          {[
-            {
-              key: "pensionContributions",
-              label:
-                "Additional qualifying pension contribution (KES 30,000 combined limit)",
-            },
-            {
-              key: "mortgageInterest",
-              label: "Eligible mortgage interest (KES 30,000 monthly limit)",
-            },
-            {
-              key: "postRetirementMedicalFund",
-              label:
-                "Post-retirement medical fund contribution (KES 15,000 monthly limit)",
-            },
-          ].map((item) => (
-            <label key={item.key} className="block text-sm text-slate-600">
-              {item.label} (monthly)
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="0"
-                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                value={
-                  allowableDeductions[item.key]
-                    ? formatNumberInput(
-                        allowableDeductions[item.key]!.toString()
-                      )
-                    : ""
-                }
-                onChange={(event) => {
-                  const raw = event.target.value.replace(/,/g, "");
-                  setAllowableDeductions((current) => ({
-                    ...current,
-                    [item.key]: raw === "" ? "" : Number(raw),
-                  }));
-                }}
-              />
-            </label>
-          ))}
-          <p className="text-xs leading-relaxed text-slate-500">
-            Allowances entered here are treated as taxable cash earnings; enter
-            only any taxable portion. Non-cash benefits, employer pension or
-            medical cover, insurance relief, bonuses and irregular payroll need
-            separate review. Part-period results are prorated estimates, and
-            wage access is not a verified withdrawable balance.
-          </p>
-        </div>
-      )}
 
-      {/* Days Slider */}
-      <div className="mt-5">
-        <label
-          htmlFor="days-worked-input"
-          className="text-sm font-medium text-slate-700"
-        >
-          Days worked this cycle
-        </label>
-        <input
-          id="days-worked-input"
-          type="range"
-          min={0}
-          max={maxDays}
-          value={daysWorked}
-          onChange={(e) => setDaysWorked(Number(e.target.value))}
-          className="mt-2 w-full accent-emerald-600"
-        />
-        <div className="mt-1 flex justify-between text-xs text-slate-500">
-          <span>
-            {daysWorked} / {maxDays} days
-          </span>
-          <span>{percentOfCycle}% of cycle</span>
-        </div>
-      </div>
-
-      {/* Calculate */}
-      <button
-        onClick={callBackendCalc}
-        disabled={!salary}
-        className="group mt-5 w-full rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-4 py-3 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-emerald-500/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
-      >
-        Calculate
-      </button>
-
-      {/* Results */}
-      <AnimatePresence mode="wait">
-        {result && result.success && (
-          <motion.div
-            key={`${country}-result`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.45 }}
-            className="mt-6 rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50 via-green-50/60 to-white p-5 shadow-sm ring-1 ring-emerald-500/10"
-          >
-            <h3 className="mb-4 font-serif text-lg font-bold text-slate-900">
-              Wage Summary
-            </h3>
-
-            <div className="space-y-2">
-              {[
-                { label: "Net Earnings", value: result.netMonthly },
-                { label: "Accrued Earnings", value: result.accruedGross },
-                ...(country === "KE" && result.taxableIncome !== undefined
-                  ? [
-                      {
-                        label: "Taxable Employment Income",
-                        value: result.taxableIncome,
-                      },
-                    ]
-                  : []),
-                {
-                  label: `Access Cap (${result.accessCapPercent}%)`,
-                  value: result.accessCap,
-                },
-              ].map(({ label, value }) => (
-                <div
-                  key={label}
-                  className="flex justify-between border-b border-emerald-100/70 pb-2"
+            <details className="mt-4 rounded-xl border border-slate-200 px-4 py-3">
+              <summary className="cursor-pointer text-sm font-semibold text-slate-700">
+                Additional earnings and allowances
+              </summary>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={country}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="mt-3"
                 >
-                  <p className="text-sm text-slate-600">{label}</p>
-                  <p className="text-sm font-semibold text-emerald-700">
-                    {currencySymbol} {fmt(value, locale)}
+                  <p className="mb-2 text-xs leading-relaxed text-slate-500">
+                    {country === "KE"
+                      ? "Enter only taxable cash earnings for the selected allowance."
+                      : "Optional inputs available for this market."}
                   </p>
+                  {countryAllowances[country].map((a) => (
+                    <div
+                      key={a.key}
+                      className="mb-3 grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(8rem,0.7fr)] sm:items-center"
+                    >
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          className="accent-emerald-600"
+                          checked={!!allowancesChecked[a.key]}
+                          onChange={(e) => {
+                            setAllowancesChecked((s) => ({
+                              ...s,
+                              [a.key]: e.target.checked,
+                            }));
+                            if (!e.target.checked) {
+                              setAllowancesAmount((s) => ({
+                                ...s,
+                                [a.key]: "",
+                              }));
+                            }
+                          }}
+                        />
+                        <span className="text-sm text-slate-600">
+                          {a.label}
+                        </span>
+                      </label>
+                      <input
+                        id={`allowance-${a.key}`}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="Amount"
+                        aria-label={`Enter amount for ${a.label}`}
+                        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 transition-all outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                        value={
+                          allowancesAmount[a.key]
+                            ? formatNumberInput(
+                                allowancesAmount[a.key]!.toString()
+                              )
+                            : ""
+                        }
+                        disabled={!allowancesChecked[a.key]}
+                        onChange={(e) =>
+                          setAllowancesAmount((s) => {
+                            const raw = e.target.value.replace(/,/g, "");
+                            return {
+                              ...s,
+                              [a.key]: raw === "" ? "" : Number(raw),
+                            };
+                          })
+                        }
+                      />
+                    </div>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </details>
+
+            {country === "KE" && (
+              <details className="mt-4 rounded-xl border border-slate-200 px-4 py-3">
+                <summary className="cursor-pointer text-sm font-semibold text-slate-700">
+                  Tax eligibility and other deductions
+                </summary>
+                <div className="mt-3 space-y-3">
+                  <p className="text-xs leading-relaxed text-slate-500">
+                    Optional details used only for the Kenya estimate.
+                  </p>
+                  <label className="block text-sm text-slate-600">
+                    Pensionable monthly earnings (optional; defaults to gross
+                    earnings)
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Defaults to salary plus allowances"
+                      className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                      value={
+                        pensionableEarnings === ""
+                          ? ""
+                          : formatNumberInput(pensionableEarnings.toString())
+                      }
+                      onChange={(event) => {
+                        const raw = event.target.value.replace(/,/g, "");
+                        setPensionableEarnings(raw === "" ? "" : Number(raw));
+                      }}
+                    />
+                  </label>
+                  <label className="flex items-start gap-2 text-sm text-slate-600">
+                    <input
+                      type="checkbox"
+                      className="mt-1 accent-emerald-600"
+                      checked={residentForTax}
+                      onChange={(event) =>
+                        setResidentForTax(event.target.checked)
+                      }
+                    />
+                    <span>
+                      I am eligible for Kenyan resident personal relief (KES
+                      2,400 per month).
+                    </span>
+                  </label>
+                  {[
+                    {
+                      key: "pensionContributions",
+                      label:
+                        "Additional qualifying pension contribution (KES 30,000 combined limit)",
+                    },
+                    {
+                      key: "mortgageInterest",
+                      label:
+                        "Eligible mortgage interest (KES 30,000 monthly limit)",
+                    },
+                    {
+                      key: "postRetirementMedicalFund",
+                      label:
+                        "Post-retirement medical fund contribution (KES 15,000 monthly limit)",
+                    },
+                  ].map((item) => (
+                    <label
+                      key={item.key}
+                      className="block text-sm text-slate-600"
+                    >
+                      {item.label} (monthly)
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="0"
+                        className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                        value={
+                          allowableDeductions[item.key]
+                            ? formatNumberInput(
+                                allowableDeductions[item.key]!.toString()
+                              )
+                            : ""
+                        }
+                        onChange={(event) => {
+                          const raw = event.target.value.replace(/,/g, "");
+                          setAllowableDeductions((current) => ({
+                            ...current,
+                            [item.key]: raw === "" ? "" : Number(raw),
+                          }));
+                        }}
+                      />
+                    </label>
+                  ))}
                 </div>
-              ))}
-
-              <div className="flex justify-between border-b border-emerald-100/70 pb-2">
-                <p className="text-sm text-slate-600">Platform Fee (5%)</p>
-                <p className="text-sm font-semibold text-red-500">
-                  − {currencySymbol} {fmt(result.platformFee, locale)}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-4 rounded-xl border border-emerald-200 bg-white/70 p-4 text-center ring-1 ring-emerald-500/10">
-              <p className="text-xs font-semibold tracking-wider text-emerald-600 uppercase">
-                You Can Access Now
-              </p>
-              <p className="mt-1 font-serif text-3xl font-extrabold text-emerald-700">
-                {currencySymbol} {fmt(result.accessibleNow, locale)}
-              </p>
-            </div>
-            {!!result.cashShortfall && result.cashShortfall > 0 && (
-              <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-800">
-                Calculated deductions exceed this period&apos;s gross earnings
-                by {currencySymbol} {fmt(result.cashShortfall, locale)}. Net pay
-                is shown as zero; actual deduction handling requires payroll
-                review.
-              </p>
+              </details>
             )}
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white/70 p-4 text-xs leading-relaxed text-slate-600">
-              <p className="mb-2 font-semibold tracking-wide text-slate-500 uppercase">
-                Formula
-              </p>
-              <div className="space-y-1.5">
-                <p>
-                  Accrued earnings = gross income × days worked ÷ {cycleDays}
-                </p>
-                <p>Access cap = net earnings × {result.accessCapPercent}%</p>
-                <p>Available now = access cap − platform fee ({feePercent}%)</p>
+            {/* Days Slider */}
+            <div className="mt-5">
+              <label
+                htmlFor="days-worked-input"
+                className="text-sm font-medium text-slate-700"
+              >
+                Days worked this cycle
+              </label>
+              <input
+                id="days-worked-input"
+                type="range"
+                min={0}
+                max={maxDays}
+                value={daysWorked}
+                onChange={(e) => setDaysWorked(Number(e.target.value))}
+                className="mt-2 w-full accent-emerald-600"
+              />
+              <div className="mt-1 flex justify-between text-xs text-slate-500">
+                <span>
+                  {daysWorked} / {maxDays} days
+                </span>
+                <span>{percentOfCycle}% of cycle</span>
               </div>
             </div>
+          </section>
 
-            <div className="mt-3 text-center text-xs text-slate-500">
-              <span className="font-semibold text-slate-600">
-                Remittances →{" "}
-              </span>
-              {Object.entries(result.deductions)
-                .map(
-                  ([key, val]) =>
-                    `${key}: ${currencySymbol} ${fmt(val, locale)}`
-                )
-                .join(" | ")}
-            </div>
+          {/* Calculate */}
+          <button
+            onClick={callBackendCalc}
+            disabled={!salary}
+            className="group mt-5 w-full rounded-xl bg-linear-to-r from-emerald-600 to-green-600 px-4 py-3 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-emerald-500/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+          >
+            Calculate
+          </button>
+        </div>
 
-            {result.employerContributions &&
-              Object.values(result.employerContributions).some(
-                (amount) => amount > 0
-              ) && (
-                <div className="mt-2 text-center text-xs text-slate-500">
-                  <span className="font-semibold text-slate-600">
-                    Employer contributions (not deducted) →{" "}
-                  </span>
-                  {Object.entries(result.employerContributions)
-                    .map(
-                      ([key, val]) =>
-                        `${key}: ${currencySymbol} ${fmt(val, locale)}`
-                    )
-                    .join(" | ")}
-                </div>
+        {/* Results */}
+        <AnimatePresence mode="wait">
+          {result && result.success && (
+            <motion.div
+              key={`${country}-result`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.45 }}
+              aria-live="polite"
+              className="rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50 via-green-50/60 to-white p-5 shadow-sm ring-1 ring-emerald-500/10"
+            >
+              <h3 className="text-sm font-semibold text-slate-700">
+                Estimated employee take-home pay
+              </h3>
+              <p className="mt-1 font-serif text-4xl font-extrabold tracking-tight text-emerald-700">
+                {currencySymbol} {fmt(result.netMonthly, locale)}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                After the deductions shown below; this is an estimate.
+              </p>
+
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                {[
+                  { label: "Gross earnings", value: result.accruedGross },
+                  ...(country === "KE" && result.taxableIncome !== undefined
+                    ? [
+                        {
+                          label: "Taxable Employment Income",
+                          value: result.taxableIncome,
+                        },
+                      ]
+                    : []),
+                  { label: "Access cap", value: result.accessCap },
+                  { label: "Available after fee", value: result.accessibleNow },
+                ].map(({ label, value }) => (
+                  <div
+                    key={label}
+                    className="rounded-xl border border-emerald-100 bg-white/70 p-3"
+                  >
+                    <p className="text-xs text-slate-500">{label}</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-800">
+                      {currencySymbol} {fmt(value, locale)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {!!result.cashShortfall && result.cashShortfall > 0 && (
+                <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-800">
+                  Calculated deductions exceed this period&apos;s gross earnings
+                  by {currencySymbol} {fmt(result.cashShortfall, locale)}. Net
+                  pay is shown as zero; actual deduction handling requires
+                  payroll review.
+                </p>
               )}
-            {result.ruleVersion && (
-              <p className="mt-2 text-center text-[11px] text-slate-400">
-                Rules {result.ruleVersion}
-                {result.effectiveFrom
-                  ? ` · effective ${result.effectiveFrom}`
-                  : ""}
-                {result.engineVersion
-                  ? ` · engine ${result.engineVersion}`
-                  : ""}
-              </p>
-            )}
 
-            <WageGraph
-              result={result}
-              currencySymbol={currencySymbol}
-              locale={locale}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <details className="mt-5 rounded-xl border border-emerald-100 bg-white/70 p-4">
+                <summary className="cursor-pointer text-sm font-semibold text-slate-700">
+                  View calculation breakdown
+                </summary>
+                <div className="mt-4 space-y-4">
+                  <section aria-labelledby="employee-deductions-heading">
+                    <h4
+                      id="employee-deductions-heading"
+                      className="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase"
+                    >
+                      Employee deductions
+                    </h4>
+                    <dl className="space-y-2">
+                      {Object.entries(result.deductions).map(
+                        ([label, value]) => (
+                          <div
+                            key={label}
+                            className="flex justify-between gap-3 text-sm"
+                          >
+                            <dt className="text-slate-600">{label}</dt>
+                            <dd className="font-medium text-slate-800">
+                              {currencySymbol} {fmt(value, locale)}
+                            </dd>
+                          </div>
+                        )
+                      )}
+                    </dl>
+                  </section>
+
+                  {result.employerContributions &&
+                    Object.values(result.employerContributions).some(
+                      (amount) => amount > 0
+                    ) && (
+                      <section aria-labelledby="employer-costs-heading">
+                        <h4
+                          id="employer-costs-heading"
+                          className="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase"
+                        >
+                          Employer contributions (not deducted from take-home
+                          pay)
+                        </h4>
+                        <dl className="space-y-2">
+                          {Object.entries(result.employerContributions).map(
+                            ([label, value]) => (
+                              <div
+                                key={label}
+                                className="flex justify-between gap-3 text-sm"
+                              >
+                                <dt className="text-slate-600">{label}</dt>
+                                <dd className="font-medium text-slate-800">
+                                  {currencySymbol} {fmt(value, locale)}
+                                </dd>
+                              </div>
+                            )
+                          )}
+                        </dl>
+                      </section>
+                    )}
+
+                  <div className="border-t border-slate-100 pt-3 text-xs leading-relaxed text-slate-500">
+                    <p>
+                      Accrued earnings = gross income × days worked ÷{" "}
+                      {cycleDays}
+                    </p>
+                    <p className="mt-1">
+                      Access cap = net earnings × {result.accessCapPercent}%;
+                      available now is reduced by the {feePercent}% platform
+                      fee.
+                    </p>
+                    {result.ruleVersion && (
+                      <p className="mt-2">
+                        Rules {result.ruleVersion}
+                        {result.effectiveFrom
+                          ? ` · effective ${result.effectiveFrom}`
+                          : ""}
+                        {result.engineVersion
+                          ? ` · engine ${result.engineVersion}`
+                          : ""}
+                      </p>
+                    )}
+                  </div>
+
+                  <WageGraph
+                    result={result}
+                    currencySymbol={currencySymbol}
+                    locale={locale}
+                  />
+                </div>
+              </details>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </TiltCard>
   );
 }
