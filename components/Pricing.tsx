@@ -40,8 +40,8 @@ const pricing = [
   },
   {
     icon: Scale,
-    title: "Up to 5% Application Fees",
-    desc: "A nominal application fee of up to 5% may apply, depending on your eligibility and the amount you wish to access.",
+    title: "Up to 6% Application Fees",
+    desc: "A nominal application fee of up to 6% may apply, depending on your eligibility and the amount you wish to access.",
   },
 ];
 
