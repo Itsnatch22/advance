@@ -125,7 +125,9 @@ Visit [http://localhost:3000](http://localhost:3000).
 
 ## License and reuse
 
-No standalone license file is included in this repository.
+This codebase and its contents are intended solely for authorized team members and approved collaborators. Unauthorized access, copying, reproduction, distribution, modification, or use of any part of this codebase outside the authorized team is prohibited without prior written permission from the owner or authorized representative.
+
+All rights reserved.
 
 ## Contact
 
