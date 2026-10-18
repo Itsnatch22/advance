@@ -1,112 +1,133 @@
-# EaziWage - Earned Wage Access Platform
+# EaziWage
 
-A Next.js 16 application providing earned wage access for employees across Africa.
+EaziWage is a Next.js web application for earned wage access and financial
+wellbeing across Africa. It combines the public EaziWage website with API
+routes, an administrative area, employee support tools, and partner resources.
 
-## Tech Stack
+## Technology
 
-- **Framework:** Next.js 16 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS v4
-- **UI Components:** shadcn/ui + Radix UI
-- **Animations:** Framer Motion + GSAP
-- **Icons:** Lucide React + Tabler Icons
-- **Charts:** Recharts
-- **Authentication:** NextAuth v5
-- **Database:** Supabase
-- **Deployment:** Vercel
+- **Web framework:** Next.js 16 App Router, React 19, and TypeScript
+- **Styling and UI:** Tailwind CSS 4, Radix UI primitives, and project UI
+  components
+- **Animation and visualization:** Framer Motion, GSAP, and Recharts
+- **Authentication and data:** Supabase; PostgreSQL is described by the Prisma
+  schema
+- **Email and infrastructure integrations:** Resend, Upstash Redis, and
+  reCAPTCHA
+- **AI integrations:** Google Generative AI, Cohere, and OpenAI SDKs
+- **Monitoring:** Vercel Analytics
 
-## 📁 Project Structure
+## Application areas
 
-``` text
-├── app/                          # Next.js App Router pages
-│   ├── (dashboards)/            # Dashboard routes
-│   ├── employees/               # Employee pages
-│   ├── employers/               # Employer pages
-│   └── ...
-├── components/                   # React components
-│   ├── shared/                  # Reusable shared components
-│   ├── ui/                      # shadcn UI components
-│   └── ...
-├── constants/                    # Application constants
-│   ├── data.ts                  # Partner data
-│   ├── colors.ts                # Brand colors
-│   ├── icons.ts                 # Icon exports
-│   └── mockData.ts              # Mock data
-├── lib/                         # Utility functions
-│   └── hooks/                   # Custom React hooks
-├── types/                       # TypeScript type definitions
-└── public/                      # Static assets
+- **Public website:** Product information for employees and employers, company
+  information, careers, and policy pages
+- **Employee support:** Earned-wage calculator, help center, and Wiza AI
+  assistant
+- **Partner and lead workflows:** Partner onboarding, contact and sales forms,
+  meeting scheduling, newsletter signup, and email preferences
+- **Administration:** Supabase-authenticated admin pages for email campaigns,
+  audit logs, and career applications
+- **API routes:** Integrations for support chat, wage calculations, rates,
+  resources, subscriptions, forms, webhooks, and administration
+
+## Repository layout
+
+```text
+app/                  App Router pages, layouts, and API route handlers
+components/           Shared site, feature, and UI components
+constants/            Application configuration and shared constants
+data/                 Application data
+docs/                 Project and integration documentation
+emails/               Email templates and related code
+hooks/                React hooks
+lib/                  Shared clients, utilities, and domain logic
+prisma/               PostgreSQL schema and Prisma configuration
+public/               Static assets
+server/               Server-side modules
+supabase/             Supabase configuration and resources
+trigger/              Trigger.dev tasks
+types/                Shared TypeScript types
 ```
 
-## 🛠️ Getting Started
+## Getting started
 
-### Prerequisites
+### Requirements
 
-- Node.js 20+
-- npm or pnpm
+- Node.js 20.9 or later
+- npm
+- Valid service credentials for the required environment variables below
 
-### Installation
+### Install and run
 
 ```bash
-# Clone the repository
 git clone https://github.com/Itsnatch22/advance.git
-
-# Navigate to project directory
 cd advance
-
-# Install dependencies
 npm install
+```
 
-# Run development server
+Create `.env.local` in the repository root and configure the required
+environment variables before starting the app. The server validates these
+values at startup and exits if a required value is missing or invalid.
+
+| Variable                         | Purpose                               |
+| -------------------------------- | ------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`       | Supabase project URL                  |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`  | Public Supabase anon key              |
+| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | reCAPTCHA site key                    |
+| `SUPABASE_SERVICE_ROLE_KEY`      | Server-only Supabase service-role key |
+| `RECAPTCHA_SECRET_KEY`           | Server-only reCAPTCHA secret          |
+| `UPSTASH_REDIS_REST_URL`         | Upstash Redis REST URL                |
+| `UPSTASH_REDIS_REST_TOKEN`       | Server-only Upstash Redis REST token  |
+| `RESEND_API_KEY`                 | Server-only Resend API key            |
+
+`NEXT_PUBLIC_APP_URL` is optional and defaults to the production site URL.
+Some features use additional integration settings, such as AI provider keys,
+SMS credentials, webhook signing secrets, or sender addresses. Set the
+credentials for the integrations you enable; keep secret values server-side
+and never commit them.
+
+`DATABASE_URL` and `DIRECT_URL` are used by Prisma for database operations.
+Configure them when using Prisma commands or features that require the Prisma
+database connection.
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+Visit [http://localhost:3000](http://localhost:3000).
 
-## 📝 Available Scripts
+## Common commands
 
-```bash
-npm run dev          # Start development server with Turbopack
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run lint:fix     # Fix ESLint errors
-npm run format       # Format code with Prettier
-npm run type-check   # Run TypeScript type checking
-```
+| Command                 | Purpose                                                       |
+| ----------------------- | ------------------------------------------------------------- |
+| `npm run dev`           | Start the Next.js development server with Turbopack           |
+| `npm run build`         | Create a production build with Turbopack                      |
+| `npm run build:webpack` | Create a production build with Webpack                        |
+| `npm run start`         | Serve the production build                                    |
+| `npm run lint`          | Run ESLint                                                    |
+| `npm run type-check`    | Run the TypeScript compiler without emitting files            |
+| `npm test`              | Run the Jest test suite                                       |
+| `npm run format`        | Format supported source and documentation files with Prettier |
+| `npm run format:check`  | Check formatting with Prettier                                |
 
-## 🎨 Code Quality
+## Development notes
 
-- **TypeScript:** Strict type checking enabled
-- **ESLint:** Custom configuration with Next.js rules
-- **Prettier:** Consistent code formatting
-- **Husky:** Pre-commit hooks for quality checks
+- The project uses the Next.js App Router; routes live under `app/`.
+- Supabase clients differ by runtime and security boundary. See
+  [docs/SUPABASE_CLIENTS.md](./docs/SUPABASE_CLIENTS.md) before adding or
+  changing Supabase access.
+- Keep service-role keys and other credentials in server-only environment
+  variables. Do not expose secrets through `NEXT_PUBLIC_*` variables.
+- The repository includes focused Jest tests for finance calculations,
+  consent handling, and campaign utilities.
 
-## 🔧 Configuration Files
+## License and reuse
 
-- `next.config.ts` - Next.js configuration
-- `tailwind.config.ts` - Tailwind CSS v4 configuration
-- `tsconfig.json` - TypeScript configuration
-- `eslintrc.json` - ESLint rules
-- `components.json` - shadcn configuration
+No standalone license file is included in this repository.
 
-## 📦 Key Features
+## Contact
 
-- 🌍 Pan-African coverage (Kenya, Tanzania, Uganda, Rwanda)
-- 💰 Instant wage access for employees
-- 📊 Real-time analytics dashboards
-- 📱 Fully responsive design
-- ♿ Accessibility focused
-
-## 📄 License
-
-All code used in this website is strictly prohibited to copy, use, merge, pull and outside usage to all users that aren't part of the EaziWage Team. 
-
-## 📞 Contact
-
-- Email: `support@eaziwage.com`
+- Support: [support@eaziwage.com](mailto:support@eaziwage.com)
 - Location: Westlands, Nairobi
-
----
-
-Built with ❤️ by the EaziWage Team
