@@ -18,13 +18,22 @@ const payloadSchema = z
     allowances: z
       .record(z.string(), z.number().finite().nonnegative())
       .optional(),
-    pensionableEarnings: z.number().finite().nonnegative().optional(),
-    residentForTax: z.boolean().optional(),
+    employerPensionCover: z.number().finite().nonnegative().optional(),
+    employerMedicalCover: z.number().finite().nonnegative().optional(),
     allowableDeductions: z
       .object({
-        pensionContributions: z.number().finite().nonnegative().optional(),
         mortgageInterest: z.number().finite().nonnegative().optional(),
         postRetirementMedicalFund: z.number().finite().nonnegative().optional(),
+        providentFundContributions: z
+          .number()
+          .finite()
+          .nonnegative()
+          .optional(),
+        lifeAndHealthInsuranceContributions: z
+          .number()
+          .finite()
+          .nonnegative()
+          .optional(),
       })
       .optional(),
   })
@@ -35,17 +44,6 @@ const payloadSchema = z
         (sum, amount) => sum + amount,
         0
       );
-    if (
-      payload.pensionableEarnings !== undefined &&
-      payload.pensionableEarnings > monthlyGross
-    ) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Pensionable earnings cannot exceed gross earnings",
-        path: ["pensionableEarnings"],
-      });
-    }
-
     const employeeDeductions = Object.values(
       payload.allowableDeductions ?? {}
     ).reduce((sum, amount) => sum + (amount ?? 0), 0);

@@ -10,12 +10,13 @@ export interface Payload {
   country: string;
 
   allowances?: Record<string, number>;
-  pensionableEarnings?: number;
-  residentForTax?: boolean;
+  employerPensionCover?: number;
+  employerMedicalCover?: number;
   allowableDeductions?: {
-    pensionContributions?: number;
     mortgageInterest?: number;
     postRetirementMedicalFund?: number;
+    providentFundContributions?: number;
+    lifeAndHealthInsuranceContributions?: number;
   };
 }
 
@@ -30,13 +31,19 @@ export interface JsonConfig {
     employeeRate?: number;
     employerRate?: number;
   };
-  shif?: { flat?: number; rate?: number };
+  shif?: { flat?: number; rate?: number; minimum?: number };
   housing?: { rate?: number; employerRate?: number };
   paye?: { brackets?: { upTo: number; rate: number }[] };
   allowableDeductions?: {
-    pensionMonthlyLimit?: number;
+    employerPensionMonthlyLimit?: number;
+    mealAllowanceMonthlyLimit?: number;
+    nightOutAllowanceDailyLimit?: number;
     mortgageInterestMonthlyLimit?: number;
     postRetirementMedicalMonthlyLimit?: number;
+    providentFundMonthlyLimit?: number;
+    providentFundSalaryPercent?: number;
+    insuranceReliefRate?: number;
+    insuranceReliefMonthlyLimit?: number;
   };
   meta?: {
     description?: string;
@@ -56,6 +63,7 @@ export interface JsonConfig {
   accessCapPercent?: number;
   platformFeePercent?: number;
   earnedWageCapPercent?: number;
+  earnedWageDays?: number;
 }
 
 export interface CalcResult {
@@ -65,6 +73,8 @@ export interface CalcResult {
   accruedGross: number;
   totalAllowances: number;
   pensionableEarnings?: number;
+  employerPensionCover?: number;
+  employerMedicalCover?: number;
   taxableIncome: number;
   nssfEmployee: number;
   nssfEmployer: number;
@@ -87,10 +97,12 @@ export interface CalcResult {
   wcf: number;
   payeBeforeRelief: number;
   personalRelief: number;
+  insuranceRelief?: number;
   payeAfterRelief: number;
   lst: number;
   netPay: number;
   earnedWage: number;
+  earnedWageDays?: number;
   accessCap: number;
   platformFee: number;
   youCanAccessNow: number;
@@ -183,7 +195,7 @@ export function calc(payload: Payload, cfg: JsonConfig): CalcResult {
 
   const earnedWage = (netPay / cycleDays) * daysWorked;
   const accessCap = earnedWage * (cfg.accessCapPercent ?? 0.6);
-  const platformFee = accessCap * (cfg.platformFeePercent ?? 0.05);
+  const platformFee = accessCap * (cfg.platformFeePercent ?? 0.06);
   const youCanAccessNow = accessCap;
 
   return {
@@ -279,6 +291,7 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
   const shifConfig = cfg.shif;
   const limits = cfg.allowableDeductions;
   const brackets = cfg.paye?.brackets;
+  const earnedWageDays = cfg.earnedWageDays;
 
   if (
     !nssfConfig?.tier1Ceiling ||
@@ -286,13 +299,21 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
     nssfConfig.tier2Rate === undefined ||
     !nssfConfig.tier2Cap ||
     shifConfig?.rate === undefined ||
+    shifConfig.minimum === undefined ||
     housingConfig?.rate === undefined ||
     housingConfig.employerRate === undefined ||
     cfg.personalRelief === undefined ||
     !brackets?.length ||
-    limits?.pensionMonthlyLimit === undefined ||
+    limits?.employerPensionMonthlyLimit === undefined ||
+    limits.mealAllowanceMonthlyLimit === undefined ||
+    limits.nightOutAllowanceDailyLimit === undefined ||
     limits.mortgageInterestMonthlyLimit === undefined ||
-    limits.postRetirementMedicalMonthlyLimit === undefined
+    limits.postRetirementMedicalMonthlyLimit === undefined ||
+    limits.providentFundMonthlyLimit === undefined ||
+    limits.providentFundSalaryPercent === undefined ||
+    limits.insuranceReliefRate === undefined ||
+    limits.insuranceReliefMonthlyLimit === undefined ||
+    earnedWageDays === undefined
   ) {
     throw new Error("Kenya statutory payroll configuration is incomplete");
   }
@@ -303,13 +324,22 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
       nssfConfig.tier2Rate,
       nssfConfig.tier2Cap,
       shifConfig.rate,
+      shifConfig.minimum,
       housingConfig.rate,
       housingConfig.employerRate,
       cfg.personalRelief,
-      limits.pensionMonthlyLimit,
+      limits.employerPensionMonthlyLimit,
+      limits.mealAllowanceMonthlyLimit,
+      limits.nightOutAllowanceDailyLimit,
       limits.mortgageInterestMonthlyLimit,
       limits.postRetirementMedicalMonthlyLimit,
+      limits.providentFundMonthlyLimit,
+      limits.providentFundSalaryPercent,
+      limits.insuranceReliefRate,
+      limits.insuranceReliefMonthlyLimit,
     ].some((value) => !Number.isFinite(value) || value < 0) ||
+    !Number.isFinite(earnedWageDays) ||
+    earnedWageDays <= 0 ||
     brackets.some(
       (bracket) =>
         !Number.isFinite(bracket.upTo) ||
@@ -323,7 +353,14 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
     );
   }
 
-  const { salary, daysWorked, cycleDays, allowances = {} } = payload;
+  const {
+    salary,
+    daysWorked,
+    cycleDays,
+    allowances = {},
+    employerPensionCover = 0,
+    employerMedicalCover = 0,
+  } = payload;
   if (
     !Number.isFinite(salary) ||
     salary < 0 ||
@@ -334,6 +371,15 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
     daysWorked > cycleDays
   ) {
     throw new Error("Invalid Kenya payroll inputs");
+  }
+
+  if (
+    !Number.isFinite(employerPensionCover) ||
+    employerPensionCover < 0 ||
+    !Number.isFinite(employerMedicalCover) ||
+    employerMedicalCover < 0
+  ) {
+    throw new Error("Employer cover must be finite, non-negative amounts");
   }
 
   const allowanceValues = Object.values(allowances);
@@ -347,41 +393,40 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
     (sum, amount) => sum + amount,
     0
   );
-  const monthlyGross = salary + totalAllowances;
-  const cycleFactor = daysWorked / cycleDays;
-  const grossCents = toCents(monthlyGross * cycleFactor);
-  const gross = fromCents(grossCents);
-  const pensionableMonthly = payload.pensionableEarnings ?? monthlyGross;
+  const cashGrossCents = toCents(salary + totalAllowances);
+  const totalIncomeCents = toCents(
+    salary + totalAllowances + employerPensionCover + employerMedicalCover
+  );
+  const gross = fromCents(totalIncomeCents);
   const tier1CeilingCents = toCents(nssfConfig.tier1Ceiling);
   const tier2CapCents = toCents(nssfConfig.tier2Cap);
-
-  if (
-    !Number.isFinite(pensionableMonthly) ||
-    pensionableMonthly < 0 ||
-    pensionableMonthly > monthlyGross ||
-    tier2CapCents < tier1CeilingCents
-  ) {
-    throw new Error("Invalid pensionable earnings or NSSF tier limits");
+  if (tier2CapCents < tier1CeilingCents) {
+    throw new Error("Invalid NSSF tier limits");
   }
 
-  const pensionableEarnings = fromCents(
-    toCents(pensionableMonthly * cycleFactor)
-  );
-  const pensionableCents = toCents(pensionableEarnings);
   const nssfTier1Cents = calculatePercentCents(
-    Math.min(pensionableCents, tier1CeilingCents),
+    Math.min(totalIncomeCents, tier1CeilingCents),
     nssfConfig.tier1Rate
   );
   const nssfTier2Cents = calculatePercentCents(
-    Math.max(0, Math.min(pensionableCents, tier2CapCents) - tier1CeilingCents),
+    Math.max(0, Math.min(totalIncomeCents, tier2CapCents) - tier1CeilingCents),
     nssfConfig.tier2Rate
   );
   const nssfEmployeeCents = nssfTier1Cents + nssfTier2Cents;
   const nssfEmployerCents = nssfEmployeeCents;
-  const shifCents = calculatePercentCents(grossCents, shifConfig.rate);
-  const housingCents = calculatePercentCents(grossCents, housingConfig.rate);
+  const shifCents =
+    totalIncomeCents === 0
+      ? 0
+      : Math.max(
+          toCents(shifConfig.minimum),
+          calculatePercentCents(totalIncomeCents, shifConfig.rate)
+        );
+  const housingCents = calculatePercentCents(
+    totalIncomeCents,
+    housingConfig.rate
+  );
   const housingEmployerCents = calculatePercentCents(
-    grossCents,
+    totalIncomeCents,
     housingConfig.employerRate
   );
 
@@ -395,57 +440,90 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
       "Allowable deductions must be finite, non-negative amounts"
     );
   }
-  const proratedDeductions = {
-    pensionContributions: prorateAmount(
-      requestedDeductions.pensionContributions ?? 0,
-      cycleFactor
-    ),
-    mortgageInterest: prorateAmount(
-      requestedDeductions.mortgageInterest ?? 0,
-      cycleFactor
-    ),
-    postRetirementMedicalFund: prorateAmount(
-      requestedDeductions.postRetirementMedicalFund ?? 0,
-      cycleFactor
-    ),
-  };
+  const mortgageInterestCents = toCents(
+    requestedDeductions.mortgageInterest ?? 0
+  );
+  const medicalFundCents = toCents(
+    requestedDeductions.postRetirementMedicalFund ?? 0
+  );
+  const providentFundCents = toCents(
+    requestedDeductions.providentFundContributions ?? 0
+  );
+  const insuranceContributionsCents = toCents(
+    requestedDeductions.lifeAndHealthInsuranceContributions ?? 0
+  );
+  const mealAllowanceCents = toCents(allowances.mealAllowance ?? 0);
+  const nightOutAllowanceCents = toCents(allowances.nightAllowance ?? 0);
+  const employerPensionCoverCents = toCents(employerPensionCover);
+  const employerMedicalCoverCents = toCents(employerMedicalCover);
 
-  const pensionLimitCents = toCents(limits.pensionMonthlyLimit * cycleFactor);
+  const mealAllowanceDeductionCents = Math.min(
+    mealAllowanceCents,
+    toCents(limits.mealAllowanceMonthlyLimit)
+  );
+  const nightOutAllowanceDeductionCents = Math.min(
+    nightOutAllowanceCents,
+    toCents(limits.nightOutAllowanceDailyLimit * earnedWageDays)
+  );
+  const employerPensionDeductionCents = Math.min(
+    employerPensionCoverCents,
+    toCents(limits.employerPensionMonthlyLimit)
+  );
   const allowableMortgageCents = Math.min(
-    toCents(proratedDeductions.mortgageInterest),
-    toCents(limits.mortgageInterestMonthlyLimit * cycleFactor)
+    mortgageInterestCents,
+    toCents(limits.mortgageInterestMonthlyLimit)
   );
   const allowableMedicalFundCents = Math.min(
-    toCents(proratedDeductions.postRetirementMedicalFund),
-    toCents(limits.postRetirementMedicalMonthlyLimit * cycleFactor)
+    medicalFundCents,
+    toCents(limits.postRetirementMedicalMonthlyLimit)
   );
-  const allowablePensionCents = Math.min(
-    pensionLimitCents,
-    nssfEmployeeCents + toCents(proratedDeductions.pensionContributions)
+  const allowableProvidentFundCents = Math.min(
+    providentFundCents,
+    toCents(limits.providentFundMonthlyLimit),
+    calculatePercentCents(toCents(salary), limits.providentFundSalaryPercent)
+  );
+  const insuranceReliefCents = Math.min(
+    calculatePercentCents(
+      insuranceContributionsCents,
+      limits.insuranceReliefRate
+    ),
+    toCents(limits.insuranceReliefMonthlyLimit)
   );
   const allowableDeductionCents =
-    allowablePensionCents +
+    mealAllowanceDeductionCents +
+    nightOutAllowanceDeductionCents +
+    employerPensionDeductionCents +
+    employerMedicalCoverCents +
+    allowableMortgageCents +
+    allowableMedicalFundCents +
+    allowableProvidentFundCents +
     shifCents +
     housingCents +
-    allowableMortgageCents +
-    allowableMedicalFundCents;
-  const taxableIncomeCents = Math.max(0, grossCents - allowableDeductionCents);
+    nssfEmployeeCents;
+  const taxableIncomeCents = Math.max(
+    0,
+    totalIncomeCents - allowableDeductionCents
+  );
   const taxableIncome = fromCents(taxableIncomeCents);
   const payeBeforeRelief = fromCents(
     calcPAYECents(taxableIncomeCents, brackets)
   );
-  const personalRelief = payload.residentForTax ? cfg.personalRelief : 0;
+  const personalRelief = cfg.personalRelief;
   const payeAfterRelief = fromCents(
-    Math.max(0, toCents(payeBeforeRelief) - toCents(personalRelief))
+    Math.max(
+      0,
+      toCents(payeBeforeRelief) - toCents(personalRelief) - insuranceReliefCents
+    )
   );
 
   const employeeDeductions = {
     nssf: fromCents(nssfEmployeeCents),
     shif: fromCents(shifCents),
     housingLevy: fromCents(housingCents),
-    pensionContributions: proratedDeductions.pensionContributions,
-    mortgageInterest: proratedDeductions.mortgageInterest,
-    postRetirementMedicalFund: proratedDeductions.postRetirementMedicalFund,
+    mortgageInterest: fromCents(mortgageInterestCents),
+    postRetirementMedicalFund: fromCents(medicalFundCents),
+    providentFundContributions: fromCents(providentFundCents),
+    lifeAndHealthInsuranceContributions: fromCents(insuranceContributionsCents),
     paye: payeAfterRelief,
   };
   const totalEmployeeDeductionsCents = Object.values(employeeDeductions).reduce(
@@ -454,27 +532,39 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
   );
   const cashShortfallCents = Math.max(
     0,
-    totalEmployeeDeductionsCents - grossCents
+    totalEmployeeDeductionsCents - cashGrossCents
   );
-  const netPay = fromCents(
-    Math.max(0, grossCents - totalEmployeeDeductionsCents)
+  const unroundedNetPayCents = Math.max(
+    0,
+    cashGrossCents - totalEmployeeDeductionsCents
   );
-  const earnedWage = fromCents(toCents((netPay / cycleDays) * daysWorked));
-  const accessCap = fromCents(
-    calculatePercentCents(toCents(earnedWage), cfg.accessCapPercent ?? 0.6)
+  const netPay = fromCents(Math.round(unroundedNetPayCents / 100) * 100);
+  const accruedGross = fromCents(
+    Math.round((cashGrossCents * daysWorked) / earnedWageDays)
   );
+  const earnedWage = fromCents(toCents((netPay * daysWorked) / earnedWageDays));
+  const accessCap = Math.round(
+    calculatePercentCents(toCents(netPay), cfg.accessCapPercent ?? 0.6) / 100
+  );
+  const availableBeforeFee = Math.min(earnedWage, accessCap);
   const platformFee = fromCents(
-    calculatePercentCents(toCents(accessCap), cfg.platformFeePercent ?? 0.05)
+    calculatePercentCents(
+      toCents(availableBeforeFee),
+      cfg.platformFeePercent ?? 0.06
+    )
   );
+  const youCanAccessNow = Math.max(0, availableBeforeFee - platformFee);
 
   return {
     success: true,
     country: payload.country,
     engineVersion: CALC_ENGINE_VERSION,
     gross,
-    accruedGross: gross,
-    totalAllowances: fromCents(toCents(totalAllowances * cycleFactor)),
-    pensionableEarnings,
+    accruedGross,
+    totalAllowances: fromCents(toCents(totalAllowances)),
+    pensionableEarnings: gross,
+    employerPensionCover: fromCents(employerPensionCoverCents),
+    employerMedicalCover: fromCents(employerMedicalCoverCents),
     taxableIncome,
     cashShortfall: fromCents(cashShortfallCents),
     nssfEmployee: fromCents(nssfEmployeeCents),
@@ -503,11 +593,13 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
       nssf: fromCents(nssfEmployeeCents),
       shif: fromCents(shifCents),
       housingLevy: fromCents(housingCents),
-      pensionContributions: fromCents(
-        Math.max(0, allowablePensionCents - nssfEmployeeCents)
-      ),
+      mealAllowance: fromCents(mealAllowanceDeductionCents),
+      nightOutAllowance: fromCents(nightOutAllowanceDeductionCents),
+      employerPensionCover: fromCents(employerPensionDeductionCents),
+      employerMedicalCover: fromCents(employerMedicalCoverCents),
       mortgageInterest: fromCents(allowableMortgageCents),
       postRetirementMedicalFund: fromCents(allowableMedicalFundCents),
+      providentFundContributions: fromCents(allowableProvidentFundCents),
     },
     ruleVersion: cfg.meta?.rulesVersion,
     effectiveFrom: cfg.meta?.effectiveFrom,
@@ -515,22 +607,24 @@ function calcKenyaPayroll(payload: Payload, cfg: JsonConfig): CalcResult {
     wcf: 0,
     payeBeforeRelief,
     personalRelief: fromCents(toCents(personalRelief)),
+    insuranceRelief: fromCents(insuranceReliefCents),
     payeAfterRelief,
     lst: 0,
     netPay,
     earnedWage,
+    earnedWageDays,
     accessCap,
     platformFee,
-    youCanAccessNow: accessCap,
+    youCanAccessNow,
     remittances: {
       NSSF: fromCents(nssfEmployeeCents),
       SHIF: fromCents(shifCents),
       Housing: fromCents(housingCents),
       PAYE: payeAfterRelief,
-      "Pension contributions": proratedDeductions.pensionContributions,
-      "Mortgage interest": proratedDeductions.mortgageInterest,
-      "Post-retirement medical fund":
-        proratedDeductions.postRetirementMedicalFund,
+      "Mortgage interest": fromCents(mortgageInterestCents),
+      "Post-retirement medical fund": fromCents(medicalFundCents),
+      "Provident fund": fromCents(providentFundCents),
+      "Life and health insurance": fromCents(insuranceContributionsCents),
     },
   };
 }
@@ -545,10 +639,6 @@ function fromCents(amount: number) {
 
 function calculatePercentCents(amountCents: number, rate: number) {
   return Math.round((amountCents * Math.round(rate * 10000)) / 10000);
-}
-
-function prorateAmount(amount: number, factor: number) {
-  return fromCents(toCents(amount * factor));
 }
 
 function calcLST(gross: number, bands: { upTo: number; tax: number }[]) {

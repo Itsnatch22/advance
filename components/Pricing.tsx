@@ -36,7 +36,7 @@ const pricing = [
   {
     icon: ShieldCheck,
     title: "No Hidden Fees",
-    desc: "Earned Wage Access with transparent, no hidden fees; includes up to 5% application fees and no interest, with options for advance salary access.",
+    desc: "Earned Wage Access with transparent, no hidden fees; includes up to 6% application fees and no interest, with options for advance salary access.",
   },
   {
     icon: Scale,

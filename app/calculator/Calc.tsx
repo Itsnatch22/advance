@@ -15,8 +15,8 @@ type Country = "KE" | "UG" | "TZ" | "RW";
 const countryAllowances: Record<Country, { key: string; label: string }[]> = {
   KE: [
     { key: "otherRemuneration", label: "Other Taxable Cash Earnings" },
-    { key: "mealAllowance", label: "Taxable Meal Allowance" },
-    { key: "nightAllowance", label: "Taxable Night-out Allowance" },
+    { key: "mealAllowance", label: "Meal Allowance" },
+    { key: "nightAllowance", label: "Night-out Allowance" },
   ],
   UG: [
     { key: "otherRemuneration", label: "Other Remuneration (Employer)" },
@@ -45,6 +45,8 @@ type CalcResult = {
   netMonthly: number;
   taxableIncome?: number;
   cashShortfall?: number;
+  earnedWage?: number;
+  earnedWageDays?: number;
   accessCapPercent: number;
   accessCap: number;
   platformFee: number;
@@ -91,10 +93,9 @@ export default function Calculator() {
   const [allowancesAmount, setAllowancesAmount] = useState<
     Record<string, number | "">
   >({});
-  const [pensionableEarnings, setPensionableEarnings] = useState<number | "">(
-    ""
-  );
-  const [residentForTax, setResidentForTax] = useState(false);
+  const [employerCover, setEmployerCover] = useState<
+    Record<string, number | "">
+  >({});
   const [allowableDeductions, setAllowableDeductions] = useState<
     Record<string, number | "">
   >({});
@@ -133,8 +134,7 @@ export default function Calculator() {
     daysWorked,
     allowancesChecked,
     allowancesAmount,
-    pensionableEarnings,
-    residentForTax,
+    employerCover,
     allowableDeductions,
   ]);
 
@@ -166,18 +166,20 @@ export default function Calculator() {
       allowances,
       ...(country === "KE"
         ? {
-            pensionableEarnings:
-              pensionableEarnings === "" ? undefined : pensionableEarnings,
-            residentForTax,
+            employerPensionCover: Number(employerCover.pensionCover || 0),
+            employerMedicalCover: Number(employerCover.medicalCover || 0),
             allowableDeductions: {
-              pensionContributions: Number(
-                allowableDeductions.pensionContributions || 0
-              ),
               mortgageInterest: Number(
                 allowableDeductions.mortgageInterest || 0
               ),
               postRetirementMedicalFund: Number(
                 allowableDeductions.postRetirementMedicalFund || 0
+              ),
+              providentFundContributions: Number(
+                allowableDeductions.providentFundContributions || 0
+              ),
+              lifeAndHealthInsuranceContributions: Number(
+                allowableDeductions.lifeAndHealthInsuranceContributions || 0
               ),
             },
           }
@@ -274,17 +276,21 @@ export default function Calculator() {
             "NSSF (Tier1+Tier2)": (data.nssf1 ?? 0) + (data.nssf2 ?? 0),
             SHIF: data.shif ?? data.nhif ?? 0,
             "Housing Levy": data.housingLevy ?? data.ahl ?? 0,
-            "Pension contributions":
-              data.employeeDeductions?.pensionContributions ?? 0,
             "Mortgage interest": data.employeeDeductions?.mortgageInterest ?? 0,
             "Post-retirement medical fund":
               data.employeeDeductions?.postRetirementMedicalFund ?? 0,
+            "Provident fund":
+              data.employeeDeductions?.providentFundContributions ?? 0,
+            "Life and health insurance":
+              data.employeeDeductions?.lifeAndHealthInsuranceContributions ?? 0,
             PAYE: payeAmount,
           };
           employerContributions = {
             "NSSF (Employer)": data.employerContributions?.nssf ?? 0,
             "Housing Levy (Employer)":
               data.employerContributions?.housingLevy ?? 0,
+            "Pension cover (Employer)": data.employerPensionCover ?? 0,
+            "Medical cover (Employer)": data.employerMedicalCover ?? 0,
           };
       }
 
@@ -292,16 +298,27 @@ export default function Calculator() {
       const gross = Number(data.gross ?? data.totalIncome ?? 0);
       const net = Number(data.netPay ?? data.net ?? 0);
 
-      const accessCap = (net * accessCapPercent) / 100;
-      const platformFee = (accessCap * feePercent) / 100;
-      const accessibleNow = accessCap - platformFee;
+      const accessCap =
+        country === "KE" && data.accessCap !== undefined
+          ? Number(data.accessCap)
+          : (net * accessCapPercent) / 100;
+      const platformFee =
+        country === "KE" && data.platformFee !== undefined
+          ? Number(data.platformFee)
+          : (accessCap * feePercent) / 100;
+      const accessibleNow =
+        country === "KE" && data.youCanAccessNow !== undefined
+          ? Number(data.youCanAccessNow)
+          : accessCap - platformFee;
 
       const mapped: CalcResult = {
         success: true,
-        accruedGross: gross,
+        accruedGross: Number(data.accruedGross ?? gross),
         netMonthly: net,
         taxableIncome: data.taxableIncome,
         cashShortfall: data.cashShortfall,
+        earnedWage: data.earnedWage,
+        earnedWageDays: data.earnedWageDays,
         accessCapPercent,
         accessCap,
         platformFee,
@@ -332,8 +349,7 @@ export default function Calculator() {
     setCountry(code);
     setAllowancesChecked({});
     setAllowancesAmount({});
-    setPensionableEarnings("");
-    setResidentForTax(false);
+    setEmployerCover({});
     setAllowableDeductions({});
     setResult(null);
     setSalary("");
@@ -538,62 +554,62 @@ export default function Calculator() {
                 </span>
               </summary>
               <div className="space-y-5 border-t border-slate-200 px-4 py-5">
-                <label
-                  htmlFor="pensionable-earnings"
-                  className="block text-sm font-medium text-slate-700"
-                >
-                  Pensionable monthly earnings
-                  <span className="mt-1 block text-xs font-normal text-slate-500">
-                    Optional. Defaults to gross earnings.
-                  </span>
-                  <input
-                    id="pensionable-earnings"
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="Defaults to salary plus allowances"
-                    className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/20"
-                    value={
-                      pensionableEarnings === ""
-                        ? ""
-                        : formatNumberInput(pensionableEarnings.toString())
-                    }
-                    onChange={(event) => {
-                      const raw = event.target.value.replace(/,/g, "");
-                      setPensionableEarnings(raw === "" ? "" : Number(raw));
-                    }}
-                  />
-                </label>
-
-                <label className="flex items-start gap-3 text-sm leading-relaxed text-slate-700">
-                  <input
-                    type="checkbox"
-                    className="mt-1 h-4 w-4 shrink-0 accent-emerald-700"
-                    checked={residentForTax}
-                    onChange={(event) =>
-                      setResidentForTax(event.target.checked)
-                    }
-                  />
-                  <span>
-                    I am eligible for Kenyan resident personal relief (KES 2,400
-                    per month).
-                  </span>
-                </label>
+                {[
+                  { key: "pensionCover", label: "Employer pension cover" },
+                  { key: "medicalCover", label: "Employer medical cover" },
+                ].map((item) => (
+                  <label
+                    key={item.key}
+                    htmlFor={`employer-cover-${item.key}`}
+                    className="block text-sm leading-relaxed font-medium text-slate-700"
+                  >
+                    {item.label}
+                    <span className="mt-1 block text-xs font-normal text-slate-500">
+                      Monthly amount in KES
+                    </span>
+                    <input
+                      id={`employer-cover-${item.key}`}
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="0"
+                      className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/20"
+                      value={
+                        employerCover[item.key]
+                          ? formatNumberInput(
+                              employerCover[item.key]!.toString()
+                            )
+                          : ""
+                      }
+                      onChange={(event) => {
+                        const raw = event.target.value.replace(/,/g, "");
+                        setEmployerCover((current) => ({
+                          ...current,
+                          [item.key]: raw === "" ? "" : Number(raw),
+                        }));
+                      }}
+                    />
+                  </label>
+                ))}
 
                 {[
                   {
-                    key: "pensionContributions",
-                    label:
-                      "Additional qualifying pension contribution (KES 30,000 combined limit)",
-                  },
-                  {
                     key: "mortgageInterest",
                     label:
-                      "Eligible mortgage interest (KES 30,000 monthly limit)",
+                      "Eligible mortgage interest (KES 25,000 monthly limit)",
                   },
                   {
                     key: "postRetirementMedicalFund",
                     label:
-                      "Post-retirement medical fund contribution (KES 15,000 monthly limit)",
+                      "Post-retirement medical fund (KES 5,000 monthly limit)",
+                  },
+                  {
+                    key: "providentFundContributions",
+                    label:
+                      "Employee provident fund contribution (KES 30,000 monthly limit and 30% of salary)",
+                  },
+                  {
+                    key: "lifeAndHealthInsuranceContributions",
+                    label: "Employee life and health insurance premiums",
                   },
                 ].map((item) => (
                   <label
@@ -630,12 +646,11 @@ export default function Calculator() {
                 ))}
 
                 <p className="text-xs leading-relaxed text-slate-600">
-                  Allowances entered here are treated as taxable cash earnings;
-                  enter only any taxable portion. Non-cash benefits, employer
-                  pension or medical cover, insurance relief, bonuses and
-                  irregular payroll need separate review. Part-period results
-                  are prorated estimates, and wage access is not a verified
-                  withdrawable balance.
+                  Enter the full meal and night-out allowances above, not only
+                  their taxable portions. Employer cover is treated as non-cash
+                  income, while employee contributions reduce take-home pay.
+                  Part-period earned wage uses a 30-day month. Wage access is an
+                  estimate, not a verified withdrawable balance.
                 </p>
               </div>
             </details>
@@ -708,6 +723,9 @@ export default function Calculator() {
                   {[
                     { label: "Net earnings", value: result.netMonthly },
                     { label: "Accrued earnings", value: result.accruedGross },
+                    ...(country === "KE" && result.earnedWage !== undefined
+                      ? [{ label: "Earned wage", value: result.earnedWage }]
+                      : []),
                     ...(country === "KE" && result.taxableIncome !== undefined
                       ? [
                           {
@@ -808,13 +826,40 @@ export default function Calculator() {
                   How this estimate is calculated
                 </summary>
                 <div className="mt-4 space-y-2 text-sm leading-relaxed text-slate-600">
-                  <p>
-                    Accrued earnings = gross income × days worked ÷ {cycleDays}
-                  </p>
-                  <p>Access cap = net earnings × {result.accessCapPercent}%</p>
-                  <p>
-                    Available now = access cap - platform fee ({feePercent}%)
-                  </p>
+                  {country === "KE" ? (
+                    <>
+                      <p>
+                        Accrued earnings = cash monthly earnings × days worked ÷{" "}
+                        {result.earnedWageDays ?? 30}
+                      </p>
+                      <p>
+                        Earned wage = net monthly pay × days worked ÷{" "}
+                        {result.earnedWageDays ?? 30}
+                      </p>
+                      <p>
+                        Access cap = rounded net pay × {result.accessCapPercent}
+                        %
+                      </p>
+                      <p>
+                        Available now = lower of earned wage and access cap,
+                        minus platform fee ({feePercent}%)
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p>
+                        Accrued earnings = gross income × days worked ÷{" "}
+                        {cycleDays}
+                      </p>
+                      <p>
+                        Access cap = net earnings × {result.accessCapPercent}%
+                      </p>
+                      <p>
+                        Available now = access cap - platform fee ({feePercent}
+                        %)
+                      </p>
+                    </>
+                  )}
                   {result.ruleVersion && (
                     <p className="border-t border-slate-200 pt-3 text-xs">
                       Payroll rules {result.ruleVersion}

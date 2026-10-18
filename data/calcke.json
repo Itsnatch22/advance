@@ -8,16 +8,23 @@
     "tier2Cap": 108000
   },
   "shif": {
-    "rate": 0.0275
+    "rate": 0.0275,
+    "minimum": 300
   },
   "housing": {
     "rate": 0.015,
     "employerRate": 0.015
   },
   "allowableDeductions": {
-    "pensionMonthlyLimit": 30000,
-    "mortgageInterestMonthlyLimit": 30000,
-    "postRetirementMedicalMonthlyLimit": 15000
+    "employerPensionMonthlyLimit": 30000,
+    "mealAllowanceMonthlyLimit": 300000,
+    "nightOutAllowanceDailyLimit": 10000,
+    "mortgageInterestMonthlyLimit": 25000,
+    "postRetirementMedicalMonthlyLimit": 5000,
+    "providentFundMonthlyLimit": 30000,
+    "providentFundSalaryPercent": 0.3,
+    "insuranceReliefRate": 0.15,
+    "insuranceReliefMonthlyLimit": 5000
   },
   "paye": {
     "brackets": [
@@ -29,13 +36,14 @@
     ]
   },
   "accessCapPercent": 0.6,
-  "platformFeePercent": 0.05,
+  "platformFeePercent": 0.06,
   "earnedWageCapPercent": 0.6,
+  "earnedWageDays": 30,
   "meta": {
-    "description": "Monthly Kenya payroll estimate using the NSSF Year 4 2026 schedule, KRA PAYE bands, SHIF, and Affordable Housing Levy parameters. Validate rules against official guidance before production payroll use.",
+    "description": "Kenya payroll estimate using the rates, limits, and inputs in the Kenya EWA calculator workbook, with progressive PAYE and the configured platform fee.",
     "lastUpdated": "2026-10-16",
-    "rulesVersion": "ke-2026-year4-v1",
+    "rulesVersion": "ke-2026-year4-v2",
     "effectiveFrom": "2026-02",
-    "source": "KRA PAYE guidance; NSSF Year 4 (2026) employer notice; Kenya Law Social Health Insurance Regulations, 2024, as amended."
+    "source": "User-provided Kenya EWA calculator workbook; KRA PAYE guidance; NSSF Year 4 (2026) employer notice."
   }
 }

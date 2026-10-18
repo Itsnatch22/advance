@@ -32,12 +32,12 @@ describe("Calculator Logic", () => {
     expect(result.youCanAccessNow).toBe(3988800);
   });
 
-  test("Kenya: preserves existing calculator availability output", async () => {
+  test("Kenya: loads the workbook-aligned payroll rules", async () => {
     const keConfig = await readCountryConfig("KE");
     const result = calc(
       {
         salary: 100000,
-        daysWorked: 31,
+        daysWorked: 30,
         cycleDays: 31,
         country: "KE",
       },
@@ -46,7 +46,7 @@ describe("Calculator Logic", () => {
 
     expect(result.success).toBe(true);
     expect(result.gross).toBe(100000);
-    expect(result.ruleVersion).toBe("ke-2026-year4-v1");
+    expect(result.ruleVersion).toBe("ke-2026-year4-v2");
     expect(result.effectiveFrom).toBe("2026-02");
     expect(result.engineVersion).toBe("2.0.0");
   });
@@ -81,16 +81,16 @@ describe("Calculator Logic", () => {
       calc(
         {
           salary,
-          daysWorked: 1,
-          cycleDays: 1,
+          daysWorked: 30,
+          cycleDays: 30,
           country: "KE",
           ...overrides,
         },
         config
       );
 
-    test("matches the KES 100,000 worked example with resident personal relief", () => {
-      const result = calculateKenya(100000, { residentForTax: true });
+    test("matches the KES 100,000 workbook example with progressive PAYE", () => {
+      const result = calculateKenya(100000);
 
       expect(result.pensionableEarnings).toBe(100000);
       expect(result.nssf1).toBe(540);
@@ -102,15 +102,11 @@ describe("Calculator Logic", () => {
       expect(result.payeBeforeRelief).toBe(21708.35);
       expect(result.personalRelief).toBe(2400);
       expect(result.payeAfterRelief).toBe(19308.35);
-      expect(result.netPay).toBe(70441.65);
-    });
-
-    test("does not grant resident relief unless the user is eligible", () => {
-      const ineligible = calculateKenya(100000);
-      const eligible = calculateKenya(100000, { residentForTax: true });
-
-      expect(ineligible.personalRelief).toBe(0);
-      expect(ineligible.payeAfterRelief - eligible.payeAfterRelief).toBe(2400);
+      expect(result.netPay).toBe(70442);
+      expect(result.earnedWage).toBe(70442);
+      expect(result.accessCap).toBe(42265);
+      expect(result.platformFee).toBe(2535.9);
+      expect(result.youCanAccessNow).toBe(39729.1);
     });
 
     test.each([
@@ -129,22 +125,20 @@ describe("Calculator Logic", () => {
       }
     );
 
-    test("calculates salaried SHIF at 2.75% with no minimum", () => {
+    test("applies the workbook SHIF minimum except when income is zero", () => {
       expect(calculateKenya(0).shif).toBe(0);
-      expect(calculateKenya(100).shif).toBe(2.75);
-      expect(calculateKenya(10000).shif).toBe(275);
+      expect(calculateKenya(100).shif).toBe(300);
+      expect(calculateKenya(10000).shif).toBe(300);
       expect(calculateKenya(10910).shif).toBe(300.03);
       expect(calculateKenya(11000).shif).toBe(302.5);
     });
 
-    test("does not report negative take-home pay when deductions exceed gross", () => {
-      const result = calculateKenya(100, {
-        allowableDeductions: { pensionContributions: 100 },
-      });
+    test("does not report negative take-home pay when statutory deductions exceed gross", () => {
+      const result = calculateKenya(100);
 
-      expect(result.shif).toBe(2.75);
+      expect(result.shif).toBe(300);
       expect(result.netPay).toBe(0);
-      expect(result.cashShortfall).toBe(10.25);
+      expect(result.cashShortfall).toBe(207.5);
     });
 
     test.each([
@@ -168,7 +162,7 @@ describe("Calculator Logic", () => {
             tier2Rate: 0,
             tier2Cap: 108000,
           },
-          shif: { rate: 0 },
+          shif: { rate: 0, minimum: 0 },
           housing: { rate: 0, employerRate: 0 },
           personalRelief: 0,
         };
@@ -177,55 +171,86 @@ describe("Calculator Logic", () => {
       }
     );
 
-    test("applies eligible deduction limits while retaining actual cash deductions", () => {
+    test("applies workbook deduction caps and subtracts employee contributions from cash pay", () => {
       const result = calculateKenya(200000, {
         allowableDeductions: {
-          pensionContributions: 40000,
           mortgageInterest: 40000,
           postRetirementMedicalFund: 20000,
+          providentFundContributions: 40000,
+          lifeAndHealthInsuranceContributions: 20000,
         },
       });
 
-      expect(result.taxableIncome).toBe(116500);
+      expect(result.taxableIncome).toBe(125020);
       expect(result.allowableDeductionBreakdown?.nssf).toBe(6480);
-      expect(result.allowableDeductionBreakdown?.pensionContributions).toBe(
-        23520
-      );
-      expect(result.allowableDeductionBreakdown?.mortgageInterest).toBe(30000);
+      expect(result.allowableDeductionBreakdown?.mortgageInterest).toBe(25000);
       expect(
         result.allowableDeductionBreakdown?.postRetirementMedicalFund
-      ).toBe(15000);
-      expect(result.employeeDeductions?.pensionContributions).toBe(40000);
+      ).toBe(5000);
+      expect(
+        result.allowableDeductionBreakdown?.providentFundContributions
+      ).toBe(30000);
+      expect(result.insuranceRelief).toBe(3000);
       expect(result.employeeDeductions?.mortgageInterest).toBe(40000);
-      expect(result.netPay).toBe(55286.65);
+      expect(result.employeeDeductions?.postRetirementMedicalFund).toBe(20000);
+      expect(result.employeeDeductions?.providentFundContributions).toBe(40000);
+      expect(
+        result.employeeDeductions?.lifeAndHealthInsuranceContributions
+      ).toBe(20000);
+      expect(result.netPay).toBe(38131);
     });
 
-    test("uses pensionable earnings independently from gross earnings", () => {
-      const result = calculateKenya(100000, { pensionableEarnings: 50000 });
+    test("treats employer cover as non-cash and applies the workbook tax limits", () => {
+      const result = calculateKenya(100000, {
+        employerPensionCover: 40000,
+        employerMedicalCover: 5000,
+      });
+
+      expect(result.gross).toBe(145000);
+      expect(result.accruedGross).toBe(100000);
+      expect(result.allowableDeductionBreakdown?.employerPensionCover).toBe(
+        30000
+      );
+      expect(result.allowableDeductionBreakdown?.employerMedicalCover).toBe(
+        5000
+      );
+      expect(result.netPay).toBe(65767);
+    });
+
+    test("exempts meal and night-out allowances up to workbook limits", () => {
+      const result = calculateKenya(100000, {
+        allowances: {
+          mealAllowance: 350000,
+          nightAllowance: 400000,
+        },
+      });
+
+      expect(result.gross).toBe(850000);
+      expect(result.allowableDeductionBreakdown?.mealAllowance).toBe(300000);
+      expect(result.allowableDeductionBreakdown?.nightOutAllowance).toBe(
+        300000
+      );
+    });
+
+    test("uses a fixed 30-day accrual and limits access to the lower earned amount", () => {
+      const result = calculateKenya(100000, {
+        daysWorked: 15,
+        cycleDays: 31,
+      });
 
       expect(result.gross).toBe(100000);
-      expect(result.pensionableEarnings).toBe(50000);
-      expect(result.nssfEmployee).toBe(3000);
+      expect(result.accruedGross).toBe(50000);
+      expect(result.netPay).toBe(70442);
+      expect(result.earnedWage).toBe(35221);
+      expect(result.accessCap).toBe(42265);
+      expect(result.platformFee).toBe(2113.26);
+      expect(result.youCanAccessNow).toBe(33107.74);
     });
 
-    test("keeps employer contributions out of net pay and reconciles cents", () => {
-      const result = calculateKenya(10910, { residentForTax: true });
-      const deductions = Object.values(result.employeeDeductions ?? {}).reduce(
-        (sum, amount) => sum + amount,
-        0
+    test("rejects invalid employer cover and cycle inputs", () => {
+      expect(() => calculateKenya(10000, { employerPensionCover: -1 })).toThrow(
+        "Employer cover must be finite, non-negative amounts"
       );
-
-      expect(result.employerContributions?.nssf).toBe(result.nssfEmployee);
-      expect(result.employerContributions?.housingLevy).toBe(
-        result.housingLevy
-      );
-      expect(result.netPay).toBeCloseTo(result.gross - deductions, 2);
-    });
-
-    test("rejects pensionable earnings above gross and invalid cycle inputs", () => {
-      expect(() =>
-        calculateKenya(10000, { pensionableEarnings: 10001 })
-      ).toThrow("Invalid pensionable earnings");
       expect(() =>
         calc(
           { salary: 10000, daysWorked: 31, cycleDays: 30, country: "KE" },

@@ -136,7 +136,7 @@ export function calc(payload: Payload, cfg: JsonConfig) {
 
   const earnedWage = (netPay / cycleDays) * daysWorked;
   const accessCap = earnedWage * (cfg.accessCapPercent ?? 0.6);
-  const platformFee = accessCap * (cfg.platformFeePercent ?? 0.05);
+  const platformFee = accessCap * (cfg.platformFeePercent ?? 0.06);
   const youCanAccessNow = accessCap;
 
   return {

@@ -22,10 +22,10 @@ export const EMAIL_CONFIG = {
 export const PRICING_CONFIG = {
   APPLICATION_FEE_MIN_PERCENT: 3.5,
   APPLICATION_FEE_MAX_PERCENT: 6.5,
-  APPLICATION_FEE_PLATFORM_PERCENT: 5.0,
+  APPLICATION_FEE_PLATFORM_PERCENT: 6.0,
   FLAT_USD_FEE: 2,
   DESCRIPTION:
-    "Earned Wage Access with transparent, no hidden fees; includes up to 5% application fees and no interest, with options for advance salary access.",
+    "Earned Wage Access with transparent, no hidden fees; includes up to 6% application fees and no interest, with options for advance salary access.",
 };
 
 export const NSSF_CONFIG = {
@@ -44,7 +44,7 @@ export const TAX_CONFIG = {
 };
 
 export const PLATFORM_CONFIG = {
-  FEE_PERCENT: 0.05, 
+  FEE_PERCENT: 0.06,
 };
 
 export const ADVANCE_CONFIG = {
