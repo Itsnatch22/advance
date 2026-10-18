@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
-import Toploader from "nextjs-toploader";
-import { Analytics } from "@vercel/analytics/next";
-import CookieBanner from "@/components/CookieBanner";
-import WizaChat from "@/components/WizaChat";
-import { Toaster } from "react-hot-toast";
+import AppShell from "@/components/AppShell";
 import { cookies } from "next/headers";
 import { CurrencyProvider } from "@/components/CurrencyProvider";
-import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import { COOKIE_CONSENT_NAME, parseConsentValue } from "@/lib/consent";
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -73,16 +66,10 @@ export default async function RootLayout({
       <body
         className={`${ibmPlexMono.variable} ${playfairDisplay.variable} antialiased`}
       >
-        <KeyboardShortcuts />
         <CurrencyProvider locale={locale}>
-          <Toaster position="top-center" />
-          <Toploader color="#16a34a" />
-          <Navbar />
-          {children}
-          <CookieBanner />
-          {analyticsConsent ? <Analytics /> : null}
-          <WizaChat />
-          <Footer />
+          <AppShell analyticsConsent={analyticsConsent}>
+            {children}
+          </AppShell>
         </CurrencyProvider>
       </body>
     </html>

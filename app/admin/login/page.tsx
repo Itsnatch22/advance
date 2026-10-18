@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, LogIn, Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
-import FloatingOrb from "@/components/shared/FloatingOrb";
+import { AlertCircle, Eye, EyeOff, LogIn } from "lucide-react";
+import Link from "next/link";
+import AdminAuthShell from "@/components/admin/AdminAuthShell";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import { BorderBeam } from "@/components/ui/border-beam";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -101,8 +99,7 @@ export default function AdminLoginPage() {
       });
 
       if (authError || !authData.user) {
-        console.error("Supabase Auth Error:", authError, "Auth Data:", authData);
-        setError(authError?.message || "Invalid credentials");
+        setError("Invalid email or password.");
         return;
       }
 
@@ -126,134 +123,123 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white">
-      {/* Background orbs — matches site style */}
-      <div className="pointer-events-none fixed inset-0">
-        <FloatingOrb color="bg-green-100" delay={0} className="-top-24 -right-24" />
-        <FloatingOrb color="bg-emerald-100" delay={2} className="-bottom-24 -left-24" />
-        <div className="absolute inset-0 bg-white/40 backdrop-blur-[1px]" />
+    <AdminAuthShell>
+      <div className="mb-7">
+        <h1 className="font-serif text-3xl font-bold tracking-tight text-slate-900">
+          Admin sign in
+        </h1>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Sign in with your administrator account to continue.
+        </p>
       </div>
 
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="w-full max-w-md"
-        >
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/40 p-10 shadow-2xl shadow-green-500/5 backdrop-blur-xl">
-            <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={120} duration={8} />
-            {/* Header */}
-            <div className="mb-10">
-              <div className="mb-6 flex items-center gap-3">
-                <Image src="/logo.png" alt="EaziWage" width={28} height={28} className="h-7 w-7" />
-                <span className="rounded-full border border-green-500/10 bg-green-500/5 px-2.5 py-0.5 text-xs font-black tracking-widest text-green-600 uppercase">
-                  Admin
-                </span>
-              </div>
-              <h1 className="mb-2 font-serif text-3xl font-bold tracking-tight text-slate-900">
-                Secure Access
-              </h1>
-              <p className="text-slate-500">
-                Sign in with your admin credentials to manage email campaigns.
-              </p>
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <input
+          type="text"
+          name="company"
+          aria-hidden="true"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(event) => setHoneypot(event.target.value)}
+          className="sr-only"
+        />
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Honeypot */}
-              <input
-                type="text"
-                className="sr-only"
-                value={honeypot}
-                onChange={(e) => setHoneypot(e.target.value)}
-                tabIndex={-1}
-                autoComplete="off"
-              />
+        <div className="space-y-2">
+          <label
+            htmlFor="admin-email"
+            className="text-sm font-medium text-slate-800"
+          >
+            Email address
+          </label>
+          <input
+            id="admin-email"
+            type="email"
+            autoComplete="username"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
+          />
+        </div>
 
-              {/* Email */}
-              <div className="space-y-2">
-                <label className="ml-1 text-xs font-black tracking-[0.2em] text-green-600/60 uppercase">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@eaziwage.com"
-                  required
-                  className="w-full rounded-2xl border border-slate-200/60 bg-white/40 px-5 py-4 text-base text-slate-900 placeholder-slate-400 backdrop-blur-sm transition-all focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10"
-                />
-              </div>
-
-              {/* Password */}
-              <div className="space-y-2">
-                <label className="ml-1 text-xs font-black tracking-[0.2em] text-green-600/60 uppercase">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                    className="w-full rounded-2xl border border-slate-200/60 bg-white/40 px-5 py-4 pr-12 text-base text-slate-900 placeholder-slate-400 backdrop-blur-sm transition-all focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600"
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Error */}
-              <AnimatePresence>
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="flex items-start gap-2 rounded-2xl border border-red-100 bg-red-50/60 p-4 text-red-700"
-                  >
-                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
-                    <p className="text-sm font-medium">{error}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-green-600 px-5 py-4 font-bold text-white transition-all hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <LogIn className="h-4 w-4" />
-                {loading ? "Signing in…" : "Sign In"}
-              </button>
-            </form>
-
-            {/* reCAPTCHA notice */}
-            <p className="mt-6 text-center text-xs text-slate-400">
-              Protected by reCAPTCHA —{" "}
-              <a href="https://policies.google.com/privacy" className="underline hover:text-slate-600">
-                Privacy
-              </a>{" "}
-              &amp;{" "}
-              <a href="https://policies.google.com/terms" className="underline hover:text-slate-600">
-                Terms
-              </a>
-            </p>
+        <div className="space-y-2">
+          <label
+            htmlFor="admin-password"
+            className="text-sm font-medium text-slate-800"
+          >
+            Password
+          </label>
+          <div className="relative">
+            <input
+              id="admin-password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((visible) => !visible)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-pressed={showPassword}
+              className="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-emerald-700"
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <Eye className="h-5 w-5" aria-hidden="true" />
+              )}
+            </button>
           </div>
+        </div>
 
-          <p className="mt-4 text-center text-xs text-slate-400">
-            Admin area · Restricted access only
-          </p>
-        </motion.div>
+        {error ? (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <p>{error}</p>
+          </div>
+        ) : null}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <LogIn className="h-4 w-4" aria-hidden="true" />
+          {loading ? "Signing in..." : "Sign in"}
+        </button>
+      </form>
+
+      <div className="mt-5 flex items-center justify-between gap-4">
+        <Link
+          href="/admin/reset-password"
+          className="text-sm font-medium text-emerald-800 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700"
+        >
+          Forgot password?
+        </Link>
+        <p className="text-right text-xs leading-5 text-slate-500">
+          Protected by reCAPTCHA.{" "}
+          <a
+            href="https://policies.google.com/privacy"
+            className="underline underline-offset-2 hover:text-slate-800"
+          >
+            Privacy
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://policies.google.com/terms"
+            className="underline underline-offset-2 hover:text-slate-800"
+          >
+            Terms
+          </a>
+        </p>
       </div>
-    </div>
+    </AdminAuthShell>
   );
 }

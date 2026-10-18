@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -8,9 +9,10 @@ import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const isLoginPage = pathname === "/admin/login";
+  const isAuthPage =
+    pathname === "/admin/login" || pathname === "/admin/reset-password";
 
-  if (isLoginPage) {
+  if (isAuthPage) {
     return <>{children}</>;
   }
 
@@ -30,12 +32,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </span>
           </div>
           <nav className="flex items-center gap-6 text-sm font-medium text-slate-600">
-            <a href="/admin/campaigns" className="transition-colors hover:text-emerald-700">
+            <Link
+              href="/admin/campaigns"
+              className="transition-colors hover:text-emerald-700"
+            >
               Campaigns
-            </a>
-            <a href="/admin/careers/applications" className="transition-colors hover:text-emerald-700">
+            </Link>
+            <Link
+              href="/admin/careers/applications"
+              className="transition-colors hover:text-emerald-700"
+            >
               Careers
-            </a>
+            </Link>
             <button
               type="button"
               onClick={handleSignOut}

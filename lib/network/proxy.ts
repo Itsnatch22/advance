@@ -8,7 +8,10 @@ export type Locale = typeof LOCALES[number];
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
 
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+  const isAdminAuthPage =
+    pathname === '/admin/login' || pathname === '/admin/reset-password';
+
+  if (pathname.startsWith('/admin') && !isAdminAuthPage) {
     return requireAdminSession(request)
   }
 
