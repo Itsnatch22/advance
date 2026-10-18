@@ -1,3 +1,5 @@
+// @ts-ignore Vitest is provided by the test runner, which may not be installed in the app typecheck.
+import { beforeAll, describe, expect, test } from "vitest";
 import {
   parseConsentValue,
   serializeConsentValue,

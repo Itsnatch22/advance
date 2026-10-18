@@ -1,3 +1,5 @@
+// @ts-ignore Vitest is provided by the test runner, which may not be installed in the app typecheck.
+import { beforeAll, describe, expect, test } from "vitest";
 import { calc } from "./calc";
 import { readCountryConfig, type JsonConfig, type Payload } from "./calc";
 
@@ -119,7 +121,7 @@ describe("Calculator Logic", () => {
       [150000, 6480],
     ])(
       "calculates employee NSSF correctly at salary %s",
-      (salary, expected) => {
+      (salary: number, expected: number) => {
         const result = calculateKenya(salary);
         expect(result.nssfEmployee).toBe(expected);
       }
@@ -153,7 +155,7 @@ describe("Calculator Logic", () => {
       [1000000000, 349962283.35],
     ])(
       "calculates progressive PAYE at taxable income %s",
-      (salary, expectedTax) => {
+      (salary: number, expectedTax: number) => {
         const noContributionConfig = {
           ...keConfig,
           nssf: {
