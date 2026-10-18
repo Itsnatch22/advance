@@ -100,7 +100,7 @@ npm run type-check   # Run TypeScript type checking
 
 ## 📄 License
 
-ISC
+All code used in this website is strictly prohibited to copy, use, merge, pull and outside usage to all users that aren't part of the EaziWage Team. 
 
 ## 📞 Contact
 
