@@ -3,8 +3,12 @@ import { z } from "zod";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
 import { sanitizeCampaignHtml } from "@/lib/campaigns/utils";
 import type { CampaignStatus } from "@/types/campaigns";
-import { getAuthenticatedAdmin, requireAdminWrite, logCampaignAudit } from "@/lib/admin/campaigns";
-import { sendSuccess, sendError } from '@/lib/utils/response';
+import {
+  getAuthenticatedAdmin,
+  requireAdminWrite,
+  logCampaignAudit,
+} from "@/lib/admin/campaigns";
+import { sendSuccess, sendError } from "@/lib/utils/response";
 
 const updateSchema = z.object({
   subject: z.string().min(3).max(300).optional(),
@@ -41,7 +45,7 @@ export async function GET(
   if ("error" in auth)
     return NextResponse.json({ error: auth.error }, { status: auth.status });
 
-  const { user, admin } = auth;
+  const { admin } = auth;
   const { id } = await params;
 
   try {
@@ -52,13 +56,13 @@ export async function GET(
       .single();
 
     if (error || !campaign) {
-      return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+      return sendError("Campaign not found", 404);
     }
 
-    return NextResponse.json({ campaign });
+    return sendSuccess({ campaign });
   } catch (err) {
     console.error("[campaigns/[id]][GET] error:", err);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return sendError("Internal error", 500);
   }
 }
 
@@ -96,18 +100,26 @@ export async function PATCH(
 
     const lockedStatuses: CampaignStatus[] = ["sending", "completed", "failed"];
     if (lockedStatuses.includes(campaign.status as CampaignStatus)) {
-      return sendError(`Cannot edit a campaign with status "${campaign.status}"`, 409);
+      return sendError(
+        `Cannot edit a campaign with status "${campaign.status}"`,
+        409
+      );
     }
 
     const body = await request.json();
     const parsed = updateSchema.safeParse(body);
     if (!parsed.success) {
-      return sendError("Validation failed", 400, { issues: parsed.error.issues });
+      return sendError("Validation failed", 400, {
+        issues: parsed.error.issues,
+      });
     }
 
-    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    const updates: Record<string, unknown> = {
+      updated_at: new Date().toISOString(),
+    };
 
-    if (parsed.data.subject !== undefined) updates.subject = parsed.data.subject;
+    if (parsed.data.subject !== undefined)
+      updates.subject = parsed.data.subject;
     if (parsed.data.title !== undefined) updates.title = parsed.data.title;
     if (parsed.data.html_content !== undefined)
       updates.html_content = sanitizeCampaignHtml(parsed.data.html_content);
@@ -118,7 +130,9 @@ export async function PATCH(
     if ("template_key" in parsed.data)
       updates.template_key = parsed.data.template_key ?? null;
     if ("audience_filter" in parsed.data)
-      updates.audience_filter = parsed.data.audience_filter ?? { segment: "all" };
+      updates.audience_filter = parsed.data.audience_filter ?? {
+        segment: "all",
+      };
     if ("ab_test_subject_b" in parsed.data)
       updates.ab_test_subject_b = parsed.data.ab_test_subject_b ?? null;
     if (parsed.data.ab_test_percent !== undefined)
@@ -143,31 +157,46 @@ export async function PATCH(
         if (newScheduled) {
           // insert or update schedule row
           const upsertRes = await admin
-            .from('email_campaign_schedules')
-            .upsert({ campaign_id: id, scheduled_at: newScheduled, created_by: user.id }, { onConflict: 'campaign_id' })
+            .from("email_campaign_schedules")
+            .upsert(
+              {
+                campaign_id: id,
+                scheduled_at: newScheduled,
+                created_by: user.id,
+              },
+              { onConflict: "campaign_id" }
+            )
             .select()
             .single();
           if (!upsertRes.error && upsertRes.data?.id) {
             await admin
-              .from('email_campaigns')
+              .from("email_campaigns")
               .update({ scheduled_job_id: upsertRes.data.id })
-              .eq('id', id);
+              .eq("id", id);
           }
         } else {
           // removed schedule -> delete schedule row and clear scheduled_job_id
-          await admin.from('email_campaign_schedules').delete().eq('campaign_id', id);
-          await admin.from('email_campaigns').update({ scheduled_job_id: null }).eq('id', id);
+          await admin
+            .from("email_campaign_schedules")
+            .delete()
+            .eq("campaign_id", id);
+          await admin
+            .from("email_campaigns")
+            .update({ scheduled_job_id: null })
+            .eq("id", id);
         }
       }
     } catch (e) {
-      console.error('[campaigns][PATCH] schedule upsert/delete failed', e);
+      console.error("[campaigns][PATCH] schedule upsert/delete failed", e);
     }
 
     await logCampaignAudit(admin, {
       campaignId: id,
       actorId: user.id,
       action: "campaign_updated",
-      metadata: { fields: Object.keys(updates).filter((key) => key !== "updated_at") },
+      metadata: {
+        fields: Object.keys(updates).filter((key) => key !== "updated_at"),
+      },
     });
 
     return sendSuccess({ campaign: updated });
@@ -205,12 +234,17 @@ export async function DELETE(
       .single();
 
     if (fetchError || !campaign) {
-      return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Campaign not found" },
+        { status: 404 }
+      );
     }
 
     if (campaign.status !== "draft") {
       return NextResponse.json(
-        { error: `Cannot delete a campaign with status "${campaign.status}" — only draft campaigns may be deleted` },
+        {
+          error: `Cannot delete a campaign with status "${campaign.status}" — only draft campaigns may be deleted`,
+        },
         { status: 409 }
       );
     }

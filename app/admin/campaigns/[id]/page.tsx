@@ -15,7 +15,15 @@ import {
   FlaskConical,
 } from "lucide-react";
 import Link from "next/link";
-import type { EmailCampaign, CampaignStats, EmailCampaignLog, CampaignStatus } from "@/types/campaigns";
+import type {
+  CampaignRecipientList,
+  CampaignRecipientListMember,
+  CampaignTemplate,
+  EmailCampaign,
+  CampaignStats,
+  EmailCampaignLog,
+  CampaignStatus,
+} from "@/types/campaigns";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -39,7 +47,9 @@ function StatusBadge({ status }: { status: CampaignStatus }) {
     failed: "bg-red-50 text-red-700 ring-red-500/10",
   };
   return (
-    <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider ring-1 ${map[status]}`}>
+    <span
+      className={`rounded-full px-3 py-1 text-xs font-semibold tracking-wider uppercase ring-1 ${map[status]}`}
+    >
       {status}
     </span>
   );
@@ -56,7 +66,9 @@ function LogStatusChip({ status }: { status: string }) {
   };
   const cls = map[s] ?? "bg-slate-50 text-slate-600 ring-slate-500/10";
   return (
-    <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ${cls}`}>
+    <span
+      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ${cls}`}
+    >
       {status}
     </span>
   );
@@ -66,8 +78,8 @@ function LogStatusChip({ status }: { status: string }) {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-[2rem] border border-slate-200/60 bg-white px-6 py-5 ring-1 ring-slate-900/5 shadow-sm">
-      <p className="text-2xl font-bold font-serif text-slate-900">{value}</p>
+    <div className="rounded-[2rem] border border-slate-200/60 bg-white px-6 py-5 shadow-sm ring-1 ring-slate-900/5">
+      <p className="font-serif text-2xl font-bold text-slate-900">{value}</p>
       <p className="mt-0.5 text-sm text-slate-500">{label}</p>
     </div>
   );
@@ -97,7 +109,7 @@ function ConfirmModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
       onClick={onCancel}
     >
       <motion.div
@@ -105,7 +117,7 @@ function ConfirmModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.2 }}
-        className="w-full max-w-md rounded-[2rem] border border-slate-200/60 bg-white p-8 ring-1 ring-slate-900/5 shadow-2xl"
+        className="w-full max-w-md rounded-[2rem] border border-slate-200/60 bg-white p-8 shadow-2xl ring-1 ring-slate-900/5"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="font-serif text-xl font-bold text-slate-900">{title}</h3>
@@ -142,7 +154,9 @@ function TestEmailModal({
 }) {
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
-  const [result, setResult] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [result, setResult] = useState<{ ok: boolean; msg: string } | null>(
+    null
+  );
 
   async function send() {
     if (!email.trim()) return;
@@ -158,7 +172,10 @@ function TestEmailModal({
       if (res.ok) {
         setResult({ ok: true, msg: data.message ?? "Test email sent!" });
       } else {
-        setResult({ ok: false, msg: data.error ?? "Failed to send test email." });
+        setResult({
+          ok: false,
+          msg: data.error ?? "Failed to send test email.",
+        });
       }
     } catch {
       setResult({ ok: false, msg: "Network error. Please try again." });
@@ -172,7 +189,7 @@ function TestEmailModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
@@ -180,11 +197,13 @@ function TestEmailModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.2 }}
-        className="w-full max-w-md rounded-[2rem] border border-slate-200/60 bg-white p-8 ring-1 ring-slate-900/5 shadow-2xl"
+        className="w-full max-w-md rounded-[2rem] border border-slate-200/60 bg-white p-8 shadow-2xl ring-1 ring-slate-900/5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h3 className="font-serif text-xl font-bold text-slate-900">Send Test Email</h3>
+          <h3 className="font-serif text-xl font-bold text-slate-900">
+            Send Test Email
+          </h3>
           <button
             onClick={onClose}
             className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200/60 text-slate-400 ring-1 ring-slate-900/5 transition-colors hover:text-slate-700"
@@ -201,7 +220,7 @@ function TestEmailModal({
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && send()}
           placeholder="you@example.com"
-          className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 ring-1 ring-slate-900/5 placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-emerald-200 transition-colors"
+          className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 ring-1 ring-slate-900/5 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:ring-emerald-200 focus:outline-none"
         />
         {result && (
           <div
@@ -259,8 +278,8 @@ export default function CampaignDetailPage() {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Template & recipient lists for editing
-  const [templates, setTemplates] = useState<any[]>([]);
-  const [lists, setLists] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<CampaignTemplate[]>([]);
+  const [lists, setLists] = useState<CampaignRecipientList[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [selectedList, setSelectedList] = useState<string | null>(null);
   const [importedEmails, setImportedEmails] = useState<string[]>([]);
@@ -269,7 +288,9 @@ export default function CampaignDetailPage() {
   const [showTestModal, setShowTestModal] = useState(false);
   const [showSendConfirm, setShowSendConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [estimatedRecipients, setEstimatedRecipients] = useState<number | null>(null);
+  const [estimatedRecipients, setEstimatedRecipients] = useState<number | null>(
+    null
+  );
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -291,17 +312,22 @@ export default function CampaignDetailPage() {
           return;
         }
 
-        const campaignData = await campaignRes.json();
-        setCampaign(campaignData.campaign);
-        setEditTitle(campaignData.campaign.title);
-        setEditSubject(campaignData.campaign.subject);
-        setEditHtml(campaignData.campaign.html_content);
-        setEditPlain(campaignData.campaign.plain_text_content ?? "");
+        const campaignResponse = await campaignRes.json();
+        const loadedCampaign = campaignResponse.data?.campaign;
+        if (!campaignResponse.success || !loadedCampaign) {
+          setFetchError(campaignResponse.error ?? "Failed to load campaign.");
+          return;
+        }
+        setCampaign(loadedCampaign);
+        setEditTitle(loadedCampaign.title);
+        setEditSubject(loadedCampaign.subject);
+        setEditHtml(loadedCampaign.html_content);
+        setEditPlain(loadedCampaign.plain_text_content ?? "");
 
         if (statsRes.ok) {
           const statsData = await statsRes.json();
-          setStats(statsData.stats);
-          setLogs((statsData.recent_logs ?? []).slice(0, 50));
+          setStats(statsData.data?.stats ?? null);
+          setLogs((statsData.data?.recent_logs ?? []).slice(0, 50));
         }
       } catch {
         setFetchError("Network error. Please try again.");
@@ -317,11 +343,17 @@ export default function CampaignDetailPage() {
     (async () => {
       try {
         const [tRes, lRes] = await Promise.all([
-          fetch('/api/admin/templates'),
-          fetch('/api/admin/recipient-lists'),
+          fetch("/api/admin/templates"),
+          fetch("/api/admin/recipient-lists"),
         ]);
-        if (tRes.ok) { const td = await tRes.json(); setTemplates(td.templates ?? []); }
-        if (lRes.ok) { const ld = await lRes.json(); setLists(ld.lists ?? []); }
+        if (tRes.ok) {
+          const td = await tRes.json();
+          setTemplates(td.data?.templates ?? []);
+        }
+        if (lRes.ok) {
+          const ld = await lRes.json();
+          setLists(ld.data?.lists ?? []);
+        }
       } catch {}
     })();
   }, []);
@@ -345,8 +377,9 @@ export default function CampaignDetailPage() {
         const res = await fetch(`/api/admin/recipient-lists/${selectedList}`);
         if (!res.ok) return;
         const data = await res.json();
-        const members = data.members ?? [];
-        setImportedEmails(members.map((m: any) => m.email));
+        const members = (data.data?.members ??
+          []) as CampaignRecipientListMember[];
+        setImportedEmails(members.map((member) => member.email));
       } catch {}
     })();
   }, [selectedList]);
@@ -354,20 +387,30 @@ export default function CampaignDetailPage() {
   async function handleSave() {
     if (!campaign) return;
     setSaveError(null);
-    if (!editTitle.trim()) { setSaveError("Title is required."); return; }
-    if (!editSubject.trim()) { setSaveError("Subject is required."); return; }
-    if (!editHtml.trim()) { setSaveError("HTML content is required."); return; }
+    if (!editTitle.trim()) {
+      setSaveError("Title is required.");
+      return;
+    }
+    if (!editSubject.trim()) {
+      setSaveError("Subject is required.");
+      return;
+    }
+    if (!editHtml.trim()) {
+      setSaveError("HTML content is required.");
+      return;
+    }
 
     setSaving(true);
     try {
-      const body: Record<string, any> = {
+      const body: Record<string, unknown> = {
         title: editTitle.trim(),
         subject: editSubject.trim(),
         html_content: editHtml,
         plain_text_content: editPlain.trim() || null,
       };
       if (selectedTemplate) body.template_key = selectedTemplate;
-      if (importedEmails.length > 0) body.audience_filter = { segment: 'manual', emails: importedEmails };
+      if (importedEmails.length > 0)
+        body.audience_filter = { segment: "manual", emails: importedEmails };
 
       const res = await fetch(`/api/admin/campaigns/${id}`, {
         method: "PATCH",
@@ -380,7 +423,14 @@ export default function CampaignDetailPage() {
         return;
       }
       const data = await res.json();
-      setCampaign(data.campaign);
+      const updatedCampaign = data.data?.campaign;
+      if (!updatedCampaign) {
+        setSaveError(
+          "Changes were saved, but the server did not return the updated campaign."
+        );
+        return;
+      }
+      setCampaign(updatedCampaign);
       setSaveSuccess(true);
       setEditing(false);
       setTimeout(() => setSaveSuccess(false), 3000);
@@ -395,20 +445,25 @@ export default function CampaignDetailPage() {
     setActionLoading(true);
     setActionError(null);
     try {
-      const res = await fetch(`/api/admin/campaigns/${id}/send`, { method: "POST" });
+      const res = await fetch(`/api/admin/campaigns/${id}/send`, {
+        method: "POST",
+      });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setActionError(data?.error ?? "Failed to send campaign.");
         setShowSendConfirm(false);
         return;
       }
-      setEstimatedRecipients(data.estimated_recipients ?? null);
+      setEstimatedRecipients(data.data?.estimated_recipients ?? null);
+      setCampaign((current) =>
+        current ? { ...current, status: "sending" } : current
+      );
       setShowSendConfirm(false);
       // Refresh campaign data
       const refreshed = await fetch(`/api/admin/campaigns/${id}`);
       if (refreshed.ok) {
         const rd = await refreshed.json();
-        setCampaign(rd.campaign);
+        setCampaign(rd.data?.campaign ?? null);
       }
     } catch {
       setActionError("Network error. Please try again.");
@@ -422,7 +477,9 @@ export default function CampaignDetailPage() {
     setActionLoading(true);
     setActionError(null);
     try {
-      const res = await fetch(`/api/admin/campaigns/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/campaigns/${id}`, {
+        method: "DELETE",
+      });
       if (res.status === 204 || res.ok) {
         router.push("/admin/campaigns");
         return;
@@ -443,8 +500,12 @@ export default function CampaignDetailPage() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
-          <h2 className="font-serif text-2xl font-bold text-slate-900">Access Restricted</h2>
-          <p className="mt-2 text-slate-600">This area requires administrator privileges.</p>
+          <h2 className="font-serif text-2xl font-bold text-slate-900">
+            Access Restricted
+          </h2>
+          <p className="mt-2 text-slate-600">
+            This area requires administrator privileges.
+          </p>
         </div>
       </div>
     );
@@ -453,7 +514,7 @@ export default function CampaignDetailPage() {
   // ── Loading ──
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 space-y-6">
+      <div className="mx-auto max-w-7xl space-y-6 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         {[...Array(3)].map((_, i) => (
           <div
             key={i}
@@ -476,8 +537,10 @@ export default function CampaignDetailPage() {
     );
   }
 
-  const canEdit = campaign.status === "draft" || campaign.status === "scheduled";
-  const canSend = campaign.status === "draft" || campaign.status === "scheduled";
+  const canEdit =
+    campaign.status === "draft" || campaign.status === "scheduled";
+  const canSend =
+    campaign.status === "draft" || campaign.status === "scheduled";
   const canDelete = campaign.status === "draft";
 
   return (
@@ -529,23 +592,24 @@ export default function CampaignDetailPage() {
               className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
             >
               <CheckCircle2 className="h-4 w-4 shrink-0" />
-              Campaign queued for {estimatedRecipients} recipient{estimatedRecipients !== 1 ? "s" : ""}.
+              Campaign queued for {estimatedRecipients} recipient
+              {estimatedRecipients !== 1 ? "s" : ""}.
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* ── Overview card ── */}
-        <div className="rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm p-6 sm:p-8">
+        <div className="rounded-[2rem] border border-slate-200/60 bg-white p-6 shadow-sm ring-1 ring-slate-900/5 sm:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               {editing ? (
                 <input
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-2.5 font-serif text-2xl font-bold text-slate-900 ring-1 ring-slate-900/5 focus:border-emerald-300 focus:outline-none focus:ring-emerald-200 transition-colors"
+                  className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-2.5 font-serif text-2xl font-bold text-slate-900 ring-1 ring-slate-900/5 transition-colors focus:border-emerald-300 focus:ring-emerald-200 focus:outline-none"
                 />
               ) : (
-                <h1 className="font-serif text-2xl font-bold text-slate-900 sm:text-3xl truncate">
+                <h1 className="truncate font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
                   {campaign.title}
                 </h1>
               )}
@@ -556,10 +620,12 @@ export default function CampaignDetailPage() {
                     value={editSubject}
                     onChange={(e) => setEditSubject(e.target.value)}
                     placeholder="Subject line"
-                    className="flex-1 min-w-[200px] rounded-xl border border-slate-200/60 bg-slate-50 px-3 py-1.5 text-sm text-slate-700 ring-1 ring-slate-900/5 focus:border-emerald-300 focus:outline-none focus:ring-emerald-200 transition-colors"
+                    className="min-w-[200px] flex-1 rounded-xl border border-slate-200/60 bg-slate-50 px-3 py-1.5 text-sm text-slate-700 ring-1 ring-slate-900/5 transition-colors focus:border-emerald-300 focus:ring-emerald-200 focus:outline-none"
                   />
                 ) : (
-                  <span className="text-sm text-slate-600">{campaign.subject}</span>
+                  <span className="text-sm text-slate-600">
+                    {campaign.subject}
+                  </span>
                 )}
               </div>
             </div>
@@ -586,73 +652,112 @@ export default function CampaignDetailPage() {
               >
                 <div className="mt-5 space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Template</label>
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                      Template
+                    </label>
                     <select
                       value={selectedTemplate ?? ""}
-                      onChange={(e) => setSelectedTemplate(e.target.value || null)}
+                      onChange={(e) =>
+                        setSelectedTemplate(e.target.value || null)
+                      }
                       className="mt-2 w-full rounded-xl border border-slate-200/60 bg-slate-50 px-3 py-2 text-sm text-slate-700"
                     >
                       <option value="">— none —</option>
                       {/* templates are loaded above in the file's useEffect */}
                       {templates.map((t) => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
+                        <option key={t.id} value={t.id}>
+                          {t.name}
+                        </option>
                       ))}
                     </select>
 
                     <div className="mt-4">
-                      <label className="mb-1.5 block text-sm font-semibold text-slate-700">HTML Content</label>
+                      <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                        HTML Content
+                      </label>
                       <textarea
                         value={editHtml}
                         onChange={(e) => setEditHtml(e.target.value)}
                         rows={10}
-                        className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-3 font-mono text-xs text-slate-900 ring-1 ring-slate-900/5 placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-emerald-200 transition-colors resize-y"
+                        className="w-full resize-y rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-3 font-mono text-xs text-slate-900 ring-1 ring-slate-900/5 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:ring-emerald-200 focus:outline-none"
                       />
                     </div>
 
                     <div className="mt-4">
-                      <label className="mb-1.5 block text-sm font-semibold text-slate-700">Plain Text
-                        <span className="ml-1 font-normal text-slate-400">(optional)</span>
+                      <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                        Plain Text
+                        <span className="ml-1 font-normal text-slate-400">
+                          (optional)
+                        </span>
                       </label>
                       <textarea
                         value={editPlain}
                         onChange={(e) => setEditPlain(e.target.value)}
                         rows={4}
-                        className="w-full rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-3 font-mono text-xs text-slate-900 ring-1 ring-slate-900/5 placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-emerald-200 transition-colors resize-y"
+                        className="w-full resize-y rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-3 font-mono text-xs text-slate-900 ring-1 ring-slate-900/5 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:ring-emerald-200 focus:outline-none"
                       />
                     </div>
 
                     <div className="mt-4 rounded border p-3">
                       <h4 className="text-sm font-semibold">Recipients</h4>
-                      <p className="text-xs text-slate-500 mt-1">Select a recipient list or upload a CSV to update campaign audience.</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        Select a recipient list or upload a CSV to update
+                        campaign audience.
+                      </p>
                       <div className="mt-3">
-                        <label className="block text-xs font-medium text-slate-600">Choose list</label>
+                        <label className="block text-xs font-medium text-slate-600">
+                          Choose list
+                        </label>
                         <select
                           value={selectedList ?? ""}
-                          onChange={(e) => setSelectedList(e.target.value || null)}
+                          onChange={(e) =>
+                            setSelectedList(e.target.value || null)
+                          }
                           className="mt-2 w-full rounded border px-3 py-2 text-sm"
                         >
                           <option value="">— none —</option>
                           {lists.map((l) => (
-                            <option key={l.id} value={l.id}>{l.name}</option>
+                            <option key={l.id} value={l.id}>
+                              {l.name}
+                            </option>
                           ))}
                         </select>
                       </div>
 
                       <div className="mt-3">
-                        <label className="block text-xs font-medium text-slate-600">Or upload CSV</label>
-                        <input type="file" accept=".csv" onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (!f) return;
-                          const reader = new FileReader();
-                          reader.onload = () => {
-                            const text = String(reader.result ?? "");
-                            const emails = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(l));
-                            // set importedEmails via window to bridge placeholder state
-                            setImportedEmails(Array.from(new Set([...importedEmails, ...emails])));
-                          };
-                          reader.readAsText(f);
-                        }} className="mt-2" />
-                        <p className="mt-2 text-xs text-slate-400">Imported will overwrite current audience when saved.</p>
+                        <label className="block text-xs font-medium text-slate-600">
+                          Or upload CSV
+                        </label>
+                        <input
+                          type="file"
+                          accept=".csv"
+                          onChange={(e) => {
+                            const f = e.target.files?.[0];
+                            if (!f) return;
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              const text = String(reader.result ?? "");
+                              const emails = text
+                                .split(/\r?\n/)
+                                .map((l) => l.trim())
+                                .filter(
+                                  (l) =>
+                                    l && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(l)
+                                );
+                              // set importedEmails via window to bridge placeholder state
+                              setImportedEmails(
+                                Array.from(
+                                  new Set([...importedEmails, ...emails])
+                                )
+                              );
+                            };
+                            reader.readAsText(f);
+                          }}
+                          className="mt-2"
+                        />
+                        <p className="mt-2 text-xs text-slate-400">
+                          Imported will overwrite current audience when saved.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -693,27 +798,45 @@ export default function CampaignDetailPage() {
           {/* Metadata */}
           <div className="mt-6 grid grid-cols-2 gap-4 border-t border-slate-100 pt-5 text-sm sm:grid-cols-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Created by</p>
-              <p className="mt-1 font-mono text-slate-700 truncate">{campaign.created_by.slice(0, 12)}…</p>
+              <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                Created by
+              </p>
+              <p className="mt-1 truncate font-mono text-slate-700">
+                {campaign.created_by.slice(0, 12)}…
+              </p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Created</p>
-              <p className="mt-1 text-slate-700">{formatDate(campaign.created_at)}</p>
+              <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                Created
+              </p>
+              <p className="mt-1 text-slate-700">
+                {formatDate(campaign.created_at)}
+              </p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Scheduled</p>
-              <p className="mt-1 text-slate-700">{formatDate(campaign.scheduled_at)}</p>
+              <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                Scheduled
+              </p>
+              <p className="mt-1 text-slate-700">
+                {formatDate(campaign.scheduled_at)}
+              </p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Sent at</p>
-              <p className="mt-1 text-slate-700">{formatDate(campaign.sent_at)}</p>
+              <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                Sent at
+              </p>
+              <p className="mt-1 text-slate-700">
+                {formatDate(campaign.sent_at)}
+              </p>
             </div>
           </div>
         </div>
 
         {/* ── Actions bar ── */}
-        <div className="rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm px-6 py-5">
-          <h2 className="mb-4 font-serif text-lg font-semibold text-slate-900">Actions</h2>
+        <div className="rounded-[2rem] border border-slate-200/60 bg-white px-6 py-5 shadow-sm ring-1 ring-slate-900/5">
+          <h2 className="mb-4 font-serif text-lg font-semibold text-slate-900">
+            Actions
+          </h2>
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setShowTestModal(true)}
@@ -748,17 +871,29 @@ export default function CampaignDetailPage() {
         {/* ── Stats ── */}
         {stats && (
           <div>
-            <h2 className="mb-4 font-serif text-xl font-semibold text-slate-900">Delivery Stats</h2>
+            <h2 className="mb-4 font-serif text-xl font-semibold text-slate-900">
+              Delivery Stats
+            </h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard label="Total Recipients" value={stats.total_recipients} />
+              <StatCard
+                label="Total Recipients"
+                value={stats.total_recipients}
+              />
               <StatCard label="Delivered" value={stats.sent_count} />
               <StatCard label="Failed" value={stats.failed_count} />
-              <StatCard label="Delivery Rate" value={`${stats.delivery_rate.toFixed(1)}%`} />
+              <StatCard
+                label="Delivery Rate"
+                value={`${stats.delivery_rate.toFixed(1)}%`}
+              />
             </div>
-            <div className="mt-5 rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm px-6 py-5">
+            <div className="mt-5 rounded-[2rem] border border-slate-200/60 bg-white px-6 py-5 shadow-sm ring-1 ring-slate-900/5">
               <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="font-semibold text-slate-700">Delivery Progress</span>
-                <span className="tabular-nums text-slate-500">{stats.delivery_rate.toFixed(1)}%</span>
+                <span className="font-semibold text-slate-700">
+                  Delivery Progress
+                </span>
+                <span className="text-slate-500 tabular-nums">
+                  {stats.delivery_rate.toFixed(1)}%
+                </span>
               </div>
               <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100">
                 <motion.div
@@ -781,7 +916,7 @@ export default function CampaignDetailPage() {
                 ({logs.length} entries)
               </span>
             </h2>
-            <div className="rounded-[2rem] border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm overflow-hidden">
+            <div className="overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white shadow-sm ring-1 ring-slate-900/5">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -789,7 +924,7 @@ export default function CampaignDetailPage() {
                       {["Email", "Status", "Sent At", "Error"].map((h) => (
                         <th
                           key={h}
-                          className="px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+                          className="px-4 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-500 uppercase"
                         >
                           {h}
                         </th>
@@ -800,18 +935,20 @@ export default function CampaignDetailPage() {
                     {logs.map((log) => (
                       <tr
                         key={log.id}
-                        className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors"
+                        className="border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50/50"
                       >
-                        <td className="px-4 py-3 font-medium text-slate-800 max-w-[220px]">
-                          <span className="block truncate">{log.recipient_email}</span>
+                        <td className="max-w-[220px] px-4 py-3 font-medium text-slate-800">
+                          <span className="block truncate">
+                            {log.recipient_email}
+                          </span>
                         </td>
                         <td className="px-4 py-3">
                           <LogStatusChip status={log.delivery_status} />
                         </td>
-                        <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
+                        <td className="px-4 py-3 whitespace-nowrap text-slate-500">
                           {formatDate(log.sent_at)}
                         </td>
-                        <td className="px-4 py-3 text-red-500 max-w-[280px]">
+                        <td className="max-w-[280px] px-4 py-3 text-red-500">
                           <span className="block truncate text-xs">
                             {log.error_message ?? "—"}
                           </span>
@@ -829,7 +966,10 @@ export default function CampaignDetailPage() {
       {/* ── Modals ── */}
       <AnimatePresence>
         {showTestModal && (
-          <TestEmailModal campaignId={id} onClose={() => setShowTestModal(false)} />
+          <TestEmailModal
+            campaignId={id}
+            onClose={() => setShowTestModal(false)}
+          />
         )}
       </AnimatePresence>
 

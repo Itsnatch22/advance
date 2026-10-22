@@ -15,45 +15,38 @@ export const sendEmailCampaign = task({
   id: "send-email-campaign",
   maxDuration: 600,
 
-  run: async (payload: { campaign_id: string; triggered_by: string; recipients?: Array<{ id: string | null; email: string }> }) => {
+  run: async (payload: {
+    campaign_id: string;
+    triggered_by: string;
+    recipients?: Array<{ id: string | null; email: string }>;
+  }) => {
     const startedAt = Date.now();
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     const resend = new Resend(process.env.RESEND_API_KEY!);
-    const APP_URL =
-      process.env.NEXT_PUBLIC_APP_URL ?? "https://eaziwage.com";
+    const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://eaziwage.com";
 
     logger.info("Starting campaign send", {
       campaign_id: payload.campaign_id,
       triggered_by: payload.triggered_by,
     });
 
-    // 1. Lock campaign. The API route may already have transitioned it to
-    // "sending" before enqueueing this job, so accept that as the lock state.
-    let { data: campaign, error: lockError } = await supabase
+    // 1. Claim the campaign atomically. Duplicate task runs cannot resume a
+    // campaign whose status has already advanced to "sending".
+    const { data: campaign, error: lockError } = await supabase
       .from("email_campaigns")
-      .update({ status: "sending" })
+      .update({ status: "sending", updated_at: new Date().toISOString() })
       .in("status", ["draft", "scheduled"])
       .eq("id", payload.campaign_id)
       .select()
       .single();
 
     if (lockError || !campaign) {
-      const { data: lockedCampaign, error: fetchLockedError } = await supabase
-        .from("email_campaigns")
-        .select()
-        .eq("id", payload.campaign_id)
-        .eq("status", "sending")
-        .single();
-
-      if (fetchLockedError || !lockedCampaign) {
-        throw new Error(
-          `Campaign ${payload.campaign_id} not in sendable state or already locked`
-        );
-      }
-      campaign = lockedCampaign;
+      throw new Error(
+        `Campaign ${payload.campaign_id} is not sendable or has already been claimed`
+      );
     }
 
     logger.info("Campaign locked for sending", {
@@ -61,226 +54,282 @@ export const sendEmailCampaign = task({
       subject: campaign.subject,
     });
 
-    // 2. Resolve recipients: either from payload override or from campaign audience_filter
-    let subscribers: Array<{ id: string | null; email: string }> = [];
+    try {
+      // 2. Resolve recipients: either from payload override or from campaign audience_filter
+      let subscribers: Array<{ id: string | null; email: string }> = [];
 
-    if (Array.isArray(payload.recipients) && payload.recipients.length > 0) {
-      subscribers = payload.recipients;
-    } else {
-      const audience = (campaign.audience_filter ?? { segment: "all" }) as {
-        segment?: string;
-        emails?: string[];
-      };
+      if (Array.isArray(payload.recipients)) {
+        subscribers = payload.recipients;
+      } else {
+        const audience = (campaign.audience_filter ?? { segment: "all" }) as {
+          segment?: string;
+          emails?: string[];
+        };
 
-      let subscriberQuery = supabase
-        .from("newsletter_subscriptions")
-        .select("id, email")
-        .eq("status", "active")
-        .not("confirmed_at", "is", null);
+        let subscriberQuery = supabase
+          .from("newsletter_subscriptions")
+          .select("id, email")
+          .eq("status", "active")
+          .not("confirmed_at", "is", null);
 
-      if (audience.segment === "manual" && audience.emails?.length) {
-        subscriberQuery = subscriberQuery.in(
-          "email",
-          audience.emails.map((email) => email.toLowerCase())
-        );
-      }
-      if (audience.segment === "recent") {
-        const since = new Date();
-        since.setDate(since.getDate() - 30);
-        subscriberQuery = subscriberQuery.gte("created_at", since.toISOString());
-      }
+        if (audience.segment === "manual" && audience.emails?.length) {
+          subscriberQuery = subscriberQuery.in(
+            "email",
+            audience.emails.map((email) => email.toLowerCase())
+          );
+        }
+        if (audience.segment === "recent") {
+          const since = new Date();
+          since.setDate(since.getDate() - 30);
+          subscriberQuery = subscriberQuery.gte(
+            "created_at",
+            since.toISOString()
+          );
+        }
 
-      const { data: subsData, error: subError } = await subscriberQuery;
+        const { data: subsData, error: subError } = await subscriberQuery;
 
-      if (subError) {
-        throw new Error(`Failed to fetch subscribers: ${subError.message}`);
-      }
+        if (subError) {
+          throw new Error(`Failed to fetch subscribers: ${subError.message}`);
+        }
 
-      subscribers = (subsData ?? []).map((s: any) => ({ id: s.id ?? null, email: s.email }));
-    }
-
-    const total = subscribers.length;
-
-    // 3. Update total_recipients on the campaign row
-    await supabase
-      .from("email_campaigns")
-      .update({ total_recipients: total })
-      .eq("id", payload.campaign_id);
-
-    logger.info("Subscriber count resolved", { total });
-
-    // 4. Handle empty subscriber list
-    if (total === 0) {
-      await supabase
-        .from("email_campaigns")
-        .update({
-          status: "completed",
-          sent_count: 0,
-          failed_count: 0,
-          sent_at: new Date().toISOString(),
-        })
-        .eq("id", payload.campaign_id);
-
-      logger.info("No subscribers — campaign marked completed with 0 sends");
-      return { sent: 0, failed: 0, total: 0 };
-    }
-
-    // 5. Fetch profiles for personalization
-    const emailList = subscribers.map((s) => s.email);
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("email, full_name")
-      .in("email", emailList);
-
-    const profileMap = new Map(
-      (profiles ?? []).map((p) => [p.email, p.full_name as string | null])
-    );
-
-    // 6. Process in batches of BATCH_SIZE
-    let sentCount = 0;
-    let failedCount = 0;
-
-    // Defense-in-depth: sanitize the stored HTML before building each email
-    const sanitizedBase = sanitizeCampaignHtml(campaign.html_content);
-
-    for (let offset = 0; offset < total; offset += BATCH_SIZE) {
-      const batch = subscribers.slice(offset, offset + BATCH_SIZE);
-
-      logger.info("Processing batch", {
-        batchStart: offset,
-        batchSize: batch.length,
-      });
-
-      // a. Pre-insert log entries with status "queued"
-      await supabase.from("email_campaign_logs").insert(
-        batch.map((sub) => ({
-          campaign_id: payload.campaign_id,
-          recipient_email: sub.email,
-          subscriber_id: sub.id,
-          delivery_status: "queued",
-        }))
-      );
-
-      // b. Build personalized emails for each subscriber
-      const emailsToSend = batch.map((sub) => {
-        const fullName = profileMap.get(sub.email) ?? null;
-        const personalizedHtml = interpolate(sanitizedBase, fullName);
-        const token = makeUnsubscribeToken(sub.email, "newsletter");
-        const unsubscribeUrl = `${APP_URL}/api/unsubscribe?email=${encodeURIComponent(
-          sub.email
-        )}&product=newsletter&token=${token}`;
-        const html = buildCampaignEmailHtml(
-          personalizedHtml,
-          campaign.subject,
-          unsubscribeUrl,
-          APP_URL
-        );
-        return { to: sub.email, html };
-      });
-
-      // c. Send batch via Resend and update logs
-      try {
-        const batchResult = await resend.batch.send(
-          emailsToSend.map((e, index) => ({
-            from: `EaziWage <${EMAIL_CONFIG.NEWSLETTER_SENDER}>`,
-            to: e.to,
-            subject:
-              campaign.ab_test_subject_b &&
-              campaign.ab_test_percent > 0 &&
-              (offset + index) % 100 < campaign.ab_test_percent
-                ? campaign.ab_test_subject_b
-                : campaign.subject,
-            html: e.html,
-          }))
-        );
-
-        // d. Update log entries to "sent" with provider message IDs
-        const sentAt = new Date().toISOString();
-        const resultData = batchResult.data?.data ?? [];
-
-        await Promise.all(
-          batch.map((sub, idx) => {
-            const providerMessageId = resultData[idx]?.id ?? null;
-            return supabase
-              .from("email_campaign_logs")
-              .update({
-                delivery_status: "sent",
-                provider_message_id: providerMessageId,
-                sent_at: sentAt,
-              })
-              .eq("campaign_id", payload.campaign_id)
-              .eq("recipient_email", sub.email);
+        subscribers = (subsData ?? []).map(
+          (s: { id: string | null; email: string }) => ({
+            id: s.id ?? null,
+            email: s.email,
           })
         );
+      }
 
-        sentCount += batch.length;
-        logger.info("Batch sent successfully", {
+      const total = subscribers.length;
+
+      // 3. Update total_recipients on the campaign row
+      const { error: recipientCountError } = await supabase
+        .from("email_campaigns")
+        .update({ total_recipients: total })
+        .eq("id", payload.campaign_id)
+        .eq("status", "sending");
+      if (recipientCountError) {
+        throw new Error(
+          `Failed to save campaign recipient count: ${recipientCountError.message}`
+        );
+      }
+
+      logger.info("Subscriber count resolved", { total });
+
+      // 4. Handle empty subscriber list
+      if (total === 0) {
+        const { error: completionError } = await supabase
+          .from("email_campaigns")
+          .update({
+            status: "completed",
+            sent_count: 0,
+            failed_count: 0,
+            sent_at: new Date().toISOString(),
+          })
+          .eq("id", payload.campaign_id)
+          .eq("status", "sending");
+        if (completionError) {
+          throw new Error(
+            `Failed to complete empty campaign: ${completionError.message}`
+          );
+        }
+
+        logger.info("No subscribers — campaign marked completed with 0 sends");
+        return { sent: 0, failed: 0, total: 0 };
+      }
+
+      // 5. Fetch profiles for personalization
+      const emailList = subscribers.map((s) => s.email);
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("email, full_name")
+        .in("email", emailList);
+
+      const profileMap = new Map(
+        (profiles ?? []).map((p) => [p.email, p.full_name as string | null])
+      );
+
+      // 6. Process in batches of BATCH_SIZE
+      let sentCount = 0;
+      let failedCount = 0;
+
+      // Defense-in-depth: sanitize the stored HTML before building each email
+      const sanitizedBase = sanitizeCampaignHtml(campaign.html_content);
+
+      for (let offset = 0; offset < total; offset += BATCH_SIZE) {
+        const batch = subscribers.slice(offset, offset + BATCH_SIZE);
+
+        logger.info("Processing batch", {
           batchStart: offset,
           batchSize: batch.length,
         });
-      } catch (batchErr) {
-        const errorMessage =
-          batchErr instanceof Error ? batchErr.message : String(batchErr);
 
-        logger.error("Batch failed", { batchStart: offset, errorMessage });
-
-        // Update all in batch to "failed"
-        await supabase
+        // a. Pre-insert log entries with status "queued"
+        const { error: logInsertError } = await supabase
           .from("email_campaign_logs")
-          .update({
-            delivery_status: "failed",
-            error_message: errorMessage,
-          })
-          .eq("campaign_id", payload.campaign_id)
-          .in(
-            "recipient_email",
-            batch.map((s) => s.email)
+          .insert(
+            batch.map((sub) => ({
+              campaign_id: payload.campaign_id,
+              recipient_email: sub.email,
+              subscriber_id: sub.id,
+              delivery_status: "queued",
+            }))
+          );
+        if (logInsertError) {
+          throw new Error(
+            `Failed to create campaign delivery logs: ${logInsertError.message}`
+          );
+        }
+
+        // b. Build personalized emails for each subscriber
+        const emailsToSend = batch.map((sub) => {
+          const fullName = profileMap.get(sub.email) ?? null;
+          const personalizedHtml = interpolate(sanitizedBase, fullName);
+          const token = makeUnsubscribeToken(sub.email, "newsletter");
+          const unsubscribeUrl = `${APP_URL}/api/unsubscribe?email=${encodeURIComponent(
+            sub.email
+          )}&product=newsletter&token=${token}`;
+          const html = buildCampaignEmailHtml(
+            personalizedHtml,
+            campaign.subject,
+            unsubscribeUrl,
+            APP_URL
+          );
+          return { to: sub.email, html };
+        });
+
+        // c. Send batch via Resend and update logs
+        try {
+          const batchResult = await resend.batch.send(
+            emailsToSend.map((e, index) => ({
+              from: `EaziWage <${EMAIL_CONFIG.NEWSLETTER_SENDER}>`,
+              to: e.to,
+              subject:
+                campaign.ab_test_subject_b &&
+                campaign.ab_test_percent > 0 &&
+                (offset + index) % 100 < campaign.ab_test_percent
+                  ? campaign.ab_test_subject_b
+                  : campaign.subject,
+              html: e.html,
+            }))
           );
 
-        failedCount += batch.length;
+          // d. Update log entries to "sent" with provider message IDs
+          const sentAt = new Date().toISOString();
+          const resultData = batchResult.data?.data ?? [];
+
+          await Promise.all(
+            batch.map((sub, idx) => {
+              const providerMessageId = resultData[idx]?.id ?? null;
+              return supabase
+                .from("email_campaign_logs")
+                .update({
+                  delivery_status: "sent",
+                  provider_message_id: providerMessageId,
+                  sent_at: sentAt,
+                })
+                .eq("campaign_id", payload.campaign_id)
+                .eq("recipient_email", sub.email);
+            })
+          );
+
+          sentCount += batch.length;
+          logger.info("Batch sent successfully", {
+            batchStart: offset,
+            batchSize: batch.length,
+          });
+        } catch (batchErr) {
+          const errorMessage =
+            batchErr instanceof Error ? batchErr.message : String(batchErr);
+
+          logger.error("Batch failed", { batchStart: offset, errorMessage });
+
+          // Update all in batch to "failed"
+          await supabase
+            .from("email_campaign_logs")
+            .update({
+              delivery_status: "failed",
+              error_message: errorMessage,
+            })
+            .eq("campaign_id", payload.campaign_id)
+            .in(
+              "recipient_email",
+              batch.map((s) => s.email)
+            );
+
+          failedCount += batch.length;
+        }
+
+        // e. Update running counts on the campaign row after each batch
+        await supabase
+          .from("email_campaigns")
+          .update({ sent_count: sentCount, failed_count: failedCount })
+          .eq("id", payload.campaign_id);
       }
 
-      // e. Update running counts on the campaign row after each batch
-      await supabase
+      // 7. Finalize campaign
+      const finalStatus = sentCount > 0 ? "completed" : "failed";
+      const { error: finalizeError } = await supabase
         .from("email_campaigns")
-        .update({ sent_count: sentCount, failed_count: failedCount })
-        .eq("id", payload.campaign_id);
-    }
+        .update({
+          status: finalStatus,
+          sent_count: sentCount,
+          failed_count: failedCount,
+          sent_at: new Date().toISOString(),
+        })
+        .eq("id", payload.campaign_id)
+        .eq("status", "sending");
+      if (finalizeError) {
+        throw new Error(
+          `Failed to finalize campaign: ${finalizeError.message}`
+        );
+      }
 
-    // 7. Finalize campaign
-    const finalStatus = sentCount > 0 ? "completed" : "failed";
-    await supabase
-      .from("email_campaigns")
-      .update({
+      const durationMs = Date.now() - startedAt;
+      logger.info("Campaign send complete", {
+        campaign_id: payload.campaign_id,
+        sent: sentCount,
+        failed: failedCount,
+        total,
         status: finalStatus,
-        sent_count: sentCount,
-        failed_count: failedCount,
-        sent_at: new Date().toISOString(),
-      })
-      .eq("id", payload.campaign_id);
-
-    const durationMs = Date.now() - startedAt;
-    logger.info("Campaign send complete", {
-      campaign_id: payload.campaign_id,
-      sent: sentCount,
-      failed: failedCount,
-      total,
-      status: finalStatus,
-      durationMs,
-    });
-
-    // Write an admin audit log for this send action (if triggered_by/admin id provided)
-    try {
-      const { logAdminAction } = await import("@/lib/admin/audit");
-      await logAdminAction(payload.triggered_by ?? null, "campaign.send", {
-        objectType: "campaign",
-        objectId: payload.campaign_id,
-        meta: { sent: sentCount, failed: failedCount, total, status: finalStatus, durationMs },
+        durationMs,
       });
-    } catch (e) {
-      logger.warn("Failed to write admin audit log", { error: String(e) });
-    }
 
-    return { sent: sentCount, failed: failedCount, total, durationMs };
+      // Write an admin audit log for this send action (if triggered_by/admin id provided)
+      try {
+        const { logAdminAction } = await import("@/lib/admin/audit");
+        await logAdminAction(payload.triggered_by ?? null, "campaign.send", {
+          objectType: "campaign",
+          objectId: payload.campaign_id,
+          meta: {
+            sent: sentCount,
+            failed: failedCount,
+            total,
+            status: finalStatus,
+            durationMs,
+          },
+        });
+      } catch (e) {
+        logger.warn("Failed to write admin audit log", { error: String(e) });
+      }
+
+      return { sent: sentCount, failed: failedCount, total, durationMs };
+    } catch (error) {
+      const { error: failedStatusError } = await supabase
+        .from("email_campaigns")
+        .update({ status: "failed", updated_at: new Date().toISOString() })
+        .eq("id", payload.campaign_id)
+        .eq("status", "sending");
+
+      if (failedStatusError) {
+        logger.error("Failed to mark campaign as failed", {
+          campaign_id: payload.campaign_id,
+          error: failedStatusError,
+        });
+      }
+
+      throw error;
+    }
   },
 });

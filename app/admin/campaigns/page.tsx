@@ -18,20 +18,15 @@ function formatDate(iso: string) {
 
 function StatusBadge({ status }: { status: CampaignStatus }) {
   const map: Record<CampaignStatus, string> = {
-    draft:
-      "bg-slate-50 text-slate-600 ring-slate-500/10",
-    scheduled:
-      "bg-blue-50 text-blue-700 ring-blue-500/10",
-    sending:
-      "bg-amber-50 text-amber-700 ring-amber-500/10",
-    completed:
-      "bg-emerald-50 text-emerald-700 ring-emerald-500/10",
-    failed:
-      "bg-red-50 text-red-700 ring-red-500/10",
+    draft: "bg-slate-50 text-slate-600 ring-slate-500/10",
+    scheduled: "bg-blue-50 text-blue-700 ring-blue-500/10",
+    sending: "bg-amber-50 text-amber-700 ring-amber-500/10",
+    completed: "bg-emerald-50 text-emerald-700 ring-emerald-500/10",
+    failed: "bg-red-50 text-red-700 ring-red-500/10",
   };
   return (
     <span
-      className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider ring-1 ${map[status]}`}
+      className={`rounded-full px-3 py-1 text-xs font-semibold tracking-wider uppercase ring-1 ${map[status]}`}
     >
       {status}
     </span>
@@ -64,12 +59,12 @@ function StatCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-4xl border border-slate-200/60 bg-white px-6 py-5 ring-1 ring-slate-900/5 shadow-sm flex items-center gap-4">
+    <div className="flex items-center gap-4 rounded-4xl border border-slate-200/60 bg-white px-6 py-5 shadow-sm ring-1 ring-slate-900/5">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
         {icon}
       </div>
       <div>
-        <p className="text-2xl font-bold font-serif text-slate-900">{value}</p>
+        <p className="font-serif text-2xl font-bold text-slate-900">{value}</p>
         <p className="text-sm text-slate-500">{label}</p>
       </div>
     </div>
@@ -97,8 +92,12 @@ export default function CampaignsPage() {
           setError(body?.error ?? "Failed to load campaigns.");
           return;
         }
-        const data = await res.json();
-        setCampaigns(data.campaigns ?? []);
+        const response = await res.json();
+        if (!response.success) {
+          setError(response.error ?? "Failed to load campaigns.");
+          return;
+        }
+        setCampaigns(response.data?.campaigns ?? []);
       } catch {
         setError("Network error. Please try again.");
       } finally {
@@ -113,8 +112,12 @@ export default function CampaignsPage() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
-          <h2 className="font-serif text-2xl font-bold text-slate-900">Access Restricted</h2>
-          <p className="mt-2 text-slate-600">This area requires administrator privileges.</p>
+          <h2 className="font-serif text-2xl font-bold text-slate-900">
+            Access Restricted
+          </h2>
+          <p className="mt-2 text-slate-600">
+            This area requires administrator privileges.
+          </p>
         </div>
       </div>
     );
@@ -147,7 +150,9 @@ export default function CampaignsPage() {
           <h1 className="font-serif text-3xl font-bold text-slate-900 sm:text-4xl">
             Email Campaigns
           </h1>
-          <p className="mt-1 text-slate-500">Manage and send campaigns to your subscribers.</p>
+          <p className="mt-1 text-slate-500">
+            Manage and send campaigns to your subscribers.
+          </p>
         </div>
         <Link
           href="/admin/campaigns/new"
@@ -175,13 +180,25 @@ export default function CampaignsPage() {
           className="mb-8 grid gap-4 sm:grid-cols-3"
         >
           <motion.div variants={itemVariants}>
-            <StatCard label="Total Campaigns" value={total} icon={<MailCheck className="h-5 w-5" />} />
+            <StatCard
+              label="Total Campaigns"
+              value={total}
+              icon={<MailCheck className="h-5 w-5" />}
+            />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <StatCard label="Currently Sending" value={active} icon={<Send className="h-5 w-5" />} />
+            <StatCard
+              label="Currently Sending"
+              value={active}
+              icon={<Send className="h-5 w-5" />}
+            />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <StatCard label="Completed" value={completed} icon={<MailCheck className="h-5 w-5" />} />
+            <StatCard
+              label="Completed"
+              value={completed}
+              icon={<MailCheck className="h-5 w-5" />}
+            />
           </motion.div>
         </motion.div>
       )}
@@ -191,16 +208,23 @@ export default function CampaignsPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="rounded-4xl border border-slate-200/60 bg-white ring-1 ring-slate-900/5 shadow-sm overflow-hidden"
+        className="overflow-hidden rounded-4xl border border-slate-200/60 bg-white shadow-sm ring-1 ring-slate-900/5"
       >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/60">
-                {["Title", "Subject", "Status", "Recipients", "Created", "Actions"].map((h) => (
+                {[
+                  "Title",
+                  "Subject",
+                  "Status",
+                  "Recipients",
+                  "Created",
+                  "Actions",
+                ].map((h) => (
                   <th
                     key={h}
-                    className="px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+                    className="px-4 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-500 uppercase"
                   >
                     {h}
                   </th>
@@ -245,12 +269,12 @@ export default function CampaignsPage() {
                     <motion.tr
                       key={c.id}
                       variants={itemVariants}
-                      className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors"
+                      className="border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50/50"
                     >
-                      <td className="px-4 py-4 font-medium text-slate-900 max-w-45">
+                      <td className="max-w-45 px-4 py-4 font-medium text-slate-900">
                         <span className="block truncate">{c.title}</span>
                       </td>
-                      <td className="px-4 py-4 text-slate-600 max-w-50">
+                      <td className="max-w-50 px-4 py-4 text-slate-600">
                         <span className="block truncate">{c.subject}</span>
                       </td>
                       <td className="px-4 py-4">
@@ -260,14 +284,18 @@ export default function CampaignsPage() {
                         <span className="tabular-nums">
                           {c.total_recipients ?? "—"} total
                           {c.sent_count > 0 && (
-                            <span className="ml-1 text-emerald-600">/ {c.sent_count} sent</span>
+                            <span className="ml-1 text-emerald-600">
+                              / {c.sent_count} sent
+                            </span>
                           )}
                           {c.failed_count > 0 && (
-                            <span className="ml-1 text-red-500">/ {c.failed_count} failed</span>
+                            <span className="ml-1 text-red-500">
+                              / {c.failed_count} failed
+                            </span>
                           )}
                         </span>
                       </td>
-                      <td className="px-4 py-4 text-slate-500 whitespace-nowrap">
+                      <td className="px-4 py-4 whitespace-nowrap text-slate-500">
                         {formatDate(c.created_at)}
                       </td>
                       <td className="px-4 py-4">
@@ -279,7 +307,8 @@ export default function CampaignsPage() {
                             <Eye className="h-3.5 w-3.5" />
                             View
                           </Link>
-                          {(c.status === "draft" || c.status === "scheduled") && (
+                          {(c.status === "draft" ||
+                            c.status === "scheduled") && (
                             <Link
                               href={`/admin/campaigns/${c.id}`}
                               className="inline-flex items-center gap-1 rounded-xl border border-slate-200/60 px-3 py-1.5 text-xs font-semibold text-slate-600 ring-1 ring-slate-900/5 transition-all hover:border-emerald-200 hover:text-emerald-700"

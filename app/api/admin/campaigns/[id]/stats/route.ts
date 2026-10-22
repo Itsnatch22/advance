@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiLimiter, checkRateLimit } from "@/lib/security/rate-limit";
-import { sendSuccess, sendError } from '@/lib/utils/response';
+import { sendSuccess, sendError } from "@/lib/utils/response";
 import { getAuthenticatedAdmin } from "@/lib/admin/campaigns";
 
 export async function GET(
@@ -11,7 +11,12 @@ export async function GET(
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const rl = await checkRateLimit(apiLimiter, ip);
   if (!rl.success)
-    return sendError("Rate limit exceeded", 429, undefined, rl.headers as Record<string,string>);
+    return sendError(
+      "Rate limit exceeded",
+      429,
+      undefined,
+      rl.headers as Record<string, string>
+    );
 
   const auth = await getAuthenticatedAdmin(request);
   if ("error" in auth)
@@ -29,7 +34,7 @@ export async function GET(
       .single();
 
     if (campaignError || !campaign) {
-        return sendError("Campaign not found", 404);
+      return sendError("Campaign not found", 404);
     }
 
     // Fetch all delivery_status values for this campaign (for grouping)
@@ -55,7 +60,8 @@ export async function GET(
     const failed_count = statusCounts["failed"] ?? 0;
     const queued_count = statusCounts["queued"] ?? 0;
     const bounced_count = statusCounts["bounced"] ?? 0;
-    const delivery_rate = total > 0 ? Math.round((sent_count / total) * 100 * 100) / 100 : 0;
+    const delivery_rate =
+      total > 0 ? Math.round((sent_count / total) * 100 * 100) / 100 : 0;
 
     // Fetch recent 50 logs (full rows) ordered by created_at DESC
     const { data: recent_logs, error: recentError } = await admin
@@ -79,7 +85,7 @@ export async function GET(
     return sendSuccess({
       campaign,
       stats: {
-        total,
+        total_recipients: total,
         sent_count,
         failed_count,
         queued_count,

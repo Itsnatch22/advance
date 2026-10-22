@@ -1,4 +1,5 @@
-export type CampaignStatus = "draft" | "scheduled" | "sending" | "completed" | "failed";
+export type CampaignStatus =
+  "draft" | "scheduled" | "sending" | "completed" | "failed";
 
 export interface EmailCampaign {
   id: string;
@@ -50,4 +51,21 @@ export interface EmailCampaignAuditLog {
   action: string;
   metadata: Record<string, unknown>;
   created_at: string;
+}
+
+export interface CampaignTemplate {
+  id: string;
+  name: string;
+  html_content: string;
+  plain_text_content: string | null;
+}
+
+export interface CampaignRecipientList {
+  id: string;
+  name: string;
+}
+
+export interface CampaignRecipientListMember {
+  email: string;
+  subscriber_id: string | null;
 }
