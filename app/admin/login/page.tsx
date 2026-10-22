@@ -76,13 +76,16 @@ export default function AdminLoginPage() {
 
         recaptchaToken = await Promise.race([recaptchaPromise, timeoutPromise]);
       } catch (recaptchaErr) {
-        console.warn("reCAPTCHA unavailable, continuing without a token:", recaptchaErr);
+        console.warn(
+          "reCAPTCHA unavailable, continuing without a token:",
+          recaptchaErr
+        );
       }
 
       const precheck = await fetch("/api/admin/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, honeypot, recaptchaToken }),
+        body: JSON.stringify({ email, password, honeypot, recaptchaToken }),
       });
 
       const precheckData = await precheck.json();
@@ -93,13 +96,19 @@ export default function AdminLoginPage() {
       }
 
       const supabase = getSupabaseBrowserClient();
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data: authData, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
       if (authError || !authData.user) {
-        console.error("signInWithPassword failed:", authError?.status, authError?.code, authError?.message);
+        console.error(
+          "signInWithPassword failed:",
+          authError?.status,
+          authError?.code,
+          authError?.message
+        );
         setError(
           authError?.code === "invalid_credentials"
             ? "Invalid email or password."
@@ -114,14 +123,20 @@ export default function AdminLoginPage() {
       if (!meRes.ok || !me.data?.isAdmin) {
         console.error("Admin verification failed:", me);
         await supabase.auth.signOut();
-        setError(me?.error || "This account is not authorized for admin access");
+        setError(
+          me?.error || "This account is not authorized for admin access"
+        );
         return;
       }
 
       window.location.href = "/admin/campaigns";
     } catch (err) {
       console.error("Login error:", err);
-      setError(err instanceof Error ? err.message : "An error occurred. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -164,7 +179,7 @@ export default function AdminLoginPage() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
-            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
+            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 transition outline-none placeholder:text-slate-500 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
           />
         </div>
 
@@ -183,7 +198,7 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 pr-12 text-sm text-slate-900 transition outline-none placeholder:text-slate-500 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
             />
             <button
               type="button"
@@ -206,7 +221,10 @@ export default function AdminLoginPage() {
             role="alert"
             className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
           >
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <AlertCircle
+              className="mt-0.5 h-4 w-4 shrink-0"
+              aria-hidden="true"
+            />
             <p>{error}</p>
           </div>
         ) : null}
