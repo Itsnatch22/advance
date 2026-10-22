@@ -1,10 +1,10 @@
 export type CareerDepartment =
   | "engineering"
-|"product_design"
-| "growth_marketing"
-| "operations"
-| "finance"
-| "people_culture";
+  | "product_design"
+  | "growth_marketing"
+  | "operations"
+  | "finance"
+  | "people_culture";
 
 export type CareerEmploymentType =
   | "full-time"
@@ -12,12 +12,15 @@ export type CareerEmploymentType =
   | "contract"
   | "internship";
 
+export type CareerStatus = "open" | "closed" | "archived";
+
 export type Career = {
   id: string;
   slug: string;
   title: string;
   department: CareerDepartment;
   employment_type: CareerEmploymentType;
+  status: CareerStatus;
   // New location fields
   country_code: string | null;
   city: string | null;
@@ -40,6 +43,12 @@ export type Career = {
   currency_code: string | null;
   is_stipend: boolean;
 };
+
+export function isCareerOpen(
+  career: Pick<Career, "status" | "is_open">
+): boolean {
+  return career.status === "open" && career.is_open;
+}
 
 // Helper: format location/work mode for display
 export function formatLocation(career: Pick<Career, "city" | "country_code" | "work_mode">) {

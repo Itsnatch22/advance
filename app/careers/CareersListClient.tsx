@@ -18,7 +18,6 @@ import {
   formatEmploymentType,
   getApplyHref,
   formatLocation,
-  formatSalary,
 } from "./types";
 import { useMemo, useState } from "react";
 
@@ -196,13 +195,6 @@ function CareerCard({ career }: { career: Career }) {
                 <MapPin className="h-4 w-4 text-green-600" strokeWidth={1.8} />
                 {formatLocation(career)}
               </span>
-
-              {/** Salary display */}
-              {formatSalary(career) ? (
-                <span className="inline-flex items-center gap-2 text-slate-600">
-                  <span className="font-semibold">{formatSalary(career)}</span>
-                </span>
-              ) : null}
 
               {career.closing_date ? (
                 <span className="inline-flex items-center gap-2">

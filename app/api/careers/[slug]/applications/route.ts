@@ -15,6 +15,7 @@ import {
   validateCareerApplicationFile,
 } from "@/lib/validations/career-application";
 import { EMAIL_CONFIG, COMPANY_CONFIG } from "@/constants/config";
+import { isCareerOpen, type CareerStatus } from "@/app/careers/types";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,7 @@ type CareerForApplication = {
   id: string;
   slug: string;
   title: string;
-  status: "open" | "closed" | "archived";
+  status: CareerStatus;
   is_open: boolean;
   apply_email: string | null;
 };
@@ -151,7 +152,7 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       return sendError("This role could not be found.", 404);
     }
 
-    if (resolvedCareer.status !== "open" || !resolvedCareer.is_open) {
+    if (!isCareerOpen(resolvedCareer)) {
       return sendError("This role is no longer accepting applications.", 409);
     }
 

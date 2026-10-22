@@ -1,10 +1,10 @@
 import { COMPANY_CONFIG } from "@/constants/config";
-import type { Career } from "./types";
+import { isCareerOpen, type Career } from "./types";
 
 type JobPosting = Record<string, unknown>;
 
 export function buildJobPostingJsonLd(career: Career): JobPosting | null {
-  if (!career.is_open) return null;
+  if (!isCareerOpen(career)) return null;
 
   const jobPosting: JobPosting = {
     "@context": "https://schema.org",
@@ -41,19 +41,6 @@ export function buildJobPostingJsonLd(career: Career): JobPosting | null {
         "@type": "PostalAddress",
         addressLocality: career.city ?? undefined,
         addressCountry: career.country_code,
-      },
-    };
-  }
-
-  if (career.salary_min != null && career.salary_max != null && career.currency_code) {
-    jobPosting.baseSalary = {
-      "@type": "MonetaryAmount",
-      currency: career.currency_code,
-      value: {
-        "@type": "QuantitativeValue",
-        minValue: career.salary_min,
-        maxValue: career.salary_max,
-        unitText: "MONTH",
       },
     };
   }

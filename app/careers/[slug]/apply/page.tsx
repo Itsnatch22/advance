@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { GridSystem } from "@/components/grid";
 import { BorderBeam } from "@/components/ui/border-beam";
 import { supabaseUser } from "@/lib/supabase/server";
-import type { Career } from "../../types";
+import { isCareerOpen, type Career } from "../../types";
 import { ApplicationForm } from "./ApplicationForm";
 
 export const dynamic = "force-dynamic";
@@ -63,7 +63,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
     notFound();
   }
 
-  if (!career.is_open) {
+  if (!isCareerOpen(career)) {
     return (
       <GridSystem
         variant="dots"
