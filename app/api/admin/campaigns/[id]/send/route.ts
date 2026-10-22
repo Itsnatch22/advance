@@ -87,18 +87,18 @@ export async function POST(
       count = recipientsPayload.length;
     }
 
-    // Trigger Trigger.dev job
+    await logCampaignAudit(admin, {
+      campaignId: id,
+      actorId: user.id,
+      action: "campaign_send_requested",
+      metadata: { estimated_recipients: count ?? 0, list_override: !!list_id },
+    });
+
+    // Do not enqueue any delivery until its audit record has been written.
     await tasks.trigger("send-email-campaign", {
       campaign_id: id,
       triggered_by: user.id,
       recipients: recipientsPayload,
-    });
-
-    await logCampaignAudit(admin, {
-      campaignId: id,
-      actorId: user.id,
-      action: "campaign_send_triggered",
-      metadata: { estimated_recipients: count ?? 0, list_override: !!list_id },
     });
 
     return sendSuccess({ campaign_id: id, estimated_recipients: count ?? 0 });
@@ -107,11 +107,14 @@ export async function POST(
     // Attempt to roll back the status transition so the campaign isn't stuck in "sending"
     try {
       const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-      await admin
+      const { error: rollbackError } = await admin
         .from("email_campaigns")
         .update({ status: "draft", updated_at: new Date().toISOString() })
         .eq("id", id)
         .eq("status", "sending");
+      if (rollbackError) {
+        console.error("[campaigns/[id]/send][POST] rollback failed:", rollbackError);
+      }
     } catch (rollbackErr) {
       console.error("[campaigns/[id]/send][POST] rollback failed:", rollbackErr);
     }

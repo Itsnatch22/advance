@@ -87,10 +87,10 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "**" },
-      { protocol: "http", hostname: "**" },
-    ],
+    // All app-owned images are local. Third-party article thumbnails are
+    // rendered unoptimized so arbitrary publisher hosts never reach the
+    // server-side image optimizer.
+    remotePatterns: [],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },

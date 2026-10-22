@@ -1,7 +1,24 @@
 import { proxy as proxyHandler } from "@/lib/network/proxy";
-import type { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { buildCsp, generateNonce } from "@/lib/security/csp";
+
+const ENFORCE = process.env.CSP_ENFORCE === "true";
 
 export default async function proxy(request: NextRequest) {
+  const nonce = generateNonce();
+  const csp = buildCsp(nonce);
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+ 
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+
+  response.headers.set(
+    ENFORCE ? "Content-Security-Policy" : "Content-Security-Policy-Report-Only",
+    csp
+  );
+
   return proxyHandler(request);
 }
 

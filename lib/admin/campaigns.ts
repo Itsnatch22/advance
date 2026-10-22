@@ -66,7 +66,8 @@ export async function logCampaignAudit(
     metadata: input.metadata ?? {},
   });
 
-  if (error && error.code !== "42P01") {
+  if (error) {
     console.error("[campaign-audit] insert failed:", error);
+    throw new Error("Campaign audit write failed", { cause: error });
   }
 }
