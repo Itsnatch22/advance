@@ -31,7 +31,7 @@ async function getCareer(slug: string) {
   const { data, error } = await supabaseUser
     .from("careers")
     .select(
-      "id,slug,title,department,employment_type,status,city,country_code,work_mode,salary_min,salary_max,currency_code,is_stipend,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
+      "id,slug,title,department,employment_type,status,city,country_code,work_mode,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -85,7 +85,7 @@ export default async function CareerDetailPage({
     <GridSystem
       variant="dots"
       opacity={0.03}
-      className="min-h-[100dvh] bg-white pt-16"
+      className="min-h-dvh bg-white pt-16"
     >
       {jobPostingJsonLd ? (
         <script

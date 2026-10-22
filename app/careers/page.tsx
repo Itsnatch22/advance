@@ -25,7 +25,7 @@ async function getOpenCareers() {
   const { data, error } = await supabaseUser
     .from("careers")
     .select(
-      "id,slug,title,department,employment_type,status,city,country_code,work_mode,salary_min,salary_max,currency_code,is_stipend,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
+      "id,slug,title,department,employment_type,status,city,country_code,work_mode,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
     )
     .eq("status", "open")
     .eq("is_open", true)
@@ -91,14 +91,14 @@ export default async function CareersPage() {
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-slate-200/70 bg-white/65 p-1.5 shadow-2xl shadow-slate-900/5">
-          <div className="rounded-[calc(2rem-0.375rem)] bg-white p-7 ring-1 ring-slate-900/5 sm:p-9">
+        <div className="rounded-4xl border border-slate-200/70 bg-white/65 p-1.5 shadow-2xl shadow-slate-900/5">
+          <div className="rounded-[1.625rem] bg-white p-7 ring-1 ring-slate-900/5 sm:p-9">
             <div className="grid gap-5">
               <Metric label="Open roles" value={careers.length.toString()} />
               <Metric label="Featured roles" value={featuredCount.toString()} />
               <Metric label="Departments" value={departmentCount.toString()} />
             </div>
-            <div className="mt-8 rounded-[1.5rem] bg-green-50 p-5 text-sm leading-relaxed text-green-900 ring-1 ring-green-500/10">
+            <div className="mt-8 rounded-3xl bg-green-50 p-5 text-sm leading-relaxed text-green-900 ring-1 ring-green-500/10">
               We keep the team focused and practical. Every role here maps to
               work we need in production, market growth, or customer trust.
             </div>
@@ -129,7 +129,7 @@ function Metric({ label, value }: { label: string; value: string }) {
 function CareersError({ message }: { message: string }) {
   return (
     <section className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
-      <div className="flex items-start gap-4 rounded-[2rem] border border-red-200 bg-red-50 p-6 text-red-950">
+      <div className="flex items-start gap-4 rounded-4xl border border-red-200 bg-red-50 p-6 text-red-950">
         <AlertCircle className="mt-1 h-5 w-5 shrink-0" strokeWidth={1.8} />
         <div>
           <h2 className="font-bold">Unable to load roles</h2>

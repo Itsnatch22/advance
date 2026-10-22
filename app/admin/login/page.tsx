@@ -99,7 +99,12 @@ export default function AdminLoginPage() {
       });
 
       if (authError || !authData.user) {
-        setError("Invalid email or password.");
+        console.error("signInWithPassword failed:", authError?.status, authError?.code, authError?.message);
+        setError(
+          authError?.code === "invalid_credentials"
+            ? "Invalid email or password."
+            : "Unable to sign in right now. Please try again."
+        );
         return;
       }
 
