@@ -5,7 +5,7 @@ import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { supabaseUser } from "@/lib/supabase/server";
 import { CareersListClient } from "./CareersListClient";
-import type { Career } from "./types";
+import { isCareerOpen, type Career } from "./types";
 
 export const dynamic = "force-dynamic";
 
@@ -36,15 +36,17 @@ async function getOpenCareers() {
     return { careers: [] as Career[], error: error.message };
   }
 
-  return { careers: (data ?? []) as Career[], error: null };
+  return {
+    careers: ((data ?? []) as Career[]).filter(isCareerOpen),
+    error: null,
+  };
 }
 
 export default async function CareersPage() {
   const { careers, error } = await getOpenCareers();
   const featuredCount = careers.filter((career) => career.is_featured).length;
-  const departmentCount = new Set(
-    careers.map((career) => career.department)
-  ).size;
+  const departmentCount = new Set(careers.map((career) => career.department))
+    .size;
 
   return (
     <GridSystem

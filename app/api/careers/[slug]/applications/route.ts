@@ -1,7 +1,9 @@
 import { randomUUID } from "crypto";
+import { createElement } from "react";
 import { NextRequest } from "next/server";
 import { Resend } from "resend";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import CareerApplicationConfirmation from "@/emails/CareerApplicationConfirmation";
 import {
   careerApplicationLimiter,
   checkRateLimit,
@@ -29,6 +31,7 @@ type CareerForApplication = {
   title: string;
   status: CareerStatus;
   is_open: boolean;
+  closing_date: string | null;
   apply_email: string | null;
 };
 
@@ -135,7 +138,7 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     const supabase = getSupabaseAdmin() as SupabaseClient<CareerDatabase>;
     const { data: career, error: careerError } = await supabase
       .from("careers")
-      .select("id,slug,title,status,is_open,apply_email")
+      .select("id,slug,title,status,is_open,closing_date,apply_email")
       .eq("slug", slug)
       .maybeSingle();
 
@@ -218,7 +221,7 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     return sendSuccess(
       {
         applicationId: application.id,
-        message: `Thank you for applying for the ${resolvedCareer.title} role. We'll review your application and get back to you soon.`,
+        message: `We received your application for ${resolvedCareer.title}. Our recruitment team will review it and contact shortlisted candidates.`,
       },
       201,
       undefined,
@@ -254,22 +257,22 @@ async function sendApplicationEmails(input: {
     return;
   }
 
-  const submittedAt = input.submittedAt.toLocaleString("en-US", {
-    dateStyle: "long",
-    timeStyle: "short",
-  });
-
   try {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: `EaziWage Careers <${EMAIL_CONFIG.SENDER_ADDRESS}>`,
       to: input.applicantEmail,
-      subject: `Application received for ${input.roleTitle}`,
-      text: `Hi ${input.applicantName},\n\nWe received your application for ${input.roleTitle} on ${submittedAt}. Our hiring team will review it and follow up with next steps.\n\nEaziWage Careers`,
+      subject: `Application Received: ${input.roleTitle} at EaziWage`,
+      react: createElement(CareerApplicationConfirmation, {
+        applicantName: input.applicantName,
+        roleTitle: input.roleTitle,
+        applicationId: input.applicationId,
+      }),
     });
+
+    if (error) throw error;
   } catch (error) {
     console.error("[careers/applications] candidate email failed:", {
       applicationId: input.applicationId,
-      applicantEmail: input.applicantEmail,
       error,
     });
   }
@@ -286,13 +289,14 @@ async function sendApplicationEmails(input: {
   }
 
   try {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: `EaziWage Careers <${EMAIL_CONFIG.SENDER_ADDRESS}>`,
       to: input.applyEmail,
       replyTo: input.applicantEmail,
       subject: `New application: ${input.roleTitle}`,
-      text: `A new application was submitted for ${input.roleTitle}.\n\nCandidate: ${input.applicantName}\nEmail: ${input.applicantEmail}\nSubmitted: ${submittedAt}\nApplication ID: ${input.applicationId}\n\nReview it in ${COMPANY_CONFIG.HOMEPAGE_URL}/admin/careers/applications`,
+      text: `A new application was submitted for ${input.roleTitle}.\n\nCandidate: ${input.applicantName}\nEmail: ${input.applicantEmail}\nSubmitted: ${input.submittedAt.toISOString()}\nApplication ID: ${input.applicationId}\n\nReview it in ${COMPANY_CONFIG.HOMEPAGE_URL}/admin/careers/applications`,
     });
+    if (error) throw error;
   } catch (error) {
     console.error("[careers/applications] internal notification failed:", {
       applicationId: input.applicationId,

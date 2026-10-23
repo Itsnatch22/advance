@@ -16,9 +16,7 @@ type ApplyPageProps = {
 async function getCareer(slug: string) {
   const { data, error } = await supabaseUser
     .from("careers")
-    .select(
-      "id,slug,title,description,is_open,status,apply_link"
-    )
+    .select("id,slug,title,description,is_open,status,closing_date,apply_link")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -26,9 +24,20 @@ async function getCareer(slug: string) {
     throw new Error(error.message);
   }
 
-  return data as Pick<Career, "id" | "slug" | "title" | "description" | "is_open" | "apply_link"> & {
-    status: "open" | "closed" | "archived";
-  } | null;
+  return data as
+    | (Pick<
+        Career,
+        | "id"
+        | "slug"
+        | "title"
+        | "description"
+        | "is_open"
+        | "closing_date"
+        | "apply_link"
+      > & {
+        status: "open" | "closed" | "archived";
+      })
+    | null;
 }
 
 export async function generateMetadata({
@@ -81,7 +90,11 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
           <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
             <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
               <div className="mb-6 rounded-[1.5rem] border-l-4 border-l-amber-500 bg-amber-50 p-5 text-sm leading-relaxed text-amber-900 ring-1 ring-amber-500/10">
-                <span className="font-bold">This role is no longer accepting applications.</span> We appreciate your interest. Please check back for other open opportunities.
+                <span className="font-bold">
+                  This role is no longer accepting applications.
+                </span>{" "}
+                We appreciate your interest. Please check back for other open
+                opportunities.
               </div>
               <Link
                 href="/careers"
@@ -115,7 +128,10 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
           <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
             <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
               <div className="mb-6 rounded-[1.5rem] border-l-4 border-l-green-600 bg-green-50 p-5 text-sm leading-relaxed text-green-900 ring-1 ring-green-500/10">
-                <span className="font-bold">This role uses an external application form.</span> Continue through the official posting to apply.
+                <span className="font-bold">
+                  This role uses an external application form.
+                </span>{" "}
+                Continue through the official posting to apply.
               </div>
               <Link
                 href={career.apply_link}
@@ -149,18 +165,22 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
 
         <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
           <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
-            <div className="relative overflow-hidden mb-8 rounded-[1.25rem]">
+            <div className="relative mb-8 overflow-hidden rounded-[1.25rem]">
               <div className="relative z-10 mb-8">
                 <h1 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl">
                   Apply for {career.title}
                 </h1>
                 <p className="mt-4 text-lg leading-relaxed text-slate-600">
-                  Tell us about yourself and why you'd be a great fit for this role.
+                  Tell us about yourself and why you'd be a great fit for this
+                  role.
                 </p>
               </div>
 
               <div className="relative z-10">
-                <ApplicationForm careerSlug={career.slug} careerTitle={career.title} />
+                <ApplicationForm
+                  careerSlug={career.slug}
+                  careerTitle={career.title}
+                />
               </div>
             </div>
           </div>

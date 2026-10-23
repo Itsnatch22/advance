@@ -7,10 +7,7 @@ export type CareerDepartment =
   | "people_culture";
 
 export type CareerEmploymentType =
-  | "full-time"
-  | "part-time"
-  | "contract"
-  | "internship";
+  "full-time" | "part-time" | "contract" | "internship";
 
 export type CareerStatus = "open" | "closed" | "archived";
 
@@ -40,13 +37,37 @@ export type Career = {
 };
 
 export function isCareerOpen(
-  career: Pick<Career, "status" | "is_open">
+  career: Pick<Career, "status" | "is_open"> &
+    Partial<Pick<Career, "closing_date">>
 ): boolean {
-  return career.status === "open" && career.is_open;
+  if (career.status !== "open" || !career.is_open) return false;
+  if (!career.closing_date) return true;
+
+  // Closing dates are inclusive and interpreted in EaziWage's local timezone.
+  // ISO date strings compare lexically, avoiding UTC-midnight boundary errors.
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Nairobi",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .formatToParts(new Date())
+    .reduce<Record<string, string>>((parts, part) => {
+      if (part.type !== "literal") parts[part.type] = part.value;
+      return parts;
+    }, {});
+  const todayInNairobi = `${today.year}-${today.month}-${today.day}`;
+
+  return (
+    /^\d{4}-\d{2}-\d{2}$/.test(career.closing_date) &&
+    career.closing_date >= todayInNairobi
+  );
 }
 
 // Helper: format location/work mode for display
-export function formatLocation(career: Pick<Career, "city" | "country_code" | "work_mode">) {
+export function formatLocation(
+  career: Pick<Career, "city" | "country_code" | "work_mode">
+) {
   const { city, country_code, work_mode } = career;
 
   if (work_mode === "remote") {
@@ -54,7 +75,7 @@ export function formatLocation(career: Pick<Career, "city" | "country_code" | "w
   }
 
   const modeLabel = work_mode === "hybrid" ? "Hybrid" : "Onsite";
-  const place = city ? `${city}, ${country_code ?? ""}` : country_code ?? "";
+  const place = city ? `${city}, ${country_code ?? ""}` : (country_code ?? "");
 
   return place ? `${place} · ${modeLabel}` : modeLabel;
 }
@@ -73,8 +94,7 @@ export const departments: Array<{
   {
     value: "product_design",
     label: "Product & Design",
-    summary:
-      "Product Manager, UI/UX, Research & Product Design.",
+    summary: "Product Manager, UI/UX, Research & Product Design.",
   },
   {
     value: "growth_marketing",
@@ -90,13 +110,13 @@ export const departments: Array<{
   {
     value: "finance",
     label: "Finance",
-    summary: "Accounting, Financial Operations, Budgeting & Reporting."
+    summary: "Accounting, Financial Operations, Budgeting & Reporting.",
   },
   {
     value: "people_culture",
     label: "People & Culture",
-    summary: "Human Resource, Recruitment & Employee Experience."
-  }
+    summary: "Human Resource, Recruitment & Employee Experience.",
+  },
 ];
 
 export const employmentTypes: Array<{
@@ -119,9 +139,7 @@ export function formatEmploymentType(type: CareerEmploymentType) {
   return employmentTypes.find((item) => item.value === type)?.label ?? type;
 }
 
-export function getApplyHref(
-  career: Pick<Career, "apply_link" | "slug">
-) {
+export function getApplyHref(career: Pick<Career, "apply_link" | "slug">) {
   if (career.apply_link) {
     return career.apply_link;
   }
