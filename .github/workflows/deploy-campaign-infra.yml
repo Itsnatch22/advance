@@ -31,7 +31,7 @@ jobs:
         run: npm run type-check
 
       - name: Run deployment script
-        run: ./.github/scripts/deploy-campaign-infra.sh
+        run: bash ./.github/scripts/deploy-campaign-infra.sh
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
