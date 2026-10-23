@@ -8,7 +8,6 @@ import {
   MapPin,
   Sparkles,
 } from "lucide-react";
-import MagneticButton from "@/components/ui/magnetic-button";
 import {
   formatCareerDate,
   getDaysRemaining,
@@ -229,18 +228,17 @@ function CareerCard({ career }: { career: Career }) {
               View role
             </Link>
             {isAcceptingApplications ? (
-              <MagneticButton
+              <Link
                 href={applyHref}
                 target={isExternalApply ? "_blank" : undefined}
                 rel={isExternalApply ? "noopener noreferrer" : undefined}
-                wrapperClassName="w-full rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 sm:w-auto"
-                className="group/apply inline-flex w-full items-center justify-center gap-3 rounded-full bg-slate-900 py-2.5 pr-2.5 pl-5 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-green-600 active:scale-[0.98] sm:w-auto"
+                className="group inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-slate-900 py-2.5 pr-2.5 pl-6 font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 active:scale-[0.98] sm:w-fit"
               >
                 Apply
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/12 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/apply:translate-x-1 group-hover/apply:-translate-y-0.5">
                   <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
                 </span>
-              </MagneticButton>
+              </Link>
             ) : (
               <p className="rounded-full bg-slate-100 px-5 py-3 text-center text-sm font-semibold text-slate-600">
                 Applications closed
