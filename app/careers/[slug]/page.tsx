@@ -19,7 +19,6 @@ import {
   isCareerOpen,
 } from "../types";
 import { buildJobPostingJsonLd } from "../job-posting";
-import MagneticButton from "@/components/ui/magnetic-button";
 
 export const dynamic = "force-dynamic";
 
@@ -136,17 +135,17 @@ export default async function CareerDetailPage({
             </div>
 
             {isOpen ? (
-              <MagneticButton
+              <Link
                 href={applyHref}
                 target={isExternalApply ? "_blank" : undefined}
                 rel={isExternalApply ? "noopener noreferrer" : undefined}
-                className="group inline-flex w-fit items-center justify-center gap-3 rounded-full bg-slate-900 py-2.5 pr-2.5 pl-6 font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-green-700 active:scale-[0.98]"
+                className="group inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-slate-900 py-2.5 pr-2.5 pl-6 font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 active:scale-[0.98] sm:w-fit"
               >
                 Apply for this role
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/12 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/12 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
                   <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
                 </span>
-              </MagneticButton>
+              </Link>
             ) : (
               <p className="w-fit rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600">
                 This role is no longer accepting applications

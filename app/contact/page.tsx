@@ -18,7 +18,6 @@ import { z } from "zod";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { EMAIL_CONFIG } from '@/constants/config';
 import { useParallax } from "@/hooks/use-parallax";
-import { BorderBeam } from "@/components/ui/border-beam";
 
 /* ----------------------------- validation ----------------------------- */
 
@@ -239,7 +238,6 @@ export default function ContactPage() {
             className="perspective-1000 relative"
           >
             <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/95 p-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-2xl">
-              <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={150} duration={8} />
               <div className="mb-10">
                 <h2 className="mb-2 font-serif text-4xl font-bold tracking-tight text-slate-900">
                   Send us a Message

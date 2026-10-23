@@ -34,7 +34,6 @@ import { Input } from "@/components/ui/input";
 import { Resource, ResourceCategory } from "@/types/resources";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";
-import { BorderBeam } from "@/components/ui/border-beam";
 import { useRealtimeRefresh } from "@/hooks/useRealtimeRefresh";
 
 interface CategoryOption {
@@ -604,7 +603,6 @@ export default function BlogsClient({ initialResources }: BlogsClientProps) {
                   onSubmit={handleSubscribe}
                   className="relative mx-auto flex max-w-xl flex-col gap-4 rounded-2xl sm:flex-row"
                 >
-                  <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={100} duration={8} />
                   <input
                     type="text"
                     aria-hidden="true"

@@ -17,7 +17,6 @@ import {
 import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { Input } from "@/components/ui";
-import { BorderBeam } from "@/components/ui/border-beam";
 
 const EXPECTATIONS = [
   {
@@ -161,7 +160,6 @@ export default function NewsletterPage() {
             onSubmit={handleSubmit}
             className="relative flex flex-col gap-3 rounded-2xl sm:flex-row"
           >
-            <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={100} duration={8} />
             {/* Honeypot field */}
             <input
               type="text"

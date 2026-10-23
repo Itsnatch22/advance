@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Wallet, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import { BorderBeam } from "@/components/ui/border-beam";
 
 type Product = "newsletter" | "partners" | "sales" | "all";
 
@@ -84,7 +83,6 @@ export default function UnsubscribePage() {
         }`}
       >
         <div className="relative bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-          <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={100} duration={8} />
           {/* Header */}
           <div className="px-8 py-5 border-b border-slate-200 flex items-center gap-3">
             <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">

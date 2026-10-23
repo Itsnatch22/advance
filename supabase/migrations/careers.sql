@@ -1,7 +1,6 @@
 create table public.careers (
   id uuid not null default gen_random_uuid (),
   title text not null,
-  department public.career_department not null,
   employment_type public.career_employment_type not null default 'full-time'::career_employment_type,
   description text not null,
   responsibilities text[] not null default '{}'::text[],
@@ -28,10 +27,8 @@ create table public.careers (
   country_code text null,
   city text null,
   work_mode public.career_work_mode not null default 'onsite'::career_work_mode,
-  salary_min numeric null,
-  salary_max numeric null,
-  currency_code text null,
-  is_stipend boolean not null default false,
+  slug text not null,
+  department public.career_department not null,
   constraint careers_pkey primary key (id),
   constraint careers_country_code_fkey foreign KEY (country_code) references withdrawal_limits (country_code),
   constraint chk_careers_country_scope check (
@@ -52,34 +49,23 @@ create table public.careers (
         and (country_code is not null)
       )
     )
-  ),
-  constraint chk_careers_currency_code_format check (
-    (
-      (currency_code is null)
-      or (currency_code ~ '^[A-Z]{3}$'::text)
-    )
   )
 ) TABLESPACE pg_default;
 
-create index IF not exists idx_careers_filter on public.careers using btree (
-  status,
-  country_code,
-  department,
-  employment_type,
-  experience_level
-) TABLESPACE pg_default;
-
-create index IF not exists idx_careers_department on public.careers using btree (department) TABLESPACE pg_default;
-
 create index IF not exists idx_careers_employment_type on public.careers using btree (employment_type) TABLESPACE pg_default;
+
+create index IF not exists idx_careers_fts on public.careers using gin (fts) TABLESPACE pg_default;
 
 create index IF not exists idx_careers_is_open on public.careers using btree (is_open) TABLESPACE pg_default;
 
-create index IF not exists idx_careers_fts on public.careers using gin (fts) TABLESPACE pg_default;
+create unique INDEX IF not exists idx_careers_slug on public.careers using btree (slug) TABLESPACE pg_default;
 
 create trigger trg_careers_updated_at BEFORE
 update on careers for EACH row
 execute FUNCTION set_careers_updated_at ();
+
+create trigger trg_generate_career_slug BEFORE INSERT on careers for EACH row
+execute FUNCTION generate_career_slug ();
 
 create trigger trg_sync_career_is_open BEFORE INSERT
 or

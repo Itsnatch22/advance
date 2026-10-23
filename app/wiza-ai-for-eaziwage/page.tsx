@@ -31,7 +31,6 @@ import {
 import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { TiltCard } from "@/components/shared/TiltCard";
-import { BorderBeam } from "@/components/ui/border-beam";
 
 function RichText({ text }: { text: string }) {
   return (
@@ -190,12 +189,6 @@ function SummaryModal({
         animate={{ scale: 1, opacity: 1 }}
         className="relative mx-6 w-full max-w-xs overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900"
       >
-        <BorderBeam
-          colorFrom="#00B37E"
-          colorTo="#006F42"
-          size={60}
-          duration={8}
-        />
         <AnimatePresence mode="wait">
           {step === "channel" ? (
             <motion.div
@@ -708,12 +701,6 @@ export default function Wiza() {
                   onSubmit={handleSubmit}
                   className="relative flex min-w-0 items-center gap-1 rounded-2xl sm:gap-2"
                 >
-                  <BorderBeam
-                    colorFrom="#00B37E"
-                    colorTo="#006F42"
-                    size={60}
-                    duration={8}
-                  />
                   {/* Toolbar buttons */}
                   <div className="flex items-center gap-1">
                     <FileAttachButton

@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { GridSystem } from "@/components/grid";
-import { BorderBeam } from "@/components/ui/border-beam";
 import { supabaseUser } from "@/lib/supabase/server";
 import { isCareerOpen, type Career } from "../../types";
 import { ApplicationForm } from "./ApplicationForm";
@@ -151,7 +150,6 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
         <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
           <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
             <div className="relative overflow-hidden mb-8 rounded-[1.25rem]">
-              <BorderBeam colorFrom="#00B37E" colorTo="#006F42" size={150} duration={8} />
               <div className="relative z-10 mb-8">
                 <h1 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl">
                   Apply for {career.title}
