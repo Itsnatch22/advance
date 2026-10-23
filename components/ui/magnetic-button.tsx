@@ -10,6 +10,7 @@ type MagneticButtonProps = React.PropsWithChildren<{
   target?: string;
   rel?: string;
   className?: string;
+  wrapperClassName?: string;
   as?: "a" | "button";
   onClick?: React.MouseEventHandler;
 }>;
@@ -19,19 +20,28 @@ export function MagneticButton({
   target,
   rel,
   className,
+  wrapperClassName,
   children,
   as = href ? "a" : "button",
   onClick,
 }: MagneticButtonProps) {
-  const ref = React.useRef<HTMLAnchorElement & HTMLButtonElement | null>(null);
+  const ref = React.useRef<(HTMLAnchorElement & HTMLButtonElement) | null>(
+    null
+  );
 
   // Motion values for pointer offset
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
 
   // spring for smoother motion
-  const x = useSpring(useTransform(pointerX, (v) => v), { stiffness: 200, damping: 30 });
-  const y = useSpring(useTransform(pointerY, (v) => v), { stiffness: 200, damping: 30 });
+  const x = useSpring(
+    useTransform(pointerX, (v) => v),
+    { stiffness: 200, damping: 30 }
+  );
+  const y = useSpring(
+    useTransform(pointerY, (v) => v),
+    { stiffness: 200, damping: 30 }
+  );
 
   React.useEffect(() => {
     return () => {
@@ -74,14 +84,24 @@ export function MagneticButton({
   if (href) {
     // Use next/link for client-side nav
     return (
-      <Link href={href} target={target} rel={rel} onClick={onClick} className="inline-block">
+      <Link
+        href={href}
+        target={target}
+        rel={rel}
+        onClick={onClick}
+        className={cn("inline-block", wrapperClassName)}
+      >
         {inner}
       </Link>
     );
   }
 
   return (
-    <button type="button" onClick={onClick} className="inline-block">
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn("inline-block", wrapperClassName)}
+    >
       {inner}
     </button>
   );
