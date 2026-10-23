@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { createHash, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { sendSuccess, sendError } from "@/lib/utils/response";
 import { adminLoginLimiter, checkRateLimit } from "@/lib/security/rate-limit";
@@ -8,41 +7,15 @@ const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY!;
 
 const precheckSchema = z.object({
   email: z.string().email().max(254),
-  password: z.string().min(1).max(1024),
   honeypot: z.string().optional(),
-  // Optional: the client falls back to no token if reCAPTCHA fails to load
-  // or execute (blocked script, misconfigured site key, Google outage).
-  // Rate limiting + honeypot below carry the bot-mitigation load in that case.
+  // Optional so a failed CAPTCHA script does not prevent Supabase Auth from
+  // applying its own authentication controls and rate limits.
   recaptchaToken: z.string().min(1).optional().nullable(),
 });
 
-function matchesConfiguredAdmin(email: string, password: string): boolean {
-  const configuredAdmins = process.env.SYSTEM_ADMINS;
-  const configuredPassword = process.env.SYSTEM_ADMINS_PASSWORD;
-  if (!configuredAdmins || !configuredPassword) return false;
-
-  // Support comma or semicolon separated addresses, and require exact matches.
-  const allowedEmails = configuredAdmins
-    .split(/[;,\r\n]+/)
-    .map((value) => value.trim().toLowerCase())
-    .filter(Boolean);
-
-  // Hash both inputs to fixed-length buffers so timingSafeEqual does not throw
-  // or reveal the configured password length.
-  const submittedHash = createHash("sha256").update(password, "utf8").digest();
-  const configuredHash = createHash("sha256")
-    .update(configuredPassword, "utf8")
-    .digest();
-  const passwordMatches = timingSafeEqual(submittedHash, configuredHash);
-  const emailMatches = allowedEmails.includes(email.trim().toLowerCase());
-
-  return emailMatches && passwordMatches;
-}
-
 /**
- * Server-side environment credential gate plus rate limiting, honeypot, and
- * reCAPTCHA. Supabase Auth still establishes the session and system_admins
- * remains the authorization source for protected admin pages and APIs.
+ * Pre-authentication bot mitigation only. Supabase Auth verifies credentials
+ * and creates the session; system_admins authorizes access to admin resources.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -65,15 +38,10 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { email, password, honeypot, recaptchaToken } =
-      precheckSchema.parse(body);
+    const { honeypot, recaptchaToken } = precheckSchema.parse(body);
 
     if (honeypot) {
       return sendError("Invalid request", 400);
-    }
-
-    if (!matchesConfiguredAdmin(email, password)) {
-      return sendError("Invalid email or password.", 401);
     }
 
     if (recaptchaToken) {
@@ -99,7 +67,7 @@ export async function POST(request: NextRequest) {
       }
     } else {
       console.warn(
-        "Admin login precheck: no reCAPTCHA token; relying on rate limit + honeypot"
+        "Admin login precheck: no reCAPTCHA token; relying on Supabase Auth rate limits + honeypot"
       );
     }
 

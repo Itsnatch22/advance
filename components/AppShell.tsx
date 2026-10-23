@@ -18,11 +18,10 @@ export default function AppShell({
   analyticsConsent: boolean;
 }) {
   const pathname = usePathname();
-  const isAdminAuthPage = /\/admin\/(?:login|reset-password)\/?$/.test(
-    pathname ?? ""
-  );
+  const isAdminRoute =
+    pathname === "/admin" || pathname?.startsWith("/admin/") === true;
 
-  if (isAdminAuthPage) {
+  if (isAdminRoute) {
     return <>{children}</>;
   }
 

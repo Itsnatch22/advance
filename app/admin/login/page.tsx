@@ -20,8 +20,8 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      // reCAPTCHA is a supplementary bot-mitigation on top of rate-limiting
-      // and real Supabase Auth credentials -- it should never be a hard
+      // reCAPTCHA is supplementary bot mitigation on top of rate limiting
+      // and Supabase Auth. It should never be a hard
       // single point of failure for getting into the admin panel. If the
       // widget fails to load/execute for any reason (blocked script,
       // misconfigured site key, Google outage), fall through with no token
@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
       const precheck = await fetch("/api/admin/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, honeypot, recaptchaToken }),
+        body: JSON.stringify({ email, honeypot, recaptchaToken }),
       });
 
       const precheckData = await precheck.json();
@@ -95,6 +95,8 @@ export default function AdminLoginPage() {
         return;
       }
 
+      // Supabase Auth verifies the password and creates the session. The
+      // server-side /api/admin/me check separately verifies system admin access.
       const supabase = getSupabaseBrowserClient();
       const { data: authData, error: authError } =
         await supabase.auth.signInWithPassword({
