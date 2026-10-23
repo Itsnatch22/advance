@@ -76,6 +76,20 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
+function getCareerEmailSender() {
+  const configuredSender = EMAIL_CONFIG.SENDER_ADDRESS.trim();
+  const emailAddress =
+    configuredSender.match(/<([^<>]+)>/)?.[1]?.trim() ?? configuredSender;
+
+  if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(emailAddress)) {
+    throw new Error(
+      "RESEND_FROM_EMAIL must be an email address or a name followed by an email address"
+    );
+  }
+
+  return `EaziWage Careers <${emailAddress}>`;
+}
+
 export async function POST(request: NextRequest, { params }: RouteProps) {
   const { slug } = await params;
   const ip = getClientIp(request);
@@ -257,9 +271,20 @@ async function sendApplicationEmails(input: {
     return;
   }
 
+  let from: string;
+  try {
+    from = getCareerEmailSender();
+  } catch (error) {
+    console.error(
+      "[careers/applications] invalid sender configuration:",
+      error
+    );
+    return;
+  }
+
   try {
     const { error } = await resend.emails.send({
-      from: `EaziWage Careers <${EMAIL_CONFIG.SENDER_ADDRESS}>`,
+      from,
       to: input.applicantEmail,
       subject: `Application Received: ${input.roleTitle} at EaziWage`,
       react: createElement(CareerApplicationConfirmation, {
@@ -290,7 +315,7 @@ async function sendApplicationEmails(input: {
 
   try {
     const { error } = await resend.emails.send({
-      from: `EaziWage Careers <${EMAIL_CONFIG.SENDER_ADDRESS}>`,
+      from,
       to: input.applyEmail,
       replyTo: input.applicantEmail,
       subject: `New application: ${input.roleTitle}`,
