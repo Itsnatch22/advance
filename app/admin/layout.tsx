@@ -39,7 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               Campaigns
             </Link>
             <Link
-              href="/admin/careers/applications"
+              href="/admin/careers"
               className="transition-colors hover:text-emerald-700"
             >
               Careers
