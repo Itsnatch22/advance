@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, Download, RefreshCw } from "lucide-react";
 
-type ApplicationStatus = "submitted" | "under_review" | "shortlisted" | "rejected" | "hired";
+type ApplicationStatus =
+  "submitted" | "under_review" | "shortlisted" | "rejected" | "hired";
 
 type CareerOption = {
   slug: string;
@@ -37,6 +38,7 @@ export default function CareerApplicationsAdminPage() {
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     role: "",
     status: "",
@@ -57,7 +59,9 @@ export default function CareerApplicationsAdminPage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`/api/admin/careers/applications${queryString ? `?${queryString}` : ""}`);
+      const response = await fetch(
+        `/api/admin/careers/applications${queryString ? `?${queryString}` : ""}`
+      );
       const result = await response.json().catch(() => null);
       if (!response.ok || !result?.success) {
         throw new Error(result?.error ?? "Unable to load career applications.");
@@ -67,7 +71,11 @@ export default function CareerApplicationsAdminPage() {
       setCareers(result.data.careers ?? []);
       setStatuses(result.data.statuses ?? []);
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : "Unable to load career applications.");
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : "Unable to load career applications."
+      );
     } finally {
       setLoading(false);
     }
@@ -77,25 +85,43 @@ export default function CareerApplicationsAdminPage() {
     loadApplications();
   }, [queryString]);
 
-  const updateStatus = async (application: CareerApplication, status: ApplicationStatus) => {
+  const updateStatus = async (
+    application: CareerApplication,
+    status: ApplicationStatus
+  ) => {
     try {
       setSavingId(application.id);
       setError(null);
-      const response = await fetch(`/api/admin/careers/applications/${application.id}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
+      setNotice(null);
+      const response = await fetch(
+        `/api/admin/careers/applications/${application.id}/status`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        }
+      );
       const result = await response.json().catch(() => null);
       if (!response.ok || !result?.success) {
         throw new Error(result?.error ?? "Unable to update status.");
       }
 
       setApplications((current) =>
-        current.map((item) => (item.id === application.id ? { ...item, status } : item))
+        current.map((item) =>
+          item.id === application.id ? { ...item, status } : item
+        )
       );
+      if (result.data.statusEmailSent === false) {
+        setNotice(
+          "Status updated, but the applicant notification email could not be sent."
+        );
+      }
     } catch (statusError) {
-      setError(statusError instanceof Error ? statusError.message : "Unable to update status.");
+      setError(
+        statusError instanceof Error
+          ? statusError.message
+          : "Unable to update status."
+      );
     } finally {
       setSavingId(null);
     }
@@ -109,7 +135,8 @@ export default function CareerApplicationsAdminPage() {
             Career Applications
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Review candidate submissions and move applications through hiring status.
+            Review candidate submissions and move applications through hiring
+            status.
           </p>
         </div>
         <button
@@ -125,7 +152,9 @@ export default function CareerApplicationsAdminPage() {
       <div className="mb-6 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-5">
         <select
           value={filters.role}
-          onChange={(event) => setFilters((current) => ({ ...current, role: event.target.value }))}
+          onChange={(event) =>
+            setFilters((current) => ({ ...current, role: event.target.value }))
+          }
           className={controlClassName}
         >
           <option value="">All roles</option>
@@ -137,7 +166,12 @@ export default function CareerApplicationsAdminPage() {
         </select>
         <select
           value={filters.status}
-          onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value }))}
+          onChange={(event) =>
+            setFilters((current) => ({
+              ...current,
+              status: event.target.value,
+            }))
+          }
           className={controlClassName}
         >
           <option value="">All statuses</option>
@@ -150,21 +184,30 @@ export default function CareerApplicationsAdminPage() {
         <input
           type="date"
           value={filters.from}
-          onChange={(event) => setFilters((current) => ({ ...current, from: event.target.value }))}
+          onChange={(event) =>
+            setFilters((current) => ({ ...current, from: event.target.value }))
+          }
           className={controlClassName}
           aria-label="Submitted from"
         />
         <input
           type="date"
           value={filters.to}
-          onChange={(event) => setFilters((current) => ({ ...current, to: event.target.value }))}
+          onChange={(event) =>
+            setFilters((current) => ({ ...current, to: event.target.value }))
+          }
           className={controlClassName}
           aria-label="Submitted to"
         />
         <input
           type="search"
           value={filters.search}
-          onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))}
+          onChange={(event) =>
+            setFilters((current) => ({
+              ...current,
+              search: event.target.value,
+            }))
+          }
           className={controlClassName}
           placeholder="Candidate search"
         />
@@ -177,15 +220,28 @@ export default function CareerApplicationsAdminPage() {
         </div>
       ) : null}
 
+      {notice ? (
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {notice}
+        </div>
+      ) : null}
+
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50">
-                {["Candidate", "Role", "Status", "Submitted", "Resume", "Move"].map((heading) => (
+                {[
+                  "Candidate",
+                  "Role",
+                  "Status",
+                  "Submitted",
+                  "Resume",
+                  "Move",
+                ].map((heading) => (
                   <th
                     key={heading}
-                    className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+                    className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-slate-500 uppercase"
                   >
                     {heading}
                   </th>
@@ -205,16 +261,26 @@ export default function CareerApplicationsAdminPage() {
                 ))
               ) : applications.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-slate-500">
+                  <td
+                    colSpan={6}
+                    className="px-4 py-12 text-center text-slate-500"
+                  >
                     No applications match these filters.
                   </td>
                 </tr>
               ) : (
                 applications.map((application) => (
-                  <tr key={application.id} className="border-b border-slate-100 last:border-0">
+                  <tr
+                    key={application.id}
+                    className="border-b border-slate-100 last:border-0"
+                  >
                     <td className="px-4 py-4">
-                      <div className="font-semibold text-slate-900">{application.full_name}</div>
-                      <div className="mt-1 text-xs text-slate-500">{application.email}</div>
+                      <div className="font-semibold text-slate-900">
+                        {application.full_name}
+                      </div>
+                      <div className="mt-1 text-xs text-slate-500">
+                        {application.email}
+                      </div>
                     </td>
                     <td className="px-4 py-4 text-slate-600">
                       {application.career_title_snapshot}
@@ -222,7 +288,7 @@ export default function CareerApplicationsAdminPage() {
                     <td className="px-4 py-4">
                       <StatusBadge status={application.status} />
                     </td>
-                    <td className="whitespace-nowrap px-4 py-4 text-slate-500">
+                    <td className="px-4 py-4 whitespace-nowrap text-slate-500">
                       {formatDate(application.created_at)}
                     </td>
                     <td className="px-4 py-4">
@@ -237,15 +303,23 @@ export default function CareerApplicationsAdminPage() {
                           Resume
                         </a>
                       ) : (
-                        <span className="text-xs text-slate-400">Unavailable</span>
+                        <span className="text-xs text-slate-400">
+                          Unavailable
+                        </span>
                       )}
                     </td>
                     <td className="px-4 py-4">
                       <select
                         value=""
-                        disabled={savingId === application.id || nextStatuses[application.status].length === 0}
+                        disabled={
+                          savingId === application.id ||
+                          nextStatuses[application.status].length === 0
+                        }
                         onChange={(event) =>
-                          updateStatus(application, event.target.value as ApplicationStatus)
+                          updateStatus(
+                            application,
+                            event.target.value as ApplicationStatus
+                          )
                         }
                         className={controlClassName}
                         aria-label={`Move ${application.full_name} to another status`}
@@ -282,7 +356,9 @@ function StatusBadge({ status }: { status: ApplicationStatus }) {
   };
 
   return (
-    <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider ring-1 ${styles[status]}`}>
+    <span
+      className={`rounded-full px-3 py-1 text-xs font-semibold tracking-wider uppercase ring-1 ${styles[status]}`}
+    >
       {formatStatus(status)}
     </span>
   );

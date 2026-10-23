@@ -1,10 +1,11 @@
 import { COMPANY_CONFIG } from "@/constants/config";
-import { isCareerOpen, type Career } from "./types";
+import { isVacancyAcceptingApplications } from "@/lib/careers/deadline";
+import type { Career } from "./types";
 
 type JobPosting = Record<string, unknown>;
 
 export function buildJobPostingJsonLd(career: Career): JobPosting | null {
-  if (!isCareerOpen(career)) return null;
+  if (!isVacancyAcceptingApplications(career)) return null;
 
   const jobPosting: JobPosting = {
     "@context": "https://schema.org",

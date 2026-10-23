@@ -4,8 +4,9 @@ import Link from "next/link";
 import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { supabaseUser } from "@/lib/supabase/server";
+import { isVacancyAcceptingApplications } from "@/lib/careers/deadline";
 import { CareersListClient } from "./CareersListClient";
-import { isCareerOpen, type Career } from "./types";
+import type { Career } from "./types";
 
 export const dynamic = "force-dynamic";
 
@@ -25,10 +26,9 @@ async function getOpenCareers() {
   const { data, error } = await supabaseUser
     .from("careers")
     .select(
-      "id,slug,title,department,employment_type,status,city,country_code,work_mode,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
+      "id,slug,title,department,employment_type,status,city,country_code,work_mode,description,responsibilities,requirements,skills,apply_link,apply_email,is_featured,posted_date,closing_date"
     )
     .eq("status", "open")
-    .eq("is_open", true)
     .order("is_featured", { ascending: false })
     .order("posted_date", { ascending: false });
 
@@ -37,7 +37,9 @@ async function getOpenCareers() {
   }
 
   return {
-    careers: ((data ?? []) as Career[]).filter(isCareerOpen),
+    careers: ((data ?? []) as Career[]).filter((career) =>
+      isVacancyAcceptingApplications(career)
+    ),
     error: null,
   };
 }

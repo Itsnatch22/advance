@@ -4,7 +4,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { GridSystem } from "@/components/grid";
 import { supabaseUser } from "@/lib/supabase/server";
-import { isCareerOpen, type Career } from "../../types";
+import { isVacancyAcceptingApplications } from "@/lib/careers/deadline";
+import type { Career } from "../../types";
 import { ApplicationForm } from "./ApplicationForm";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +17,7 @@ type ApplyPageProps = {
 async function getCareer(slug: string) {
   const { data, error } = await supabaseUser
     .from("careers")
-    .select("id,slug,title,description,is_open,status,closing_date,apply_link")
+    .select("id,slug,title,description,status,closing_date,apply_link")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -27,13 +28,7 @@ async function getCareer(slug: string) {
   return data as
     | (Pick<
         Career,
-        | "id"
-        | "slug"
-        | "title"
-        | "description"
-        | "is_open"
-        | "closing_date"
-        | "apply_link"
+        "id" | "slug" | "title" | "description" | "closing_date" | "apply_link"
       > & {
         status: "open" | "closed" | "archived";
       })
@@ -71,12 +66,12 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
     notFound();
   }
 
-  if (!isCareerOpen(career)) {
+  if (!isVacancyAcceptingApplications(career)) {
     return (
       <GridSystem
         variant="dots"
         opacity={0.03}
-        className="min-h-[100dvh] bg-white pt-16"
+        className="min-h-dvh bg-white pt-16"
       >
         <main className="relative z-10 mx-auto max-w-3xl px-6 py-20 lg:px-8 lg:py-24">
           <Link
@@ -87,13 +82,11 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
             Back to role
           </Link>
 
-          <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
-            <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
-              <div className="mb-6 rounded-[1.5rem] border-l-4 border-l-amber-500 bg-amber-50 p-5 text-sm leading-relaxed text-amber-900 ring-1 ring-amber-500/10">
-                <span className="font-bold">
-                  This role is no longer accepting applications.
-                </span>{" "}
-                We appreciate your interest. Please check back for other open
+          <section className="rounded-4xl border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
+            <div className="rounded-[1.625rem] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
+              <div className="mb-6 rounded-3xl border-l-4 border-l-amber-500 bg-amber-50 p-5 text-sm leading-relaxed text-amber-900 ring-1 ring-amber-500/10">
+                <span className="font-bold">Applications closed.</span> We
+                appreciate your interest. Please check back for other open
                 opportunities.
               </div>
               <Link
@@ -114,7 +107,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
       <GridSystem
         variant="dots"
         opacity={0.03}
-        className="min-h-[100dvh] bg-white pt-16"
+        className="min-h-dvh bg-white pt-16"
       >
         <main className="relative z-10 mx-auto max-w-3xl px-6 py-20 lg:px-8 lg:py-24">
           <Link
@@ -125,9 +118,9 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
             Back to role
           </Link>
 
-          <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
-            <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
-              <div className="mb-6 rounded-[1.5rem] border-l-4 border-l-green-600 bg-green-50 p-5 text-sm leading-relaxed text-green-900 ring-1 ring-green-500/10">
+          <section className="rounded-4xl border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
+            <div className="rounded-[1.625rem] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
+              <div className="mb-6 rounded-3xl border-l-4 border-l-green-600 bg-green-50 p-5 text-sm leading-relaxed text-green-900 ring-1 ring-green-500/10">
                 <span className="font-bold">
                   This role uses an external application form.
                 </span>{" "}
@@ -152,7 +145,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
     <GridSystem
       variant="dots"
       opacity={0.03}
-      className="min-h-[100dvh] bg-white pt-16"
+      className="min-h-dvh bg-white pt-16"
     >
       <main className="relative z-10 mx-auto max-w-3xl px-6 py-20 lg:px-8 lg:py-24">
         <Link
@@ -163,8 +156,8 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
           Back to role
         </Link>
 
-        <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
-          <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
+        <section className="rounded-4xl border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
+          <div className="rounded-[1.625rem] bg-white p-6 ring-1 ring-slate-900/5 sm:p-10 lg:p-12">
             <div className="relative mb-8 overflow-hidden rounded-[1.25rem]">
               <div className="relative z-10 mb-8">
                 <h1 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl">

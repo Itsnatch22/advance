@@ -3,14 +3,14 @@ import {
   Container,
   Head,
   Html,
+  Img,
+  Link,
   Preview,
   Section,
   Text,
-  Link,
-  Img,
 } from "@react-email/components";
 import type { ReactNode } from "react";
-import { EMAIL_CONFIG, COMPANY_CONFIG } from '@/constants/config';
+import { COMPANY_CONFIG, EMAIL_CONFIG } from "@/constants/config";
 
 export interface FooterLink {
   label: string;
@@ -27,7 +27,7 @@ interface EmailLayoutProps {
   logoAlt?: string;
   showFooter?: boolean;
   footerContent?: ReactNode;
-  /** Links shown in the footer, in order. Defaults to Website / Security / Unsubscribe. Pass [] to hide the row entirely. */
+  /** Links shown in the footer. Pass [] to hide the link row. */
   footerLinks?: FooterLink[];
   showBorder?: boolean;
   containerPadding?: string;
@@ -50,185 +50,198 @@ const DEFAULT_FOOTER_LINKS: FooterLink[] = [
 export default function EmailLayout({
   previewText,
   children,
-  bgColor = "#f1f5f4",
+  bgColor = "#f3f6f4",
   showLogo = true,
-  logoWidth = 132,
+  logoWidth = 128,
   logoHeight = "auto",
   logoAlt = "EaziWage",
   showFooter = true,
   footerContent,
   footerLinks,
   showBorder = true,
-  containerPadding = "0 0 8px",
-  containerMarginBottom = "64px",
-  containerBorderRadius = "28px",
-  containerBorder = "1px solid #e6ebe9",
-  headerPadding = "36px 48px 28px",
-  contentPadding = "8px 48px 32px",
-  footerPadding = "32px 48px 40px",
+  containerPadding = "0 0 0",
+  containerMarginBottom = "28px",
+  containerBorderRadius = "16px",
+  containerBorder = "1px solid #dfe8e2",
+  headerPadding = "28px 24px 22px",
+  contentPadding = "8px 32px 32px",
+  footerPadding = "22px 24px 26px",
   showBorderBottom = true,
   showBorderTop = true,
 }: EmailLayoutProps) {
-  const baseUrl = COMPANY_CONFIG.HOMEPAGE_URL || process.env.NEXT_PUBLIC_APP_URL || "https://eaziwage.com";
-  const links = (footerLinks ?? DEFAULT_FOOTER_LINKS).map((l) => ({
-    ...l,
-    href: l.href ? (l.href.startsWith("http") ? l.href : `${baseUrl}${l.href.startsWith("/") ? "" : "/"}${l.href}`) : baseUrl,
+  const baseUrl = (
+    COMPANY_CONFIG.HOMEPAGE_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    "https://eaziwage.com"
+  ).replace(/\/$/, "");
+  const links = (footerLinks ?? DEFAULT_FOOTER_LINKS).map((link) => ({
+    ...link,
+    href: link.href
+      ? /^https?:\/\//i.test(link.href)
+        ? link.href
+        : `${baseUrl}/${link.href.replace(/^\//, "")}`
+      : baseUrl,
   }));
 
-  const main = {
+  const bodyStyle = {
     backgroundColor: bgColor,
+    color: "#33443b",
     fontFamily:
-      '-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",sans-serif',
+      '-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif',
+    margin: "0",
+    padding: "28px 12px",
   };
 
-  const accentBar = {
+  const containerStyle = {
+    width: "100%",
+    maxWidth: "600px",
+    margin: "0 auto",
+    marginBottom: containerMarginBottom,
+    padding: containerPadding,
+    backgroundColor: "#ffffff",
+    border: showBorder ? containerBorder : "none",
+    borderRadius: containerBorderRadius,
+  };
+
+  const accentStyle = {
     height: "4px",
     lineHeight: "4px",
     fontSize: "0",
-    backgroundColor: "#059669",
-    backgroundImage: "linear-gradient(90deg, #00B37E 0%, #059669 45%, #006F42 100%)",
+    backgroundColor: "#087f5b",
   };
 
-  const container = {
-    backgroundColor: "#ffffff",
-    margin: "0 auto",
-    padding: containerPadding,
-    marginBottom: containerMarginBottom,
-    maxWidth: "600px",
-    borderRadius: containerBorderRadius,
-    overflow: "hidden" as const,
-    border: showBorder ? containerBorder : undefined,
-    boxShadow: "0 24px 48px -18px rgba(5, 100, 70, 0.16), 0 1px 2px rgba(15, 23, 42, 0.04)",
-  };
-
-  const header = {
+  const headerStyle = {
     padding: headerPadding,
-    backgroundColor: "#ffffff",
-    borderBottom: showBorderBottom ? "1px solid #eef2f0" : undefined,
     textAlign: "center" as const,
+    backgroundColor: "#ffffff",
+    borderBottom: showBorderBottom ? "1px solid #edf1ee" : "none",
   };
 
-  const logo = {
-    margin: "0 auto",
+  const logoStyle = {
     display: "block",
+    margin: "0 auto",
   };
 
-  const badge = {
-    display: "inline-block",
-    margin: "14px 0 0",
-    padding: "5px 14px",
-    borderRadius: "999px",
-    backgroundColor: "#ecfdf5",
-    border: "1px solid #bbf7d0",
-    color: "#059669",
-    fontSize: "11px",
+  const brandNoteStyle = {
+    margin: "12px 0 0",
+    color: "#648174",
+    fontSize: "10px",
     fontWeight: "700",
-    letterSpacing: "0.14em",
+    letterSpacing: "1.6px",
+    lineHeight: "1.4",
     textTransform: "uppercase" as const,
   };
 
-  const content = {
+  const contentStyle = {
     padding: contentPadding,
+    backgroundColor: "#ffffff",
   };
 
-  const footer = {
-    borderTop: showBorderTop ? "1px solid #eef2f0" : undefined,
+  const footerStyle = {
     padding: footerPadding,
     textAlign: "center" as const,
-    backgroundColor: "#f9fbfa",
+    backgroundColor: "#f8faf8",
+    borderTop: showBorderTop ? "1px solid #e8eee9" : "none",
   };
 
-  const footerWordmark = {
-    color: "#0f172a",
-    fontSize: "15px",
+  const footerBrandStyle = {
+    margin: "0 0 5px",
+    color: "#18392d",
+    fontSize: "14px",
     fontWeight: "700",
-    letterSpacing: "-0.01em",
-    margin: "0 0 4px",
-    fontFamily: 'Georgia, "Times New Roman", serif',
+    lineHeight: "1.4",
   };
 
-  const footerTagline = {
-    color: "#94a3b8",
+  const footerTaglineStyle = {
+    margin: "0 0 16px",
+    color: "#718278",
     fontSize: "12px",
     lineHeight: "1.5",
-    margin: "0 0 18px",
   };
 
-  const footerLinksRow = {
-    color: "#94a3b8",
-    fontSize: "13px",
-    lineHeight: "1.8",
+  const footerLinksStyle = {
     margin: "0 0 14px",
-  };
-
-  const footerLink = {
-    color: "#059669",
-    textDecoration: "none",
-    fontWeight: "600",
-  };
-
-  const footerMeta = {
-    color: "#94a3b8",
+    color: "#087f5b",
     fontSize: "12px",
-    lineHeight: "1.6",
+    lineHeight: "1.8",
+  };
+
+  const footerLinkStyle = {
+    color: "#087f5b",
+    fontWeight: "600",
+    textDecoration: "underline",
+  };
+
+  const footerMetaStyle = {
     margin: "0",
+    color: "#718278",
+    fontSize: "11px",
+    lineHeight: "1.7",
   };
 
   return (
     <Html>
       <Head />
       <Preview>{previewText}</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <div style={accentBar}>&nbsp;</div>
+      <Body style={bodyStyle}>
+        <Container style={containerStyle}>
+          <Section style={accentStyle}>&nbsp;</Section>
 
-          {/* Header with Logo */}
-          {showLogo && (
-            <Section style={header}>
+          {showLogo ? (
+            <Section style={headerStyle}>
               <Img
                 src={`${baseUrl}/logo.png`}
                 width={logoWidth}
                 height={logoHeight}
                 alt={logoAlt}
-                style={logo}
+                style={logoStyle}
               />
-              <div style={badge}>Earned Wage Access</div>
+              <Text style={brandNoteStyle}>Earned Wage Access</Text>
             </Section>
-          )}
+          ) : null}
 
-          {/* Content */}
-          <Section style={content}>{children}</Section>
+          <Section style={contentStyle}>{children}</Section>
 
-          {/* Footer */}
-          {showFooter && (
-            <Section style={footer}>
+          {showFooter ? (
+            <Section style={footerStyle}>
               {footerContent ?? (
                 <>
-                  <Text style={footerWordmark}>EaziWage</Text>
-                  <Text style={footerTagline}>Empowering Africa&apos;s Workforce</Text>
+                  <Text style={footerBrandStyle}>EaziWage</Text>
+                  <Text style={footerTaglineStyle}>
+                    Empowering Africa&apos;s Workforce
+                  </Text>
 
-                  {links.length > 0 && (
-                    <Text style={footerLinksRow}>
-                      {links.map((l, i) => (
-                        <span key={l.label}>
-                          {i > 0 && <span style={{ color: "#cbd5e1" }}> &middot; </span>}
-                          <Link href={l.href} style={footerLink}>
-                            {l.label}
+                  {links.length > 0 ? (
+                    <Text style={footerLinksStyle}>
+                      {links.map((link, index) => (
+                        <span key={link.label}>
+                          {index > 0 ? (
+                            <span style={{ color: "#b7c4bc" }}> &middot; </span>
+                          ) : null}
+                          <Link href={link.href} style={footerLinkStyle}>
+                            {link.label}
                           </Link>
                         </span>
                       ))}
                     </Text>
-                  )}
+                  ) : null}
 
-                  <Text style={footerMeta}>
-                    Nairobi, Kenya &middot; {EMAIL_CONFIG.SUPPORT_EMAIL}
+                  <Text style={footerMetaStyle}>
+                    Nairobi, Kenya &middot;{" "}
+                    <Link
+                      href={`mailto:${EMAIL_CONFIG.SUPPORT_EMAIL}`}
+                      style={footerLinkStyle}
+                    >
+                      {EMAIL_CONFIG.SUPPORT_EMAIL}
+                    </Link>
                     <br />
-                    &copy; {new Date().getFullYear()} EaziWage. All rights reserved.
+                    &copy; {new Date().getFullYear()} EaziWage. All rights
+                    reserved.
                   </Text>
                 </>
               )}
             </Section>
-          )}
+          ) : null}
         </Container>
       </Body>
     </Html>

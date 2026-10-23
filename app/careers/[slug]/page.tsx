@@ -11,12 +11,16 @@ import {
 import { GridSystem } from "@/components/grid";
 import { supabaseUser } from "@/lib/supabase/server";
 import {
+  formatCareerDate,
+  getDaysRemaining,
+  isVacancyAcceptingApplications,
+} from "@/lib/careers/deadline";
+import {
   type Career,
   formatDepartment,
   formatEmploymentType,
   getApplyHref,
   formatLocation,
-  isCareerOpen,
 } from "../types";
 import { buildJobPostingJsonLd } from "../job-posting";
 
@@ -30,7 +34,7 @@ async function getCareer(slug: string) {
   const { data, error } = await supabaseUser
     .from("careers")
     .select(
-      "id,slug,title,department,employment_type,status,city,country_code,work_mode,description,responsibilities,requirements,skills,apply_link,apply_email,is_open,is_featured,posted_date,closing_date"
+      "id,slug,title,department,employment_type,status,city,country_code,work_mode,description,responsibilities,requirements,skills,apply_link,apply_email,is_featured,posted_date,closing_date"
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -77,7 +81,8 @@ export default async function CareerDetailPage({
 
   const applyHref = getApplyHref(career);
   const isExternalApply = Boolean(career.apply_link);
-  const isOpen = isCareerOpen(career);
+  const isOpen = isVacancyAcceptingApplications(career);
+  const daysRemaining = getDaysRemaining(career.closing_date);
   const jobPostingJsonLd = buildJobPostingJsonLd(career);
 
   return (
@@ -128,7 +133,9 @@ export default async function CareerDetailPage({
                       className="h-4 w-4 text-green-700"
                       strokeWidth={1.8}
                     />
-                    Applications close {formatDate(career.closing_date)}
+                    {daysRemaining === 0
+                      ? "Closes today"
+                      : `Closes ${formatCareerDate(career.closing_date)}`}
                   </span>
                 ) : null}
               </div>
@@ -148,7 +155,7 @@ export default async function CareerDetailPage({
               </Link>
             ) : (
               <p className="w-fit rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600">
-                This role is no longer accepting applications
+                Applications closed
               </p>
             )}
           </div>
@@ -289,12 +296,4 @@ function DetailList({ title, items }: { title?: string; items: string[] }) {
       </ul>
     </div>
   );
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
 }

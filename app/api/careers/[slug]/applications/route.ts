@@ -9,6 +9,11 @@ import {
   checkRateLimit,
 } from "@/lib/security/rate-limit";
 import { getSupabaseAdmin } from "@/lib/server/supabaseAdmin";
+import { supabaseUser } from "@/lib/supabase/server";
+import {
+  getDaysRemaining,
+  isVacancyAcceptingApplications,
+} from "@/lib/careers/deadline";
 import { sendError, sendSuccess } from "@/lib/utils/response";
 import {
   careerApplicationForbiddenClientFields,
@@ -17,7 +22,7 @@ import {
   validateCareerApplicationFile,
 } from "@/lib/validations/career-application";
 import { EMAIL_CONFIG, COMPANY_CONFIG } from "@/constants/config";
-import { isCareerOpen, type CareerStatus } from "@/app/careers/types";
+import type { CareerStatus } from "@/app/careers/types";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +35,6 @@ type CareerForApplication = {
   slug: string;
   title: string;
   status: CareerStatus;
-  is_open: boolean;
   closing_date: string | null;
   apply_email: string | null;
 };
@@ -150,9 +154,11 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     }
 
     const supabase = getSupabaseAdmin() as SupabaseClient<CareerDatabase>;
-    const { data: career, error: careerError } = await supabase
+    const { data: career, error: careerError } = await (
+      supabaseUser as SupabaseClient<CareerDatabase>
+    )
       .from("careers")
-      .select("id,slug,title,status,is_open,closing_date,apply_email")
+      .select("id,slug,title,status,closing_date,apply_email")
       .eq("slug", slug)
       .maybeSingle();
 
@@ -169,8 +175,18 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       return sendError("This role could not be found.", 404);
     }
 
-    if (!isCareerOpen(resolvedCareer)) {
-      return sendError("This role is no longer accepting applications.", 409);
+    if (!isVacancyAcceptingApplications(resolvedCareer)) {
+      const daysRemaining = getDaysRemaining(resolvedCareer.closing_date);
+      const isDeadlinePassed =
+        resolvedCareer.status === "open" &&
+        daysRemaining !== null &&
+        daysRemaining < 0;
+      return sendError(
+        isDeadlinePassed
+          ? "The application deadline for this vacancy has passed."
+          : "This vacancy is closed and is no longer accepting applications.",
+        isDeadlinePassed ? 410 : 409
+      );
     }
 
     const extension = getCareerApplicationFileExtension(resumeFile.name);
@@ -220,6 +236,10 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     if (insertError) {
       await supabase.storage.from("career-applications").remove([storagePath]);
       console.error("[careers/applications] insert failed:", insertError);
+      const mappedError = mapCareerInsertError(insertError.message);
+      if (mappedError) {
+        return sendError(mappedError.message, mappedError.status);
+      }
       return sendError("Application submission failed. Please try again.", 500);
     }
 
@@ -247,6 +267,41 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
   } catch (error) {
     console.error("[careers/applications] unexpected error:", error);
     return sendError("An unexpected error occurred. Please try again.", 500);
+  }
+}
+
+function mapCareerInsertError(message: string) {
+  const errorCode = [
+    "career_required",
+    "career_not_found",
+    "career_closed",
+    "career_deadline_passed",
+  ].find((code) => message.toLowerCase().includes(code));
+
+  switch (errorCode) {
+    case "career_required":
+      return {
+        status: 400,
+        message: "Choose a vacancy before submitting your application.",
+      };
+    case "career_not_found":
+      return {
+        status: 404,
+        message: "This vacancy could not be found.",
+      };
+    case "career_closed":
+      return {
+        status: 410,
+        message:
+          "This vacancy is closed and is no longer accepting applications.",
+      };
+    case "career_deadline_passed":
+      return {
+        status: 410,
+        message: "The application deadline for this vacancy has passed.",
+      };
+    default:
+      return null;
   }
 }
 

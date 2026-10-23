@@ -1,10 +1,21 @@
 import { NextRequest } from "next/server";
+import { createElement } from "react";
+import { Resend } from "resend";
+import CareerApplicationStatusUpdate, {
+  type NotifiableCareerApplicationStatus,
+  getCareerApplicationStatusSubject,
+} from "@/emails/CareerApplicationStatusUpdate";
+import { EMAIL_CONFIG } from "@/constants/config";
 import { z } from "zod";
 import { logAdminAction } from "@/lib/admin/audit";
 import { requireAdminWrite } from "@/lib/admin/campaigns";
 import { sendError, sendSuccess } from "@/lib/utils/response";
 
 export const dynamic = "force-dynamic";
+
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 const statusSchema = z.object({
   status: z.enum(["under_review", "shortlisted", "rejected", "hired"]),
@@ -55,7 +66,10 @@ export async function PATCH(request: NextRequest, { params }: RouteProps) {
   const newStatus = parsed.data.status;
 
   if (!allowedTransitions[oldStatus]?.includes(newStatus)) {
-    return sendError(`Cannot move application from ${oldStatus} to ${newStatus}`, 409);
+    return sendError(
+      `Cannot move application from ${oldStatus} to ${newStatus}`,
+      409
+    );
   }
 
   const changedAt = new Date().toISOString();
@@ -69,7 +83,10 @@ export async function PATCH(request: NextRequest, { params }: RouteProps) {
     .single();
 
   if (updateError) {
-    console.error("[admin/careers/applications/status] update failed:", updateError);
+    console.error(
+      "[admin/careers/applications/status] update failed:",
+      updateError
+    );
     return sendError("Unable to update application status", 500);
   }
 
@@ -86,7 +103,10 @@ export async function PATCH(request: NextRequest, { params }: RouteProps) {
     .insert(auditPayload);
 
   if (statusAuditError) {
-    console.error("[admin/careers/applications/status] status audit failed:", statusAuditError);
+    console.error(
+      "[admin/careers/applications/status] status audit failed:",
+      statusAuditError
+    );
   }
 
   await logAdminAction(user.id, "career_application_status_changed", {
@@ -95,5 +115,62 @@ export async function PATCH(request: NextRequest, { params }: RouteProps) {
     meta: auditPayload,
   });
 
-  return sendSuccess({ application: updated });
+  let statusEmailSent: boolean | null = null;
+  if (
+    newStatus === "shortlisted" ||
+    newStatus === "rejected" ||
+    newStatus === "hired"
+  ) {
+    statusEmailSent = await sendStatusEmail({
+      applicantName: updated.full_name,
+      applicantEmail: updated.email,
+      applicationId: updated.id,
+      roleTitle: updated.career_title_snapshot,
+      status: newStatus,
+    });
+  }
+
+  return sendSuccess({ application: updated, statusEmailSent });
+}
+
+async function sendStatusEmail(input: {
+  applicantName: string;
+  applicantEmail: string;
+  applicationId: string;
+  roleTitle: string;
+  status: NotifiableCareerApplicationStatus;
+}) {
+  if (!resend) {
+    console.error(
+      "[admin/careers/applications/status] RESEND_API_KEY is not configured"
+    );
+    return false;
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: EMAIL_CONFIG.SENDER_ADDRESS,
+      to: input.applicantEmail,
+      subject: getCareerApplicationStatusSubject(input.status, input.roleTitle),
+      react: createElement(CareerApplicationStatusUpdate, {
+        applicantName: input.applicantName,
+        roleTitle: input.roleTitle,
+        applicationId: input.applicationId,
+        status: input.status,
+      }),
+    });
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error(
+      "[admin/careers/applications/status] applicant email failed:",
+      {
+        applicationId: input.applicationId,
+        status: input.status,
+        error,
+      }
+    );
+    return false;
+  }
 }

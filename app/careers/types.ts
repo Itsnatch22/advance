@@ -30,39 +30,10 @@ export type Career = {
   apply_link: string | null;
   apply_email: string;
   // Visibility/metadata
-  is_open: boolean;
   is_featured: boolean;
   posted_date: string;
   closing_date: string | null;
 };
-
-export function isCareerOpen(
-  career: Pick<Career, "status" | "is_open"> &
-    Partial<Pick<Career, "closing_date">>
-): boolean {
-  if (career.status !== "open" || !career.is_open) return false;
-  if (!career.closing_date) return true;
-
-  // Closing dates are inclusive and interpreted in EaziWage's local timezone.
-  // ISO date strings compare lexically, avoiding UTC-midnight boundary errors.
-  const today = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Africa/Nairobi",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  })
-    .formatToParts(new Date())
-    .reduce<Record<string, string>>((parts, part) => {
-      if (part.type !== "literal") parts[part.type] = part.value;
-      return parts;
-    }, {});
-  const todayInNairobi = `${today.year}-${today.month}-${today.day}`;
-
-  return (
-    /^\d{4}-\d{2}-\d{2}$/.test(career.closing_date) &&
-    career.closing_date >= todayInNairobi
-  );
-}
 
 // Helper: format location/work mode for display
 export function formatLocation(

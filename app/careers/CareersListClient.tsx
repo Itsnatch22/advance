@@ -10,6 +10,11 @@ import {
 } from "lucide-react";
 import MagneticButton from "@/components/ui/magnetic-button";
 import {
+  formatCareerDate,
+  getDaysRemaining,
+  isVacancyAcceptingApplications,
+} from "@/lib/careers/deadline";
+import {
   type Career,
   type CareerDepartment,
   type CareerEmploymentType,
@@ -72,7 +77,7 @@ export function CareersListClient({ careers }: CareersListClientProps) {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[18rem_1fr]">
-        <aside className="h-fit rounded-[2rem] border border-slate-200/70 bg-white/75 p-3 shadow-xl shadow-slate-900/5">
+        <aside className="h-fit rounded-4xl border border-slate-200/70 bg-white/75 p-3 shadow-xl shadow-slate-900/5">
           <div className="grid gap-2">
             {departments.map((department) => {
               const active = department.value === selectedDepartment;
@@ -162,14 +167,16 @@ export function CareersListClient({ careers }: CareersListClientProps) {
 function CareerCard({ career }: { career: Career }) {
   const applyHref = getApplyHref(career);
   const isExternalApply = Boolean(career.apply_link);
+  const isAcceptingApplications = isVacancyAcceptingApplications(career);
+  const daysRemaining = getDaysRemaining(career.closing_date);
   const excerpt =
     career.description.length > 180
       ? `${career.description.slice(0, 177).trim()}...`
       : career.description;
 
   return (
-    <article className="group overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/80 p-1.5 shadow-xl shadow-slate-900/5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/10">
-      <div className="rounded-[calc(2rem-0.375rem)] bg-white p-6 ring-1 ring-slate-900/5 sm:p-7">
+    <article className="group overflow-hidden rounded-4xl border border-slate-200/70 bg-white/80 p-1.5 shadow-xl shadow-slate-900/5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/10">
+      <div className="rounded-[1.625rem] bg-white p-6 ring-1 ring-slate-900/5 sm:p-7">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0 flex-1">
             <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -202,7 +209,9 @@ function CareerCard({ career }: { career: Career }) {
                     className="h-4 w-4 text-green-600"
                     strokeWidth={1.8}
                   />
-                  Closes {formatDate(career.closing_date)}
+                  {daysRemaining === 0
+                    ? "Closes today"
+                    : `Closes ${formatCareerDate(career.closing_date)}`}
                 </span>
               ) : null}
             </div>
@@ -219,18 +228,24 @@ function CareerCard({ career }: { career: Career }) {
             >
               View role
             </Link>
-            <MagneticButton
-              href={applyHref}
-              target={isExternalApply ? "_blank" : undefined}
-              rel={isExternalApply ? "noopener noreferrer" : undefined}
-              wrapperClassName="w-full rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 sm:w-auto"
-              className="group/apply inline-flex w-full items-center justify-center gap-3 rounded-full bg-slate-900 py-2.5 pr-2.5 pl-5 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-green-600 active:scale-[0.98] sm:w-auto"
-            >
-              Apply
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/12 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/apply:translate-x-1 group-hover/apply:-translate-y-0.5">
-                <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
-              </span>
-            </MagneticButton>
+            {isAcceptingApplications ? (
+              <MagneticButton
+                href={applyHref}
+                target={isExternalApply ? "_blank" : undefined}
+                rel={isExternalApply ? "noopener noreferrer" : undefined}
+                wrapperClassName="w-full rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 sm:w-auto"
+                className="group/apply inline-flex w-full items-center justify-center gap-3 rounded-full bg-slate-900 py-2.5 pr-2.5 pl-5 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-green-600 active:scale-[0.98] sm:w-auto"
+              >
+                Apply
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/12 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/apply:translate-x-1 group-hover/apply:-translate-y-0.5">
+                  <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
+                </span>
+              </MagneticButton>
+            ) : (
+              <p className="rounded-full bg-slate-100 px-5 py-3 text-center text-sm font-semibold text-slate-600">
+                Applications closed
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -240,7 +255,7 @@ function CareerCard({ career }: { career: Career }) {
 
 function EmptyState({ title }: { title: string }) {
   return (
-    <div className="rounded-[2rem] border border-dashed border-slate-300 bg-white/70 p-10 text-center shadow-xl shadow-slate-900/5">
+    <div className="rounded-4xl border border-dashed border-slate-300 bg-white/70 p-10 text-center shadow-xl shadow-slate-900/5">
       <h3 className="text-2xl font-black tracking-tight text-slate-900">
         {title}
       </h3>
@@ -250,12 +265,4 @@ function EmptyState({ title }: { title: string }) {
       </p>
     </div>
   );
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
 }
