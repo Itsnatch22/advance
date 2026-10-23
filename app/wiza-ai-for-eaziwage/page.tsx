@@ -30,7 +30,6 @@ import {
 } from "@/components/shared/FileAttachButton";
 import { GifPicker, type GifResult } from "@/components/shared/GifPicker";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
-import { TiltCard } from "@/components/shared/TiltCard";
 
 function RichText({ text }: { text: string }) {
   return (
@@ -320,13 +319,29 @@ export default function Wiza() {
   const [attachment, setAttachment] = useState<AttachedFile | null>(null);
   const [showGifPicker, setShowGifPicker] = useState(false);
 
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const messageScrollRef = useRef<HTMLDivElement>(null);
+  const shouldFollowMessagesRef = useRef(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (messages.length === 0) return;
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!shouldFollowMessagesRef.current) return;
+
+    const messageContainer = messageScrollRef.current;
+    if (messageContainer) {
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
   }, [messages]);
+
+  const handleMessageScroll = () => {
+    const messageContainer = messageScrollRef.current;
+    if (!messageContainer) return;
+
+    const distanceFromBottom =
+      messageContainer.scrollHeight -
+      messageContainer.scrollTop -
+      messageContainer.clientHeight;
+    shouldFollowMessagesRef.current = distanceFromBottom < 96;
+  };
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -336,6 +351,7 @@ export default function Wiza() {
     setInput("");
     setAttachment(null);
     setShowGifPicker(false);
+    shouldFollowMessagesRef.current = true;
     const att: AttachmentData | undefined = file
       ? { mimeType: file.mimeType, base64: file.base64 }
       : undefined;
@@ -345,7 +361,13 @@ export default function Wiza() {
 
   const handleGifSelect = async (gif: GifResult) => {
     setShowGifPicker(false);
+    shouldFollowMessagesRef.current = true;
     await sendMessage(`__gif__${gif.url}`);
+  };
+
+  const handleQuickPrompt = (prompt: string) => {
+    shouldFollowMessagesRef.current = true;
+    void sendMessage(prompt);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -366,7 +388,7 @@ export default function Wiza() {
     setTimeout(() => setSummaryStatus(null), 4000);
   };
 
-  const isEmpty = messages.length === 0;
+  const hasUserMessage = messages.some((message) => message.role === "user");
   const conversationStartedAt = messages[0]?.createdAt ?? null;
 
   return (
@@ -478,7 +500,7 @@ export default function Wiza() {
             viewport={{ once: true }}
             transition={{ delay: 0.32 }}
           >
-            <TiltCard className="flex h-[min(42rem,calc(100dvh-7rem))] min-h-[30rem] w-full min-w-0 flex-col rounded-2xl border-slate-200/60 shadow-2xl sm:h-[42rem] sm:min-h-0 sm:rounded-[2.5rem]">
+            <div className="relative flex h-[min(42rem,calc(100dvh-7rem))] min-h-[30rem] w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200/60 bg-white shadow-2xl sm:h-[42rem] sm:min-h-0 sm:rounded-[2.5rem] dark:border-slate-800 dark:bg-slate-900">
               {/* Summary modal overlay */}
               {showSummaryModal && (
                 <SummaryModal
@@ -562,95 +584,89 @@ export default function Wiza() {
               </AnimatePresence>
 
               {/* Messages */}
-              <div className="min-h-0 flex-1 space-y-4 overflow-y-auto scroll-smooth px-3 py-4 sm:px-5 sm:py-5">
-                {isEmpty ? (
-                  <div className="flex h-full min-h-72 flex-col items-center justify-center px-2 text-center sm:min-h-80 sm:px-8">
-                    <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800">
-                      <Bot className="h-8 w-8 text-slate-300 dark:text-slate-600" />
-                    </div>
-                    <h4 className="mb-2 text-base font-semibold text-slate-800 dark:text-slate-200">
-                      How can Wiza help you today?
-                    </h4>
-                    <p className="mb-6 text-sm leading-relaxed text-slate-400 dark:text-slate-500">
-                      Try me! Ask about salary breakdowns, budget tips, or
-                      spending habits.
-                    </p>
-                    {/* Quick-start prompts */}
-                    <div className="w-full space-y-2">
-                      {[
-                        "How much of my salary can I access right now?",
-                        "Help me survive till payday",
-                        "Is it safe to request an advance today?",
-                      ].map((prompt) => (
-                        <button
-                          key={prompt}
-                          onClick={() => sendMessage(prompt)}
-                          className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-left text-sm text-slate-600 transition-all hover:border-emerald-400 hover:bg-emerald-50/50 hover:text-emerald-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-400"
-                        >
-                          {prompt}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <AnimatePresence initial={false}>
-                    {messages.map((msg) => (
-                      <motion.div
-                        key={msg.id}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              <div
+                ref={messageScrollRef}
+                onScroll={handleMessageScroll}
+                className="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-4 sm:px-5 sm:py-5"
+              >
+                <AnimatePresence initial={false}>
+                  {messages.map((msg) => (
+                    <motion.div
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                    >
+                      <div
+                        className={`flex max-w-[85%] items-end gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
                       >
+                        {/* Avatar */}
                         <div
-                          className={`flex max-w-[85%] items-end gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+                            msg.role === "user"
+                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                              : "bg-slate-900 text-emerald-400 dark:bg-white dark:text-emerald-600"
+                          }`}
                         >
-                          {/* Avatar */}
-                          <div
-                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                              msg.role === "user"
-                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
-                                : "bg-slate-900 text-emerald-400 dark:bg-white dark:text-emerald-600"
-                            }`}
-                          >
-                            {msg.role === "user" ? (
-                              <User size={14} />
-                            ) : (
-                              <Bot size={14} />
-                            )}
-                          </div>
-
-                          {/* Bubble */}
-                          <div
-                            className={`min-w-0 rounded-2xl px-3 py-2.5 text-sm leading-relaxed [overflow-wrap:anywhere] break-words sm:px-4 sm:py-3 ${
-                              msg.role === "user"
-                                ? "rounded-br-sm bg-emerald-600 text-white"
-                                : "rounded-bl-sm border border-slate-100 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                            }`}
-                          >
-                            {msg.pending && !msg.content ? (
-                              <TypingCursor />
-                            ) : (
-                              <>
-                                <MessageContent text={msg.content} />
-                                {msg.pending && <TypingCursor />}
-                              </>
-                            )}
-                            <p
-                              className={`mt-2 text-[10px] font-medium ${
-                                msg.role === "user"
-                                  ? "text-emerald-50/80"
-                                  : "text-slate-400 dark:text-slate-500"
-                              }`}
-                            >
-                              {formatMessageTimestamp(msg.createdAt)}
-                            </p>
-                          </div>
+                          {msg.role === "user" ? (
+                            <User size={14} />
+                          ) : (
+                            <Bot size={14} />
+                          )}
                         </div>
-                      </motion.div>
+
+                        {/* Bubble */}
+                        <div
+                          className={`min-w-0 rounded-2xl px-3 py-2.5 text-sm leading-relaxed [overflow-wrap:anywhere] break-words sm:px-4 sm:py-3 ${
+                            msg.role === "user"
+                              ? "rounded-br-sm bg-emerald-600 text-white"
+                              : "rounded-bl-sm border border-slate-100 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                          }`}
+                        >
+                          {msg.pending && !msg.content ? (
+                            <TypingCursor />
+                          ) : (
+                            <>
+                              <MessageContent text={msg.content} />
+                              {msg.pending && <TypingCursor />}
+                            </>
+                          )}
+                          <p
+                            className={`mt-2 text-[10px] font-medium ${
+                              msg.role === "user"
+                                ? "text-emerald-50/80"
+                                : "text-slate-400 dark:text-slate-500"
+                            }`}
+                          >
+                            {formatMessageTimestamp(msg.createdAt)}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+
+                {!hasUserMessage && !streaming ? (
+                  <div className="space-y-2 pt-1">
+                    <p className="px-1 text-xs font-medium text-slate-400 dark:text-slate-500">
+                      Try asking
+                    </p>
+                    {[
+                      "How much of my salary can I access right now?",
+                      "Help me survive till payday",
+                      "Is it safe to request an advance today?",
+                    ].map((prompt) => (
+                      <button
+                        key={prompt}
+                        onClick={() => handleQuickPrompt(prompt)}
+                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-left text-sm text-slate-600 transition-all hover:border-emerald-400 hover:bg-emerald-50/50 hover:text-emerald-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-400"
+                      >
+                        {prompt}
+                      </button>
                     ))}
-                  </AnimatePresence>
-                )}
+                  </div>
+                ) : null}
 
                 {/* Error banner */}
                 <AnimatePresence>
@@ -668,8 +684,6 @@ export default function Wiza() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-
-                <div ref={chatEndRef} />
               </div>
 
               {/* Input */}
@@ -749,7 +763,7 @@ export default function Wiza() {
                   </button>
                 </form>
               </div>
-            </TiltCard>
+            </div>
             <div className="text-center">
               <p className="mt-4 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
                 By using Wiza, you agree to how{" "}
