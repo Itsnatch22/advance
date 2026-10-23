@@ -462,10 +462,6 @@ export default function Wiza() {
                   desc: "Future you might have opinions about this latte budget. Let's run the numbers.",
                 },
                 {
-                  label: "No Auth Required",
-                  desc: "Anyone can try Wiza, no authentication required.",
-                },
-                {
                   label: "Web-informed answers",
                   desc: "For current public questions, Wiza can search the web and link its sources.",
                 },
