@@ -362,6 +362,7 @@ export default function Footer() {
                 { name: "Careers", href: "/careers" },
                 { name: "Culture", href: "/culture" },
                 { name: "Contact", href: "/contact" },
+                { name: "Humans", href: "/humans"},
                 { name: "Partners", href: "/partners" },
                 { name: "Security", href: "/security"}
               ].map((link, index) => (
