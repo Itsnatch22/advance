@@ -1,45 +1,35 @@
 "use client";
 
-import React, {
-  useState,
-  useMemo,
-  useRef,
-  useEffect,
-  useCallback,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ElementType } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useTransform,
-} from "framer-motion";
-import {
-  Search,
-  Download,
-  Calendar,
-  TrendingUp,
-  FileText,
-  Clock,
-  Users,
-  Layers,
-  Video,
-  CheckCircle2,
   AlertCircle,
+  ArrowRight,
+  Calendar,
+  Download,
   ExternalLink,
+  FileText,
+  Layers,
+  LoaderCircle,
   Newspaper,
-  RefreshCw,
+  Search,
+  TrendingUp,
+  Users,
+  Video,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
-import { Resource, ResourceCategory } from "@/types/resources";
+import TiltCard from "@/components/shared/TiltCard";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
-import { useParallax } from "@/hooks/use-parallax";
 import { useRealtimeRefresh } from "@/hooks/useRealtimeRefresh";
+import type { Resource, ResourceCategory } from "@/types/resources";
 
 interface CategoryOption {
   id: "all" | ResourceCategory;
   label: string;
-  icon: React.ElementType;
+  icon: ElementType;
 }
 
 const categories: CategoryOption[] = [
@@ -51,12 +41,15 @@ const categories: CategoryOption[] = [
   { id: "download", label: "EWA Tools", icon: Download },
 ];
 
-const categoryColors: Record<ResourceCategory, string> = {
-  guide: "bg-blue-50 text-blue-600 border-blue-100",
-  blog: "bg-purple-50 text-purple-600 border-purple-100",
-  "case-study": "bg-emerald-50 text-emerald-600 border-emerald-100",
-  webinar: "bg-orange-50 text-orange-600 border-orange-100",
-  download: "bg-indigo-50 text-indigo-600 border-indigo-100",
+const RESOURCES_PER_PAGE = 6;
+const RESOURCE_REFRESH_INTERVAL = 60_000;
+
+const categoryLabels: Record<ResourceCategory, string> = {
+  guide: "Implementation guide",
+  blog: "EWA insight",
+  "case-study": "Success story",
+  webinar: "EWA event",
+  download: "EWA tool",
 };
 
 function getResourceDedupKey(resource: Resource): string {
@@ -69,582 +62,559 @@ function getResourceDedupKey(resource: Resource): string {
     .join("::");
 }
 
-const SkeletonCard = () => (
-  <div className="relative flex h-full animate-pulse flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl">
-    <div className="mb-6 flex items-center justify-between">
-      <div className="h-5 w-20 rounded-xl bg-slate-100" />
-      <div className="h-4 w-24 rounded-lg bg-slate-100" />
-    </div>
-    <div className="mb-4 space-y-2">
-      <div className="h-6 w-full rounded-lg bg-slate-100" />
-      <div className="h-6 w-3/4 rounded-lg bg-slate-100" />
-    </div>
-    <div className="mb-8 h-32 w-full rounded-2xl bg-slate-100" />
-    <div className="space-y-2">
-      <div className="h-4 w-full rounded bg-slate-100" />
-      <div className="h-4 w-5/6 rounded bg-slate-100" />
-      <div className="h-4 w-4/6 rounded bg-slate-100" />
-    </div>
-    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-6">
-      <div className="flex gap-2">
-        <div className="h-3 w-12 rounded bg-slate-100" />
-        <div className="h-3 w-16 rounded bg-slate-100" />
-      </div>
-      <div className="h-4 w-20 rounded bg-slate-100" />
-    </div>
-  </div>
-);
+function formatDate(date: string): string | null {
+  const parsed = new Date(`${date}T12:00:00`);
+  if (Number.isNaN(parsed.getTime())) return null;
 
-interface TiltResourceCardProps {
-  resource: Resource;
+  return parsed.toLocaleDateString("en-KE", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
-const TiltResourceCard = ({ resource }: TiltResourceCardProps) => {
-  const {
-    rotateX,
-    rotateY,
-    spotlightBackground,
-    handleMouseMove,
-    handleMouseLeave,
-  } = useParallax();
+function getDestination(link: string | null | undefined) {
+  if (!link?.trim()) return null;
+
+  try {
+    const url = new URL(link, "https://eaziwage.com");
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+
+    const internal = url.hostname === "eaziwage.com" || url.hostname.endsWith(".eaziwage.com");
+    return {
+      href: internal ? `${url.pathname}${url.search}${url.hash}` : url.toString(),
+      external: !internal,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function ResourceAction({ resource }: { resource: Resource }) {
+  const destination = getDestination(resource.link);
+  if (!destination) {
+    return <span className="text-sm text-slate-400">Link unavailable</span>;
+  }
+
+  const label = resource.category === "download" ? "Get resource" : "Read more";
+  const className =
+    "inline-flex min-h-10 items-center gap-2 text-sm font-bold text-green-700 transition-colors hover:text-green-800 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-700";
+
+  if (destination.external) {
+    return (
+      <a
+        href={destination.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+      >
+        {label}
+        <ExternalLink size={15} aria-hidden="true" />
+      </a>
+    );
+  }
 
   return (
-    <motion.div style={{ perspective: 1000 }} className="h-full">
-      <motion.div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{ rotateX, rotateY }}
-        className="group relative flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-8 backdrop-blur-2xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+    <Link href={destination.href} className={className}>
+      {label}
+      <ArrowRight size={15} aria-hidden="true" />
+    </Link>
+  );
+}
+
+function ResourceCard({
+  resource,
+  featured = false,
+}: {
+  resource: Resource;
+  featured?: boolean;
+}) {
+  const date = formatDate(resource.date);
+
+  return (
+    <article
+      className={`flex h-full flex-col overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-sm ${
+        featured ? "md:grid md:grid-cols-[1fr_1.1fr]" : ""
+      }`}
+    >
+      {resource.image && (
+        <div
+          className={`relative overflow-hidden bg-green-50 ${
+            featured ? "min-h-64 md:min-h-full" : "h-52"
+          }`}
+        >
+          <Image
+            src={resource.image}
+            alt={resource.title}
+            fill
+            unoptimized
+            sizes={featured ? "(min-width: 768px) 45vw, 100vw" : "(min-width: 1024px) 33vw, 100vw"}
+            className="object-cover"
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
+          />
+        </div>
+      )}
+
+      <div
+        className={`flex flex-1 flex-col p-6 sm:p-8 ${
+          featured ? "justify-center md:p-10" : ""
+        }`}
       >
-        {/* Radial glow that follows the cursor */}
-        <motion.div
-          style={{
-            background: spotlightBackground,
-          }}
-          className="pointer-events-none absolute inset-0 rounded-[2.5rem]"
-        />
-
-        <div className="relative z-10 flex h-full flex-col">
-          {/* Cover image */}
-          {resource.image && (
-            <div className="relative -mx-8 -mt-8 mb-6 h-44 overflow-hidden rounded-t-[2.5rem]">
-              <Image
-                src={resource.image}
-                alt={resource.title}
-                fill
-                unoptimized
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
-              />
-              <div className="absolute inset-0 bg-linear-to-b from-transparent to-white/20" />
-            </div>
+        <div className="mb-5 flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-800">
+            {categoryLabels[resource.category]}
+          </span>
+          {resource.source === "external" && (
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+              External resource
+            </span>
           )}
-
-          {/* Category badge + date/read-time */}
-          <div className="mb-6 flex items-center justify-between">
-            <div
-              className={`rounded-xl border px-3 py-1 text-[10px] font-black tracking-widest uppercase ${
-                categoryColors[resource.category]
-              }`}
-            >
-              {resource.category.replace("-", " ")}
-            </div>
-            <div className="flex items-center gap-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-              <span className="flex items-center gap-1">
-                <Calendar size={12} />
-                {new Date(resource.date).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-              {resource.readTime && (
-                <span className="flex items-center gap-1">
-                  <Clock size={12} />
-                  {resource.readTime}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <h3 className="mb-4 line-clamp-3 font-serif text-xl leading-tight font-bold text-slate-900 transition-colors group-hover:text-green-600">
-            {resource.title}
-          </h3>
-
-          <p className="mb-8 line-clamp-3 text-sm leading-relaxed text-slate-500">
-            {resource.description}
-          </p>
-
-          {/* Optional metrics grid */}
-          {resource.metrics && resource.metrics.length > 0 && (
-            <div className="mb-8 grid grid-cols-3 gap-3 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
-              {resource.metrics.map((m, i) => (
-                <div key={i} className="text-center">
-                  <div className="text-lg font-black text-green-600">
-                    {m.value}
-                  </div>
-                  <div className="text-[8px] font-black tracking-widest text-slate-400 uppercase">
-                    {m.label}
-                  </div>
-                </div>
-              ))}
-            </div>
+          {date && (
+            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+              <Calendar size={13} aria-hidden="true" />
+              <time dateTime={resource.date}>{date}</time>
+            </span>
           )}
-
-          {resource.author && (
-            <p className="mb-4 text-[11px] font-bold tracking-widest text-slate-400 uppercase">
-              By {resource.author}
-            </p>
-          )}
-
-          {/* Footer: tags + read link */}
-          <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-6">
-            <div className="flex flex-wrap gap-2">
-              {resource.tags.slice(0, 2).map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[10px] font-bold text-slate-400"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-            <a
-              href={resource.link ?? "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-black tracking-widest text-green-600 uppercase transition-all group-hover:gap-3"
-            >
-              Read
-              <ExternalLink size={14} />
-            </a>
-          </div>
         </div>
 
-        {/* Bottom progress bar on hover */}
-        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
-      </motion.div>
-    </motion.div>
+        <h3
+          className={`font-serif font-bold tracking-tight text-slate-900 ${
+            featured ? "text-2xl sm:text-3xl" : "text-xl"
+          }`}
+        >
+          {resource.title}
+        </h3>
+        <p
+          className={`mt-3 leading-relaxed text-slate-600 ${
+            featured ? "text-base sm:text-lg" : "text-sm"
+          }`}
+        >
+          {resource.description}
+        </p>
+
+        {(resource.author || resource.tags.length > 0) && (
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500">
+            {resource.author && (
+              <span>
+                {resource.source === "external" ? "Source" : "By"}{" "}
+                <span className="font-medium text-slate-700">
+                  {resource.author}
+                </span>
+              </span>
+            )}
+            {resource.tags.slice(0, 3).map((tag) => (
+              <span key={tag} className="rounded-full bg-slate-50 px-2.5 py-1">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-auto pt-6">
+          <ResourceAction resource={resource} />
+        </div>
+      </div>
+    </article>
   );
-};
+}
+
+function ResourceSkeleton() {
+  return (
+    <div
+      aria-hidden="true"
+      className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+    >
+      {Array.from({ length: 6 }, (_, index) => (
+        <div
+          key={index}
+          className="animate-pulse overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white p-6"
+        >
+          <div className="h-44 rounded-2xl bg-slate-100" />
+          <div className="mt-6 h-4 w-28 rounded bg-slate-100" />
+          <div className="mt-4 h-6 rounded bg-slate-100" />
+          <div className="mt-3 h-4 rounded bg-slate-100" />
+          <div className="mt-2 h-4 w-4/5 rounded bg-slate-100" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 interface BlogsClientProps {
   initialResources: Resource[];
+  initialError: string | null;
 }
 
-export default function BlogsClient({ initialResources }: BlogsClientProps) {
-  const [resources, setResources] = useState<Resource[]>(initialResources);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+export default function BlogsClient({
+  initialResources,
+  initialError,
+}: BlogsClientProps) {
+  const [resources, setResources] = useState(initialResources);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<
     "all" | ResourceCategory
   >("all");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [lastFetched, setLastFetched] = useState<Date | null>(new Date());
-
-  const [email, setEmail] = useState<string>("");
-  const [honeypot, setHoneypot] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const containerRef = useRef<HTMLElement>(null);
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-  const yHero = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(initialError);
+  const reduceMotion = useReducedMotion();
+  const requestController = useRef<AbortController | null>(null);
+  const isFirstFilterRender = useRef(true);
 
   const fetchResources = useCallback(
-    async (category: string, search: string) => {
-      setIsLoading(true);
+    async (
+      category: string,
+      search: string,
+      { showLoading = true }: { showLoading?: boolean } = {}
+    ) => {
+      requestController.current?.abort();
+      const controller = new AbortController();
+      requestController.current = controller;
+
+      if (showLoading) setIsLoading(true);
       setError(null);
 
       try {
         const params = new URLSearchParams({ category });
         if (search.trim()) params.set("search", search.trim());
 
-        const res = await fetch(`/api/resources?${params.toString()}`);
-        const rawText = await res.text();
+        const response = await fetch(`/api/resources?${params.toString()}`, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const result = (await response.json()) as {
+          resources?: Resource[];
+          error?: string;
+        };
 
-        if (!rawText) {
-          throw new Error(`Empty response from server (status ${res.status})`);
+        if (!response.ok) {
+          throw new Error(result.error ?? "Resources are temporarily unavailable.");
         }
 
-        let parsed: { resources?: Resource[]; error?: string };
-        try {
-          parsed = JSON.parse(rawText);
-        } catch {
-          throw new Error(`Invalid response from server (status ${res.status})`);
-        }
-
-        if (!res.ok) {
-          throw new Error(parsed.error ?? "Failed to fetch");
-        }
-
-        setResources(parsed.resources ?? []);
-        setLastFetched(new Date());
-      } catch (err) {
+        setResources(result.resources ?? []);
+      } catch (requestError) {
+        if (controller.signal.aborted) return;
         setError(
-          err instanceof Error
-            ? err.message
-            : "Something went wrong. Try again."
+          requestError instanceof Error
+            ? requestError.message
+            : "Resources are temporarily unavailable."
         );
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     },
     []
   );
 
-  useRealtimeRefresh(
-    [{ table: "blogs", event: "INSERT" }],
-    () => fetchResources(selectedCategory, searchQuery)
+  useEffect(() => {
+    if (isFirstFilterRender.current) {
+      isFirstFilterRender.current = false;
+      return;
+    }
+
+    const timeout = window.setTimeout(
+      () => fetchResources(selectedCategory, searchQuery),
+      searchQuery.trim() ? 350 : 0
+    );
+
+    return () => window.clearTimeout(timeout);
+  }, [fetchResources, searchQuery, selectedCategory]);
+
+  useEffect(
+    () => () => {
+      requestController.current?.abort();
+    },
+    []
+  );
+
+  useRealtimeRefresh([{ table: "blogs", event: "*" }], () =>
+    fetchResources(selectedCategory, searchQuery, { showLoading: false })
   );
 
   useEffect(() => {
-    fetchResources(selectedCategory, searchQuery);
-  }, [selectedCategory]);
-
-  useEffect(() => {
-    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    searchTimeoutRef.current = setTimeout(() => {
-      fetchResources(selectedCategory, searchQuery);
-    }, 500);
-    return () => {
-      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === "visible") {
+        void fetchResources(selectedCategory, searchQuery, {
+          showLoading: false,
+        });
+      }
     };
-  }, [searchQuery]);
 
-  const displayedResources = useMemo<Resource[]>(() => {
-    const filtered = !searchQuery.trim()
-      ? resources
-      : resources.filter(
-          (r) =>
-            r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            r.description.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+    const interval = window.setInterval(
+      refreshWhenVisible,
+      RESOURCE_REFRESH_INTERVAL
+    );
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
+  }, [fetchResources, searchQuery, selectedCategory]);
+
+  const displayedResources = useMemo(() => {
+    const filtered = searchQuery.trim()
+      ? resources.filter((resource) => {
+          const query = searchQuery.trim().toLowerCase();
+          return (
+            resource.title.toLowerCase().includes(query) ||
+            resource.description.toLowerCase().includes(query) ||
+            resource.tags.some((tag) => tag.toLowerCase().includes(query))
+          );
+        })
+      : resources;
 
     const seen = new Set<string>();
-    return filtered.filter((resource) => {
-      const key = getResourceDedupKey(resource);
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+    return filtered
+      .filter((resource) => {
+        const key = getResourceDedupKey(resource);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .sort(
+        (first, second) =>
+          Number(second.isFeatured) - Number(first.isFeatured) ||
+          new Date(second.date).getTime() - new Date(first.date).getTime()
+      );
   }, [resources, searchQuery]);
 
-  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (honeypot || !email) return;
+  const pageCount = Math.ceil(displayedResources.length / RESOURCES_PER_PAGE);
+  const pageResources = displayedResources.slice(
+    (currentPage - 1) * RESOURCES_PER_PAGE,
+    currentPage * RESOURCES_PER_PAGE
+  );
+  const featuredResource = pageResources.find(
+    (resource) => resource.isFeatured
+  );
+  const latestResources = pageResources.filter(
+    (resource) => resource.id !== featuredResource?.id
+  );
 
-    setIsSubmitting(true);
-    setSubmitStatus("idle");
-    setErrorMessage("");
-
-    try {
-      const response = await fetch("/api/subscription", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, honeypot }),
-      });
-
-      const result = (await response.json()) as { error?: string };
-
-      if (response.ok) {
-        setSubmitStatus("success");
-        setEmail("");
-        setTimeout(() => setSubmitStatus("idle"), 5000);
-      } else {
-        setSubmitStatus("error");
-        setErrorMessage(
-          result.error ?? "Failed to subscribe. Please try again."
-        );
-      }
-    } catch {
-      setSubmitStatus("error");
-      setErrorMessage("Network error. Please try again later.");
-    } finally {
-      setIsSubmitting(false);
+  useEffect(() => {
+    if (pageCount > 0 && currentPage > pageCount) {
+      setCurrentPage(pageCount);
     }
-  };
+  }, [currentPage, pageCount]);
 
   return (
-    <main
-      ref={containerRef}
-      className="relative min-h-screen overflow-hidden bg-white text-slate-900"
-    >
-      {/* Immersive Background - consistent with other pages */}
-      <div className="pointer-events-none absolute inset-0">
+    <main className="relative min-h-[100dvh] overflow-hidden bg-white text-slate-900">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
         <FloatingOrb
           color="bg-green-100"
           delay={0}
           className="top-[-10%] left-[10%]"
         />
-        <FloatingOrb
-          color="bg-emerald-100"
-          delay={2}
-          className="top-[30%] right-[5%]"
-        />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
-      <section className="relative bg-white py-40">
-        <motion.section
-          style={{ y: yHero, opacity: opacityHero }}
-          className="relative px-6 py-40"
-        >
-          <div className="mx-auto max-w-5xl text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
-            >
-              <Newspaper size={14} className="animate-pulse" />
-              <span>Live from Africa</span>
-            </motion.div>
-
+      <section className="relative px-6 pb-12 pt-24 sm:pb-16 sm:pt-28 lg:pt-32">
+        <div className="mx-auto grid max-w-7xl items-end gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.16em] text-green-700 uppercase">
+              <Newspaper size={14} aria-hidden="true" />
+              EaziWage insights
+            </div>
             <motion.h1
-              initial={{ opacity: 0, y: 30 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
+              transition={{ duration: reduceMotion ? 0 : 0.45 }}
+              className="max-w-3xl font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl"
             >
-              Earned Wage Access <br />
-              <span className="text-green-600">Across Africa</span>
+              Ideas for a more financially confident workforce.
             </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 1 }}
-              className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
-            >
-              Real-time insights, implementation guides, and success stories on
-              Earned Wage Access (EWA), on-demand pay, and flexible wage
-              solutions across African markets.
-            </motion.p>
-
-            {/* Search */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="group mx-auto mt-16 max-w-2xl"
-            >
-              <div className="relative">
-                <Search className="absolute top-1/2 left-6 h-6 w-6 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-green-600" />
-                <Input
-                  type="text"
-                  placeholder="Search Africa fintech news..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-20 rounded-3xl border-slate-200 bg-white/80 pr-8 pl-16 text-xl shadow-2xl backdrop-blur-xl transition-all focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
-                />
-                {isLoading && (
-                  <div className="absolute top-1/2 right-6 -translate-y-1/2">
-                    <RefreshCw
-                      size={20}
-                      className="animate-spin text-green-600"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {lastFetched && (
-                <p className="mt-3 text-xs font-medium text-slate-400">
-                  Last updated{" "}
-                  {lastFetched.toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
-              )}
-            </motion.div>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
+              Explore earned wage access, employee financial wellness, payroll
+              innovation, and financial inclusion across African markets.
+            </p>
           </div>
-        </motion.section>
-      </section>
 
-      <section className="sticky top-16 z-30 border-y border-slate-100 bg-white/40 py-8 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                disabled={isLoading}
-                className={`flex items-center gap-3 rounded-2xl px-6 py-3 text-sm font-black tracking-widest uppercase transition-all duration-300 disabled:opacity-50 ${
-                  selectedCategory === cat.id
-                    ? "scale-105 bg-slate-900 text-white shadow-xl"
-                    : "border border-slate-200 bg-white text-slate-400 hover:border-green-500 hover:text-green-600"
-                }`}
-              >
-                <cat.icon size={16} />
-                {cat.label}
-              </button>
-            ))}
+          <div className="w-full lg:pb-1">
+            <label
+              htmlFor="resource-search"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
+              Search EaziWage resources
+            </label>
+            <div className="relative">
+              <Search
+                aria-hidden="true"
+                className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-slate-400"
+              />
+              <Input
+                id="resource-search"
+                type="search"
+                placeholder="Search guides, insights, and more"
+                value={searchQuery}
+                onChange={(event) => {
+                  setSearchQuery(event.target.value);
+                  setCurrentPage(1);
+                }}
+                className="h-14 rounded-2xl border-slate-200 bg-white pl-12 text-base shadow-sm focus:border-green-600 focus:ring-green-600/15"
+              />
+              {isLoading && (
+                <LoaderCircle
+                  aria-label="Updating results"
+                  role="status"
+                  size={19}
+                  className="absolute top-1/2 right-4 -translate-y-1/2 animate-spin text-green-700 motion-reduce:animate-none"
+                />
+              )}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-40">
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-12 flex items-center gap-3 rounded-2xl border border-red-100 bg-red-50 px-6 py-4 text-red-600"
-          >
-            <AlertCircle size={20} />
-            <span className="text-sm font-bold">{error}</span>
+      <nav
+        aria-label="Filter resources by category"
+        className="relative z-10 border-y border-slate-100 bg-white/90 py-4 backdrop-blur-sm"
+      >
+        <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-6 pb-1">
+          {categories.map((category) => (
             <button
-              onClick={() => fetchResources(selectedCategory, searchQuery)}
-              className="ml-auto text-xs font-black tracking-widest uppercase underline"
+              key={category.id}
+              type="button"
+              aria-pressed={selectedCategory === category.id}
+              onClick={() => {
+                setSelectedCategory(category.id);
+                setCurrentPage(1);
+              }}
+              className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 ${
+                selectedCategory === category.id
+                  ? "bg-green-700 text-white"
+                  : "border border-slate-200 bg-white text-slate-600 hover:border-green-600/50 hover:text-green-800"
+              }`}
+            >
+              <category.icon size={16} aria-hidden="true" />
+              {category.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
+        {error && (
+          <div
+            role="alert"
+            className="mt-8 flex flex-wrap items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-800"
+          >
+            <AlertCircle size={19} aria-hidden="true" />
+            <p className="flex-1">{error}</p>
+            <button
+              type="button"
+              onClick={() =>
+                fetchResources(selectedCategory, searchQuery)
+              }
+              className="min-h-10 rounded-lg px-3 font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800"
             >
               Retry
             </button>
-          </motion.div>
-        )}
-
-        <AnimatePresence mode="popLayout">
-          {isLoading ? (
-            <motion.div
-              key="skeleton"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3"
-            >
-              {Array.from({ length: 6 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="results"
-              layout
-              className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3"
-            >
-              {displayedResources.map((resource, i) => (
-                <motion.div
-                  key={getResourceDedupKey(resource)}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: i * 0.04 }}
-                  className="h-full"
-                >
-                  <TiltResourceCard resource={resource} />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {!isLoading && displayedResources.length === 0 && !error && (
-          <div className="py-40 text-center">
-            <div className="mb-8 inline-flex rounded-full bg-slate-50 p-10 ring-1 ring-slate-100">
-              <Search className="h-12 w-12 text-slate-200" />
-            </div>
-            <h3 className="font-serif text-3xl font-bold text-slate-900">
-              No results found
-            </h3>
-            <p className="mt-4 text-lg text-slate-500">
-              Try adjusting your search or switching categories.
-            </p>
           </div>
         )}
-      </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-40">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="group relative overflow-hidden rounded-[3rem] border border-slate-200/60 bg-white p-12 text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-3xl transition-all duration-500 hover:shadow-green-500/10 lg:p-24"
-        >
-          <div className="absolute inset-0 bg-linear-to-br from-green-50/20 via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-          <div className="relative z-10">
-            <div className="mb-10 flex justify-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                Join the Community
-              </div>
-            </div>
-
-            <h2 className="mb-8 font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
-              Join Us <span className="text-green-600">Today</span>
+        {featuredResource && (
+          <section aria-labelledby="featured-heading" className="py-12 sm:py-16">
+            <h2
+              id="featured-heading"
+              className="mb-5 font-serif text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
+            >
+              Featured
             </h2>
-            <p className="mx-auto mb-16 max-w-2xl text-xl text-slate-500">
-              Get the latest financial wellness insights and regulatory updates
-              delivered straight to your inbox.
-            </p>
+            <TiltCard className="rounded-[2rem] shadow-lg shadow-green-900/5 transition-shadow hover:shadow-xl hover:shadow-green-900/10">
+              <ResourceCard resource={featuredResource} featured />
+            </TiltCard>
+          </section>
+        )}
 
-            <AnimatePresence mode="wait">
-              {submitStatus === "success" ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="mx-auto mb-8 flex max-w-md items-center justify-center gap-3 rounded-2xl border border-green-100 bg-green-50 px-8 py-4 font-bold text-green-600"
-                >
-                  <CheckCircle2 size={24} />
-                  <span>Welcome to the community! Check your inbox.</span>
-                </motion.div>
-              ) : (
-                <form
-                  onSubmit={handleSubscribe}
-                  className="relative mx-auto flex max-w-xl flex-col gap-4 rounded-2xl sm:flex-row"
-                >
-                  <input
-                    type="text"
-                    aria-hidden="true"
-                    tabIndex={-1}
-                    className="sr-only"
-                    value={honeypot}
-                    onChange={(e) => setHoneypot(e.target.value)}
-                  />
-                  <Input
-                    type="email"
-                    required
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-16 rounded-2xl border-slate-200 bg-slate-50/50 px-6 text-lg focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                  />
-                  <motion.button
-                    type="submit"
-                    disabled={isSubmitting}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="h-16 rounded-2xl bg-slate-900 px-10 font-bold text-white shadow-2xl transition-all hover:bg-green-600 disabled:opacity-50"
-                  >
-                    {isSubmitting ? "Subscribing..." : "Subscribe"}
-                  </motion.button>
-                </form>
-              )}
-            </AnimatePresence>
-
-            {submitStatus === "error" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-4 flex items-center justify-center gap-2 text-sm font-bold text-red-500"
+        <section
+          aria-labelledby="latest-heading"
+          aria-busy={isLoading}
+          className="py-12 sm:py-16"
+        >
+          <div className="mb-7 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2
+                id="latest-heading"
+                className="font-serif text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
               >
-                <AlertCircle size={16} />
-                <span>{errorMessage}</span>
-              </motion.div>
-            )}
+                {searchQuery.trim() ? "Search results" : "Latest resources"}
+              </h2>
+              {searchQuery.trim() && (
+                <p className="mt-2 text-sm text-slate-600">
+                  Results for <span className="font-semibold">“{searchQuery.trim()}”</span>
+                </p>
+              )}
+            </div>
+            <p className="text-sm text-slate-500" aria-live="polite">
+              {displayedResources.length}{" "}
+              {displayedResources.length === 1 ? "resource" : "resources"}
+            </p>
           </div>
-        </motion.div>
-      </section>
+
+          {isLoading && resources.length === 0 ? (
+            <ResourceSkeleton />
+          ) : latestResources.length > 0 ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {latestResources.map((resource) => (
+                <ResourceCard key={getResourceDedupKey(resource)} resource={resource} />
+              ))}
+            </div>
+          ) : !featuredResource && !error && !isLoading ? (
+            <div
+              role="status"
+              className="rounded-[2rem] border border-slate-200/70 bg-slate-50/70 px-6 py-16 text-center"
+            >
+              <Search
+                aria-hidden="true"
+                className="mx-auto h-9 w-9 text-green-700"
+              />
+              <h3 className="mt-4 font-serif text-2xl font-bold text-slate-900">
+                No resources found
+              </h3>
+              <p className="mt-2 text-slate-600">
+                Try another search or choose a different category.
+              </p>
+            </div>
+          ) : null}
+        </section>
+
+        {!isLoading && pageCount > 1 && (
+          <nav
+            aria-label="Resource pages"
+            className="flex items-center justify-center gap-4 border-t border-slate-100 py-8"
+          >
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              disabled={currentPage === 1}
+              className="inline-flex min-h-10 items-center gap-2 rounded-full border border-slate-200 px-4 text-sm font-semibold text-slate-700 transition-colors hover:border-green-700 hover:text-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ArrowRight size={15} aria-hidden="true" className="rotate-180" />
+              Previous
+            </button>
+            <p aria-live="polite" className="text-sm text-slate-600">
+              Page <span className="font-semibold text-slate-900">{currentPage}</span> of{" "}
+              <span className="font-semibold text-slate-900">{pageCount}</span>
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentPage((page) => Math.min(pageCount, page + 1))
+              }
+              disabled={currentPage === pageCount}
+              className="inline-flex min-h-10 items-center gap-2 rounded-full border border-slate-200 px-4 text-sm font-semibold text-slate-700 transition-colors hover:border-green-700 hover:text-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next
+              <ArrowRight size={15} aria-hidden="true" />
+            </button>
+          </nav>
+        )}
+      </div>
+
     </main>
   );
 }

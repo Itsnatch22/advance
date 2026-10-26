@@ -87,14 +87,6 @@ const Navbar = () => {
           desc: "See how you can access an advance using our calculator.",
           href: "/calculator",
         },
-        {
-          title: "Documentation",
-          icon: (
-            <CogIcon className="h-5 w-5 text-emerald-600" strokeWidth={2} />
-          ),
-          desc: "Learn how to integrate EaziWage into your system.",
-          href: "/docs",
-        },
       ],
     },
     { name: "Wiza AI", href: "/wiza-ai-for-eaziwage" },

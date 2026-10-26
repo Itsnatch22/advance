@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import BlogsClient from "./BlogsClient";
 import { Resource } from "@/types/resources";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Blogs",
@@ -16,30 +16,50 @@ export const metadata: Metadata = {
   },
 };
 
-async function fetchResources(category = "all"): Promise<Resource[]> {
+interface InitialResources {
+  resources: Resource[];
+  error: string | null;
+}
+
+async function fetchResources(category = "all"): Promise<InitialResources> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://eaziwage.com";
 
     const res = await fetch(`${baseUrl}/api/resources?category=${category}`, {
-      next: { revalidate: 3600 },
+      cache: "no-store",
     });
 
-    if (!res.ok) return [];
+    const data = (await res.json()) as {
+      resources?: Resource[];
+      error?: string;
+    };
 
-    const data = (await res.json()) as { resources?: Resource[] };
-    return data.resources ?? [];
+    if (!res.ok) {
+      return {
+        resources: [],
+        error: data.error ?? "Resources are temporarily unavailable.",
+      };
+    }
+
+    return { resources: data.resources ?? [], error: null };
   } catch (err) {
     console.error("Failed to prefetch resources:", err);
-    return [];
+    return {
+      resources: [],
+      error: "Resources are temporarily unavailable.",
+    };
   }
 }
 
 export default async function ResourcesPage() {
-  const initialResources = await fetchResources("all");
+  const initial = await fetchResources("all");
 
   return (
     <Suspense fallback={null}>
-      <BlogsClient initialResources={initialResources} />
+      <BlogsClient
+        initialResources={initial.resources}
+        initialError={initial.error}
+      />
     </Suspense>
   );
 }

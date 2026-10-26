@@ -11,14 +11,17 @@ export interface ResourceMetric {
 }
 
 export interface Resource {
+  id: string;
   link?: string | null;
   title: string;
   date: string;
   category: ResourceCategory;
   image?: string | null;
-  readTime?: string;
+  readTime?: string | null;
   description: string;
-  metrics?: ResourceMetric[];
-  author?: string;
+  metrics?: ResourceMetric[] | null;
+  author?: string | null;
   tags: string[];
+  isFeatured: boolean;
+  source: "eaziwage" | "external";
 }

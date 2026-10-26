@@ -336,7 +336,6 @@ export default function Footer() {
             <ul className="space-y-3.5">
               {[
                 { name: "Blogs", href: "/blogs" },
-                { name: "Documentation", href: "/docs" },
                 { name: "Help Center", href: "/help" },
               ].map((link, index) => (
                 <li key={index}>
@@ -361,9 +360,10 @@ export default function Footer() {
               {[
                 { name: "About Us", href: "/about" },
                 { name: "Careers", href: "/careers" },
-                { name: "Partners", href: "/partners" },
                 { name: "Culture", href: "/culture" },
                 { name: "Contact", href: "/contact" },
+                { name: "Partners", href: "/partners" },
+                { name: "Security", href: "/security"}
               ].map((link, index) => (
                 <li key={index}>
                   <Link

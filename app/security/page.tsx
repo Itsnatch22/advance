@@ -1,173 +1,149 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
-  motion,
   AnimatePresence,
-  useScroll,
-  useTransform,
+  motion,
+  useReducedMotion,
 } from "framer-motion";
 import {
-  ShieldCheck,
-  Lock,
-  Server,
-  FileKey,
-  Key,
-  Database,
+  Activity,
+  ArrowRight,
   CheckCircle2,
+  Database,
+  FileClock,
+  KeyRound,
+  LockKeyhole,
+  Network,
+  ShieldCheck,
 } from "lucide-react";
+import Link from "next/link";
 import { GridSystem } from "@/components/grid";
+import { FloatingOrb } from "@/components/shared/FloatingOrb";
 
-/* ----------------------------- data ----------------------------- */
+const trustIndicators = [
+  {
+    title: "AES-256 encryption",
+    description: "Encryption for stored data, as implemented.",
+    icon: LockKeyhole,
+  },
+  {
+    title: "TLS 1.3",
+    description: "Protection for data moving between systems.",
+    icon: Network,
+  },
+  {
+    title: "Role-based access",
+    description: "Permissions help limit access to what is needed.",
+    icon: KeyRound,
+  },
+  {
+    title: "Administrative audit logs",
+    description: "Relevant administrative actions are recorded.",
+    icon: FileClock,
+  },
+];
 
 const securityLayers = [
   {
     id: "infrastructure",
     title: "Infrastructure Security",
-    icon: Server,
-    description: "Enterprise cloud infrastructure with built-in redundancy and security.",
+    icon: Network,
+    description:
+      "Managed infrastructure and operational safeguards support availability and resilience.",
+    customerImpact:
+      "These measures help keep the service dependable and better prepared for common disruptions.",
     details: [
-      "Hosted on Supabase enterprise cloud",
-      "Automated backups and point-in-time recovery",
-      "DDoS protection via Cloudflare",
-      "Continuous uptime monitoring",
+      "Supabase-hosted infrastructure",
+      "Automated backups and point-in-time recovery, where configured",
+      "Cloudflare DDoS protection",
+      "Service and uptime monitoring",
     ],
   },
   {
-    id: "data",
+    id: "encryption",
     title: "Data Encryption",
-    icon: Lock,
-    description: "Bank-grade encryption for all data, both in transit and at rest.",
+    icon: LockKeyhole,
+    description:
+      "Encryption helps protect sensitive information while stored and as it travels between systems.",
+    customerImpact:
+      "It reduces the risk of information being read if it is accessed outside its intended context.",
     details: [
-      "PII encrypted at rest via AES-256",
-      "TLS 1.3 encryption in transit",
-      "Encrypted national IDs and bank details",
-      "Zero plaintext PII exposure",
+      "AES-256 encryption at rest",
+      "TLS 1.3 for data in transit",
+      "Safeguards for sensitive identifiers and financial information",
+      "Controls intended to limit unnecessary plaintext exposure",
     ],
   },
   {
     id: "access",
     title: "Access Control",
-    icon: Key,
-    description: "Strict role-based access controls enforced at the database level.",
+    icon: KeyRound,
+    description:
+      "Authentication, defined roles, and database-level policies help keep information within permitted boundaries.",
+    customerImpact:
+      "People and systems should only access the information their role and permissions allow.",
     details: [
-      "Row Level Security on all tables",
-      "Role-based access — admin, employer, employee",
-      "Service role separation from client",
-      "Session-based authentication via Supabase Auth",
+      "Row Level Security (RLS) policies",
+      "Administrator, employer, and employee roles",
+      "Separation of privileged service access",
+      "Supabase authentication",
     ],
   },
   {
-    id: "compliance",
-    title: "Regulatory Compliance",
-    icon: FileKey,
-    description: "Built for East African financial regulation from day one.",
+    id: "accountability",
+    title: "Compliance & Accountability",
+    icon: FileClock,
+    description:
+      "Operational controls and clear responsibilities support the careful handling of customer information.",
+    customerImpact:
+      "Relevant administrative actions can be reviewed, and personal financial data is not sold or rented.",
     details: [
-      "ODPC (Kenya) data protection aligned",
-      "CBK EWA framework compliant",
-      "Full audit trail on all admin actions",
-      "Transparent data processing — no data sold",
+      "Administrative audit trails",
+      "Data handling subject to applicable obligations",
+      "Personal financial data is not sold or rented",
     ],
   },
 ];
 
-const certifications = [
-  { label: "ODPC Aligned", icon: ShieldCheck },
-  { label: "CBK Framework", icon: CheckCircle2 },
-  { label: "256-bit SSL", icon: Lock },
-  { label: "Audit Logged", icon: Database },
+const protectionPractices = [
+  {
+    title: "Protecting information",
+    description:
+      "Encryption helps protect information stored by the service and data sent between systems.",
+    icon: Database,
+  },
+  {
+    title: "Limiting access",
+    description:
+      "Authentication and access policies help restrict information to permitted users and services.",
+    icon: KeyRound,
+  },
+  {
+    title: "Maintaining accountability",
+    description:
+      "Administrative audit logs support visibility into relevant actions taken in the platform.",
+    icon: FileClock,
+  },
+  {
+    title: "Supporting resilience",
+    description:
+      "Backups, recovery capabilities, and service monitoring help support reliable operations.",
+    icon: Activity,
+  },
 ];
-
-/* ----------------------------- components ----------------------------- */
-
-import FloatingOrb from "@/components/shared/FloatingOrb";
-
-const VaultDoor = ({
-  isOpen,
-  onClick,
-}: {
-  isOpen: boolean;
-  onClick: () => void;
-}) => {
-  return (
-    <motion.div
-      onClick={onClick}
-      className="relative z-20 cursor-pointer"
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-    >
-      <div className="relative h-64 w-64 sm:h-80 sm:w-80 md:h-96 md:w-96">
-        {/* Outer Ring */}
-        <div className="absolute inset-0 rounded-full border-20 border-slate-200 bg-slate-100 shadow-[inset_0_10px_20px_rgba(0,0,0,0.1),0_20px_40px_rgba(0,0,0,0.2)]" />
-
-        {/* Inner Mechanism */}
-        <motion.div
-          className="absolute inset-4 flex items-center justify-center rounded-full border-4 border-slate-300 bg-linear-to-br from-slate-100 to-slate-300 shadow-inner"
-          animate={{ rotate: isOpen ? 120 : 0 }}
-          transition={{ duration: 1.5, type: "spring", stiffness: 50 }}
-        >
-          {/* Bolts */}
-          {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
-            <motion.div
-              key={deg}
-              className="absolute h-6 w-12 rounded-sm bg-slate-400"
-              style={{ rotate: deg, x: 140 }}
-              animate={{ x: isOpen ? 120 : 140 }}
-              transition={{ duration: 0.5, delay: isOpen ? 0 : 1 }}
-            />
-          ))}
-
-          {/* Center Wheel */}
-          <motion.div
-            className="flex h-32 w-32 items-center justify-center rounded-full border-8 border-slate-600 bg-slate-800 shadow-xl"
-            animate={{ rotate: isOpen ? -360 : 0 }}
-            transition={{ duration: 2, ease: "easeInOut" }}
-          >
-            <ShieldCheck
-              size={48}
-              className={`text-green-600 transition-opacity duration-500 ${isOpen ? "opacity-100" : "opacity-50"}`}
-            />
-          </motion.div>
-        </motion.div>
-
-        {/* Status Light */}
-        <div className="absolute top-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2">
-          <motion.div
-            className={`h-3 w-3 rounded-full ${isOpen ? "bg-green-500 shadow-[0_0_10px_#22c55e]" : "bg-red-500 shadow-[0_0_10px_#ef4444]"}`}
-          />
-          <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-            {isOpen ? "SECURE" : "LOCKED"}
-          </span>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-/* ------------------------------ page ----------------------------- */
 
 export default function SecurityPage() {
   const [activeLayer, setActiveLayer] = useState<string | null>(null);
-  const [isVaultOpen, setIsVaultOpen] = useState(false);
-  const containerRef = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const yHero = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const reduceMotion = useReducedMotion();
 
   return (
     <GridSystem
-      ref={containerRef}
       variant="dots"
       opacity={0.03}
-      className="relative min-h-screen overflow-hidden bg-white text-slate-900"
+      className="relative min-h-[100dvh] overflow-hidden bg-white text-slate-900"
     >
-      {/* Immersive Background */}
-      <div className="pointer-events-none fixed inset-0">
+      <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
           delay={0}
@@ -176,205 +152,354 @@ export default function SecurityPage() {
         <FloatingOrb
           color="bg-emerald-100"
           delay={2}
-          className="bottom-[10%] left-[10%]"
+          className="bottom-[12%] left-[8%]"
         />
       </div>
 
-      {/* Hero Section */}
-      <motion.section
-        style={{ y: yHero, opacity: opacityHero }}
-        className="relative px-6 pt-40 pb-20 lg:pt-56 lg:pb-32"
-      >
-        <div className="mx-auto max-w-5xl text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
-          >
-            <ShieldCheck size={14} className="animate-pulse" />
-            <span>Trust Center</span>
-          </motion.div>
+      <section className="relative px-6 py-24 sm:py-28 lg:py-36">
+        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          <div className="space-y-7 text-left">
+            <motion.div
+              initial={reduceMotion ? false : { opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: reduceMotion ? 0 : 0.4 }}
+              className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-700 uppercase"
+            >
+              <ShieldCheck size={14} aria-hidden="true" />
+              <span>Security &amp; Trust</span>
+            </motion.div>
+            <motion.h1
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.6, delay: 0.05 }}
+              className="max-w-2xl font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
+            >
+              Your trust. Our responsibility.
+            </motion.h1>
+            <motion.p
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: reduceMotion ? 0 : 0.5, delay: 0.15 }}
+              className="max-w-xl text-lg leading-relaxed text-slate-600 sm:text-xl"
+            >
+              EaziWage helps employees access earned wages with confidence.
+              Protecting the information entrusted to us is central to how we
+              build and operate our platform.
+            </motion.p>
+            <p className="max-w-xl text-base leading-relaxed text-slate-500">
+              We use layered security measures, controlled access, and
+              established data-protection practices to safeguard customer
+              information.
+            </p>
+            <div className="flex flex-wrap items-center gap-4 pt-1">
+              <Link
+                href="#security-architecture"
+                className="inline-flex min-h-12 items-center gap-2 rounded-full bg-green-600 px-6 text-sm font-bold text-white shadow-lg shadow-green-900/10 transition hover:-translate-y-0.5 hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-700 active:translate-y-0"
+              >
+                Explore our security
+                <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+              <Link
+                href="#privacy"
+                className="inline-flex min-h-12 items-center gap-2 rounded-full px-4 text-sm font-bold text-green-700 transition hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+              >
+                Our privacy commitment
+              </Link>
+            </div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+          <motion.aside
+            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-serif text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl lg:text-8xl"
+            transition={{ duration: reduceMotion ? 0 : 0.5, delay: 0.1 }}
+            aria-labelledby="security-at-a-glance"
+            className="rounded-[2rem] border border-slate-200/60 bg-white/75 p-6 shadow-xl shadow-green-900/5 backdrop-blur-2xl sm:p-8"
           >
-            Uncompromising <br />
-            <span className="text-green-600">Security</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 1 }}
-            className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
-          >
-            Your trust is our currency. Every piece of financial data is
-            encrypted, access-controlled, and audit-logged — built for East
-            Africa&apos;s regulatory standards.
-          </motion.p>
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-50 text-green-700 ring-1 ring-green-500/10">
+                <ShieldCheck size={22} aria-hidden="true" />
+              </div>
+              <h2
+                id="security-at-a-glance"
+                className="font-serif text-xl font-bold text-slate-900"
+              >
+                Security at a glance
+              </h2>
+            </div>
+            <div className="divide-y divide-slate-100">
+              {trustIndicators.map((indicator) => (
+                <div
+                  key={indicator.title}
+                  className="flex items-start gap-4 py-4 first:pt-0 last:pb-0"
+                >
+                  <indicator.icon
+                    size={20}
+                    strokeWidth={1.7}
+                    aria-hidden="true"
+                    className="mt-0.5 shrink-0 text-green-700"
+                  />
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">
+                      {indicator.title}
+                    </h3>
+                    <p className="mt-1 text-sm leading-5 text-slate-500">
+                      {indicator.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.aside>
         </div>
-      </motion.section>
+      </section>
 
-      {/* Interactive Vault Section */}
-      <section className="relative z-10 py-20 lg:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid items-center gap-16 lg:grid-cols-2">
-            {/* Left: The Vault */}
-            <div className="flex justify-center lg:justify-end">
-              <VaultDoor
-                isOpen={isVaultOpen}
-                onClick={() => setIsVaultOpen(!isVaultOpen)}
-              />
-            </div>
+      <section
+        id="security-architecture"
+        className="relative z-10 scroll-mt-20 px-6 py-24 lg:py-32"
+      >
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 max-w-3xl">
+            <h2 className="mb-4 font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Security works in layers.
+            </h2>
+            <p className="text-lg leading-relaxed text-slate-500">
+              Protecting financial information takes more than one safeguard.
+              These measures work across infrastructure, data, access, and
+              operational practices.
+            </p>
+          </div>
 
-            {/* Right: Security Layers */}
-            <div>
-              <div className="mb-12">
-                <h2 className="mb-4 font-serif text-3xl font-bold text-slate-900">
-                  Defense in Depth
-                </h2>
-                <p className="text-lg text-slate-500">
-                  Click on a security layer to inspect our protocols. Our
-                  multi-layered architecture ensures zero single points of
-                  failure.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {securityLayers.map((layer) => (
-                  <motion.div
-                    key={layer.id}
-                    layout
-                    onClick={() => {
-                      setActiveLayer(
-                        activeLayer === layer.id ? null : layer.id
-                      );
-                      setIsVaultOpen(true);
-                    }}
-                    className={`cursor-pointer overflow-hidden rounded-2xl border transition-all duration-500 ${
-                      activeLayer === layer.id
-                        ? "scale-105 border-slate-900 bg-slate-900 shadow-2xl"
-                        : "border-slate-200 bg-white/60 hover:border-green-500/50 hover:bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center gap-4 p-6">
-                      <div
-                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                          activeLayer === layer.id
-                            ? "bg-green-600 text-white"
-                            : "bg-slate-100 text-slate-500"
-                        }`}
-                      >
-                        <layer.icon size={24} />
-                      </div>
-                      <div className="flex-1">
-                        <h3
-                          className={`text-lg font-bold ${activeLayer === layer.id ? "text-white" : "text-slate-900"}`}
-                        >
-                          {layer.title}
-                        </h3>
-                        <p
-                          className={`text-sm ${activeLayer === layer.id ? "text-slate-400" : "text-slate-500"}`}
-                        >
-                          {layer.description}
-                        </p>
-                      </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            {securityLayers.map((layer, index) => {
+              const isActive = activeLayer === layer.id;
+              return (
+                <motion.article
+                  key={layer.id}
+                  initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{
+                    duration: reduceMotion ? 0 : 0.4,
+                    delay: reduceMotion ? 0 : (index % 2) * 0.06,
+                  }}
+                  className={`overflow-hidden rounded-[2rem] border p-6 transition-all duration-300 sm:p-8 ${
+                    isActive
+                      ? "border-green-600/40 bg-white shadow-lg shadow-green-900/5"
+                      : "border-slate-200/80 bg-white/80 shadow-sm hover:border-green-500/40 hover:shadow-lg hover:shadow-green-900/5"
+                  }`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-50 text-green-700"
+                    >
+                      <layer.icon size={23} aria-hidden="true" />
                     </div>
-
-                    <AnimatePresence>
-                      {activeLayer === layer.id && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="px-6 pb-6"
-                        >
-                          <div className="mb-6 h-px w-full bg-slate-800" />
-                          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                            {layer.details.map((detail, i) => (
-                              <li
-                                key={i}
-                                className="flex items-center gap-2 text-sm text-slate-300"
-                              >
-                                <CheckCircle2
-                                  size={16}
-                                  className="shrink-0 text-green-600"
-                                />
-                                <span>{detail}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+                    <div className="flex-1">
+                      <h3 className="font-serif text-xl font-bold text-slate-900">
+                        {layer.title}
+                      </h3>
+                      <p className="mt-2 text-sm leading-6 text-slate-500">
+                        {layer.description}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-5 border-l-2 border-green-600/50 pl-4 text-sm leading-6 text-slate-600">
+                    {layer.customerImpact}
+                  </p>
+                  <button
+                    type="button"
+                    aria-expanded={isActive}
+                    aria-controls={`security-details-${layer.id}`}
+                    onClick={() => {
+                      setActiveLayer(isActive ? null : layer.id);
+                    }}
+                    className="mt-5 inline-flex min-h-10 items-center gap-2 rounded text-sm font-bold text-green-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-600 hover:text-green-800"
+                  >
+                    {isActive ? "Hide details" : "View measures"}
+                    <ArrowRight
+                      size={15}
+                      aria-hidden="true"
+                      className={`transition-transform duration-300 ${
+                        isActive ? "rotate-90" : ""
+                      }`}
+                    />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isActive && (
+                      <motion.div
+                        id={`security-details-${layer.id}`}
+                        initial={
+                          reduceMotion ? false : { height: 0, opacity: 0 }
+                        }
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: reduceMotion ? 0 : 0.25 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-2 mb-4 h-px w-full bg-slate-100" />
+                        <ul className="grid gap-3 sm:grid-cols-2">
+                          {layer.details.map((detail) => (
+                            <li
+                              key={detail}
+                              className="flex items-start gap-2 text-sm leading-5 text-slate-600"
+                            >
+                              <CheckCircle2
+                                size={16}
+                                aria-hidden="true"
+                                className="mt-0.5 shrink-0 text-green-500"
+                              />
+                              <span>{detail}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.article>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Certifications Strip */}
-      <section className="border-y border-slate-200 bg-slate-50 py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {certifications.map((cert, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="flex flex-col items-center gap-4 text-center"
-              >
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm">
-                  <cert.icon
-                    size={32}
-                    className="text-green-600"
-                    strokeWidth={1.5}
-                  />
+      <section className="relative z-10 border-y border-slate-200 bg-slate-50/80 px-6 py-24 lg:py-28">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <div>
+            <h2 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Protection is built into the details.
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-500">
+              Security controls matter when they make a practical difference to
+              how information is handled.
+            </p>
+          </div>
+          <div className="grid gap-x-8 gap-y-9 sm:grid-cols-2">
+            {protectionPractices.map((practice) => (
+              <div key={practice.title} className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-green-700 shadow-sm ring-1 ring-slate-200">
+                  <practice.icon size={20} aria-hidden="true" />
                 </div>
-                <span className="text-sm font-bold tracking-widest text-slate-900 uppercase">
-                  {cert.label}
-                </span>
-              </motion.div>
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-slate-900">
+                    {practice.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    {practice.description}
+                  </p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Data Privacy Promise */}
-      <section className="px-6 py-40">
-        <div className="mx-auto max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="relative overflow-hidden rounded-[3rem] bg-slate-900 p-12 text-center shadow-2xl"
-          >
-            <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-green-500/20 blur-[80px]" />
-
-            <div className="relative z-10">
-              <Database size={48} className="mx-auto mb-8 text-green-600" />
-              <h2 className="mb-6 font-serif text-3xl font-bold text-white md:text-4xl">
-                Your Data Stays <span className="text-green-600">Yours</span>
-              </h2>
-              <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400">
-                We believe in absolute data sovereignty. We do not sell, rent,
-                or monetize your personal financial data. It is used solely to
-                facilitate your wage advances and improve your experience across
-                Kenya, Uganda, Rwanda, and Tanzania.
-              </p>
-              <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-6 py-2 text-sm font-bold text-green-400">
-                <Lock size={16} />
-                <span>End-to-End Encrypted</span>
+      <section
+        id="privacy"
+        className="relative z-10 scroll-mt-20 px-6 py-24 lg:py-32"
+      >
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: reduceMotion ? 0 : 0.45 }}
+          className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] bg-slate-900 px-7 py-12 shadow-2xl shadow-slate-900/15 sm:px-12 sm:py-16"
+        >
+          <div className="pointer-events-none absolute -top-16 -right-12 h-72 w-72 rounded-full bg-green-500/15 blur-[80px]" />
+          <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
+            <div>
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-green-500/10 text-green-400">
+                <Database size={25} aria-hidden="true" />
               </div>
+              <h2 className="font-serif text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                Your data stays yours.
+              </h2>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
+                Your financial information is personal. EaziWage uses customer
+                information to provide its services and improve the experience,
+                subject to applicable requirements and our privacy practices. We
+                do not sell or rent personal financial data.
+              </p>
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+                Information may be processed or disclosed as needed to deliver
+                the service or meet legal obligations. See our Privacy Policy
+                for details.
+              </p>
             </div>
-          </motion.div>
+            <Link
+              href="/data-privacy-protection"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-green-500/40 bg-green-500/10 px-6 text-sm font-bold text-green-300 transition hover:bg-green-500/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-400"
+            >
+              Read our Privacy Policy
+              <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </div>
+        </motion.div>
+      </section>
+
+      <section className="relative z-10 px-6 pb-20">
+        <div className="mx-auto grid max-w-7xl gap-10 rounded-3xl border border-slate-200/80 bg-white/70 p-7 shadow-sm sm:p-10 md:grid-cols-2 md:gap-16">
+          <div>
+            <h2 className="font-serif text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Security is an ongoing responsibility.
+            </h2>
+            <p className="mt-4 text-base leading-7 text-slate-500">
+              Operational controls and administrative audit trails support
+              responsible platform operations. Our data-handling practices are
+              subject to applicable privacy obligations.
+            </p>
+          </div>
+          <div className="flex flex-col justify-center gap-5">
+            <div className="flex items-start gap-3">
+              <ShieldCheck
+                size={20}
+                aria-hidden="true"
+                className="mt-0.5 shrink-0 text-green-700"
+              />
+              <p className="text-sm leading-6 text-slate-600">
+                Security and privacy practices are part of how we operate the
+                service.
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <FileClock
+                size={20}
+                aria-hidden="true"
+                className="mt-0.5 shrink-0 text-green-700"
+              />
+              <p className="text-sm leading-6 text-slate-600">
+                Relevant administrative actions are recorded for accountability.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-6 pb-24">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 rounded-[2.5rem] bg-green-700 px-8 py-10 text-white shadow-xl shadow-green-900/10 sm:px-12 sm:py-12 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-2xl">
+            <h2 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl">
+              Confidence starts with transparency.
+            </h2>
+            <p className="mt-3 text-base leading-7 text-green-50/90">
+              Understand how your information is protected and how it is used.
+              Our security and privacy practices are part of our responsibility
+              to you.
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-3">
+            <Link
+              href="/data-privacy-protection"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-bold text-green-800 transition hover:-translate-y-0.5 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/40 px-5 text-sm font-bold text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Contact EaziWage
+            </Link>
+          </div>
         </div>
       </section>
     </GridSystem>

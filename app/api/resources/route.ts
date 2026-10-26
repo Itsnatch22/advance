@@ -2,6 +2,7 @@ import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { publicReadLimiter, checkRateLimit } from "@/lib/security/rate-limit";
+import type { Resource } from "@/types/resources";
 
 export const runtime = "nodejs";
 
@@ -33,21 +34,6 @@ interface BlogRow {
   tags: string[];
   metrics: { value: string; label: string }[] | null;
   is_featured: boolean;
-}
-
-interface Resource {
-  id: string;
-  title: string;
-  description: string;
-  category: BlogCategory;
-  date: string;
-  link: string | null;
-  image: string | null;
-  readTime: string | null;
-  author: string | null;
-  tags: string[];
-  metrics: { value: string; label: string }[] | null;
-  isFeatured: boolean;
 }
 
 interface NewsAPIArticle {
@@ -103,10 +89,11 @@ async function fetchFromSupabase(
     image: row.image,
     readTime: row.read_time,
     author: row.author,
-    tags: row.tags,
+    tags: row.tags ?? [],
     metrics: row.metrics,
     isFeatured: row.is_featured,
-  }));
+    source: "eaziwage",
+  } satisfies Resource));
 }
 
 const CATEGORY_QUERIES: Record<string, string> = {
@@ -166,13 +153,6 @@ function inferTags(sourceName: string, title: string): string[] {
   if (sourceName) tags.push(sourceName);
 
   return [...new Set(tags)].slice(0, 5);
-}
-
-function estimateReadTime(text?: string): string {
-  if (!text) return "3 min";
-  const words = text.split(" ").length;
-  const minutes = Math.max(2, Math.round((words * 5) / 200));
-  return `${minutes} min`;
 }
 
 function inferCategory(title: string, description: string): BlogCategory {
@@ -257,11 +237,12 @@ async function fetchFromNewsAPI(
           date: article.publishedAt.split("T")[0],
           link: normalizedUrl,
           image: article.urlToImage,
-          readTime: estimateReadTime(article.description ?? ""),
+          readTime: null,
           author: article.author ?? article.source.name,
           tags: inferTags(article.source.name, article.title),
           metrics: null,
           isFeatured: false,
+          source: "external",
         } satisfies Resource,
       ];
     });
@@ -291,7 +272,7 @@ export async function GET(request: NextRequest) {
       { resources, total: resources.length },
       {
         headers: {
-          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
+          "Cache-Control": "private, no-store, no-cache, must-revalidate",
         },
       }
     );
