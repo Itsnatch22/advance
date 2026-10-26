@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Humans",
-    description: "Get to meet the team that makes EaziWage work.",
-    openGraph: {
-        title: "EaziWage Humans - Our Team",
-        description: "Discover the minds that drive EaziWage forward"
-    }
-}
+  title: "Humans",
+  description:
+    "Meet the people behind EaziWage and learn more about the team building earned wage access for African workplaces.",
+};
 
-export default function HumanLayout ({
-    children,
+export default function HumansLayout({
+  children,
 }: {
-    children: React.ReactNode
+  children: React.ReactNode;
 }) {
-    return <>{children}</>
+  return <>{children}</>;
 }
