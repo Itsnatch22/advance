@@ -71,25 +71,6 @@ export default function HumansPage() {
             </Link>
           </div>
         </div>
-
-        <ul
-          aria-label="EaziWage co-founders"
-          className="mx-auto grid w-full max-w-md grid-cols-2 gap-4 sm:gap-6 lg:max-w-lg"
-        >
-          {people.map((person) => (
-            <li key={person.slug} className="min-w-0">
-              <div className="relative aspect-square overflow-hidden rounded-full bg-green-50/80 dark:bg-slate-800">
-                <Image
-                  src={person.image}
-                  alt={person.name}
-                  fill
-                  sizes="(min-width: 1024px) 20vw, (min-width: 640px) 25vw, 40vw"
-                  className="object-contain object-bottom"
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
       </section>
 
       <section
