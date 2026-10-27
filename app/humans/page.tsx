@@ -50,7 +50,7 @@ export default function HumansPage() {
           </div>
 
           <h1 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl dark:text-slate-100">
-            Humans behind EaziWage
+            <span className="text-green-600">Humans</span> behind EaziWage
           </h1>
           <p className="mt-6 max-w-xl text-xl leading-relaxed text-slate-600 sm:text-2xl dark:text-slate-300">
             We build tools that help people access the wages they have already
