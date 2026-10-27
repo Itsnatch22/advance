@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Sparkles, ChevronRight } from "lucide-react";
 import React, { useState, Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import HeroStats from "./HeroStats";
 import HeroPhone from "./HeroPhone";
 import { GridSystem } from "./grid";
 import { BorderBeam } from "./ui/border-beam";
@@ -127,13 +126,6 @@ export default function Hero() {
                 </motion.button>
               </div>
             </motion.form>
-
-            {/* Stats Row — async server component wrapped in Suspense */}
-            <div className="border-t border-slate-100 pt-8">
-              <Suspense fallback={<StatsFallback />}>
-                <HeroStats />
-              </Suspense>
-            </div>
           </div>
 
           {/* Visual Column */}

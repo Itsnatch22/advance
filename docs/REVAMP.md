@@ -130,3 +130,12 @@ Defer elaborate profile pages, activity feeds, contribution timelines, clubs, an
 **Make EaziWage feel like a company made of people, not just a product made by a company.**
 
 Resend provides the human connection. Next.js provides the organisational clarity. EaziWage brings those ideas together through its existing identity, its actual team, and the work those people do.
+
+```tsx
+    {/* Stats Row — async server component wrapped in Suspense */}
+    <div className="border-t border-slate-100 pt-8">
+        <Suspense fallback={<StatsFallback />}>
+        <HeroStats />
+        </Suspense>
+    </div>
+```
