@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Sparkles, ChevronRight } from "lucide-react";
-import React, { useState, Suspense, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import HeroPhone from "./HeroPhone";
 import { GridSystem } from "./grid";

@@ -52,20 +52,20 @@ export default function HumansPage() {
           <h1 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl dark:text-slate-100">
             Humans behind EaziWage
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600 sm:text-xl dark:text-slate-300">
+          <p className="mt-6 max-w-xl text-xl leading-relaxed text-slate-600 sm:text-2xl dark:text-slate-300">
             We build tools that help people access the wages they have already
             earned.
           </p>
-          <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-semibold">
             <Link
               href="/culture"
-              className="text-slate-700 underline decoration-slate-300 underline-offset-4 transition-colors hover:text-green-800 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-700 dark:text-slate-200 dark:decoration-slate-600 dark:hover:text-green-300 dark:focus-visible:outline-green-300"
+              className="inline-flex min-h-11 items-center text-slate-700 underline decoration-slate-300 underline-offset-4 transition-colors hover:text-green-800 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-700 dark:text-slate-200 dark:decoration-slate-600 dark:hover:text-green-300 dark:focus-visible:outline-green-300"
             >
               Our culture
             </Link>
             <Link
               href="/careers"
-              className="text-green-800 underline decoration-green-700/40 underline-offset-4 transition-colors hover:text-green-600 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-700 dark:text-green-300 dark:decoration-green-300/50 dark:hover:text-green-200 dark:focus-visible:outline-green-300"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-slate-900 px-6 font-bold text-white transition-colors hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-700 active:scale-[0.98] dark:bg-green-700 dark:hover:bg-green-600 dark:focus-visible:outline-green-300"
             >
               Open roles
             </Link>
