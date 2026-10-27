@@ -65,7 +65,7 @@ export const people: TeamMember[] = [
     role: "Co-Founder & CEO",
     image: "/team/jason.png",
     links: [
-      { icon: FaGithub, label: "GitHub", href: "https://github.com/TheeKJ" },
+      { icon: FaGithub, label: "GitHub", href: "https://github.com/jason94crawford" },
       { icon: FaLinkedin, label: "LinkedIn", href: ""},
       { icon: SiGmail, label: "Gmail", href: "mailto:jason@eaziwage.com"}
     ]
