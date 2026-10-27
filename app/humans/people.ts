@@ -39,7 +39,7 @@ export const people: TeamMember[] = [
     role: "Co-Founder & Developer",
     image: "/team/joel.png",
     links: [
-      { icon: FaGithub, label: "GiHub", href: "https://github.com/TheeKJ" },
+      { icon: FaGithub, label: "GitHub", href: "https://github.com/TheeKJ" },
       { icon: FaLink, label: "Personal website", href: "https://jowey.netlify.app" },
       { icon: FaLinkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/joel-ndoho-4371102a1/"},
       { icon: SiGmail, label: "Gmail", href: "mailto:joel@eaziwage.com"}
@@ -65,7 +65,7 @@ export const people: TeamMember[] = [
     role: "Co-Founder & CEO",
     image: "/team/jason.png",
     links: [
-      { icon: FaGithub, label: "GiHub", href: "https://github.com/TheeKJ" },
+      { icon: FaGithub, label: "GitHub", href: "https://github.com/TheeKJ" },
       { icon: FaLinkedin, label: "LinkedIn", href: ""},
       { icon: SiGmail, label: "Gmail", href: "mailto:jason@eaziwage.com"}
     ]
