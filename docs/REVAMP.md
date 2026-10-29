@@ -1,4 +1,5 @@
 # EaziWage Humans
+
 ## Page Concept & Implementation Brief
 
 ### 1. The objective
@@ -12,6 +13,7 @@ The page should feel personal without becoming a social network, and professiona
 ### 2. Proposed page structure
 
 #### A. Introduction
+
 - A short, confident headline introducing the people behind EaziWage.
 - A brief description of the team and its mission.
 - Copy should sound like EaziWage, not generic recruitment marketing.
@@ -85,18 +87,21 @@ The page should feel like a natural part of EaziWage, not a separate microsite.
 ### 7. What to learn from each reference
 
 **From Resend**
+
 - Make the people the focus rather than presenting a conventional company introduction.
 - Give each person a distinct identity.
 - Make the page feel personal and approachable.
 - Consider former team members and individual contributions as the company grows.
 
 **From Next.js**
+
 - Organise people by real responsibilities where useful.
 - Make professional roles and technical contributions easy to understand.
 - Link to relevant public work and profiles.
 - Keep the directory straightforward to navigate.
 
 **What EaziWage should do differently**
+
 - Combine personality with clarity.
 - Reflect the reality of a small, growing team.
 - Avoid copying either reference's layout or adding features that the team cannot maintain.
@@ -105,6 +110,7 @@ The page should feel like a natural part of EaziWage, not a separate microsite.
 ### 8. Scope boundaries
 
 The initial release should prioritise:
+
 1. The introduction and team directory.
 2. Accurate individual profiles.
 3. A clear representation of responsibilities.

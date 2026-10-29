@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ElementType } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -80,9 +80,12 @@ function getDestination(link: string | null | undefined) {
     const url = new URL(link, "https://eaziwage.com");
     if (url.protocol !== "http:" && url.protocol !== "https:") return null;
 
-    const internal = url.hostname === "eaziwage.com" || url.hostname.endsWith(".eaziwage.com");
+    const internal =
+      url.hostname === "eaziwage.com" || url.hostname.endsWith(".eaziwage.com");
     return {
-      href: internal ? `${url.pathname}${url.search}${url.hash}` : url.toString(),
+      href: internal
+        ? `${url.pathname}${url.search}${url.hash}`
+        : url.toString(),
       external: !internal,
     };
   } catch {
@@ -148,7 +151,11 @@ function ResourceCard({
             alt={resource.title}
             fill
             unoptimized
-            sizes={featured ? "(min-width: 768px) 45vw, 100vw" : "(min-width: 1024px) 33vw, 100vw"}
+            sizes={
+              featured
+                ? "(min-width: 768px) 45vw, 100vw"
+                : "(min-width: 1024px) 33vw, 100vw"
+            }
             className="object-cover"
             onError={(event) => {
               event.currentTarget.style.display = "none";
@@ -186,13 +193,15 @@ function ResourceCard({
         >
           {resource.title}
         </h3>
-        <p
-          className={`mt-3 leading-relaxed text-slate-600 ${
-            featured ? "text-base sm:text-lg" : "text-sm"
-          }`}
-        >
-          {resource.description}
-        </p>
+        {resource.description && (
+          <p
+            className={`mt-3 leading-relaxed text-slate-600 ${
+              featured ? "text-base sm:text-lg" : "text-sm"
+            }`}
+          >
+            {resource.description}
+          </p>
+        )}
 
         {(resource.author || resource.tags.length > 0) && (
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500">
@@ -245,11 +254,13 @@ function ResourceSkeleton() {
 interface BlogsClientProps {
   initialResources: Resource[];
   initialError: string | null;
+  initialDiscoveryUnavailable: boolean;
 }
 
 export default function BlogsClient({
   initialResources,
   initialError,
+  initialDiscoveryUnavailable,
 }: BlogsClientProps) {
   const [resources, setResources] = useState(initialResources);
   const [searchQuery, setSearchQuery] = useState("");
@@ -259,6 +270,9 @@ export default function BlogsClient({
   >("all");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(initialError);
+  const [discoveryUnavailable, setDiscoveryUnavailable] = useState(
+    initialDiscoveryUnavailable
+  );
   const reduceMotion = useReducedMotion();
   const requestController = useRef<AbortController | null>(null);
   const isFirstFilterRender = useRef(true);
@@ -287,15 +301,20 @@ export default function BlogsClient({
         const result = (await response.json()) as {
           resources?: Resource[];
           error?: string;
+          discoveryUnavailable?: boolean;
         };
 
         if (!response.ok) {
-          throw new Error(result.error ?? "Resources are temporarily unavailable.");
+          throw new Error(
+            result.error ?? "Resources are temporarily unavailable."
+          );
         }
 
-        setResources(result.resources ?? []);
+        setResources(Array.isArray(result.resources) ? result.resources : []);
+        setDiscoveryUnavailable(result.discoveryUnavailable ?? false);
       } catch (requestError) {
         if (controller.signal.aborted) return;
+        setDiscoveryUnavailable(false);
         setError(
           requestError instanceof Error
             ? requestError.message
@@ -354,32 +373,7 @@ export default function BlogsClient({
     };
   }, [fetchResources, searchQuery, selectedCategory]);
 
-  const displayedResources = useMemo(() => {
-    const filtered = searchQuery.trim()
-      ? resources.filter((resource) => {
-          const query = searchQuery.trim().toLowerCase();
-          return (
-            resource.title.toLowerCase().includes(query) ||
-            resource.description.toLowerCase().includes(query) ||
-            resource.tags.some((tag) => tag.toLowerCase().includes(query))
-          );
-        })
-      : resources;
-
-    const seen = new Set<string>();
-    return filtered
-      .filter((resource) => {
-        const key = getResourceDedupKey(resource);
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      })
-      .sort(
-        (first, second) =>
-          Number(second.isFeatured) - Number(first.isFeatured) ||
-          new Date(second.date).getTime() - new Date(first.date).getTime()
-      );
-  }, [resources, searchQuery]);
+  const displayedResources = resources;
 
   const pageCount = Math.ceil(displayedResources.length / RESOURCES_PER_PAGE);
   const pageResources = displayedResources.slice(
@@ -412,7 +406,7 @@ export default function BlogsClient({
         />
       </div>
 
-      <section className="relative px-6 pb-12 pt-24 sm:pb-16 sm:pt-28 lg:pt-32">
+      <section className="relative px-6 pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32">
         <div className="mx-auto grid max-w-7xl items-end gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.16em] text-green-700 uppercase">
@@ -497,6 +491,16 @@ export default function BlogsClient({
       </nav>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
+        {discoveryUnavailable && (
+          <p
+            role="status"
+            className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          >
+            External discovery is temporarily unavailable. EaziWage resources
+            are still shown.
+          </p>
+        )}
+
         {error && (
           <div
             role="alert"
@@ -506,9 +510,7 @@ export default function BlogsClient({
             <p className="flex-1">{error}</p>
             <button
               type="button"
-              onClick={() =>
-                fetchResources(selectedCategory, searchQuery)
-              }
+              onClick={() => fetchResources(selectedCategory, searchQuery)}
               className="min-h-10 rounded-lg px-3 font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800"
             >
               Retry
@@ -517,7 +519,10 @@ export default function BlogsClient({
         )}
 
         {featuredResource && (
-          <section aria-labelledby="featured-heading" className="py-12 sm:py-16">
+          <section
+            aria-labelledby="featured-heading"
+            className="py-12 sm:py-16"
+          >
             <h2
               id="featured-heading"
               className="mb-5 font-serif text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
@@ -545,7 +550,8 @@ export default function BlogsClient({
               </h2>
               {searchQuery.trim() && (
                 <p className="mt-2 text-sm text-slate-600">
-                  Results for <span className="font-semibold">“{searchQuery.trim()}”</span>
+                  Results for{" "}
+                  <span className="font-semibold">“{searchQuery.trim()}”</span>
                 </p>
               )}
             </div>
@@ -555,12 +561,31 @@ export default function BlogsClient({
             </p>
           </div>
 
+          {resources.some((resource) => resource.source === "external") && (
+            <p className="mb-5 text-xs text-slate-500">
+              External links open at their original publishers. Discovery
+              powered by{" "}
+              <a
+                href="https://www.gdeltproject.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium underline underline-offset-2 hover:text-green-800"
+              >
+                GDELT
+              </a>
+              .
+            </p>
+          )}
+
           {isLoading && resources.length === 0 ? (
             <ResourceSkeleton />
           ) : latestResources.length > 0 ? (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {latestResources.map((resource) => (
-                <ResourceCard key={getResourceDedupKey(resource)} resource={resource} />
+                <ResourceCard
+                  key={getResourceDedupKey(resource)}
+                  resource={resource}
+                />
               ))}
             </div>
           ) : !featuredResource && !error && !isLoading ? (
@@ -597,7 +622,11 @@ export default function BlogsClient({
               Previous
             </button>
             <p aria-live="polite" className="text-sm text-slate-600">
-              Page <span className="font-semibold text-slate-900">{currentPage}</span> of{" "}
+              Page{" "}
+              <span className="font-semibold text-slate-900">
+                {currentPage}
+              </span>{" "}
+              of{" "}
               <span className="font-semibold text-slate-900">{pageCount}</span>
             </p>
             <button
@@ -614,7 +643,6 @@ export default function BlogsClient({
           </nav>
         )}
       </div>
-
     </main>
   );
 }

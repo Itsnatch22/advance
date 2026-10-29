@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 interface InitialResources {
   resources: Resource[];
   error: string | null;
+  discoveryUnavailable: boolean;
 }
 
 async function fetchResources(category = "all"): Promise<InitialResources> {
@@ -32,21 +33,28 @@ async function fetchResources(category = "all"): Promise<InitialResources> {
     const data = (await res.json()) as {
       resources?: Resource[];
       error?: string;
+      discoveryUnavailable?: boolean;
     };
 
     if (!res.ok) {
       return {
         resources: [],
         error: data.error ?? "Resources are temporarily unavailable.",
+        discoveryUnavailable: false,
       };
     }
 
-    return { resources: data.resources ?? [], error: null };
+    return {
+      resources: data.resources ?? [],
+      error: null,
+      discoveryUnavailable: data.discoveryUnavailable ?? false,
+    };
   } catch (err) {
     console.error("Failed to prefetch resources:", err);
     return {
       resources: [],
       error: "Resources are temporarily unavailable.",
+      discoveryUnavailable: false,
     };
   }
 }
@@ -59,6 +67,7 @@ export default async function ResourcesPage() {
       <BlogsClient
         initialResources={initial.resources}
         initialError={initial.error}
+        initialDiscoveryUnavailable={initial.discoveryUnavailable}
       />
     </Suspense>
   );
