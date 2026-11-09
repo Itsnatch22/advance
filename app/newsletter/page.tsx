@@ -14,7 +14,6 @@ import {
   CalendarClock,
   ArrowUpRight,
 } from "lucide-react";
-import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { Input } from "@/components/ui";
 
@@ -76,7 +75,7 @@ export default function NewsletterPage() {
   };
 
   return (
-    <GridSystem variant="dots" opacity={0.03} className="min-h-screen bg-white">
+    <section className="overflow-hidden relative min-h-screen bg-white"><div className="relative z-10">
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb color="bg-green-100" delay={0} className="top-[-10%] left-[10%]" />
         <FloatingOrb color="bg-emerald-100" delay={2} className="right-[10%] bottom-[10%]" />
@@ -233,8 +232,7 @@ export default function NewsletterPage() {
               </p>
             </div>
           ))}
-        </div>
-      </section>
+        </div></section>
 
       {/* Further reading */}
       <section className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 pb-32 text-center">
@@ -255,6 +253,6 @@ export default function NewsletterPage() {
           />
         </Link>
       </section>
-    </GridSystem>
+      </div></section>
   );
 }

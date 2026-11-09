@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { AlertCircle, ArrowUpRight, BriefcaseBusiness } from "lucide-react";
 import Link from "next/link";
-import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { supabaseUser } from "@/lib/supabase/server";
 import { isVacancyAcceptingApplications } from "@/lib/careers/deadline";
@@ -51,11 +50,7 @@ export default async function CareersPage() {
     .size;
 
   return (
-    <GridSystem
-      variant="dots"
-      opacity={0.03}
-      className="min-h-screen bg-white pt-16"
-    >
+    <section className="overflow-hidden relative min-h-screen bg-white pt-16"><div className="relative z-10">
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
@@ -107,15 +102,14 @@ export default async function CareersPage() {
               work we need in production, market growth, or customer trust.
             </div>
           </div>
-        </div>
-      </section>
+        </div></section>
 
       {error ? <CareersError message={error} /> : null}
 
       <div id="open-roles">
         <CareersListClient careers={careers} />
       </div>
-    </GridSystem>
+      </div></section>
   );
 }
 
@@ -139,7 +133,6 @@ function CareersError({ message }: { message: string }) {
           <h2 className="font-bold">Unable to load roles</h2>
           <p className="mt-1 text-sm leading-relaxed text-red-800">{message}</p>
         </div>
-      </div>
-    </section>
+      </div></section>
   );
 }

@@ -1,8 +1,7 @@
-import { GridSystem } from "@/components/grid";
 
 export default function CareerApplyLoading() {
   return (
-    <GridSystem variant="dots" opacity={0.03} className="min-h-[100dvh] bg-white pt-16">
+    <section className="overflow-hidden relative min-h-[100dvh] bg-white pt-16"><div className="relative z-10">
       <main className="relative z-10 mx-auto max-w-3xl px-6 py-20 lg:px-8 lg:py-24">
         <div className="mb-10 h-10 w-32 animate-pulse rounded-full bg-slate-100" />
         <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
@@ -22,9 +21,8 @@ export default function CareerApplyLoading() {
               <div className="h-16 animate-pulse rounded-lg bg-slate-100" />
               <div className="h-12 animate-pulse rounded-full bg-slate-100" />
             </div>
-          </div>
-        </section>
+          </div></section>
       </main>
-    </GridSystem>
+      </div></section>
   );
 }

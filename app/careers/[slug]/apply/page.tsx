@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { GridSystem } from "@/components/grid";
 import { supabaseUser } from "@/lib/supabase/server";
 import { isVacancyAcceptingApplications } from "@/lib/careers/deadline";
 import type { Career } from "../../types";
@@ -68,11 +67,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
 
   if (!isVacancyAcceptingApplications(career)) {
     return (
-      <GridSystem
-        variant="dots"
-        opacity={0.03}
-        className="min-h-dvh bg-white pt-16"
-      >
+      <section className="overflow-hidden relative min-h-dvh bg-white pt-16"><div className="relative z-10">
         <main className="relative z-10 mx-auto max-w-3xl px-6 py-20 lg:px-8 lg:py-24">
           <Link
             href={`/careers/${career.slug}`}
@@ -95,20 +90,15 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
               >
                 View other roles
               </Link>
-            </div>
-          </section>
+            </div></section>
         </main>
-      </GridSystem>
+        </div></section>
     );
   }
 
   if (career.apply_link) {
     return (
-      <GridSystem
-        variant="dots"
-        opacity={0.03}
-        className="min-h-dvh bg-white pt-16"
-      >
+      <section className="overflow-hidden relative min-h-dvh bg-white pt-16"><div className="relative z-10">
         <main className="relative z-10 mx-auto max-w-3xl px-6 py-20 lg:px-8 lg:py-24">
           <Link
             href={`/careers/${career.slug}`}
@@ -134,19 +124,14 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
               >
                 Continue to application
               </Link>
-            </div>
-          </section>
+            </div></section>
         </main>
-      </GridSystem>
+        </div></section>
     );
   }
 
   return (
-    <GridSystem
-      variant="dots"
-      opacity={0.03}
-      className="min-h-dvh bg-white pt-16"
-    >
+    <section className="overflow-hidden relative min-h-dvh bg-white pt-16"><div className="relative z-10">
       <main className="relative z-10 mx-auto max-w-3xl px-6 py-20 lg:px-8 lg:py-24">
         <Link
           href={`/careers/${career.slug}`}
@@ -176,9 +161,8 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
                 />
               </div>
             </div>
-          </div>
-        </section>
+          </div></section>
       </main>
-    </GridSystem>
+      </div></section>
   );
 }

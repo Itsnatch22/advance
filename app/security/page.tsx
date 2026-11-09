@@ -18,7 +18,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
-import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 
 const trustIndicators = [
@@ -138,11 +137,7 @@ export default function SecurityPage() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <GridSystem
-      variant="dots"
-      opacity={0.03}
-      className="relative min-h-[100dvh] overflow-hidden bg-white text-slate-900"
-    >
+    <section className="relative min-h-[100dvh] overflow-hidden bg-white text-slate-900"><div className="relative z-10">
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
@@ -250,8 +245,7 @@ export default function SecurityPage() {
               ))}
             </div>
           </motion.aside>
-        </div>
-      </section>
+        </div></section>
 
       <section
         id="security-architecture"
@@ -359,8 +353,7 @@ export default function SecurityPage() {
               );
             })}
           </div>
-        </div>
-      </section>
+        </div></section>
 
       <section className="relative z-10 border-y border-slate-200 bg-slate-50/80 px-6 py-24 lg:py-28">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
@@ -390,8 +383,7 @@ export default function SecurityPage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </div></section>
 
       <section
         id="privacy"
@@ -471,8 +463,7 @@ export default function SecurityPage() {
               </p>
             </div>
           </div>
-        </div>
-      </section>
+        </div></section>
 
       <section className="relative z-10 px-6 pb-24">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 rounded-[2.5rem] bg-green-700 px-8 py-10 text-white shadow-xl shadow-green-900/10 sm:px-12 sm:py-12 md:flex-row md:items-center md:justify-between">
@@ -500,8 +491,7 @@ export default function SecurityPage() {
               Contact EaziWage
             </Link>
           </div>
-        </div>
-      </section>
-    </GridSystem>
+        </div></section>
+      </div></section>
   );
 }

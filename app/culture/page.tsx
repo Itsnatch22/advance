@@ -8,7 +8,6 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Typed from "typed.js";
 import { EMAIL_CONFIG } from '@/constants/config';
-import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";
 import { Terminal, TypingAnimation, AnimatedSpan } from "@/components/ui/terminal";
@@ -54,7 +53,7 @@ export default function CulturePage() {
   }, []);
 
   return (
-    <GridSystem variant="dots" opacity={0.02} className="min-h-screen bg-slate-50 bg-white">
+    <section className="overflow-hidden relative min-h-screen bg-slate-50 bg-white"><div className="relative z-10">
       {/* Immersive Background */}
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb color="bg-green-300" delay={0} />
@@ -201,6 +200,6 @@ export default function CulturePage() {
           </motion.div>
         </motion.div>
       </section>
-    </GridSystem>
+      </div></section>
   );
 }

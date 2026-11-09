@@ -1,12 +1,7 @@
-import { GridSystem } from "@/components/grid";
 
 export default function CareersLoading() {
   return (
-    <GridSystem
-      variant="dots"
-      opacity={0.03}
-      className="min-h-screen bg-white pt-16"
-    >
+    <section className="overflow-hidden relative min-h-screen bg-white pt-16"><div className="relative z-10">
       <main className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
         <div className="max-w-3xl">
           <div className="h-7 w-28 animate-pulse rounded-full bg-green-100" />
@@ -23,6 +18,6 @@ export default function CareersLoading() {
           </div>
         </div>
       </main>
-    </GridSystem>
+      </div></section>
   );
 }

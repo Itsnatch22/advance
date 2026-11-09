@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import Lottie from "lottie-react";
 import EditDocument from "@/public/Edit-document.json";
-import { GridSystem } from "@/components/grid";
 import { EMAIL_CONFIG } from '@/constants/config';
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";
@@ -72,7 +71,7 @@ export default function DocsPage() {
   const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <GridSystem variant="dots" opacity={0.03} className="min-h-screen bg-white">
+    <section className="overflow-hidden relative min-h-screen bg-white"><div className="relative z-10">
       {/* Background */}
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
@@ -190,7 +189,7 @@ export default function DocsPage() {
 
         <DevPerksGrid />
       </section>
-    </GridSystem>
+      </div></section>
   );
 }
 

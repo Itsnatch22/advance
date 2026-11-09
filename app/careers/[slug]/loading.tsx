@@ -1,8 +1,7 @@
-import { GridSystem } from "@/components/grid";
 
 export default function CareerDetailLoading() {
   return (
-    <GridSystem variant="dots" opacity={0.03} className="min-h-[100dvh] bg-white pt-16">
+    <section className="overflow-hidden relative min-h-[100dvh] bg-white pt-16"><div className="relative z-10">
       <main className="relative z-10 mx-auto max-w-5xl px-6 py-20 lg:px-8 lg:py-24">
         <div className="mb-10 h-10 w-36 animate-pulse rounded-full bg-slate-100" />
         <section className="rounded-[2rem] border border-slate-200/70 bg-white/75 p-1.5 shadow-2xl shadow-slate-900/5">
@@ -22,8 +21,7 @@ export default function CareerDetailLoading() {
               <div className="h-5 w-full animate-pulse rounded bg-slate-100" />
               <div className="h-5 w-5/6 animate-pulse rounded bg-slate-100" />
             </div>
-          </div>
-        </section>
+          </div></section>
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_20rem]">
           <div className="space-y-8">
             <SkeletonPanel />
@@ -32,7 +30,7 @@ export default function CareerDetailLoading() {
           <SkeletonPanel />
         </div>
       </main>
-    </GridSystem>
+      </div></section>
   );
 }
 

@@ -10,7 +10,6 @@ import { ShieldCheck, Cpu, Users, Eye, Sparkles } from "lucide-react";
 import { Team } from "@/components/Team";
 import Image from "next/image";
 import Typed from "typed.js";
-import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";
 
@@ -45,7 +44,7 @@ const TiltAboutCard = ({
 };
 
 export default function AboutPage() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   const typedRef = useRef<HTMLSpanElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -76,12 +75,7 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <GridSystem
-      ref={containerRef}
-      variant="dots"
-      opacity={0.03}
-      className="relative min-h-screen overflow-hidden bg-white"
-    >
+    <section ref={containerRef} className="relative min-h-screen overflow-hidden bg-white"><div className="relative z-10">
       {/* Immersive Background */}
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
@@ -202,8 +196,7 @@ export default function AboutPage() {
               secure technology.
             </p>
           </TiltAboutCard>
-        </div>
-      </section>
+        </div></section>
 
       {/* ===== Our Story ===== */}
       <section className="relative overflow-hidden py-40">
@@ -247,8 +240,7 @@ export default function AboutPage() {
 
             <div className="absolute top-0 right-0 h-64 w-64 translate-x-1/2 -translate-y-1/2 rounded-full bg-green-500/5 blur-3xl" />
           </motion.div>
-        </div>
-      </section>
+        </div></section>
 
       {/* ===== Core Values ===== */}
       <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
@@ -303,10 +295,9 @@ export default function AboutPage() {
               <p className="text-base leading-relaxed text-slate-500">{text}</p>
             </TiltAboutCard>
           ))}
-        </div>
-      </section>
+        </div></section>
 
       <Team />
-    </GridSystem>
+      </div></section>
   );
 }

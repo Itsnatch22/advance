@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { AlertCircle } from "lucide-react";
-import { GridSystem } from "@/components/grid";
 
 export default function CareersError({
   error,
@@ -16,11 +15,7 @@ export default function CareersError({
   }, [error]);
 
   return (
-    <GridSystem
-      variant="dots"
-      opacity={0.03}
-      className="min-h-screen bg-white pt-16"
-    >
+    <section className="overflow-hidden relative min-h-screen bg-white pt-16"><div className="relative z-10">
       <main className="mx-auto flex min-h-[70dvh] max-w-3xl items-center px-6 py-24">
         <div className="rounded-[2rem] border border-red-200 bg-red-50 p-8 text-red-950 shadow-xl shadow-red-900/5">
           <div className="flex items-start gap-4">
@@ -43,6 +38,6 @@ export default function CareersError({
           </div>
         </div>
       </main>
-    </GridSystem>
+      </div></section>
   );
 }

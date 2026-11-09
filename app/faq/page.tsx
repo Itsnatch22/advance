@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Input } from "../../components/ui/input";
-import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { FAQCard } from "@/components/shared/FAQCard";
 
@@ -231,7 +230,7 @@ export default function FAQPage() {
   const currentCategory = categories.find((c) => c.id === activeCategory);
 
   return (
-    <GridSystem variant="dots" opacity={0.03} className="min-h-screen bg-white">
+    <section className="overflow-hidden relative min-h-screen bg-white"><div className="relative z-10">
       {/* Immersive Background */}
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
@@ -308,8 +307,7 @@ export default function FAQPage() {
               className="h-20 rounded-3xl border-slate-200 bg-white/80 pr-8 pl-16 text-xl shadow-2xl backdrop-blur-xl transition-all focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
             />
           </motion.div>
-        </div>
-      </section>
+        </div></section>
 
       {/* CATEGORIES */}
       {!searchQuery && (
@@ -329,8 +327,7 @@ export default function FAQPage() {
                 {cat.label}
               </button>
             ))}
-          </div>
-        </section>
+          </div></section>
       )}
 
       {/* FAQ LIST */}
@@ -363,8 +360,7 @@ export default function FAQPage() {
               />
             ))}
           </div>
-        </div>
-      </section>
-    </GridSystem>
+        </div></section>
+      </div></section>
   );
 }

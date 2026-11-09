@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Users } from "lucide-react";
-import { GridSystem } from "@/components/grid";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { people } from "./people";
 
@@ -20,11 +19,7 @@ export const metadata: Metadata = {
 
 export default function HumansPage() {
   return (
-    <GridSystem
-      variant="dots"
-      opacity={0.03}
-      className="relative min-h-[100dvh] overflow-hidden bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100"
-    >
+    <section className="relative min-h-[100dvh] overflow-hidden bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100"><div className="relative z-10">
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
@@ -70,8 +65,7 @@ export default function HumansPage() {
               Open roles
             </Link>
           </div>
-        </div>
-      </section>
+        </div></section>
 
       <section
         aria-labelledby="team-heading"
@@ -119,6 +113,6 @@ export default function HumansPage() {
           ))}
         </ul>
       </section>
-    </GridSystem>
+      </div></section>
   );
 }

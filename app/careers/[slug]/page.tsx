@@ -8,7 +8,6 @@ import {
   Clock3,
   MapPin,
 } from "lucide-react";
-import { GridSystem } from "@/components/grid";
 import { supabaseUser } from "@/lib/supabase/server";
 import {
   formatCareerDate,
@@ -86,11 +85,7 @@ export default async function CareerDetailPage({
   const jobPostingJsonLd = buildJobPostingJsonLd(career);
 
   return (
-    <GridSystem
-      variant="dots"
-      opacity={0.03}
-      className="min-h-dvh bg-white pt-16"
-    >
+    <section className="overflow-hidden relative min-h-dvh bg-white pt-16"><div className="relative z-10">
       {jobPostingJsonLd ? (
         <script
           type="application/ld+json"
@@ -158,8 +153,7 @@ export default async function CareerDetailPage({
                 Applications closed
               </p>
             )}
-          </div>
-        </section>
+          </div></section>
 
         <div className="grid gap-12 py-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-16">
           <div className="min-w-0">
@@ -257,7 +251,7 @@ export default async function CareerDetailPage({
           </aside>
         </div>
       </main>
-    </GridSystem>
+      </div></section>
   );
 }
 

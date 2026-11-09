@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { AlertCircle, RotateCcw } from "lucide-react";
-import { GridSystem } from "@/components/grid";
 
 export default function CareerDetailError({ error, reset }: { error: Error; reset: () => void }) {
   return (
-    <GridSystem variant="dots" opacity={0.03} className="min-h-[100dvh] bg-white pt-16">
+    <section className="overflow-hidden relative min-h-[100dvh] bg-white pt-16"><div className="relative z-10">
       <main className="relative z-10 mx-auto max-w-3xl px-6 py-20 lg:px-8 lg:py-24">
         <section className="rounded-[2rem] border border-red-200 bg-red-50 p-6 text-red-950">
           <div className="flex items-start gap-4">
@@ -33,9 +32,8 @@ export default function CareerDetailError({ error, reset }: { error: Error; rese
                 </Link>
               </div>
             </div>
-          </div>
-        </section>
+          </div></section>
       </main>
-    </GridSystem>
+      </div></section>
   );
 }
