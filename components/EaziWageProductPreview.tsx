@@ -208,10 +208,6 @@ export default function EaziWageProductPreview() {
           <span className="truncate text-sm font-bold tracking-tight text-slate-900 sm:text-base">
             EaziWage
           </span>
-          <span className="hidden text-sm text-slate-400 sm:inline">/</span>
-          <span className="hidden text-sm text-slate-500 sm:inline">
-            Employee account
-          </span>
         </div>
         <Badge
           variant="outline"
@@ -224,7 +220,7 @@ export default function EaziWageProductPreview() {
       <div className="grid min-h-[420px] grid-cols-1 md:grid-cols-[176px_minmax(0,1fr)]">
         <aside className="hidden border-r border-slate-200/60 bg-slate-50/50 p-4 md:block">
           <p className="mb-3 px-2 text-[10px] font-semibold tracking-[0.12em] text-slate-400 uppercase">
-            Employee portal
+            User portal
           </p>
           <nav aria-label="Sample dashboard navigation" className="space-y-1">
             {navigation.map(({ id, label, icon: Icon }) => (
