@@ -41,6 +41,9 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const restingDashboardShadow =
+  "0 28px 72px -36px rgba(16, 185, 129, 0.3), 0 10px 24px -14px rgba(15, 23, 42, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.95)";
+
 const countryForLocale: Record<Locale, CountryCode> = {
   "en-ke": "KE",
   "en-ug": "UG",
@@ -157,16 +160,19 @@ export default function EaziWageProductPreview() {
 
   useEffect(() => {
     const dashboard = dashboardRef.current;
-    const supportsTilt = window.matchMedia(
+    const supportsPointerLighting = window.matchMedia(
       "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
     );
 
-    if (!dashboard || prefersReducedMotion !== false || !supportsTilt.matches) {
+    if (
+      !dashboard ||
+      prefersReducedMotion !== false ||
+      !supportsPointerLighting.matches
+    ) {
       return;
     }
 
     let animationFrame: number | null = null;
-    const restingTransform = "perspective(1600px) translateZ(8px)";
 
     const handlePointerMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
@@ -181,30 +187,34 @@ export default function EaziWageProductPreview() {
           (event.clientX - bounds.left) / bounds.width - 0.5;
         const verticalPosition =
           (event.clientY - bounds.top) / bounds.height - 0.5;
-        const rotateX = -verticalPosition * 3;
-        const rotateY = horizontalPosition * 3;
+        const shadowX = -horizontalPosition * 8;
+        const shadowY = 10 + verticalPosition * 6;
+        const glowOpacity = (
+          0.24 +
+          (0.5 - Math.hypot(horizontalPosition, verticalPosition)) * 0.12
+        ).toFixed(2);
 
-        dashboard.style.transform = `perspective(1600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(8px)`;
+        dashboard.style.boxShadow = `0 ${shadowY.toFixed(1)}px 72px -36px rgba(16, 185, 129, ${glowOpacity}), ${shadowX.toFixed(1)}px 10px 24px -14px rgba(15, 23, 42, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.95)`;
         animationFrame = null;
       });
     };
 
-    const resetTilt = () => {
+    const resetLighting = () => {
       if (animationFrame !== null) {
         window.cancelAnimationFrame(animationFrame);
         animationFrame = null;
       }
 
-      dashboard.style.transform = restingTransform;
+      dashboard.style.boxShadow = restingDashboardShadow;
     };
 
     dashboard.addEventListener("pointermove", handlePointerMove);
-    dashboard.addEventListener("pointerleave", resetTilt);
+    dashboard.addEventListener("pointerleave", resetLighting);
 
     return () => {
       dashboard.removeEventListener("pointermove", handlePointerMove);
-      dashboard.removeEventListener("pointerleave", resetTilt);
-      resetTilt();
+      dashboard.removeEventListener("pointerleave", resetLighting);
+      resetLighting();
     };
   }, [prefersReducedMotion]);
 
@@ -249,8 +259,8 @@ export default function EaziWageProductPreview() {
       ref={dashboardRef}
       role="region"
       aria-label="Interactive sample EaziWage employee dashboard"
-      className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white/70 text-left shadow-2xl shadow-green-500/10 backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-reduce:transition-none"
-      style={{ transform: "perspective(1600px) translateZ(8px)" }}
+      className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white/70 text-left motion-safe:transition-[box-shadow] motion-safe:duration-300 motion-safe:ease-out motion-reduce:transition-none"
+      style={{ boxShadow: restingDashboardShadow }}
     >
       <div className="flex min-h-14 items-center justify-between gap-3 border-b border-slate-200/60 bg-white/70 px-4 sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
