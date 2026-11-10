@@ -60,7 +60,7 @@ export default function UI() {
           </div>
 
           <div className="min-w-0 xl:relative xl:z-10">
-            <EaziWageHeroDashboard />
+            <EaziWageHeroDashboard audience="employee" />
           </div>
         </div>
       </div>
