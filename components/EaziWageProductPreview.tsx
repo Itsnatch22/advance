@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import {
@@ -117,6 +117,7 @@ const viewCopy: Record<DashboardView, { title: string; description: string }> =
 
 export default function EaziWageProductPreview() {
   const { locale } = useCurrency();
+  const dashboardRef = useRef<HTMLDivElement>(null);
   const [greeting, setGreeting] = useState("Good morning");
   const today = new Date();
   const monthName = today.toLocaleDateString("en", { month: "long" });
@@ -153,6 +154,59 @@ export default function EaziWageProductPreview() {
   );
   const [activeView, setActiveView] = useState<DashboardView>("overview");
   const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    const dashboard = dashboardRef.current;
+    const supportsTilt = window.matchMedia(
+      "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
+    );
+
+    if (!dashboard || prefersReducedMotion !== false || !supportsTilt.matches) {
+      return;
+    }
+
+    let animationFrame: number | null = null;
+    const restingTransform = "perspective(1600px) translateZ(8px)";
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+
+      animationFrame = window.requestAnimationFrame(() => {
+        const bounds = dashboard.getBoundingClientRect();
+        const horizontalPosition =
+          (event.clientX - bounds.left) / bounds.width - 0.5;
+        const verticalPosition =
+          (event.clientY - bounds.top) / bounds.height - 0.5;
+        const rotateX = -verticalPosition * 3;
+        const rotateY = horizontalPosition * 3;
+
+        dashboard.style.transform = `perspective(1600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(8px)`;
+        animationFrame = null;
+      });
+    };
+
+    const resetTilt = () => {
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+      }
+
+      dashboard.style.transform = restingTransform;
+    };
+
+    dashboard.addEventListener("pointermove", handlePointerMove);
+    dashboard.addEventListener("pointerleave", resetTilt);
+
+    return () => {
+      dashboard.removeEventListener("pointermove", handlePointerMove);
+      dashboard.removeEventListener("pointerleave", resetTilt);
+      resetTilt();
+    };
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     setCountry(countryForLocale[locale]);
@@ -192,9 +246,11 @@ export default function EaziWageProductPreview() {
 
   return (
     <div
+      ref={dashboardRef}
       role="region"
       aria-label="Interactive sample EaziWage employee dashboard"
-      className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white/70 text-left shadow-2xl shadow-green-500/10 backdrop-blur-xl"
+      className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white/70 text-left shadow-2xl shadow-green-500/10 backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-reduce:transition-none"
+      style={{ transform: "perspective(1600px) translateZ(8px)" }}
     >
       <div className="flex min-h-14 items-center justify-between gap-3 border-b border-slate-200/60 bg-white/70 px-4 sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
@@ -278,9 +334,13 @@ export default function EaziWageProductPreview() {
 
           <motion.div
             key={activeView}
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+            initial={
+              prefersReducedMotion === false ? { opacity: 0, y: 8 } : false
+            }
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{
+              duration: prefersReducedMotion === false ? 0.25 : 0,
+            }}
           >
             <div className="mb-5 flex flex-wrap items-end justify-between gap-2">
               <div>
