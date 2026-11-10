@@ -1,124 +1,141 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
+import * as Dialog from "@radix-ui/react-dialog";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 
 export function AppleCardsCarouselDemo() {
   const [selectedCard, setSelectedCard] = useState<(typeof data)[0] | null>(
     null
   );
+  const shouldReduceMotion = useReducedMotion() !== false;
   const cards = data.map((card) => (
     <Card key={card.src} card={card} onClick={() => setSelectedCard(card)} />
   ));
 
   return (
-    <div className="h-full w-full py-20">
-      <Carousel items={cards} />
+    <Dialog.Root
+      open={selectedCard !== null}
+      onOpenChange={(open) => {
+        if (!open) setSelectedCard(null);
+      }}
+    >
+      <div className="w-full">
+        <Carousel items={cards} />
+      </div>
 
-      {/* Modal */}
-      <AnimatePresence>
-        {selectedCard && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-4 backdrop-blur-md"
-            onClick={() => setSelectedCard(null)}
-          >
-            <motion.div
-              initial={{ y: 24, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 24, opacity: 0 }}
-              transition={{ type: "spring", damping: 28, stiffness: 320 }}
-              className="relative w-full max-w-4xl overflow-hidden rounded-4xl border border-slate-200/60 bg-white shadow-2xl shadow-slate-900/20 ring-1 ring-slate-900/5"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close button */}
-              <button
-                onClick={() => setSelectedCard(null)}
-                className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/60 bg-white text-slate-500 shadow-sm ring-1 ring-slate-900/5 transition-all hover:bg-slate-50 hover:text-slate-900"
-                aria-label="Close"
-              >
-                <X size={16} strokeWidth={2.5} />
-              </button>
+      <Dialog.Portal forceMount>
+        <AnimatePresence>
+          {selectedCard && (
+            <React.Fragment key={selectedCard.src}>
+              <Dialog.Overlay asChild>
+                <motion.div
+                  initial={shouldReduceMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: shouldReduceMotion ? 0.01 : 0.2 }}
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-3 backdrop-blur-sm sm:p-6"
+                />
+              </Dialog.Overlay>
+              <Dialog.Content asChild>
+                <motion.div
+                  initial={
+                    shouldReduceMotion
+                      ? false
+                      : { opacity: 0, y: 16, scale: 0.99 }
+                  }
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 12, scale: 0.99 }}
+                  transition={{
+                    duration: shouldReduceMotion ? 0.01 : 0.24,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className="relative grid h-[min(88dvh,52rem)] w-full max-w-5xl grid-cols-1 grid-rows-[minmax(12rem,0.38fr)_minmax(0,0.62fr)] overflow-hidden rounded-3xl border border-white/70 bg-white shadow-[0_32px_100px_rgba(15,23,42,0.28)] outline-none md:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] md:grid-rows-1"
+                >
+                  <div className="relative min-h-56 bg-emerald-950 md:min-h-0">
+                    <Image
+                      src={selectedCard.src}
+                      alt=""
+                      fill
+                      sizes="(max-width: 768px) 100vw, 42vw"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-950/85 via-slate-950/15 to-transparent" />
+                    <div className="absolute right-6 bottom-6 left-6 sm:right-8 sm:bottom-8 sm:left-8">
+                      <p className="mb-2 text-xs font-bold tracking-[0.16em] text-emerald-200 uppercase">
+                        {selectedCard.category}
+                      </p>
+                      <p className="max-w-md text-2xl leading-tight font-semibold tracking-tight text-white sm:text-3xl">
+                        {selectedCard.title}
+                      </p>
+                    </div>
+                  </div>
 
-              {/* Content */}
-              <div className="flex max-h-[88vh] flex-col lg:flex-row">
-                {/* Image panel */}
-                <div className="relative h-56 shrink-0 lg:h-auto lg:w-[42%]">
-                  <Image
-                    src={selectedCard.src}
-                    alt={selectedCard.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
-                  <div className="absolute bottom-5 left-5 right-5">
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-emerald-400">
-                      {selectedCard.category}
+                  <div className="relative min-h-0 overflow-y-auto overscroll-contain px-6 pt-7 pb-6 sm:px-9 sm:pt-9 sm:pb-8">
+                    <Dialog.Close asChild>
+                      <button
+                        type="button"
+                        aria-label="Close story"
+                        className="absolute top-4 right-4 flex size-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none"
+                      >
+                        <X aria-hidden="true" size={17} strokeWidth={2} />
+                      </button>
+                    </Dialog.Close>
+
+                    <p className="pr-12 text-xs font-bold tracking-[0.16em] text-emerald-700 uppercase">
+                      EaziWage in {selectedCard.category}
                     </p>
-                    <h3 className="font-serif text-xl font-bold leading-snug text-white">
-                      {selectedCard.title}
-                    </h3>
-                  </div>
-                </div>
+                    <Dialog.Title className="mt-3 max-w-lg text-2xl leading-tight font-semibold tracking-tight text-slate-950 sm:text-3xl">
+                      Earned wage access for{" "}
+                      {selectedCard.category.toLowerCase()}
+                    </Dialog.Title>
 
-                {/* Story panel */}
-                <div className="flex-1 overflow-y-auto p-7 lg:p-10">
-                  {/* Eyebrow badge */}
-                  <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-500/10">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    {selectedCard.category} · Success Story
-                  </div>
-
-                  <h2 className="mb-2 font-serif text-2xl font-bold leading-snug text-slate-900">
-                    EWA in {selectedCard.category}
-                  </h2>
-                  <div className="mb-6 h-0.5 w-12 rounded-full bg-linear-to-r from-emerald-600 to-green-500" />
-
-                  <div className="space-y-4 text-sm leading-relaxed text-slate-600">
-                    {selectedCard.story?.map((paragraph, index) => (
-                      <p key={index}>{paragraph}</p>
-                    ))}
-                  </div>
-
-                  {selectedCard.stats && (
-                    <div className="mt-7 grid grid-cols-2 gap-4">
-                      {selectedCard.stats.map((stat, index) => (
-                        <div
-                          key={index}
-                          className="rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50 via-green-50/60 to-white p-4 ring-1 ring-emerald-500/10"
-                        >
-                          <div className="font-serif text-2xl font-bold text-emerald-700">
-                            {stat.value}
-                          </div>
-                          <div className="mt-1 text-xs leading-relaxed text-slate-500">
-                            {stat.label}
-                          </div>
-                        </div>
+                    <div className="mt-6 space-y-4 text-sm leading-7 text-slate-600 sm:text-[15px]">
+                      {selectedCard.story?.map((paragraph) => (
+                        <p key={paragraph}>{paragraph}</p>
                       ))}
                     </div>
-                  )}
 
-                  <div className="mt-7 border-t border-slate-100 pt-6">
-                    <button
-                      onClick={() => setSelectedCard(null)}
-                      className="inline-flex items-center gap-2 rounded-xl border border-slate-200/60 px-5 py-2.5 text-sm font-semibold text-slate-600 ring-1 ring-slate-900/5 transition-all hover:border-emerald-200 hover:text-emerald-700"
-                    >
-                      <X size={14} strokeWidth={2.5} />
-                      Close
-                    </button>
+                    {selectedCard.stats && (
+                      <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                        {selectedCard.stats.map((stat) => (
+                          <div
+                            key={`${stat.value}-${stat.label}`}
+                            className="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4"
+                          >
+                            <p className="text-2xl font-bold tracking-tight text-emerald-800">
+                              {stat.value}
+                            </p>
+                            <p className="mt-2 text-xs leading-relaxed text-slate-600">
+                              {stat.label}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="mt-8 border-t border-slate-100 pt-5">
+                      <Dialog.Close asChild>
+                        <button
+                          type="button"
+                          className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none"
+                        >
+                          <X aria-hidden="true" size={15} strokeWidth={2} />
+                          Close story
+                        </button>
+                      </Dialog.Close>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+                </motion.div>
+              </Dialog.Content>
+            </React.Fragment>
+          )}
+        </AnimatePresence>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
 

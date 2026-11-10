@@ -1,8 +1,9 @@
 "use client";
-import React, { createContext, useEffect, useState } from "react";
+
+import React, { createContext, useCallback, useEffect, useState } from "react";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import { cn } from "@/lib/utils/utils";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
 interface CarouselProps {
@@ -10,7 +11,7 @@ interface CarouselProps {
   initialScroll?: number;
 }
 
-type Card = {
+export type CarouselCard = {
   src: string;
   title: string;
   category: string;
@@ -29,51 +30,62 @@ export const CarouselContext = createContext<{
 export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
-  const [canScrollRight, setCanScrollRight] = React.useState(true);
+  const [canScrollRight, setCanScrollRight] = React.useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const shouldReduceMotion = useReducedMotion() !== false;
+
+  const checkScrollability = useCallback(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+    setCanScrollLeft(carousel.scrollLeft > 1);
+    setCanScrollRight(maxScrollLeft - carousel.scrollLeft > 1);
+  }, []);
 
   useEffect(() => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollLeft = initialScroll;
-      checkScrollability();
-    }
-  }, [initialScroll]);
+    const carousel = carouselRef.current;
+    if (!carousel) return;
 
-  const checkScrollability = () => {
-    if (carouselRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-    }
-  };
+    carousel.scrollLeft = initialScroll;
+    checkScrollability();
 
-  const scrollLeft = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    const resizeObserver = new ResizeObserver(checkScrollability);
+    resizeObserver.observe(carousel);
+    if (carousel.firstElementChild) {
+      resizeObserver.observe(carousel.firstElementChild);
     }
-  };
 
-  const scrollRight = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: 300, behavior: "smooth" });
-    }
+    return () => resizeObserver.disconnect();
+  }, [checkScrollability, initialScroll]);
+
+  const scrollByCards = (direction: -1 | 1) => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    carousel.scrollBy({
+      left: direction * carousel.clientWidth * 0.8,
+      behavior: shouldReduceMotion ? "instant" : "smooth",
+    });
   };
 
   const handleCardClose = (index: number) => {
-    if (carouselRef.current) {
-      const cardWidth = isMobile() ? 230 : 384;
-      const gap = isMobile() ? 4 : 8;
-      const scrollPosition = (cardWidth + gap) * (index + 1);
-      carouselRef.current.scrollTo({
-        left: scrollPosition,
-        behavior: "smooth",
-      });
-      setCurrentIndex(index);
-    }
-  };
+    const carousel = carouselRef.current;
+    const card = carousel?.querySelector<HTMLElement>(
+      `[data-card-index="${index}"]`
+    );
+    if (!carousel || !card) return;
 
-  const isMobile = () => {
-    return window && window.innerWidth < 768;
+    const cardOffset =
+      carousel.scrollLeft +
+      card.getBoundingClientRect().left -
+      carousel.getBoundingClientRect().left;
+
+    carousel.scrollTo({
+      left: Math.max(0, cardOffset - 12),
+      behavior: shouldReduceMotion ? "instant" : "smooth",
+    });
+    setCurrentIndex(index);
   };
 
   return (
@@ -82,59 +94,60 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
     >
       <div className="relative w-full">
         <div
-          className="flex w-full [scrollbar-width:none] overflow-x-scroll overscroll-x-auto scroll-smooth py-4 md:py-8"
           ref={carouselRef}
+          role="region"
+          aria-label="Stories by industry"
+          tabIndex={0}
+          className={cn(
+            "flex w-full snap-x snap-mandatory scrollbar-none overflow-x-auto overscroll-x-contain py-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700 md:py-5",
+            shouldReduceMotion ? "scroll-auto" : "scroll-smooth"
+          )}
           onScroll={checkScrollability}
+          onKeyDown={(event) => {
+            if (event.target !== event.currentTarget) return;
+            if (event.key === "ArrowLeft") scrollByCards(-1);
+            if (event.key === "ArrowRight") scrollByCards(1);
+          }}
         >
-          <div
-            className={cn(
-              "absolute right-0 z-1000 h-auto w-[5%] overflow-hidden bg-linear-to-l"
-            )}
-          ></div>
-
-          <div
-            className={cn(
-              "flex flex-row justify-start gap-4 pl-4",
-              "mx-auto max-w-7xl"
-            )}
-          >
+          <div className="mx-auto flex max-w-7xl min-w-max snap-x snap-mandatory flex-row gap-4 px-1 md:gap-5">
             {items.map((item, index) => (
               <motion.div
-                initial={{
-                  opacity: 0,
-                  y: 20,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  transition: {
-                    duration: 0.5,
-                    delay: 0.2 * index,
-                    ease: "easeOut",
-                  },
-                }}
                 key={"card" + index}
-                className="rounded-3xl last:pr-[5%] md:last:pr-[33%]"
+                data-card-index={index}
+                className="snap-start"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: shouldReduceMotion ? 0 : 0.35,
+                  delay: shouldReduceMotion ? 0 : Math.min(index * 0.06, 0.3),
+                  ease: "easeOut",
+                }}
               >
                 {item}
               </motion.div>
             ))}
+            <div aria-hidden="true" className="w-5 shrink-0 md:w-10" />
           </div>
         </div>
-        <div className="mr-10 flex justify-end gap-2">
+
+        <div className="mt-5 flex justify-end gap-2 px-1">
           <button
-            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
-            onClick={scrollLeft}
+            type="button"
+            aria-label="Scroll to previous stories"
+            className="flex size-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none motion-reduce:active:scale-100"
+            onClick={() => scrollByCards(-1)}
             disabled={!canScrollLeft}
           >
-            <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
+            <IconArrowNarrowLeft aria-hidden="true" className="size-5" />
           </button>
           <button
-            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
-            onClick={scrollRight}
+            type="button"
+            aria-label="Scroll to next stories"
+            className="flex size-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none motion-reduce:active:scale-100"
+            onClick={() => scrollByCards(1)}
             disabled={!canScrollRight}
           >
-            <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
+            <IconArrowNarrowRight aria-hidden="true" className="size-5" />
           </button>
         </div>
       </div>
@@ -147,30 +160,49 @@ export const Card = ({
   layout = false,
   onClick,
 }: {
-  card: Card;
+  card: CarouselCard;
   layout?: boolean;
   onClick?: () => void;
 }) => {
+  const shouldReduceMotion = useReducedMotion() !== false;
+
   return (
-    <motion.div
+    <motion.button
+      type="button"
       layoutId={layout ? `card-${card.title}` : undefined}
-      className="relative z-10 flex h-80 w-56 cursor-pointer flex-col items-end justify-end overflow-hidden rounded-3xl bg-gray-100 transition-transform hover:scale-105 md:h-128 md:w-96 dark:bg-neutral-900"
+      className="group relative flex w-[min(78vw,18.5rem)] flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white text-left shadow-[0_8px_24px_rgba(15,23,42,0.06)] transition-[border-color,box-shadow] duration-300 hover:border-emerald-200 hover:shadow-[0_18px_38px_rgba(15,23,42,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700 motion-reduce:transition-none md:w-[21rem]"
       onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+      whileTap={shouldReduceMotion ? undefined : { scale: 0.99 }}
+      aria-label={`Read the ${card.category} story: ${card.title}`}
     >
-      <div className="pointer-events-none absolute inset-0 z-10" />
-      <BlurImage
-        src={card.src}
-        alt={card.title}
-        className="absolute inset-0 object-cover"
-      />
-      <div className="relative z-20 p-4 text-white md:p-6">
-        <p className="text-xs opacity-90 md:text-sm">{card.category}</p>
-        <p className="text-lg font-semibold md:text-2xl">{card.title}</p>
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity hover:opacity-100" />
-    </motion.div>
+      <span className="relative block aspect-[4/3] w-full overflow-hidden bg-emerald-50">
+        <BlurImage
+          src={card.src}
+          alt=""
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 bg-linear-to-t from-slate-950/15 via-transparent to-transparent"
+        />
+      </span>
+      <span className="flex min-h-32 flex-1 flex-col items-start p-5 md:min-h-36 md:p-6">
+        <span className="text-[11px] font-bold tracking-[0.16em] text-emerald-700 uppercase">
+          {card.category}
+        </span>
+        <span className="mt-2 text-lg leading-snug font-semibold tracking-tight text-slate-900 md:text-xl">
+          {card.title}
+        </span>
+        <span className="mt-auto flex items-center gap-2 pt-4 text-sm font-semibold text-slate-500 transition-colors group-hover:text-emerald-700 motion-reduce:transition-none">
+          Read the story
+          <IconArrowNarrowRight
+            aria-hidden="true"
+            className="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+          />
+        </span>
+      </span>
+    </motion.button>
   );
 };
 
@@ -183,21 +215,15 @@ export const BlurImage = ({
   className?: string;
   alt?: string;
 } & React.ImgHTMLAttributes<HTMLImageElement>) => {
-  const [isLoading, setLoading] = useState(true);
   return (
     <Image
-      className={cn(
-        "h-full w-full transition duration-300",
-        isLoading ? "blur-sm" : "blur-0",
-        className
-      )}
-      onLoad={() => setLoading(false)}
+      className={cn("h-full w-full", className)}
       src={src}
       loading="lazy"
       decoding="async"
-      alt={alt ? alt : "Background image"}
+      alt={alt ?? ""}
       fill
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      sizes="(max-width: 768px) 78vw, 336px"
     />
   );
 };

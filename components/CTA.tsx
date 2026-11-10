@@ -8,32 +8,33 @@ import { ArrowRight, Calendar } from "lucide-react";
 export default function CTA() {
   const typedRef = useRef<HTMLSpanElement>(null);
   const prefersReduced = useReducedMotion();
+  const shouldReduceMotion = prefersReduced === true;
   const d = (n: number) => (prefersReduced ? 0 : n);
 
   useEffect(() => {
     const el = typedRef.current;
     if (!el) return;
+    if (shouldReduceMotion) {
+      el.textContent = "Boost Retention";
+      return;
+    }
+
     // Guard against React Strict Mode's dev-only double-invoke of effects:
     // if a previous instance's destroy() hasn't fully flushed before this
     // one initializes, its cursor element can end up stripped from the DOM.
     // Clearing the node first guarantees a clean slate either way.
     el.innerHTML = "";
     const typed = new Typed(el, {
-      strings: [
-        "Transform Your Workplace",
-        "Boost Retention",
-        "Increase Payroll Efficiency",
-        "Encourage Punctuality & Attendance",
-      ],
-      typeSpeed: 100,
-      backSpeed: 80,
+      strings: ["Boost Retention", "Ease Payroll", "Support Wellbeing"],
+      typeSpeed: 65,
+      backSpeed: 45,
       loop: true,
       smartBackspace: true,
       cursorChar: "|",
-      backDelay: 2000,
+      backDelay: 1500,
     });
     return () => typed.destroy();
-  }, []);
+  }, [shouldReduceMotion]);
 
   return (
     <section className="relative flex items-center overflow-hidden bg-linear-to-br from-slate-900 via-slate-800 to-emerald-950 py-40">
@@ -56,7 +57,9 @@ export default function CTA() {
           className="mb-6 flex justify-center sm:mb-8"
         >
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-emerald-300 uppercase ring-1 ring-white/20 backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400"></span>
+            <span
+              className={`h-1.5 w-1.5 rounded-full bg-emerald-400 ${shouldReduceMotion ? "" : "animate-pulse"}`}
+            ></span>
             Get Started Today
           </div>
         </motion.div>
@@ -68,12 +71,16 @@ export default function CTA() {
           transition={{ duration: d(0.7), delay: d(0.1) }}
           viewport={{ once: true }}
           className="mb-8 font-serif text-5xl leading-tight font-bold tracking-tight text-white sm:text-6xl lg:text-7xl"
+          aria-label="Ready to boost retention?"
         >
           Ready To{" "}
           <span
             ref={typedRef}
-            className="inline-block min-w-70 bg-linear-to-r from-emerald-400 via-green-300 to-emerald-400 bg-clip-text text-transparent sm:min-w-100 lg:min-w-150"
-          />
+            aria-hidden="true"
+            className="inline-block min-w-[11ch] bg-linear-to-r from-emerald-300 via-green-200 to-emerald-300 bg-clip-text text-transparent sm:min-w-[14ch]"
+          >
+            {shouldReduceMotion ? "Boost Retention" : ""}
+          </span>
           ?
         </motion.h2>
 
@@ -100,17 +107,17 @@ export default function CTA() {
           {/* Primary CTA */}
           <Link href="/schedule">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="group inline-flex items-center gap-2.5 rounded-xl bg-linear-to-r from-emerald-500 to-green-500 px-8 py-4 font-semibold text-white shadow-2xl shadow-emerald-500/50 transition-all duration-300 hover:shadow-emerald-500/60"
+              whileHover={shouldReduceMotion ? undefined : { scale: 1.05 }}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.95 }}
+              className="group inline-flex items-center gap-2.5 rounded-xl bg-linear-to-r from-emerald-500 to-green-500 px-8 py-4 font-semibold text-white shadow-2xl shadow-emerald-500/50 transition-all duration-300 hover:shadow-emerald-500/60 motion-reduce:transition-none"
             >
               <Calendar
-                className="h-5 w-5 transition-transform duration-300 group-hover:scale-110"
+                className="h-5 w-5 transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                 strokeWidth={2.5}
               />
               <span>Schedule a Demo</span>
               <ArrowRight
-                className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+                className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                 strokeWidth={2.5}
               />
             </motion.button>
@@ -119,13 +126,13 @@ export default function CTA() {
           {/* Secondary CTA */}
           <Link href="/sales">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="group inline-flex items-center gap-2.5 rounded-xl border-2 border-white/20 bg-white/5 px-8 py-4 font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-white/10"
+              whileHover={shouldReduceMotion ? undefined : { scale: 1.05 }}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.95 }}
+              className="group inline-flex items-center gap-2.5 rounded-xl border-2 border-white/20 bg-white/5 px-8 py-4 font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-white/10 motion-reduce:transition-none"
             >
               <span>Contact Sales</span>
               <ArrowRight
-                className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+                className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                 strokeWidth={2.5}
               />
             </motion.button>
