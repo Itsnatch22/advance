@@ -141,7 +141,7 @@ export default function Hero() {
               delay: 0.24,
               ease: [0.2, 0.7, 0.2, 1],
             }}
-            className="mx-auto mt-12 max-w-6xl sm:mt-16"
+            className="mx-auto mt-12 max-w-7xl sm:mt-16"
           >
             <EaziWageProductPreview />
             <figcaption className="mt-4 px-2 text-center text-xs leading-5 text-slate-500 sm:text-sm">
