@@ -104,11 +104,7 @@ function DashboardHeader({
     <header className="flex min-h-14 items-center justify-between gap-4 border-b border-slate-200/70 bg-white px-4 sm:px-5">
       <div className="flex min-w-0 items-center gap-2.5">
         <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
-          {isEmployer ? (
-            <Users className="size-4" aria-hidden="true" />
-          ) : (
             <Wallet className="size-4" aria-hidden="true" />
-          )}
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-bold tracking-tight text-slate-900">
@@ -663,7 +659,7 @@ export default function EaziWageHeroDashboard({
 
   return (
     <div className="relative min-w-0 xl:overflow-visible">
-      <div className="w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_24px_64px_-32px_rgba(15,23,42,0.28),0_8px_24px_-16px_rgba(16,185,129,0.22)] xl:w-[1080px] xl:max-w-none">
+      <div className="w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_24px_64px_-32px_rgba(15,23,42,0.28),0_8px_24px_-16px_rgba(16,185,129,0.22)] xl:w-270 xl:max-w-none">
         <DashboardHeader
           greeting={greeting}
           monthName={monthName}

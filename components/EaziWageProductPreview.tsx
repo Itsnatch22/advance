@@ -259,7 +259,7 @@ export default function EaziWageProductPreview() {
       ref={dashboardRef}
       role="region"
       aria-label="Interactive sample EaziWage employee dashboard"
-      className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white/70 text-left motion-safe:transition-[box-shadow] motion-safe:duration-300 motion-safe:ease-out motion-reduce:transition-none"
+      className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white/70 text-left motion-safe:transition-shadow motion-safe:duration-300 motion-safe:ease-out motion-reduce:transition-none"
       style={{ boxShadow: restingDashboardShadow }}
     >
       <div className="flex min-h-14 items-center justify-between gap-3 border-b border-slate-200/60 bg-white/70 px-4 sm:px-6">
@@ -283,7 +283,7 @@ export default function EaziWageProductPreview() {
         </Badge>
       </div>
 
-      <div className="grid min-h-[420px] grid-cols-1 md:grid-cols-[176px_minmax(0,1fr)]">
+      <div className="grid min-h-105 grid-cols-1 md:grid-cols-[176px_minmax(0,1fr)]">
         <aside className="hidden border-r border-slate-200/60 bg-slate-50/50 p-4 md:block">
           <p className="mb-3 px-2 text-[10px] font-semibold tracking-[0.12em] text-slate-400 uppercase">
             User portal
@@ -445,7 +445,7 @@ export default function EaziWageProductPreview() {
                   <CardContent className="px-2 pt-3 pb-3 sm:px-4">
                     <ChartContainer
                       config={chartConfig}
-                      className="aspect-auto h-[150px] w-full sm:h-[174px]"
+                      className="aspect-auto h-37.5 w-full sm:h-43.5"
                     >
                       <AreaChart
                         accessibilityLayer
