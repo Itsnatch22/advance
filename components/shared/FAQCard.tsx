@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { TiltCard } from "@/components/shared/TiltCard";
+import { useId } from "react";
 
 interface FAQCardProps {
   question: string;
@@ -12,64 +12,73 @@ interface FAQCardProps {
 }
 
 export function FAQCard({ question, answer, isOpen, onToggle }: FAQCardProps) {
+  const reduceMotion = useReducedMotion();
+  const answerId = useId();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true }}
       className="w-full"
     >
-      <TiltCard
-        className={`group relative overflow-hidden rounded-4xl border border-slate-200/60 transition-all duration-500 ${
+      <div
+        className={`group relative overflow-hidden rounded-2xl border border-slate-200/60 transition-colors duration-300 ${
           isOpen
-            ? "bg-white shadow-2xl ring-1 shadow-green-500/10 ring-green-500/20"
-            : "bg-white/40 backdrop-blur-2xl hover:bg-white"
+            ? "bg-white shadow-lg ring-1 shadow-green-500/5 ring-green-500/15"
+            : "bg-white/70 hover:bg-white"
         }`}
       >
         <button
+          type="button"
+          aria-expanded={isOpen}
+          aria-controls={isOpen ? answerId : undefined}
           onClick={onToggle}
-          className="relative z-10 flex w-full items-center justify-between p-8 text-left"
+          className="relative z-10 flex w-full items-center justify-between gap-5 p-5 text-left sm:p-7"
         >
           <span
-            className={`text-xl font-bold tracking-tight transition-colors duration-300 ${
+            className={`text-base font-bold tracking-tight transition-colors duration-300 sm:text-lg ${
               isOpen ? "text-green-600" : "text-slate-900"
             }`}
           >
             {question}
           </span>
           <div
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-500 ${
+            className={`flex size-9 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${
               isOpen
-                ? "rotate-180 bg-green-600 text-white"
+                ? "bg-green-600 text-white"
                 : "bg-slate-100 text-slate-500 group-hover:bg-green-500 group-hover:text-white"
             }`}
           >
-            <ChevronDown className="h-5 w-5" />
+            <ChevronDown
+              className={`size-5 ${reduceMotion ? "" : "transition-transform duration-300"} ${isOpen ? "rotate-180" : ""}`}
+              aria-hidden="true"
+            />
           </div>
         </button>
 
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
+              id={answerId}
+              initial={reduceMotion ? false : { height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+              transition={{
+                duration: reduceMotion ? 0 : 0.3,
+                ease: [0.16, 1, 0.3, 1],
+              }}
             >
-              <div className="px-8 pb-8">
-                <div className="mb-8 h-px w-full bg-slate-100" />
-                <p className="text-lg leading-relaxed text-slate-500">{answer}</p>
+              <div className="px-5 pb-5 sm:px-7 sm:pb-7">
+                <div className="mb-5 h-px w-full bg-slate-100" />
+                <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
+                  {answer}
+                </p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-
-        <div
-          className={`absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 ${
-            isOpen ? "w-full" : "group-hover:w-full"
-          }`}
-        />
-      </TiltCard>
+      </div>
     </motion.div>
   );
 }

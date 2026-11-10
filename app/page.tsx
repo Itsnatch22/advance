@@ -15,7 +15,7 @@ import System from "@/components/System";
 export default function HomePage() {
   return (
     <ErrorBoundary>
-      <div className="overflow-hidden">
+      <div className="overflow-x-clip">
         <Hero />
         <Marquee />
         <WordReveal />

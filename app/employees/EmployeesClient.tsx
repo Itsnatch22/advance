@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Clock3,
@@ -19,7 +18,7 @@ import { ComplianceStrip } from "@/components/shared/ComplianceStrip";
 import UI from "./UI";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { TiltCard } from "@/components/shared/TiltCard";
-import { FAQCard } from "@/components/shared/FAQCard";
+import { PinnedFAQSection } from "@/components/shared/PinnedFAQSection";
 
 const reasons = [
   {
@@ -114,8 +113,6 @@ const faqs = [
 ];
 
 export default function EmployeesClient() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   return (
     <main className="relative min-h-screen bg-white text-slate-900">
       <div className="pointer-events-none absolute inset-0">
@@ -180,7 +177,9 @@ export default function EmployeesClient() {
                     <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-600">
                       {item.title}
                     </h3>
-                    <p className="text-lg leading-relaxed text-slate-500">{item.desc}</p>
+                    <p className="text-lg leading-relaxed text-slate-500">
+                      {item.desc}
+                    </p>
                   </div>
                   <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
                 </TiltCard>
@@ -230,7 +229,9 @@ export default function EmployeesClient() {
                     <h3 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-600">
                       {item.title}
                     </h3>
-                    <p className="text-lg leading-relaxed text-slate-500">{item.desc}</p>
+                    <p className="text-lg leading-relaxed text-slate-500">
+                      {item.desc}
+                    </p>
                   </div>
                   <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
                 </TiltCard>
@@ -264,39 +265,20 @@ export default function EmployeesClient() {
           <AppleCardsCarouselDemo />
         </div>
 
-        <div className="mx-auto max-w-4xl px-6 py-40">
-          <div className="mb-24 text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
-            >
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
-              Support
-            </motion.div>
-            <h2 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl">
+        <PinnedFAQSection
+          eyebrow="Support"
+          title={
+            <>
               Frequently Asked{" "}
               <span className="bg-linear-to-r from-emerald-700 via-green-600 to-emerald-600 bg-clip-text text-transparent">
                 Questions
               </span>
-            </h2>
-          </div>
-
-          <div className="space-y-6">
-            {faqs.map((faq, index) => (
-              <FAQCard
-                key={index}
-                question={faq.question}
-                answer={faq.answer}
-                isOpen={openIndex === index}
-                onToggle={() =>
-                  setOpenIndex(openIndex === index ? null : index)
-                }
-              />
-            ))}
-          </div>
-        </div>
+            </>
+          }
+          intro="Learn about accessing your earned wages, payout timing, fees, and eligibility."
+          faqs={faqs}
+          initialOpenIndex={null}
+        />
       </section>
     </main>
   );
