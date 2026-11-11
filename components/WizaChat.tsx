@@ -252,7 +252,6 @@ function SessionItem({
         </div>
       </div>
 
-      {/* Delete */}
       {confirming ? (
         <div
           className="absolute top-2 right-2 flex gap-1"
@@ -427,7 +426,6 @@ export default function WizaChat() {
               maxWidth: isMobile ? "calc(100vw - 1rem)" : undefined,
             }}
           >
-            {/* ── History sidebar ── */}
             <AnimatePresence>
               {showHistory && !isMinimized && (
                 <motion.div
@@ -443,7 +441,6 @@ export default function WizaChat() {
                     height: isMobile ? "100%" : undefined,
                   }}
                 >
-                  {/* Sidebar header */}
                   <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-3.5 py-3 dark:border-slate-800">
                     <span className="text-xs font-semibold tracking-widest text-slate-600 uppercase dark:text-slate-300">
                       History
@@ -473,7 +470,7 @@ export default function WizaChat() {
                     </div>
                   </div>
 
-                  {/* Session list */}
+                  
                   <div className="min-h-0 flex-1 space-y-1 overflow-y-auto px-2 py-2">
                     {sessions.length === 0 ? (
                       <div className="flex h-32 flex-col items-center justify-center px-4 text-center">
@@ -498,7 +495,6 @@ export default function WizaChat() {
               )}
             </AnimatePresence>
 
-            {/* ── Main chat panel ── */}
             <div
               className={cn(
                 "flex min-h-0 min-w-0 flex-1 flex-col",
@@ -506,7 +502,6 @@ export default function WizaChat() {
               )}
               style={{ width: isMobile ? "100%" : CHAT_W }}
             >
-              {/* Header */}
               <div className="flex items-center justify-between bg-emerald-700 px-4 py-3 dark:bg-emerald-800">
                 <div className="flex items-center gap-2.5">
                   <div className="relative">
@@ -567,7 +562,6 @@ export default function WizaChat() {
 
               {!isMinimized && (
                 <>
-                  {/* Loading history overlay */}
                   {loadingHistory && (
                     <div className="flex items-center justify-center gap-2 border-b border-emerald-100 bg-emerald-50 py-3 dark:border-emerald-900 dark:bg-emerald-950/30">
                       <Loader2 className="h-3.5 w-3.5 animate-spin text-emerald-600" />
@@ -577,7 +571,6 @@ export default function WizaChat() {
                     </div>
                   )}
 
-                  {/* Messages */}
                   <div
                     ref={scrollRef}
                     className="min-h-0 flex-1 space-y-4 overflow-y-auto scroll-smooth px-3 py-3 sm:px-4 sm:py-4"
@@ -623,7 +616,7 @@ export default function WizaChat() {
                             </div>
                             <div
                               className={cn(
-                                "min-w-0 rounded-2xl px-3 py-2.5 text-sm leading-relaxed [overflow-wrap:anywhere] break-words",
+                                "min-w-0 rounded-2xl px-3 py-2.5 text-sm leading-relaxed wrap-break-word",
                                 isUser
                                   ? "rounded-br-sm bg-emerald-600 text-white shadow-sm shadow-emerald-500/20"
                                   : "rounded-bl-sm border border-slate-200 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
@@ -657,7 +650,6 @@ export default function WizaChat() {
                       );
                     })}
 
-                    {/* Thinking indicator */}
                     {streaming && (
                       <motion.div
                         initial={{ opacity: 0, y: 6 }}
@@ -675,7 +667,6 @@ export default function WizaChat() {
                       </motion.div>
                     )}
 
-                    {/* Error state */}
                     {error && !streaming && (
                       <div className="flex justify-center">
                         <div className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 dark:border-red-900 dark:bg-red-950/40">
@@ -693,9 +684,7 @@ export default function WizaChat() {
                     )}
                   </div>
 
-                  {/* Input */}
                   <div className="shrink-0 border-t border-slate-100 px-2 pt-2 pb-2 sm:px-3 sm:pb-3 dark:border-slate-800">
-                    {/* File preview */}
                     {attachment && (
                       <div className="mb-2">
                         <FilePreview
@@ -705,7 +694,6 @@ export default function WizaChat() {
                       </div>
                     )}
 
-                    {/* GIF picker */}
                     <div className="relative">
                       <AnimatePresence>
                         {showGifPicker && (
@@ -767,7 +755,7 @@ export default function WizaChat() {
                     </form>
                   </div>
 
-                  {/* Footer */}
+                  
                   <div className="flex items-center justify-between px-3 pb-2.5 sm:px-4">
                     <button
                       onClick={() => {
@@ -789,7 +777,7 @@ export default function WizaChat() {
         )}
       </AnimatePresence>
 
-      {/* FAB */}
+      
       <motion.div whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}>
         <button
           onClick={toggleChat}

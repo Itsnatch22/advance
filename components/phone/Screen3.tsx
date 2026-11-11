@@ -15,9 +15,9 @@ export default function Screen3() {
 
   return (
     <div className="flex h-full flex-col items-center justify-center bg-[#F8F9F7] px-5 py-4">
-      {/* Animated checkmark */}
+      
       <div className="relative mb-5 flex h-20 w-20 items-center justify-center">
-        {/* Burst particles */}
+        
         {Array.from({ length: 6 }).map((_, i) => (
           <motion.div
             key={i}
@@ -34,7 +34,7 @@ export default function Screen3() {
         ))}
 
         <svg viewBox="0 0 56 56" className="h-full w-full">
-          {/* Circle draw-on */}
+          
           <motion.circle
             cx="28"
             cy="28"
@@ -47,7 +47,7 @@ export default function Screen3() {
             animate={{ pathLength: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           />
-          {/* Checkmark draw-on */}
+          
           <motion.path
             d="M17 28.5L24 36L39 20"
             fill="none"
@@ -62,7 +62,7 @@ export default function Screen3() {
         </svg>
       </div>
 
-      {/* Amount */}
+      
       <p className="text-4xl font-bold text-[#0A0A0A]">
         {fmt(DISBURSED_AMOUNT_KES)} Sent
       </p>
@@ -92,7 +92,7 @@ export default function Screen3() {
         </div>
       </div>
 
-      {/* Action buttons */}
+      
       <div className="mt-4 flex w-full flex-col gap-3">
         <button className="w-full rounded-xl border border-[#E5E7EB] bg-transparent py-3">
           <span className="text-sm font-semibold text-[#0A0A0A]">

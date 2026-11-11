@@ -83,7 +83,7 @@ export default function UnsubscribePage() {
         }`}
       >
         <div className="relative bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-          {/* Header */}
+          
           <div className="px-8 py-5 border-b border-slate-200 flex items-center gap-3">
             <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
               <Wallet className="h-4 w-4 text-white" strokeWidth={2} aria-hidden="true" />
@@ -91,7 +91,7 @@ export default function UnsubscribePage() {
             <span className="font-serif text-xl text-slate-900 tracking-tight">EaziWage</span>
           </div>
 
-          {/* Body */}
+          
           <div className="px-8 py-8">
             {status === "success" ? (
               <div className="text-center py-4">
@@ -218,7 +218,7 @@ export default function UnsubscribePage() {
             )}
           </div>
 
-          {/* Footer */}
+          
           <div className="px-8 py-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-400">
             <span>© {new Date().getFullYear()} EaziWage</span>
             <div className="flex gap-4">

@@ -16,18 +16,18 @@ export function Team() {
   return (
     <section className="relative flex flex-col items-center justify-center overflow-hidden bg-white px-4 py-12 antialiased dark:bg-grid-white/[0.05] sm:px-6 lg:py-20">
       
-      {/* Heading Section */}
+      
       <div className="relative z-10 mb-10 max-w-4xl text-center">
         <h2 className="font-serif text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl dark:text-white">
           What The <span className="text-green-600 dark:text-green-400">Team </span>
-          <br className="block sm:hidden" /> {/* Break line on tiny screens for better flow */}
+          <br className="block sm:hidden" /> 
           <Highlighter action="underline" color="#008000">
             Had To Say
           </Highlighter>
         </h2>
       </div>
 
-      {/* Team Grid */}
+      
       <div className="grid w-full max-w-6xl grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4 md:gap-10">
         {team.map((member, i) => (
           <motion.div
@@ -38,7 +38,7 @@ export function Team() {
             viewport={{ once: true }}
             className="group flex flex-col items-center"
           >
-            {/* Responsive Image Container */}
+            
             <div className="relative aspect-square w-full max-w-37.5 overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:shadow-xl sm:rounded-full md:max-w-45">
               <Image
                 src={member.image}
@@ -55,7 +55,7 @@ export function Team() {
         ))}
       </div>
 
-      {/* Testimonials Slider */}
+      
       <div className="mt-12 w-full max-w-7xl sm:mt-16 lg:mt-24">
         <InfiniteMovingCards
           items={testimonials}

@@ -20,7 +20,7 @@ import { EMAIL_CONFIG } from '@/constants/config';
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { useParallax } from "@/hooks/use-parallax";
 
-/* ---------- Shared primitives (same as Careers) ---------- */
+
 
 const TiltCard = ({
   children,
@@ -58,7 +58,7 @@ const TiltCard = ({
   );
 };
 
-/* ---------- Page ---------- */
+
 
 export default function DocsPage() {
   const containerRef = useRef<HTMLElement>(null);
@@ -72,7 +72,7 @@ export default function DocsPage() {
 
   return (
     <section className="overflow-hidden relative min-h-screen bg-white"><div className="relative z-10">
-      {/* Background */}
+      
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
@@ -86,7 +86,7 @@ export default function DocsPage() {
         />
       </div>
 
-      {/* Hero */}
+      
       <motion.section
         ref={containerRef}
         style={{ y: yHero, opacity: opacityHero }}
@@ -145,7 +145,7 @@ export default function DocsPage() {
         </motion.div>
       </motion.section>
 
-      {/* What's Coming Section */}
+      
       <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
         <div className="mb-24 text-center">
           <motion.div
@@ -170,7 +170,7 @@ export default function DocsPage() {
         <DocsGrid />
       </section>
 
-      {/* Why Build on EaziWage */}
+      
       <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
         <div className="mb-24 text-center">
           <motion.div
@@ -193,7 +193,7 @@ export default function DocsPage() {
   );
 }
 
-/* ---------- Docs sections grid ---------- */
+
 
 function DocsGrid() {
   const sections = [
@@ -258,7 +258,7 @@ function DocsGrid() {
   );
 }
 
-/* ---------- Developer perks grid ---------- */
+
 
 function DevPerksGrid() {
   const perks = [

@@ -110,7 +110,7 @@ export default function SchedulePage() {
   return (
     <>
       <main className="relative min-h-screen overflow-hidden bg-white">
-        {/* Background Elements */}
+        
         <div className="pointer-events-none fixed inset-0">
           <FloatingOrb
             color="bg-green-100"
@@ -127,7 +127,7 @@ export default function SchedulePage() {
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-40">
           <div className="grid gap-16 lg:grid-cols-12 lg:items-start">
-            {/* Left Content */}
+            
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -220,7 +220,7 @@ export default function SchedulePage() {
               </div>
             </motion.div>
 
-            {/* Right Content: Calendly Embed */}
+            
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}

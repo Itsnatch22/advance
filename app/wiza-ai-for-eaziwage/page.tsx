@@ -393,7 +393,7 @@ export default function Wiza() {
 
   return (
     <section className="relative overflow-hidden bg-white py-16 sm:py-24 dark:bg-slate-950">
-      {/* Ambient orbs */}
+      
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-emerald-100"
@@ -409,7 +409,7 @@ export default function Wiza() {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid min-w-0 items-start gap-10 lg:grid-cols-2 lg:gap-24">
-          {/* ── Left: copy ─────────────────────────────────────────────── */}
+          
           <div className="relative z-10 lg:sticky lg:top-24">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -488,7 +488,7 @@ export default function Wiza() {
             </motion.div>
           </div>
 
-          {/* ── Right: chat widget ────────────────────────────────────── */}
+          
           <motion.div
             className="min-w-0"
             initial={{ opacity: 0, scale: 0.96 }}
@@ -497,7 +497,7 @@ export default function Wiza() {
             transition={{ delay: 0.32 }}
           >
             <div className="relative flex h-[min(42rem,calc(100dvh-7rem))] min-h-[30rem] w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200/60 bg-white shadow-2xl sm:h-[42rem] sm:min-h-0 sm:rounded-[2.5rem] dark:border-slate-800 dark:bg-slate-900">
-              {/* Summary modal overlay */}
+              
               {showSummaryModal && (
                 <SummaryModal
                   onConfirm={handleSummaryConfirm}
@@ -505,7 +505,7 @@ export default function Wiza() {
                 />
               )}
 
-              {/* Header */}
+              
               <div className="flex shrink-0 items-center justify-between gap-2 border-b border-slate-100 px-3 py-3 sm:px-5 sm:py-4 dark:border-slate-800">
                 <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                   <div className="relative">
@@ -562,7 +562,7 @@ export default function Wiza() {
                 </div>
               </div>
 
-              {/* Summary status toast */}
+              
               <AnimatePresence>
                 {summaryStatus && (
                   <motion.div
@@ -579,7 +579,7 @@ export default function Wiza() {
                 )}
               </AnimatePresence>
 
-              {/* Messages */}
+              
               <div
                 ref={messageScrollRef}
                 onScroll={handleMessageScroll}
@@ -597,7 +597,7 @@ export default function Wiza() {
                       <div
                         className={`flex max-w-[85%] items-end gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
                       >
-                        {/* Avatar */}
+                        
                         <div
                           className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
                             msg.role === "user"
@@ -612,7 +612,7 @@ export default function Wiza() {
                           )}
                         </div>
 
-                        {/* Bubble */}
+                        
                         <div
                           className={`min-w-0 rounded-2xl px-3 py-2.5 text-sm leading-relaxed [overflow-wrap:anywhere] break-words sm:px-4 sm:py-3 ${
                             msg.role === "user"
@@ -664,7 +664,7 @@ export default function Wiza() {
                   </div>
                 ) : null}
 
-                {/* Error banner */}
+                
                 <AnimatePresence>
                   {error && (
                     <motion.div
@@ -682,9 +682,9 @@ export default function Wiza() {
                 </AnimatePresence>
               </div>
 
-              {/* Input */}
+              
               <div className="shrink-0 border-t border-slate-100 px-2 pt-2 pb-3 sm:px-4 sm:pb-4 dark:border-slate-800">
-                {/* File preview */}
+                
                 {attachment && (
                   <div className="mb-2">
                     <FilePreview
@@ -694,7 +694,7 @@ export default function Wiza() {
                   </div>
                 )}
 
-                {/* GIF picker */}
+                
                 <div className="relative">
                   <AnimatePresence>
                     {showGifPicker && (
@@ -711,7 +711,7 @@ export default function Wiza() {
                   onSubmit={handleSubmit}
                   className="relative flex min-w-0 items-center gap-1 rounded-2xl sm:gap-2"
                 >
-                  {/* Toolbar buttons */}
+                  
                   <div className="flex items-center gap-1">
                     <FileAttachButton
                       onFile={setAttachment}

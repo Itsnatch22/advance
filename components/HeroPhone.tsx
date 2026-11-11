@@ -100,7 +100,7 @@ export default function HeroPhone({
 
       <FloatingNotification />
 
-      {/* Ambient glow */}
+      
       <div className="absolute -bottom-10 -left-10 -z-10 h-64 w-64 rounded-full bg-green-500/10 blur-3xl" />
     </div>
   );

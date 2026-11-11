@@ -231,7 +231,7 @@ export default function FAQPage() {
 
   return (
     <section className="overflow-hidden relative min-h-screen bg-white"><div className="relative z-10">
-      {/* Immersive Background */}
+      
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
@@ -245,7 +245,7 @@ export default function FAQPage() {
         />
       </div>
 
-      {/* HERO */}
+      
       <section className="relative pt-40 pb-32 lg:pt-56 lg:pb-48">
         <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
           <motion.div
@@ -292,7 +292,7 @@ export default function FAQPage() {
             </a>
           </motion.div>
 
-          {/* SEARCH */}
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -309,7 +309,7 @@ export default function FAQPage() {
           </motion.div>
         </div></section>
 
-      {/* CATEGORIES */}
+      
       {!searchQuery && (
         <section className="relative z-10 border-y border-slate-100 bg-white/40 py-12 backdrop-blur-md">
           <div className="flex flex-wrap justify-center gap-4 px-6">
@@ -330,7 +330,7 @@ export default function FAQPage() {
           </div></section>
       )}
 
-      {/* FAQ LIST */}
+      
       <section className="relative z-10 py-40">
         <div className="mx-auto max-w-4xl px-6">
           {!searchQuery && currentCategory && (

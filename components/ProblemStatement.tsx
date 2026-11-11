@@ -29,7 +29,7 @@ export default function ProblemStatement() {
 
   return (
     <section ref={ref} className="relative overflow-hidden bg-white py-40">
-      {/* Background architectural elements */}
+      
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute top-1/2 left-0 h-125 w-125 -translate-y-1/2 rounded-full bg-green-50/50 blur-[120px]" />
         <div className="absolute top-0 right-0 h-px w-full bg-linear-to-r from-transparent via-slate-200 to-transparent" />

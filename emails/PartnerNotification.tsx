@@ -34,7 +34,7 @@ export default function PartnerNotificationEmail({
       showBorderTop
       footerLinks={[]}
     >
-      {/* Content */}
+      
       <Section>
         <Heading style={h1}>New Partnership Application</Heading>
 
@@ -55,7 +55,7 @@ export default function PartnerNotificationEmail({
   );
 }
 
-/* ----------------------------- styles ----------------------------- */
+
 
 const h1 = {
   color: "#0f172a",

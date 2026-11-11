@@ -290,7 +290,7 @@ export default function StatusPage() {
     <main className="min-h-screen bg-zinc-50 pt-32 pb-12 dark:bg-zinc-950">
       <div className="container mx-auto max-w-4xl px-4">
 
-        {/* ── Header ── */}
+        
         <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div>
             <h1 className="font-playfair mb-2 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
@@ -320,7 +320,7 @@ export default function StatusPage() {
           </div>
         </div>
 
-        {/* ── Alerts ── */}
+        
         <AnimatePresence>
           {fetchError && (
             <motion.div
@@ -344,7 +344,7 @@ export default function StatusPage() {
           )}
         </AnimatePresence>
 
-        {/* ── Global banner ── */}
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           className={`mb-8 flex flex-col items-center gap-6 rounded-2xl border-2 p-6 md:flex-row ${banner.border} ${banner.bg}`}
@@ -364,7 +364,7 @@ export default function StatusPage() {
           <StatusBadge status={data?.status ?? "unknown"} stale={data?.stale} />
         </motion.div>
 
-        {/* ── Service grid ── */}
+        
         <div className="mb-4 flex items-center gap-2 px-1">
           <Server className="h-5 w-5 text-zinc-400" />
           <h3 className="text-lg font-semibold text-zinc-700 dark:text-zinc-300">Services</h3>
@@ -409,7 +409,7 @@ export default function StatusPage() {
           ))}
         </div>
 
-        {/* ── Calendar tracker ── */}
+        
         <motion.div
           initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }} className="mb-8"
@@ -455,7 +455,7 @@ export default function StatusPage() {
             </CardHeader>
 
             <CardContent className="p-5 sm:p-6">
-              {/* Legend */}
+              
               <div className="mb-4 flex flex-wrap items-center gap-4 text-xs text-zinc-500">
                 {(["healthy", "degraded", "down", undefined] as (APIStatus | undefined)[]).map((s) => (
                   <div key={s ?? "none"} className="inline-flex items-center gap-2">
@@ -465,7 +465,7 @@ export default function StatusPage() {
                 ))}
               </div>
 
-              {/* Weekday headers */}
+              
               <div className="grid grid-cols-7 gap-1.5">
                 {WEEKDAY_LABELS.map((day) => (
                   <div key={day} className="pb-2 text-center text-[10px] font-bold tracking-[0.22em] text-zinc-400 uppercase">
@@ -499,7 +499,7 @@ export default function StatusPage() {
                         <span className={`mt-0.5 h-2 w-2 rounded-full ${statusDotClass(dayStatus)}`} />
                       </div>
 
-                      {/* Hover tooltip for incident detail */}
+                      
                       {isHovered && (incident || day.isToday) && (
                         <div className="absolute bottom-full left-1/2 z-10 mb-2 w-48 -translate-x-1/2 rounded-lg border border-zinc-200 bg-white p-3 text-xs shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
                           <p className="font-bold text-zinc-800 dark:text-zinc-100">
@@ -530,7 +530,7 @@ export default function StatusPage() {
           </Card>
         </motion.div>
 
-        {/* ── Footer ── */}
+        
         <p className="mt-4 text-center text-xs text-zinc-400">
           Checks run every 15 minutes via automated pipeline.{" "}
           {data?.last_checked_at && (

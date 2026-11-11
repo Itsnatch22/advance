@@ -17,7 +17,7 @@ export default function Screen2() {
 
   return (
     <div className="flex h-full flex-col bg-[#F8F9F7] px-5 py-3">
-      {/* Header */}
+      
       <div className="mb-5 flex items-center gap-3">
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F3F4F6]">
           <ChevronLeft className="h-4 w-4 text-[#0A0A0A]" strokeWidth={2.5} />
@@ -25,7 +25,7 @@ export default function Screen2() {
         <p className="text-[15px] font-bold text-[#0A0A0A]">Request Wages</p>
       </div>
 
-      {/* Amount */}
+      
       <div className="mb-5 text-center">
         <p className="text-[10px] tracking-widest text-[#6B7280] uppercase">
           Request amount
@@ -34,7 +34,7 @@ export default function Screen2() {
           {fmt(REQUESTED_AMOUNT_KES)}
         </p>
 
-        {/* +/− with mini track */}
+        
         <div className="mx-auto flex w-fit items-center gap-4">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F3F4F6] text-lg font-bold text-[#0A0A0A] select-none">
             −
@@ -51,7 +51,7 @@ export default function Screen2() {
         </p>
       </div>
 
-      {/* Breakdown card */}
+      
       <div className="mb-4 rounded-2xl bg-[#F3F4F6] p-4">
         <div className="flex items-center justify-between py-1">
           <span className="text-xs text-[#6B7280]">You receive</span>
@@ -88,7 +88,7 @@ export default function Screen2() {
         </div>
       </div>
 
-      {/* CTA */}
+      
       <button className="mb-2 flex w-full items-center justify-center rounded-xl bg-[#0A0A0A] py-3">
         <span className="text-sm font-semibold text-white">
           Confirm Request

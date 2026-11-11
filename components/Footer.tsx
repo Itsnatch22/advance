@@ -146,7 +146,7 @@ export default function Footer() {
                 onSubmit={handleSubmit}
                 className="relative flex flex-col gap-3 rounded-2xl sm:flex-row sm:gap-4"
               >
-                {/* Honeypot field */}
+                
                 <input
                   type="text"
                   value={honeypot}
@@ -198,7 +198,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Trust Strip */}
+      
       <div className="border-t border-slate-800/60 bg-slate-950/90 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
           <div className="grid gap-4 rounded-2xl border border-emerald-500/15 bg-linear-to-r from-slate-900 via-slate-900 to-emerald-950/40 p-5 shadow-[0_0_0_1px_rgba(16,185,129,0.04)] sm:gap-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
@@ -259,10 +259,10 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Main footer content - enhanced spacing and typography */}
+      
       <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-12 md:grid-cols-5 lg:gap-16">
-          {/* Brand - enhanced styling */}
+          
           <div className="space-y-5 sm:col-span-2 md:col-span-1">
             <Link href="/" className="group inline-flex items-center gap-2.5">
               <motion.div
@@ -284,7 +284,7 @@ export default function Footer() {
               reducing financial stress and boosting workplace performance.
             </p>
 
-            {/* Enhanced social links */}
+            
             <div className="flex gap-3 pt-2">
               {[
                 {
@@ -328,7 +328,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Product - enhanced link styling */}
+          
           <div>
             <h3 className="mb-5 font-serif text-lg font-bold text-white sm:mb-6 sm:text-xl">
               Product
@@ -351,7 +351,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Company - enhanced link styling */}
+          
           <div>
             <h3 className="mb-5 font-serif text-lg font-bold text-white sm:mb-6 sm:text-xl">
               Company
@@ -379,7 +379,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal - enhanced link styling */}
+          
           <div>
             <h3 className="mb-5 font-serif text-lg font-bold text-white sm:mb-6 sm:text-xl">
               Legal
@@ -410,7 +410,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact - enhanced with icon containers */}
+          
           <div>
             <h3 className="mb-5 font-serif text-lg font-bold text-white sm:mb-6 sm:text-xl">
               Contact
@@ -452,7 +452,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar - enhanced layout and styling */}
+        
         <div className="mt-12 flex flex-col items-center justify-between gap-5 border-t border-slate-800/60 pt-8 sm:mt-16 sm:pt-10 md:flex-row">
           <p className="text-center text-xs text-slate-500 sm:text-sm md:text-left">
             &copy; {FOUNDING_YEAR} - {currentYear ?? ""} EaziWage. All Rights

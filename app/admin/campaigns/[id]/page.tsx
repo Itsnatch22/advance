@@ -551,7 +551,7 @@ export default function CampaignDetailPage() {
         transition={{ duration: 0.3 }}
         className="space-y-8"
       >
-        {/* Back link */}
+        
         <Link
           href="/admin/campaigns"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-emerald-700"
@@ -560,7 +560,7 @@ export default function CampaignDetailPage() {
           All Campaigns
         </Link>
 
-        {/* Action-level error */}
+        
         <AnimatePresence>
           {actionError && (
             <motion.div
@@ -598,7 +598,7 @@ export default function CampaignDetailPage() {
           )}
         </AnimatePresence>
 
-        {/* ── Overview card ── */}
+        
         <div className="rounded-[2rem] border border-slate-200/60 bg-white p-6 shadow-sm ring-1 ring-slate-900/5 sm:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
@@ -640,7 +640,7 @@ export default function CampaignDetailPage() {
             )}
           </div>
 
-          {/* Edit fields */}
+          
           <AnimatePresence>
             {editing && (
               <motion.div
@@ -663,7 +663,7 @@ export default function CampaignDetailPage() {
                       className="mt-2 w-full rounded-xl border border-slate-200/60 bg-slate-50 px-3 py-2 text-sm text-slate-700"
                     >
                       <option value="">— none —</option>
-                      {/* templates are loaded above in the file's useEffect */}
+                      
                       {templates.map((t) => (
                         <option key={t.id} value={t.id}>
                           {t.name}
@@ -795,7 +795,7 @@ export default function CampaignDetailPage() {
             )}
           </AnimatePresence>
 
-          {/* Metadata */}
+          
           <div className="mt-6 grid grid-cols-2 gap-4 border-t border-slate-100 pt-5 text-sm sm:grid-cols-4">
             <div>
               <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
@@ -832,7 +832,7 @@ export default function CampaignDetailPage() {
           </div>
         </div>
 
-        {/* ── Actions bar ── */}
+        
         <div className="rounded-[2rem] border border-slate-200/60 bg-white px-6 py-5 shadow-sm ring-1 ring-slate-900/5">
           <h2 className="mb-4 font-serif text-lg font-semibold text-slate-900">
             Actions
@@ -868,7 +868,7 @@ export default function CampaignDetailPage() {
           </div>
         </div>
 
-        {/* ── Stats ── */}
+        
         {stats && (
           <div>
             <h2 className="mb-4 font-serif text-xl font-semibold text-slate-900">
@@ -907,7 +907,7 @@ export default function CampaignDetailPage() {
           </div>
         )}
 
-        {/* ── Logs ── */}
+        
         {logs.length > 0 && (
           <div>
             <h2 className="mb-4 font-serif text-xl font-semibold text-slate-900">
@@ -963,7 +963,7 @@ export default function CampaignDetailPage() {
         )}
       </motion.div>
 
-      {/* ── Modals ── */}
+      
       <AnimatePresence>
         {showTestModal && (
           <TestEmailModal

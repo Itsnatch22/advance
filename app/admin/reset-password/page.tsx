@@ -54,6 +54,7 @@ export default function AdminResetPasswordPage() {
         return;
       }
 
+      setEmail("");
       setMode("sent");
     } catch {
       setError("Unable to request a reset right now. Please try again later.");
@@ -84,6 +85,8 @@ export default function AdminResetPasswordPage() {
         return;
       }
 
+      setPassword("");
+      setConfirmPassword("");
       setMode("complete");
     } catch {
       setError(

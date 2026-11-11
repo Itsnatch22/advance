@@ -50,7 +50,7 @@ export default function UnsubscribeConfirmation({
   );
 }
 
-/* ----------------------------- styles ----------------------------- */
+
 
 const h1 = {
   color: "#0f172a",

@@ -13,7 +13,7 @@ export default function Screen1() {
 
   return (
     <div className="flex h-full flex-col bg-[#F8F9F7] px-5 py-3">
-      {/* Header */}
+      
       <div className="mb-4 flex items-center justify-between">
         <div>
           <p className="text-[10px] tracking-widest text-[#6B7280] uppercase">
@@ -27,7 +27,7 @@ export default function Screen1() {
         </div>
       </div>
 
-      {/* Balance Card */}
+      
       <div className="mb-3 rounded-2xl bg-[#0A0A0A] p-4 text-white">
         <p className="mb-2 text-[10px] tracking-widest text-white/50 uppercase">
           Earned this period
@@ -37,7 +37,7 @@ export default function Screen1() {
           of {fmt(24_000)} total salary
         </p>
 
-        {/* Progress bar */}
+        
         <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
           <motion.div
             className="h-full rounded-full bg-[#10B981]"
@@ -54,13 +54,13 @@ export default function Screen1() {
         </div>
       </div>
 
-      {/* CTA */}
+      
       <button className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0A0A0A] py-3">
         <span className="text-sm font-semibold text-white">Access Wages</span>
         <ArrowRight className="h-4 w-4 text-white" strokeWidth={2.5} />
       </button>
 
-      {/* Bottom stats */}
+      
       <div className="grid grid-cols-3 gap-2">
         {[
           { label: "Next payday", value: "8 days" },

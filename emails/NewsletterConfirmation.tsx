@@ -37,7 +37,7 @@ export default function NewsletterConfirmation({ email, confirmUrl }: Newsletter
   );
 }
 
-/* ----------------------------- styles ----------------------------- */
+
 
 const h1 = {
   color: "#0f172a",

@@ -102,7 +102,7 @@ const Navbar = () => {
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-18 sm:px-6 lg:px-8">
-        {/* Logo - Enhanced */}
+        
         <Link href="/" className="group flex items-center gap-2.5">
           <motion.div
             whileHover={{ rotate: 5, scale: 1.1 }}
@@ -119,7 +119,7 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* Desktop Nav - Enhanced */}
+        
         <div className="hidden items-center gap-8 lg:flex">
           {links.map((link, i) => (
             <div key={i} className="relative">
@@ -143,7 +143,7 @@ const Navbar = () => {
                 />
               </Link>
 
-              {/* Enhanced Dropdown */}
+              
               <AnimatePresence>
                 {openDrawer === i && link.drawer && (
                   <motion.div
@@ -182,7 +182,7 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Right side buttons - Enhanced */}
+        
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             href={process.env.NEXT_PUBLIC_DASHBOARD_APP_URL ?? "https://app.eaziwage.com"}
@@ -208,7 +208,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Mobile toggle - Enhanced */}
+        
         <button
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
@@ -224,7 +224,7 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Drawer - Enhanced */}
+      
       <AnimatePresence>
         {mobileOpen && (
           <motion.div

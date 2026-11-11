@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Script from "next/script";
 
-/* ----------------------------- validation ----------------------------- */
+
 
 const salesSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -99,7 +99,7 @@ const StatCard = ({ value, label }: { value: string; label: string }) => (
   </motion.div>
 );
 
-/* ------------------------------ page ----------------------------- */
+
 
 export default function SalesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -182,7 +182,7 @@ export default function SalesPage() {
         strategy="lazyOnload"
       />
       <main className="relative min-h-screen overflow-hidden bg-white">
-        {/* Simple Background - consistent with other pages */}
+        
         <div className="pointer-events-none fixed inset-0 overflow-hidden">
           <div className="absolute top-0 right-[-10%] h-200 w-200 rounded-full bg-green-50/50 blur-[120px]" />
           <div className="absolute bottom-[-20%] left-[-10%] h-150 w-150 rounded-full bg-emerald-50/50 blur-[120px]" />
@@ -190,7 +190,7 @@ export default function SalesPage() {
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-40">
           <div className="grid gap-20 lg:grid-cols-2 lg:items-center">
-            {/* Left Side: Info */}
+            
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -247,7 +247,7 @@ export default function SalesPage() {
               </div>
             </motion.div>
 
-            {/* Right Side: Form */}
+            
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}

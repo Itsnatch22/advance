@@ -15,7 +15,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-/* ----------------------------- validation ----------------------------- */
+
 
 const partnerFormSchema = z.object({
   partnerType: z.enum(["banking", "enterprise", "technology", "investor", "suppliers", "others"], {
@@ -37,7 +37,7 @@ const partnerFormSchema = z.object({
 
 type PartnerFormData = z.infer<typeof partnerFormSchema>;
 
-/* ----------------------------- components ----------------------------- */
+
 
 function FormField({
   label,
@@ -64,7 +64,7 @@ function FormField({
   );
 }
 
-/* ------------------------------ page ----------------------------- */
+
 
 export default function PartnerOnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -143,7 +143,7 @@ export default function PartnerOnboardingPage() {
   return (
     <main className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-green-50 py-24 dark:from-neutral-950 dark:via-neutral-900 dark:to-emerald-950">
       <div className="mx-auto max-w-4xl px-6">
-        {/* Header */}
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -159,7 +159,7 @@ export default function PartnerOnboardingPage() {
           </p>
         </motion.div>
 
-        {/* Form */}
+        
         <motion.form
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -168,7 +168,7 @@ export default function PartnerOnboardingPage() {
           className="relative overflow-hidden rounded-3xl bg-white p-8 shadow-2xl sm:p-12 dark:bg-neutral-900"
         >
           <div className="space-y-8">
-            {/* Partner Type */}
+            
             <FormField
               label="I'm interested in partnering as a"
               error={errors.partnerType?.message}
@@ -203,7 +203,7 @@ export default function PartnerOnboardingPage() {
               </div>
             </FormField>
 
-            {/* Company Info */}
+            
             <div className="grid gap-6 sm:grid-cols-2">
               <FormField
                 label="Company Name"
@@ -228,7 +228,7 @@ export default function PartnerOnboardingPage() {
               </FormField>
             </div>
 
-            {/* Contact Info */}
+            
             <div className="grid gap-6 sm:grid-cols-2">
               <FormField
                 label="Contact Name"
@@ -281,7 +281,7 @@ export default function PartnerOnboardingPage() {
               </FormField>
             </div>
 
-            {/* Company Size */}
+            
             <FormField
               label="Company Size (Employees)"
               error={errors.companySize?.message}
@@ -299,7 +299,7 @@ export default function PartnerOnboardingPage() {
               </select>
             </FormField>
 
-            {/* Message */}
+            
             <FormField
               label="Tell us about your partnership interest"
               error={errors.message?.message}
@@ -312,7 +312,7 @@ export default function PartnerOnboardingPage() {
               />
             </FormField>
 
-            {/* Submit Button */}
+            
             <motion.button
               type="submit"
               disabled={isSubmitting}

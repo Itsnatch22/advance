@@ -30,13 +30,13 @@ export const TiltCard = ({ children, className }: TiltCardProps) => {
           className
         )}
       >
-        {/* Spotlight that follows the cursor */}
+        
         <motion.div
           style={{ background: spotlightBackground }}
           className="pointer-events-none absolute inset-0"
         />
         {children}
-        {/* Thin emerald accent bar that slides in on hover */}
+        
         <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-emerald-500 transition-all duration-700 group-hover:w-full" />
       </motion.div>
     </motion.div>

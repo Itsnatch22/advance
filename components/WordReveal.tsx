@@ -8,7 +8,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 const SENTENCE = "Your salary shouldn't make you wait — your work already happened.";
 
-// Split into words, preserving the em dash as its own token
 const words = SENTENCE.split(" ");
 
 export default function WordReveal() {
@@ -44,12 +43,11 @@ export default function WordReveal() {
       className="relative w-full py-28 px-6 flex items-center justify-center overflow-hidden"
       aria-label="Brand statement"
     >
-      {/* Subtle radial glow behind text — matches EaziWage emerald palette */}
       <div
         className="pointer-events-none absolute inset-0 flex items-center justify-center"
         aria-hidden="true"
       >
-        <div className="h-[340px] w-[640px] rounded-full bg-emerald-500/5 blur-3xl" />
+        <div className="h-85 w-160 rounded-full bg-emerald-500/5 blur-3xl" />
       </div>
 
       <p className="relative max-w-4xl text-center font-serif text-4xl font-semibold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-5xl md:text-6xl lg:text-7xl">
@@ -64,7 +62,6 @@ export default function WordReveal() {
             >
               {word}
             </span>
-            {/* Space between words — not selectable */}
             {i < words.length - 1 && (
               <span aria-hidden="true">&nbsp;</span>
             )}

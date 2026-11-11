@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useCurrency } from "./CurrencyProvider";
 import { useParallax } from "@/hooks/use-parallax";
 
-/* ---------- FX Config ---------- */
+
 const FX_CACHE_KEY = "eazi_fx_v1";
 const FX_CACHE_TTL = 1000 * 60 * 60; // 1 hour
 
@@ -42,7 +42,7 @@ const CURRENCIES = {
 
 type CountryKey = keyof typeof CURRENCIES;
 
-/* ---------- FX Helpers ---------- */
+
 
 function formatCurrency(
   amountKES: number,
@@ -63,7 +63,7 @@ function formatCurrency(
   }
 }
 
-/** KES → display currency (numeric, for salary input). */
+
 function kesToDisplay(
   amountKES: number,
   country: CountryKey,
@@ -74,7 +74,7 @@ function kesToDisplay(
   return Math.round(amountKES * rate);
 }
 
-/** Display currency → KES (internal base). */
+
 function displayToKes(
   amountDisplay: number,
   country: CountryKey,
@@ -97,7 +97,7 @@ function usdToKes(rates: Record<string, number> | null): number {
   return 1 / usdRate;
 }
 
-/* ---------- Cache ---------- */
+
 function saveFxToCache(rates: Record<string, number>) {
   try {
     localStorage.setItem(
@@ -145,7 +145,7 @@ async function fetchFxWithRetries(
   throw lastErr;
 }
 
-/* ---------- UI Subcomponents ---------- */
+
 
 const LabeledNumber = ({
   label,
@@ -288,7 +288,7 @@ const TiltROICard = ({
   );
 };
 
-/* ---------- Main Component ---------- */
+
 
 export default function ROI() {
   const [headcount, setHeadcount] = useState(250);
@@ -326,7 +326,7 @@ export default function ROI() {
     setAvgSalaryKES(displayToKes(displayValue, selectedCountry, rates));
   }
 
-  /* ---------- Calculations ---------- */
+  
   const monthlyProductivityValue = useMemo(
     () => headcount * adoption * avgSalaryKES * productivityLift,
     [headcount, adoption, avgSalaryKES, productivityLift]
@@ -356,7 +356,7 @@ export default function ROI() {
   const totalMonthlyAdvances = headcount * adoption * advancesPerMonth;
   const totalEmployeeFeeVolumeKES = totalMonthlyAdvances * feePerAdvanceKES;
 
-  /* ---------- FX Loading ---------- */
+  
   useEffect(() => {
     let mounted = true;
     const cached = readFxFromCache();
@@ -417,7 +417,7 @@ export default function ROI() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
-        {/* Header */}
+        
         <div className="mb-20 grid items-end gap-8 lg:grid-cols-2">
           <div>
             <motion.div
@@ -467,7 +467,7 @@ export default function ROI() {
         </div>
 
         <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
-          {/* Left: Interactive Calculator */}
+          
           <TiltROICard>
             <div className="grid gap-8 sm:grid-cols-2">
               <LabeledNumber
@@ -478,7 +478,7 @@ export default function ROI() {
                 max={100_000}
               />
 
-              {/* Salary label + value both update with selected currency */}
+              
               <LabeledNumber
                 label={`Avg Salary (${currencyLabel})`}
                 value={salaryDisplayValue}
@@ -511,7 +511,7 @@ export default function ROI() {
                 />
               </div>
 
-              {/* Previously declared but never rendered */}
+              
               <div className="sm:col-span-2">
                 <LabeledNumber
                   label="Avg Advances per Employee / Month"
@@ -557,7 +557,7 @@ export default function ROI() {
               </div>
             </div>
 
-            {/* Metric Cards */}
+            
             <div className="mt-12 grid gap-4 sm:grid-cols-2">
               <MetricCard
                 title="Monthly Productivity Value"
@@ -602,7 +602,7 @@ export default function ROI() {
             </p>
           </TiltROICard>
 
-          {/* Right: Benefits Narrative */}
+          
           <div className="space-y-12 lg:sticky lg:top-32 lg:pl-12">
             <div className="space-y-6">
               <h3 className="font-serif text-3xl font-bold text-slate-900">

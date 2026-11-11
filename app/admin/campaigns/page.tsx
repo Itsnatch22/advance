@@ -139,7 +139,7 @@ export default function CampaignsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-      {/* Page header */}
+      
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -163,7 +163,7 @@ export default function CampaignsPage() {
         </Link>
       </motion.div>
 
-      {/* Error */}
+      
       {error && (
         <div className="mb-6 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
           <AlertCircle className="h-4 w-4 shrink-0" />
@@ -171,7 +171,7 @@ export default function CampaignsPage() {
         </div>
       )}
 
-      {/* Stat cards */}
+      
       {!loading && !error && (
         <motion.div
           variants={containerVariants}
@@ -203,7 +203,7 @@ export default function CampaignsPage() {
         </motion.div>
       )}
 
-      {/* Table */}
+      
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}

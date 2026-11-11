@@ -81,7 +81,7 @@ export default function NewsletterPage() {
         <FloatingOrb color="bg-emerald-100" delay={2} className="right-[10%] bottom-[10%]" />
       </div>
 
-      {/* Hero */}
+      
       <section className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-6 pt-32 pb-24 text-center lg:pt-48 lg:pb-32">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -159,7 +159,7 @@ export default function NewsletterPage() {
             onSubmit={handleSubmit}
             className="relative flex flex-col gap-3 rounded-2xl sm:flex-row"
           >
-            {/* Honeypot field */}
+            
             <input
               type="text"
               value={honeypot}
@@ -207,7 +207,7 @@ export default function NewsletterPage() {
         </motion.div>
       </section>
 
-      {/* What to expect */}
+      
       <section className="relative z-10 mx-auto max-w-6xl px-6 py-24 lg:px-8">
         <div className="mb-16 text-center">
           <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
@@ -234,7 +234,7 @@ export default function NewsletterPage() {
           ))}
         </div></section>
 
-      {/* Further reading */}
+      
       <section className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 pb-32 text-center">
         <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-green-500/10 text-green-600">
           <Mail className="h-6 w-6" strokeWidth={1.5} />

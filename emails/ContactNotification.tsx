@@ -32,10 +32,10 @@ export default function ContactNotification({
       showBorderTop
       footerLinks={[]}
     >
-      {/* Header */}
-      {/* Logo is handled by EmailLayout by default */}
       
-      {/* Content */}
+      
+      
+      
       <Section>
         <Heading style={h1}>New Contact Submission</Heading>
 
@@ -79,7 +79,7 @@ export default function ContactNotification({
   );
 }
 
-/* ----------------------------- styles ----------------------------- */
+
 
 const h1 = {
   color: "#0f172a",

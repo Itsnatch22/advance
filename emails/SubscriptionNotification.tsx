@@ -22,7 +22,7 @@ export default function SubscriptionNotification({
         { label: "Unsubscribe", href: "/unsubscribe" },
       ]}
     >
-      {/* Content */}
+      
       <Section>
         <Heading style={h1}>You're Subscribed!</Heading>
 
@@ -74,7 +74,7 @@ export default function SubscriptionNotification({
   );
 }
 
-/* ----------------------------- styles ----------------------------- */
+
 
 const h1 = {
   color: "#0f172a",

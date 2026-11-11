@@ -27,7 +27,7 @@ interface EmailLayoutProps {
   logoAlt?: string;
   showFooter?: boolean;
   footerContent?: ReactNode;
-  /** Links shown in the footer. Pass [] to hide the link row. */
+  
   footerLinks?: FooterLink[];
   showBorder?: boolean;
   containerPadding?: string;

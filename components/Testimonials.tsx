@@ -58,7 +58,7 @@ export default function Testimonials() {
         </p>
       </div>
 
-      {/* Clip reveal */}
+      
       <div className="relative mt-16 h-dvh w-screen" id="testimonial-clip">
         <div className="testimonial-mask">
           <video

@@ -90,7 +90,7 @@ export default function StatsCounter() {
                 {item.label}
               </p>
 
-              {/* aesthetic divider for mobile */}
+              
               <div className="mt-8 h-px w-12 bg-slate-100 sm:hidden" />
             </motion.div>
           ))}

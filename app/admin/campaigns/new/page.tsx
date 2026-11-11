@@ -260,7 +260,7 @@ export default function NewCampaignPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Header */}
+        
         <div className="mb-8">
           <h1 className="font-serif text-3xl font-bold text-slate-900 sm:text-4xl">
             New Campaign
@@ -381,7 +381,7 @@ export default function NewCampaignPage() {
               </div>
             </section>
 
-            {/* Error / success */}
+            
             <AnimatePresence>
               {error && (
                 <motion.div
@@ -419,7 +419,7 @@ export default function NewCampaignPage() {
                     : "Save as Draft"}
               </button>
 
-              {/* Quick recipient import summary */}
+              
               <div className="text-sm text-slate-500">
                 Imported recipients:{" "}
                 <strong className="text-slate-700">
@@ -430,7 +430,7 @@ export default function NewCampaignPage() {
           </div>
 
           <div className="space-y-5 lg:col-span-2">
-            {/* Preview */}
+            
             <div className="rounded-4xl border border-slate-200/60 bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
               <h2 className="mb-3 font-serif text-lg font-semibold text-slate-900">
                 Preview
@@ -447,7 +447,7 @@ export default function NewCampaignPage() {
               </button>
             </div>
 
-            {/* Template picker */}
+            
             <div className="rounded-4xl border border-slate-200/60 bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
               <h2 className="mb-3 font-serif text-lg font-semibold text-slate-900">
                 Template
@@ -469,7 +469,7 @@ export default function NewCampaignPage() {
               </select>
             </div>
 
-            {/* Recipient lists / import */}
+            
             <div className="rounded-4xl border border-slate-200/60 bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
               <h2 className="mb-3 font-serif text-lg font-semibold text-slate-900">
                 Recipients
@@ -542,7 +542,7 @@ export default function NewCampaignPage() {
               )}
             </div>
 
-            {/* Template variables */}
+            
             <div className="rounded-4xl border border-slate-200/60 bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
               <div className="mb-3 flex items-center gap-2">
                 <Info className="h-4 w-4 text-emerald-600" />

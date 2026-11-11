@@ -170,13 +170,13 @@ export const Card = ({
     <motion.button
       type="button"
       layoutId={layout ? `card-${card.title}` : undefined}
-      className="group relative flex w-[min(78vw,18.5rem)] flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white text-left shadow-[0_8px_24px_rgba(15,23,42,0.06)] transition-[border-color,box-shadow] duration-300 hover:border-emerald-200 hover:shadow-[0_18px_38px_rgba(15,23,42,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700 motion-reduce:transition-none md:w-[21rem]"
+      className="group relative flex w-[min(78vw,18.5rem)] flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white text-left shadow-[0_8px_24px_rgba(15,23,42,0.06)] transition-[border-color,box-shadow] duration-300 hover:border-emerald-200 hover:shadow-[0_18px_38px_rgba(15,23,42,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700 motion-reduce:transition-none md:w-84"
       onClick={onClick}
       whileHover={shouldReduceMotion ? undefined : { y: -4 }}
       whileTap={shouldReduceMotion ? undefined : { scale: 0.99 }}
       aria-label={`Read the ${card.category} story: ${card.title}`}
     >
-      <span className="relative block aspect-[4/3] w-full overflow-hidden bg-emerald-50">
+      <span className="relative block aspect-4/3 w-full overflow-hidden bg-emerald-50">
         <BlurImage
           src={card.src}
           alt=""

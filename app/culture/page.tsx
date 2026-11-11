@@ -54,7 +54,7 @@ export default function CulturePage() {
 
   return (
     <section className="overflow-hidden relative min-h-screen bg-slate-50 bg-white"><div className="relative z-10">
-      {/* Immersive Background */}
+      
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb color="bg-green-300" delay={0} />
         <div className="absolute top-1/2 right-0">
@@ -66,7 +66,7 @@ export default function CulturePage() {
         </div>
 
       <section className="relative z-10 mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-16 px-6 py-40 lg:grid-cols-2 lg:px-8">
-        {/* LEFT – Content Section */}
+        
         <div className="space-y-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -132,7 +132,7 @@ export default function CulturePage() {
           </div>
         </div>
 
-        {/* RIGHT – 3D Code Block */}
+        
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -145,7 +145,7 @@ export default function CulturePage() {
             style={{ rotateX, rotateY }}
             className="group relative overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/40 p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-2xl transition-shadow duration-500 hover:shadow-green-500/10"
           >
-            {/* Spotlight Gradient */}
+            
             <motion.div
               style={{
                 background: spotlightBackground,

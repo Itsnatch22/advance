@@ -76,7 +76,7 @@ export default function AboutPage() {
 
   return (
     <section ref={containerRef} className="relative min-h-screen overflow-hidden bg-white"><div className="relative z-10">
-      {/* Immersive Background */}
+      
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
@@ -90,7 +90,7 @@ export default function AboutPage() {
         />
       </div>
 
-      {/* ===== Hero ===== */}
+      
       <motion.section
         style={{ y: yHero, opacity: opacityHero }}
         className="relative overflow-hidden px-6 py-40"
@@ -146,7 +146,7 @@ export default function AboutPage() {
               alt="Financial freedom illustration"
               className="relative w-full max-w-lg rounded-[2.5rem] shadow-2xl ring-1 shadow-slate-900/10 ring-slate-200"
             />
-            {/* Floating accent card */}
+            
             <motion.div
               animate={{ y: [0, -20, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -163,7 +163,7 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
-      {/* Mission & Vision Grid */}
+      
       <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           <TiltAboutCard>
@@ -198,7 +198,7 @@ export default function AboutPage() {
           </TiltAboutCard>
         </div></section>
 
-      {/* ===== Our Story ===== */}
+      
       <section className="relative overflow-hidden py-40">
         <div className="mx-auto max-w-5xl px-6">
           <div className="mb-16 text-center">
@@ -242,7 +242,7 @@ export default function AboutPage() {
           </motion.div>
         </div></section>
 
-      {/* ===== Core Values ===== */}
+      
       <section className="relative z-10 mx-auto max-w-7xl px-6 py-40 lg:px-8">
         <div className="mb-24 text-center">
           <motion.div

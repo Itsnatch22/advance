@@ -28,10 +28,10 @@ export default function ContactAutoReply({
         { label: "Docs", href: "/docs" },
       ]}
     >
-      {/* Header */}
-      {/* Logo is handled by EmailLayout by default */}
       
-      {/* Content */}
+      
+      
+      
       <Section>
         <Heading style={h1}>Hi {name},</Heading>
 
@@ -58,12 +58,12 @@ export default function ContactAutoReply({
         </Text>
       </Section>
 
-      {/* Footer custom content */}
+      
     </EmailLayout>
   );
 }
 
-/* ----------------------------- styles ----------------------------- */
+
 
 const h1 = {
   color: "#0f172a",

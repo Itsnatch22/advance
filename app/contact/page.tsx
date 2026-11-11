@@ -158,7 +158,7 @@ export default function ContactPage() {
 
   return (
     <main className="relative min-h-screen bg-white text-slate-900">
-      {/* Immersive Background - consistent with other pages */}
+      
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
@@ -175,7 +175,7 @@ export default function ContactPage() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-40">
         <div className="grid gap-20 lg:grid-cols-2 lg:items-center">
-          {/* Left Side: Info */}
+          
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -230,7 +230,7 @@ export default function ContactPage() {
             </div>
           </motion.div>
 
-          {/* Right Side: Form */}
+          
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}

@@ -12,7 +12,7 @@ import { ArrowRight, ShieldCheck, Building2, Cpu } from "lucide-react";
 import { FloatingOrb } from "@/components/shared/FloatingOrb";
 import { TiltCard } from "@/components/shared/TiltCard";
 
-/* ----------------------------- data ----------------------------- */
+
 
 const bankingPartners = [
   "/partners/equity.svg",
@@ -32,7 +32,7 @@ const corporatePartners = [
   "/partners/CIC.png",
 ];
 
-/* -------------------------- components -------------------------- */
+
 
 const TiltLogoCard = ({ src }: { src: string }) => {
   return (
@@ -142,7 +142,7 @@ function PartnerSection({
   );
 }
 
-/* ------------------------------ page ----------------------------- */
+
 
 export default function PartnersPage() {
   const containerRef = useRef<HTMLElement>(null);
@@ -159,7 +159,7 @@ export default function PartnersPage() {
       ref={containerRef}
       className="relative min-h-screen bg-white text-slate-900"
     >
-      {/* Immersive Background */}
+      
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
@@ -174,7 +174,7 @@ export default function PartnersPage() {
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
-      {/* HERO */}
+      
       <motion.section
         style={{ y: yHero, opacity: opacityHero }}
         className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-32 lg:px-6 lg:py-40"
@@ -213,7 +213,7 @@ export default function PartnersPage() {
         </div>
       </motion.section>
 
-      {/* BANKS */}
+      
       <PartnerSection
   eyebrow="Banking"
   title="Built for institutions like"
@@ -223,10 +223,10 @@ export default function PartnersPage() {
   icon={ShieldCheck}
 />
 
-      {/* Visual separator */}
+      
       <div className="mx-auto h-px max-w-7xl bg-linear-to-r from-transparent via-slate-200 to-transparent"></div>
 
-      {/* CORPORATES */}
+      
       <PartnerSection
         eyebrow="Enterprise"
         title="Built for employers like"
@@ -237,7 +237,7 @@ export default function PartnersPage() {
         reverse
       />
 
-      {/* CTA */}
+      
       <section className="px-4 py-20 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
         <div className="mx-auto max-w-5xl">
           <motion.div

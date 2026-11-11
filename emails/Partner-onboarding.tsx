@@ -31,7 +31,7 @@ export default function PartnerOnboardingEmail({
         { label: "Contact", href: "/contact" },
       ]}
     >
-      {/* Content */}
+      
       <Section>
         <Heading style={h1}>Partnership Application Received</Heading>
 
@@ -91,7 +91,7 @@ export default function PartnerOnboardingEmail({
   );
 }
 
-/* ----------------------------- styles ----------------------------- */
+
 
 const h1 = {
   color: "#0f172a",

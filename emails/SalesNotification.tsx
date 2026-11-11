@@ -24,7 +24,7 @@ export default function SalesNotification({
       showBorderTop
       footerLinks={[]}
     >
-      {/* Content */}
+      
       <Section>
         <Heading style={h1}>New Sales Lead Received</Heading>
 
@@ -64,7 +64,7 @@ export default function SalesNotification({
   );
 }
 
-/* ----------------------------- styles ----------------------------- */
+
 
 const h1 = {
   color: "#0f172a",

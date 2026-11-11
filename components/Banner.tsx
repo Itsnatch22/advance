@@ -18,15 +18,15 @@ export default function Banner() {
           transition={{ duration: 0.35, ease: "easeOut" }}
           className="relative z-60 flex w-full items-center justify-center gap-3 bg-linear-to-r from-green-700 via-emerald-500 to-green-600 py-2.5 text-sm font-medium tracking-wide text-white shadow-[0_2px_20px_rgba(22,163,74,0.3)] md:text-[15px]"
         >
-          {/* Icon */}
+          
           <Sparkles size={15} className="shrink-0 opacity-80" />
 
-          {/* Message */}
+          
           <span className="drop-shadow-sm">
             Introducing EaziWage — earned wage access, finally in Africa.
           </span>
 
-          {/* CTA */}
+          
           <Link
             href={`${process.env.NEXT_PUBLIC_DASHBOARD_APP_URL || "https://app.eaziwage.com"}/register`}
             className="group hidden items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-widest backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-green-600 sm:flex"
@@ -35,7 +35,7 @@ export default function Banner() {
             <ArrowRight size={11} className="transition-transform duration-300 group-hover:translate-x-0.5" />
           </Link>
 
-          {/* Dismiss */}
+          
           <button
             onClick={() => setVisible(false)}
             aria-label="Dismiss banner"

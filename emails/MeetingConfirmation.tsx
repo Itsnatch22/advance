@@ -24,7 +24,7 @@ export default function MeetingConfirmation({
         { label: "Contact", href: "/contact" },
       ]}
     >
-      {/* Content */}
+      
       <Section>
         <Heading style={h1}>Meeting Scheduled Successfully!</Heading>
 
@@ -65,7 +65,7 @@ export default function MeetingConfirmation({
   );
 }
 
-/* ----------------------------- styles ----------------------------- */
+
 
 const h1 = {
   color: "#0f172a",
