@@ -16,7 +16,7 @@ export function Team() {
   return (
     <section className="relative flex flex-col items-center justify-center overflow-hidden bg-white px-4 py-12 antialiased dark:bg-grid-white/[0.05] sm:px-6 lg:py-20">
       <div className="relative z-10 mb-10 max-w-4xl text-center">
-        <h2 className="font-serif text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl dark:text-white">
+        <h2 className="font-serif text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl dark:text-white">
           What The <span className="text-green-600 dark:text-green-400">Team </span>
           <br className="block sm:hidden" /> 
           <Highlighter action="underline" color="#008000">

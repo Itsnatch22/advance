@@ -65,7 +65,7 @@ export default function CTA() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: d(0.7), delay: d(0.1) }}
           viewport={{ once: true }}
-          className="mb-8 font-serif text-5xl leading-tight font-bold tracking-tight text-white sm:text-6xl lg:text-7xl"
+          className="mb-8 font-serif text-5xl leading-tight font-bold tracking-tight text-white sm:text-6xl"
           aria-label="Ready to boost retention?"
         >
           Ready To

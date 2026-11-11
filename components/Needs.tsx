@@ -135,7 +135,7 @@ export default function Needs() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="font-serif text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl"
+          className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl"
         >
           Built for the{" "}
           <span className="text-green-600">African Workforce</span>

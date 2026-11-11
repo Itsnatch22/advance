@@ -93,7 +93,7 @@ export function PinnedFAQSection({
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
             {eyebrow}
           </div>
-          <h2 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          <h2 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl">
             {title}
           </h2>
           <p className="mt-5 max-w-lg text-base leading-relaxed text-slate-500 sm:text-lg">
