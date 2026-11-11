@@ -188,16 +188,16 @@ export default function SalesPage() {
           <div className="absolute bottom-[-20%] left-[-10%] h-150 w-150 rounded-full bg-emerald-50/50 blur-[120px]" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-40">
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-center">
+        <div className="relative z-10 mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="space-y-12"
+              className="space-y-8"
             >
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -207,18 +207,19 @@ export default function SalesPage() {
                   Empower Your Workforce
                 </motion.div>
 
-                <h1 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-7xl">
-                  Unlock Financial Freedom for <span>Your Employees</span>
+                <h1 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl">
+                  Unlock Financial Freedom for{" "}
+                  <span className="text-emerald-700">Your Employees</span>
                 </h1>
 
-                <p className="max-w-xl text-xl leading-relaxed text-slate-500">
+                <p className="max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
                   With EaziWage&apos;s earned wage access, boost productivity,
                   reduce turnover, and enhance financial wellbeing for your
                   workforce across Africa. Zero interest, instant disbursements.
                 </p>
               </div>
 
-              <div className="max-w-md space-y-4">
+              <div className="max-w-md space-y-3">
                 <TiltInfoCard
                   icon={Briefcase}
                   label="For Businesses"
@@ -237,7 +238,7 @@ export default function SalesPage() {
                 />
               </div>
 
-              <div className="grid max-w-md grid-cols-3 gap-4">
+              <div className="grid max-w-md grid-cols-3 gap-3">
                 <StatCard
                   value={`${employerCount ?? "..."}+`}
                   label="Companies"
@@ -254,12 +255,12 @@ export default function SalesPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="relative space-y-8 overflow-hidden rounded-[3rem] bg-white/40 p-12 shadow-2xl backdrop-blur-3xl lg:p-16">
-                <div className="space-y-6">
-                  <h2 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              <div className="relative space-y-5 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_16px_48px_-28px_rgba(15,23,42,0.3)] sm:p-8">
+                <div className="space-y-2">
+                  <h2 className="font-serif text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                     Get Your Custom <span className="text-green-600">Demo</span>
                   </h2>
-                  <p className="text-xl leading-relaxed text-slate-500">
+                  <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
                     Response within 24 hours.
                   </p>
                 </div>
@@ -270,7 +271,7 @@ export default function SalesPage() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="mb-8 overflow-hidden rounded-2xl border border-green-100 bg-green-50 p-5 text-green-600"
+                      className="mb-5 overflow-hidden rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-emerald-800"
                     >
                       <div className="flex items-center gap-3">
                         <CheckCircle2 size={20} className="shrink-0" />
@@ -282,21 +283,21 @@ export default function SalesPage() {
                   )}
                 </AnimatePresence>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <input
                     type="text"
                     className="sr-only"
                     {...register("honeypot")}
                   />
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                       Full Name
                     </label>
                     <input
                       placeholder="Your name"
                       {...register("name")}
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors focus:border-emerald-700 focus:bg-white focus:ring-4 focus:ring-emerald-700/10 focus:outline-none"
                     />
                     {errors.name && (
                       <p className="ml-1 text-xs font-bold text-red-500">
@@ -305,7 +306,7 @@ export default function SalesPage() {
                     )}
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                       Email Address
                     </label>
@@ -313,7 +314,7 @@ export default function SalesPage() {
                       type="email"
                       placeholder="you@company.com"
                       {...register("email")}
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors focus:border-emerald-700 focus:bg-white focus:ring-4 focus:ring-emerald-700/10 focus:outline-none"
                     />
                     {errors.email && (
                       <p className="ml-1 text-xs font-bold text-red-500">
@@ -322,14 +323,14 @@ export default function SalesPage() {
                     )}
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                       Company Name
                     </label>
                     <input
                       placeholder="Your Company"
                       {...register("company")}
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors focus:border-emerald-700 focus:bg-white focus:ring-4 focus:ring-emerald-700/10 focus:outline-none"
                     />
                     {errors.company && (
                       <p className="ml-1 text-xs font-bold text-red-500">
@@ -338,15 +339,15 @@ export default function SalesPage() {
                     )}
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <label className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                       Message
                     </label>
                     <textarea
-                      rows={4}
+                      rows={3}
                       placeholder="Tell us about your business needs..."
                       {...register("message")}
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors focus:border-emerald-700 focus:bg-white focus:ring-4 focus:ring-emerald-700/10 focus:outline-none"
                     />
                     {errors.message && (
                       <p className="ml-1 text-xs font-bold text-red-500">
@@ -360,7 +361,7 @@ export default function SalesPage() {
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex w-full items-center justify-center gap-3 rounded-2xl bg-slate-900 py-5 text-lg font-bold text-white shadow-2xl transition-all hover:bg-green-600 disabled:opacity-50"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />

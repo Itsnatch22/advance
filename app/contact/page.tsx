@@ -173,16 +173,16 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-40">
-        <div className="grid gap-20 lg:grid-cols-2 lg:items-center">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-12"
+            className="space-y-8"
           >
-            <div className="space-y-8">
+            <div className="space-y-6">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -192,18 +192,19 @@ export default function ContactPage() {
                 Get in Touch
               </motion.div>
 
-              <h1 className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-7xl">
-                Ready to Transform Your <span>Workforce?</span>
+              <h1 className="font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl">
+                Ready to Transform Your{" "}
+                <span className="text-emerald-700">Workforce?</span>
               </h1>
 
-              <p className="max-w-xl text-xl leading-relaxed text-slate-500">
+              <p className="max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
                 Contact us for any queries about earned wage access,
                 partnerships, or support. We&apos;re here to help employers and
                 employees across Africa achieve financial wellbeing.
               </p>
             </div>
 
-            <div className="max-w-md space-y-4">
+            <div className="max-w-md space-y-3">
               <TiltContactCard
                 icon={Mail}
                 label="Email us at"
@@ -223,7 +224,7 @@ export default function ContactPage() {
               />
             </div>
 
-            <div className="grid max-w-md grid-cols-3 gap-4">
+            <div className="grid max-w-md grid-cols-3 gap-3">
               <StatCard value={`${employerCount ?? "..."}+`} label="Companies" />
               <StatCard value="0%" label="Interest" />
               <StatCard value="24/7" label="Instant Disbursement" />
@@ -237,12 +238,12 @@ export default function ContactPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="perspective-1000 relative"
           >
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white/95 p-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-2xl">
-              <div className="mb-10">
-                <h2 className="mb-2 font-serif text-4xl font-bold tracking-tight text-slate-900">
+            <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_16px_48px_-28px_rgba(15,23,42,0.3)] sm:p-8">
+              <div className="mb-5">
+                <h2 className="mb-1.5 font-serif text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                   Send us a Message
                 </h2>
-                <p className="text-lg text-slate-500">
+                <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
                   Fill out the form below and we&apos;ll get back to you within
                   24 hours.
                 </p>
@@ -254,7 +255,7 @@ export default function ContactPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mb-8 overflow-hidden rounded-2xl border border-green-100 bg-green-50 p-5 text-green-600"
+                    className="mb-5 overflow-hidden rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-emerald-800"
                   >
                     <div className="flex items-center gap-3">
                       <CheckCircle2 size={20} className="shrink-0" />
@@ -266,14 +267,14 @@ export default function ContactPage() {
                 )}
               </AnimatePresence>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <input
                   type="text"
                   className="sr-only"
                   {...register("honeypot")}
                 />
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label htmlFor="contact-name" className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                     Full Name
                   </label>
@@ -281,7 +282,7 @@ export default function ContactPage() {
                     id="contact-name"
                     placeholder="Your name..."
                     {...register("name")}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors focus:border-emerald-700 focus:bg-white focus:ring-4 focus:ring-emerald-700/10 focus:outline-none"
                   />
                   {errors.name && (
                     <p className="ml-1 text-xs font-bold text-red-500">
@@ -290,7 +291,7 @@ export default function ContactPage() {
                   )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label htmlFor="contact-email" className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                     Email Address
                   </label>
@@ -299,7 +300,7 @@ export default function ContactPage() {
                     type="email"
                     placeholder="Your email..."
                     {...register("email")}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors focus:border-emerald-700 focus:bg-white focus:ring-4 focus:ring-emerald-700/10 focus:outline-none"
                   />
                   {errors.email && (
                     <p className="ml-1 text-xs font-bold text-red-500">
@@ -308,7 +309,7 @@ export default function ContactPage() {
                   )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label htmlFor="contact-subject" className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                     Subject
                   </label>
@@ -316,7 +317,7 @@ export default function ContactPage() {
                     id="contact-subject"
                     placeholder="Your subject..."
                     {...register("subject")}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors focus:border-emerald-700 focus:bg-white focus:ring-4 focus:ring-emerald-700/10 focus:outline-none"
                   />
                   {errors.subject && (
                     <p className="ml-1 text-xs font-bold text-red-500">
@@ -325,16 +326,16 @@ export default function ContactPage() {
                   )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label htmlFor="contact-message" className="ml-1 text-xs font-black tracking-widest text-slate-400 uppercase">
                     Message
                   </label>
                   <textarea
                     id="contact-message"
-                    rows={4}
+                    rows={3}
                     placeholder="Your message..."
                     {...register("message")}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition-colors focus:border-emerald-700 focus:bg-white focus:ring-4 focus:ring-emerald-700/10 focus:outline-none"
                   />
                   {errors.message && (
                     <p className="ml-1 text-xs font-bold text-red-500">
@@ -348,7 +349,7 @@ export default function ContactPage() {
                   disabled={isSubmitting}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex w-full items-center justify-center gap-3 rounded-2xl bg-slate-900 py-5 text-lg font-bold text-white shadow-2xl transition-all hover:bg-green-600 disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />

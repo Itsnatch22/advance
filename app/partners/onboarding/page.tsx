@@ -52,8 +52,8 @@ function FormField({
 }) {
   return (
     <div className="space-y-2">
-      <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
-        {Icon && <Icon className="h-4 w-4 text-emerald-600" />}
+      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+        {Icon && <Icon className="h-4 w-4 text-emerald-700" />}
         {label}
       </label>
       {children}
@@ -102,35 +102,35 @@ export default function PartnerOnboardingPage() {
 
   if (isSuccess) {
     return (
-      <main className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-green-50 py-24 dark:from-neutral-950 dark:via-neutral-900 dark:to-emerald-950">
-        <div className="mx-auto max-w-2xl px-6">
+      <main className="min-h-screen bg-white px-4 py-16 text-slate-900 sm:px-6 sm:py-20 dark:bg-neutral-950 dark:text-white">
+        <div className="mx-auto max-w-2xl">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="rounded-3xl bg-white p-12 text-center shadow-2xl dark:bg-neutral-900"
+            className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10 dark:border-neutral-800 dark:bg-neutral-900"
           >
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900"
+              className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-900/40"
             >
               <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
             </motion.div>
 
-            <h2 className="mb-4 text-3xl font-bold text-neutral-900 dark:text-white">
+            <h2 className="mb-3 font-serif text-2xl font-bold text-slate-900 sm:text-3xl dark:text-white">
               Thank you for your interest!
             </h2>
 
-            <p className="mb-8 text-neutral-600 dark:text-neutral-400">
+            <p className="mb-7 text-base leading-relaxed text-slate-600 dark:text-slate-400">
               We've received your partnership application. Our team will review
               it and get back to you within 2-3 business days.
             </p>
 
             <button
               onClick={() => setIsSuccess(false)}
-              className="rounded-xl bg-emerald-600 px-6 py-3 font-medium text-white transition hover:bg-emerald-700"
+              className="rounded-xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
             >
               Submit another application
             </button>
@@ -141,19 +141,22 @@ export default function PartnerOnboardingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-green-50 py-24 dark:from-neutral-950 dark:via-neutral-900 dark:to-emerald-950">
-      <div className="mx-auto max-w-4xl px-6">
+    <main className="min-h-screen bg-white px-4 py-16 text-slate-900 sm:px-6 sm:py-20 dark:bg-neutral-950 dark:text-white">
+      <div className="mx-auto max-w-5xl">
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-12 text-center"
+          className="mb-8 max-w-3xl"
         >
-          <h1 className="mb-4 font-serif text-4xl font-bold text-neutral-900 sm:text-5xl dark:text-white">
-            Partner with <span className="text-green-600">EaziWage</span>
+          <p className="mb-3 text-xs font-semibold tracking-[0.2em] text-emerald-700 uppercase">
+            Partner application
+          </p>
+          <h1 className="font-serif text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+            Partner with <span className="text-emerald-700">EaziWage</span>
           </h1>
-          <p className="text-lg text-neutral-600 dark:text-neutral-400">
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg dark:text-slate-400">
             Join us in revolutionizing financial wellbeing for Africa's
             workforce
           </p>
@@ -165,16 +168,16 @@ export default function PartnerOnboardingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           onSubmit={handleSubmit(onSubmit)}
-          className="relative overflow-hidden rounded-3xl bg-white p-8 shadow-2xl sm:p-12 dark:bg-neutral-900"
+          className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8 lg:p-9 dark:border-neutral-800 dark:bg-neutral-900"
         >
-          <div className="space-y-8">
+          <div className="space-y-6">
             
             <FormField
               label="I'm interested in partnering as a"
               error={errors.partnerType?.message}
               icon={Briefcase}
             >
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {[
                   { value: "banking", label: "Banking Institution" },
                   { value: "enterprise", label: "Enterprise Employer" },
@@ -193,8 +196,8 @@ export default function PartnerOnboardingPage() {
                       {...register("partnerType")}
                       className="peer sr-only"
                     />
-                    <div className="rounded-xl border-2 border-neutral-200 bg-white p-4 text-center transition peer-checked:border-emerald-600 peer-checked:bg-emerald-50 hover:border-emerald-300 dark:border-neutral-700 dark:bg-neutral-800 dark:peer-checked:border-emerald-600 dark:peer-checked:bg-emerald-900/20">
-                      <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                    <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-center transition-colors peer-checked:border-emerald-700 peer-checked:bg-emerald-50 hover:border-emerald-300 focus-within:ring-2 focus-within:ring-emerald-600/20 dark:border-neutral-700 dark:bg-neutral-800 dark:peer-checked:border-emerald-600 dark:peer-checked:bg-emerald-900/20">
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
                         {type.label}
                       </p>
                     </div>
@@ -204,7 +207,7 @@ export default function PartnerOnboardingPage() {
             </FormField>
 
             
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2">
               <FormField
                 label="Company Name"
                 error={errors.companyName?.message}
@@ -213,7 +216,7 @@ export default function PartnerOnboardingPage() {
                 <input
                   type="text"
                   {...register("companyName")}
-                  className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="Your company name"
                 />
               </FormField>
@@ -222,14 +225,14 @@ export default function PartnerOnboardingPage() {
                 <input
                   type="text"
                   {...register("industry")}
-                  className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="E.g., Retail, Banking, Tech"
                 />
               </FormField>
             </div>
 
             
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2">
               <FormField
                 label="Contact Name"
                 error={errors.contactName?.message}
@@ -238,7 +241,7 @@ export default function PartnerOnboardingPage() {
                 <input
                   type="text"
                   {...register("contactName")}
-                  className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="Your name"
                 />
               </FormField>
@@ -247,13 +250,13 @@ export default function PartnerOnboardingPage() {
                 <input
                   type="text"
                   {...register("jobTitle")}
-                  className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="Head of Partnerships"
                 />
               </FormField>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2">
               <FormField
                 label="Email Address"
                 error={errors.email?.message}
@@ -262,7 +265,7 @@ export default function PartnerOnboardingPage() {
                 <input
                   type="email"
                   {...register("email")}
-                  className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="you@company.com"
                 />
               </FormField>
@@ -275,7 +278,7 @@ export default function PartnerOnboardingPage() {
                 <input
                   type="tel"
                   {...register("phone")}
-                  className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                   placeholder="+254 712 345 678"
                 />
               </FormField>
@@ -288,7 +291,7 @@ export default function PartnerOnboardingPage() {
             >
               <select
                 {...register("companySize")}
-                className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
               >
                 <option value="">Select company size</option>
                 <option value="1-50">1-50 employees</option>
@@ -306,8 +309,8 @@ export default function PartnerOnboardingPage() {
             >
               <textarea
                 {...register("message")}
-                rows={5}
-                className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-neutral-900 transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                rows={4}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
                 placeholder="How would you like to partner with EaziWage? What value can we create together?"
               />
             </FormField>
@@ -318,7 +321,7 @@ export default function PartnerOnboardingPage() {
               disabled={isSubmitting}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full rounded-xl bg-green-600 px-6 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting
                 ? "Submitting..."
