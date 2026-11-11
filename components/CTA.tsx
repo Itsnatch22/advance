@@ -38,17 +38,13 @@ export default function CTA() {
 
   return (
     <section className="relative flex items-center overflow-hidden bg-linear-to-br from-slate-900 via-slate-800 to-emerald-950 py-40">
-      {/* Enhanced overlay with gradient */}
 
-      {/* Ambient glow effects */}
       <div className="absolute top-0 left-0 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl"></div>
       <div className="absolute right-0 bottom-0 h-96 w-96 rounded-full bg-green-500/10 blur-3xl"></div>
 
-      {/* Decorative grid pattern */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-40"></div>
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
-        {/* CTA Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -64,7 +60,6 @@ export default function CTA() {
           </div>
         </motion.div>
 
-        {/* Enhanced heading with typed effect */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -73,7 +68,7 @@ export default function CTA() {
           className="mb-8 font-serif text-5xl leading-tight font-bold tracking-tight text-white sm:text-6xl lg:text-7xl"
           aria-label="Ready to boost retention?"
         >
-          Ready To{" "}
+          Ready To
           <span
             ref={typedRef}
             aria-hidden="true"
@@ -84,7 +79,6 @@ export default function CTA() {
           ?
         </motion.h2>
 
-        {/* Enhanced description */}
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -92,11 +86,11 @@ export default function CTA() {
           viewport={{ once: true }}
           className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-200"
         >
-          Join leading companies already using EaziWage to improve employee
-          satisfaction and reduce turnover.
+          Be among the first to experience the future of employee engagement. 
+          Our platform is designed to help you retain top talent, streamline payroll, 
+          and support overall wellbeing. Join us today and see the difference.
         </motion.p>
 
-        {/* Enhanced CTA buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -104,7 +98,6 @@ export default function CTA() {
           viewport={{ once: true }}
           className="mt-16 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5"
         >
-          {/* Primary CTA */}
           <Link href="/schedule">
             <motion.button
               whileHover={shouldReduceMotion ? undefined : { scale: 1.05 }}
@@ -123,7 +116,6 @@ export default function CTA() {
             </motion.button>
           </Link>
 
-          {/* Secondary CTA */}
           <Link href="/sales">
             <motion.button
               whileHover={shouldReduceMotion ? undefined : { scale: 1.05 }}
@@ -139,7 +131,6 @@ export default function CTA() {
           </Link>
         </motion.div>
 
-        {/* Trust indicators */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
