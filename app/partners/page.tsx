@@ -36,15 +36,24 @@ const PartnerLogo = ({ src, name }: { src: string; name: string }) => {
 
 function SectionHeader({
   title,
+  highlightWord,
   description,
 }: {
   title: string;
+  highlightWord?: string;
   description: string;
 }) {
   return (
     <div className="max-w-xl space-y-3">
       <h2 className="font-serif text-2xl leading-tight font-bold tracking-tight text-slate-900 sm:text-3xl">
-        {title}
+        {highlightWord ? (
+          <>
+            {title.slice(0, -highlightWord.length)}
+            <span className="text-emerald-700">{highlightWord}</span>
+          </>
+        ) : (
+          title
+        )}
       </h2>
       <p className="text-base leading-relaxed text-slate-600">{description}</p>
     </div>
@@ -53,11 +62,13 @@ function SectionHeader({
 
 function PartnerSection({
   title,
+  highlightWord,
   description,
   partners,
   reverse = false,
 }: {
   title: string;
+  highlightWord?: string;
   description: string;
   partners: { src: string; name: string }[];
   reverse?: boolean;
@@ -68,7 +79,11 @@ function PartnerSection({
         className={`mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-14 lg:px-8 ${reverse ? "lg:grid-flow-dense" : ""}`}
       >
         <div className={reverse ? "lg:col-start-2" : ""}>
-          <SectionHeader title={title} description={description} />
+          <SectionHeader
+            title={title}
+            highlightWord={highlightWord}
+            description={description}
+          />
         </div>
 
         <div
@@ -109,13 +124,15 @@ export default function PartnersPage() {
       </section>
 
       <PartnerSection
-        title="Built for financial institutions"
+        title="Built for institutions like"
+        highlightWord="like"
         description="Designed to work with the regulated financial infrastructure powering East Africa."
         partners={bankingPartners}
       />
 
       <PartnerSection
-        title="Built for employers"
+        title="Built for employers like"
+        highlightWord="like"
         description="From retail to manufacturing, EaziWage supports the organisations that power East Africa's workforce."
         partners={corporatePartners}
         reverse
