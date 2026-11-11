@@ -75,7 +75,7 @@ const FeatureCard = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY }}
-        className="group relative h-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+        className="group relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-lg hover:shadow-emerald-900/5 sm:p-8"
       >
         <motion.div
           style={{
@@ -85,7 +85,7 @@ const FeatureCard = ({
         />
 
         <div className="relative z-10">
-          <div className="mb-6 flex">
+          <div className="mb-5 flex">
             <div className="relative">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-green-50 to-emerald-50 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
                 <feature.icon
@@ -105,7 +105,7 @@ const FeatureCard = ({
           </p>
         </div>
 
-        <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-green-500 to-emerald-500 transition-all duration-700 group-hover:w-full" />
+        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-500 group-hover:w-full" />
       </motion.div>
     </motion.div>
   );
@@ -113,7 +113,7 @@ const FeatureCard = ({
 
 export default function Needs() {
   return (
-    <section className="relative overflow-hidden bg-slate-50/50 py-40">
+    <section className="relative overflow-hidden bg-slate-50/50 py-16 sm:py-20 lg:py-24">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-green-100/30 blur-[120px]" />
         <div className="absolute -right-24 -bottom-24 h-96 w-96 rounded-full bg-emerald-100/30 blur-[120px]" />
@@ -124,7 +124,7 @@ export default function Needs() {
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
+          className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
         >
           <Icons.Award className="h-4 w-4" />
           <span>Why Choose EaziWage</span>
@@ -135,7 +135,7 @@ export default function Needs() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl"
+          className="font-serif text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl"
         >
           Built for the{" "}
           <span className="text-green-600">African Workforce</span>
@@ -145,17 +145,17 @@ export default function Needs() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
+          className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-500 sm:text-lg"
         >
           Enterprise-grade fintech built for Africa - compliant, secure, and
           fully integrated with local banking and mobile money systems.
         </motion.p>
-        <p className="mt-4 text-xs font-bold tracking-widest text-slate-400 uppercase italic">
+        <p className="mt-3 text-xs font-bold tracking-widest text-slate-400 uppercase italic">
           Integrated with mobile money applications, payroll providers & leading
           banks.
         </p>
 
-        <div className="mt-28 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3">
           {steps.map((feature, i) => (
             <FeatureCard key={i} feature={feature} />
           ))}

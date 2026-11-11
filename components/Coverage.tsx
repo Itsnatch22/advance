@@ -93,7 +93,7 @@ const CountryCard = ({
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
         style={{ rotateX, rotateY }}
-        className="group relative h-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+        className="group relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-lg hover:shadow-emerald-900/5 sm:p-8"
       >
         <motion.div
           style={{
@@ -107,7 +107,7 @@ const CountryCard = ({
         />
 
         <div className="relative z-10">
-          <div className="relative mb-6 inline-block">
+          <div className="relative mb-4 inline-block">
             <div className="absolute -inset-4 rounded-full bg-green-500/10 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
             <Image
               src={country.flag}
@@ -118,13 +118,13 @@ const CountryCard = ({
             />
           </div>
 
-          <h3 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-600">
+          <h3 className="mb-2 text-xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-green-600">
             {country.name}
           </h3>
 
-          <p className="mb-6 font-bold text-green-600">{count} registered</p>
+          <p className="mb-4 font-bold text-green-600">{count} registered</p>
 
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="mb-2 flex items-center justify-between text-xs font-bold tracking-wider text-slate-500 uppercase">
               <span>Wage access coverage</span>
               <span className="text-slate-900">{country.cap}%</span>
@@ -144,7 +144,7 @@ const CountryCard = ({
             </div>
           </div>
 
-          <div className="mb-8 flex flex-wrap gap-2">
+          <div className="mb-6 flex flex-wrap gap-2">
             {country.providers.map((p: string) => (
               <span
                 key={p}
@@ -165,14 +165,13 @@ const CountryCard = ({
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-linear-to-r from-green-500 to-emerald-500 transition-all duration-700 group-hover:w-full" />
+        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-500 group-hover:w-full" />
       </motion.div>
     </motion.div>
   );
 };
 
 export default function Coverage() {
-
   const [userCounts, setUserCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -183,14 +182,14 @@ export default function Coverage() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-slate-50/50 py-40">
+    <section className="relative overflow-hidden bg-slate-50/50 py-16 sm:py-20 lg:py-24">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute top-0 right-0 h-125 w-125 rounded-full bg-green-100/20 blur-[120px]" />
         <div className="absolute bottom-0 left-0 h-125 w-125 rounded-full bg-emerald-100/20 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <div className="mb-32 text-center">
+        <div className="mb-10 text-center sm:mb-12">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -206,7 +205,7 @@ export default function Coverage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl"
+            className="font-serif text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl"
           >
             Financial access across{" "}
             <span className="text-green-600">East Africa</span>
@@ -216,13 +215,13 @@ export default function Coverage() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
+            className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-500 sm:text-lg"
           >
             Real-time wage infrastructure with native mobile money rails.
           </motion.p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 md:grid-cols-2 lg:gap-6 lg:grid-cols-4">
           {countries.map((country) => (
             <CountryCard key={country.name} country={country} count={userCounts[country.name] ?? 0} />
           ))}

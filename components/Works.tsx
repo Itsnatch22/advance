@@ -65,7 +65,7 @@ const WorkStepCard = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY }}
-        className="group relative h-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+        className="group relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-lg hover:shadow-emerald-900/5 sm:p-8"
       >
         <motion.div
           style={{
@@ -75,7 +75,7 @@ const WorkStepCard = ({
         />
 
         <div className="relative z-10 flex flex-col items-center text-center">
-          <div className="relative mb-8">
+          <div className="relative mb-5">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-green-50 to-emerald-50 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
               <step.icon className="h-8 w-8 text-green-600" strokeWidth={1.5} />
             </div>
@@ -93,7 +93,7 @@ const WorkStepCard = ({
           </p>
         </div>
 
-        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-linear-to-r from-green-500 to-emerald-500 transition-all duration-700 group-hover:w-full" />
+        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-500 group-hover:w-full" />
       </motion.div>
     </motion.div>
   );
@@ -101,7 +101,7 @@ const WorkStepCard = ({
 
 export default function Works() {
   return (
-    <section className="relative overflow-hidden bg-slate-50/50 py-40">
+    <section className="relative overflow-hidden bg-slate-50/50 py-16 sm:py-20 lg:py-24">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute top-0 left-0 h-96 w-96 rounded-full bg-green-100/20 blur-[120px]" />
         <div className="absolute right-0 bottom-0 h-96 w-96 rounded-full bg-emerald-100/20 blur-[120px]" />
@@ -112,7 +112,7 @@ export default function Works() {
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
+          className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
         >
           <Sparkles className="h-4 w-4" />
           <span>Simple Process</span>
@@ -123,7 +123,7 @@ export default function Works() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl"
+          className="font-serif text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl"
         >
           How EaziWage <span className="text-green-600">Works</span>
         </motion.h2>
@@ -132,13 +132,13 @@ export default function Works() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
+          className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-500 sm:text-lg"
         >
           Access your earnings effortlessly - transparent, secure, and built for
           your financial freedom.
         </motion.p>
 
-        <div className="mt-32 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:mt-14 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, i) => (
             <WorkStepCard key={i} step={step} />
           ))}

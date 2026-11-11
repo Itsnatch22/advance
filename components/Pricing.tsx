@@ -68,7 +68,7 @@ const PricingCard = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY }}
-        className="group relative h-full overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 p-8 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+        className="group relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-lg hover:shadow-emerald-900/5 sm:p-8"
       >
         <motion.div
           style={{
@@ -79,8 +79,8 @@ const PricingCard = ({
 
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="mb-6">
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-green-50 to-emerald-50 shadow-sm ring-1 ring-green-500/10 transition-transform duration-500 group-hover:scale-110">
-              <card.icon className="h-8 w-8 text-green-600" strokeWidth={1.5} />
+            <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-green-50 to-emerald-50 shadow-sm ring-1 ring-green-500/10 transition-transform duration-300 group-hover:scale-105">
+              <card.icon className="h-7 w-7 text-green-600" strokeWidth={1.5} />
               <div className="absolute inset-0 rounded-2xl bg-green-400/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
             </div>
           </div>
@@ -91,7 +91,7 @@ const PricingCard = ({
           <p className="text-sm leading-relaxed text-slate-500">{card.desc}</p>
         </div>
 
-        <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-green-500 to-emerald-500 transition-all duration-700 group-hover:w-full" />
+        <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-green-600 transition-all duration-500 group-hover:w-full" />
       </motion.div>
     </motion.div>
   );
@@ -99,7 +99,7 @@ const PricingCard = ({
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="relative overflow-hidden bg-white py-40">
+    <section id="pricing" className="relative overflow-hidden bg-white py-16 sm:py-20 lg:py-24">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute top-0 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-green-50/50 blur-[120px]" />
       </div>
@@ -109,7 +109,7 @@ export default function Pricing() {
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
+          className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
         >
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
           Transparent Pricing
@@ -120,7 +120,7 @@ export default function Pricing() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="font-serif text-5xl leading-tight font-bold tracking-tight text-slate-900 sm:text-6xl"
+          className="font-serif text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl"
         >
           Fast. Fair. <span className="text-green-600">Fully Transparent.</span>
         </motion.h2>
@@ -129,13 +129,13 @@ export default function Pricing() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-slate-500"
+          className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-500 sm:text-lg"
         >
           It&apos;s not a loan, it&apos;s freedom — the freedom to live, plan,
           and dream without waiting for payday.
         </motion.p>
 
-        <div className="mt-28 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3">
           {pricing.map((card, i) => (
             <PricingCard key={i} card={card} />
           ))}
