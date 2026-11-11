@@ -1,279 +1,150 @@
-"use client";
-
-import React, { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Building2, Cpu } from "lucide-react";
-import { FloatingOrb } from "@/components/shared/FloatingOrb";
-import { TiltCard } from "@/components/shared/TiltCard";
-
-
+import { ArrowRight } from "lucide-react";
 
 const bankingPartners = [
-  "/partners/equity.svg",
-  "/partners/kcb.svg",
-  "/partners/coop.svg",
-  "/partners/stanbic.svg",
-  "/partners/ncba.svg",
-  "/partners/family.svg",
+  { src: "/partners/equity.svg", name: "Equity Bank" },
+  { src: "/partners/kcb.svg", name: "KCB Bank" },
+  { src: "/partners/coop.svg", name: "Co-operative Bank" },
+  { src: "/partners/stanbic.svg", name: "Stanbic Bank" },
+  { src: "/partners/ncba.svg", name: "NCBA Bank" },
+  { src: "/partners/family.svg", name: "Family Bank" },
 ];
 
 const corporatePartners = [
-  "/partners/naivas.svg",
-  "/partners/carrefour.png",
-  "/partners/mayfair.svg",
-  "/partners/eabl.svg",
-  "/partners/jubilee.png",
-  "/partners/CIC.png",
+  { src: "/partners/naivas.svg", name: "Naivas" },
+  { src: "/partners/carrefour.png", name: "Carrefour" },
+  { src: "/partners/mayfair.svg", name: "Mayfair" },
+  { src: "/partners/eabl.svg", name: "East African Breweries" },
+  { src: "/partners/jubilee.png", name: "Jubilee Insurance" },
+  { src: "/partners/CIC.png", name: "CIC Insurance" },
 ];
 
-
-
-const TiltLogoCard = ({ src }: { src: string }) => {
+const PartnerLogo = ({ src, name }: { src: string; name: string }) => {
   return (
-    <motion.div style={{ perspective: 1000 }} className="h-28">
-      <TiltCard className="group relative flex h-full items-center justify-center rounded-2xl border border-slate-200/60 bg-white/50 p-6 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl hover:shadow-green-500/10">
-        <Image
-          src={src}
-          alt="partner logo"
-          width={120}
-          height={40}
-          className="relative z-10 h-10 w-auto object-contain opacity-40 grayscale transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0"
-        />
-        <div className="absolute bottom-0 left-0 h-1 w-0 bg-green-600 transition-all duration-700 group-hover:w-full" />
-      </TiltCard>
-    </motion.div>
+    <div className="flex h-24 items-center justify-center rounded-xl border border-slate-200 bg-white p-5 transition-colors hover:border-emerald-300">
+      <Image
+        src={src}
+        alt={name}
+        width={140}
+        height={48}
+        className="h-10 w-auto max-w-full object-contain"
+      />
+    </div>
   );
 };
 
 function SectionHeader({
-  eyebrow,
   title,
-  highlightWord,
   description,
-  icon: Icon,
 }: {
-  eyebrow: string;
   title: string;
-  highlightWord?: string;
   description: string;
-  icon: React.ElementType;
 }) {
   return (
-    <div className="max-w-xl space-y-6">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
-      >
-        <Icon size={14} className="animate-pulse" />
-        <span>{eyebrow}</span>
-      </motion.div>
-
-      <h2 className="font-serif text-2xl leading-tight font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
-        {highlightWord
-    ? title.split(highlightWord).map((part, i, arr) => (
-        <React.Fragment key={i}>
-          {part}
-          {i < arr.length - 1 && (
-            <span className="text-green-600"> {highlightWord}</span>
-          )}
-        </React.Fragment>
-      ))
-    : title}
+    <div className="max-w-xl space-y-3">
+      <h2 className="font-serif text-2xl leading-tight font-bold tracking-tight text-slate-900 sm:text-3xl">
+        {title}
       </h2>
-
-      <p className="text-lg leading-relaxed text-slate-500 sm:text-xl">{description}</p>
+      <p className="text-base leading-relaxed text-slate-600">{description}</p>
     </div>
   );
 }
 
 function PartnerSection({
-  eyebrow,
   title,
   description,
-  highlightWord,
   partners,
-  icon,
   reverse = false,
 }: {
-  eyebrow: string;
   title: string;
   description: string;
-  highlightWord?: string;
-  partners: string[];
-  icon: React.ElementType;
+  partners: { src: string; name: string }[];
   reverse?: boolean;
 }) {
   return (
-    <section className="relative overflow-hidden py-20 sm:py-32 lg:py-40">
+    <section className="relative py-12 sm:py-16 lg:py-20">
       <div
-        className={`mx-auto grid max-w-7xl gap-8 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 ${reverse ? "lg:grid-flow-dense" : ""}`}
+        className={`mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-14 lg:px-8 ${reverse ? "lg:grid-flow-dense" : ""}`}
       >
         <div className={reverse ? "lg:col-start-2" : ""}>
-          <SectionHeader
-            eyebrow={eyebrow}
-            title={title}
-            highlightWord={highlightWord}
-            description={description}
-            icon={icon}
-          />
+          <SectionHeader title={title} description={description} />
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className={`grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-6 ${reverse ? "lg:col-start-1" : ""}`}
+        <div
+          className={`grid grid-cols-2 gap-3 sm:grid-cols-3 ${reverse ? "lg:col-start-1" : ""}`}
         >
-          {partners.map((p, i) => (
-            <TiltLogoCard key={i} src={p} />
+          {partners.map((partner) => (
+            <PartnerLogo
+              key={partner.name}
+              src={partner.src}
+              name={partner.name}
+            />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-
-
 export default function PartnersPage() {
-  const containerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const yHero = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
   return (
-    <main
-      ref={containerRef}
-      className="relative min-h-screen bg-white text-slate-900"
-    >
-      
-      <div className="pointer-events-none absolute inset-0">
-        <FloatingOrb
-          color="bg-green-100"
-          delay={0}
-          className="top-[-10%] left-[10%]"
-        />
-        <FloatingOrb
-          color="bg-emerald-100"
-          delay={2}
-          className="top-[30%] right-[5%]"
-        />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
-      </div>
-
-      
-      <motion.section
-        style={{ y: yHero, opacity: opacityHero }}
-        className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-32 lg:px-6 lg:py-40"
-      >
-        <div className="relative z-10 mx-auto max-w-5xl text-left">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase"
-          >
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
+    <main className="bg-white text-slate-900">
+      <section className="border-b border-slate-200 bg-slate-50/70 px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
+        <div className="mx-auto max-w-6xl">
+          <p className="mb-4 text-xs font-semibold tracking-[0.18em] text-emerald-700 uppercase">
             Our Partners
-          </motion.div>
+          </p>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-serif text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl"
-          >
-            <span className="text-green-600">Built for the teams</span>
-            <br />
+          <h1 className="max-w-4xl font-serif text-4xl leading-tight font-bold tracking-tight text-slate-900 sm:text-5xl">
+            <span className="text-emerald-700">Built for the teams</span>{" "}
             powering Africa&apos;s workforce.
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-6 max-w-3xl text-lg leading-relaxed text-slate-500 sm:text-xl sm:mt-8"
-          >
-            Banks. Corporates. Technology platforms.{" "}
-            <br className="hidden lg:block" />
-            We partner with the people who move money securely and at scale.
-          </motion.p>
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
+            Banks. Corporates. Technology platforms. We partner with the people
+            who move money securely and at scale.
+          </p>
         </div>
-      </motion.section>
+      </section>
 
-      
       <PartnerSection
-  eyebrow="Banking"
-  title="Built for institutions like"
-  highlightWord="like"
-  description="Designed to plug into the regulated financial infrastructure powering East Africa."
-  partners={bankingPartners}
-  icon={ShieldCheck}
-/>
+        title="Built for financial institutions"
+        description="Designed to work with the regulated financial infrastructure powering East Africa."
+        partners={bankingPartners}
+      />
 
-      
-      <div className="mx-auto h-px max-w-7xl bg-linear-to-r from-transparent via-slate-200 to-transparent"></div>
-
-      
       <PartnerSection
-        eyebrow="Enterprise"
-        title="Built for employers like"
-        highlightWord="like"
-        description="From retail to manufacturing — EaziWage is designed for the organisations that power East Africa's workforce."
+        title="Built for employers"
+        description="From retail to manufacturing, EaziWage supports the organisations that power East Africa's workforce."
         partners={corporatePartners}
-        icon={Building2}
         reverse
       />
 
-      
-      <section className="px-4 py-20 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
-        <div className="mx-auto max-w-5xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="group relative overflow-hidden rounded-4xl border border-slate-200/60 bg-white p-8 text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] backdrop-blur-3xl transition-all duration-500 hover:shadow-green-500/10 sm:p-12 lg:rounded-[3rem] lg:p-24"
-          >
-            <div className="absolute inset-0 bg-linear-to-br from-green-50/20 via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      <section className="px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-6 sm:p-9 lg:p-12">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="max-w-2xl">
+                <h3 className="font-serif text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                  Want to partner with{" "}
+                  <span className="text-emerald-700">EaziWage?</span>
+                </h3>
 
-            <div className="relative z-10">
-              <div className="mb-10 flex justify-center">
-                <div className="inline-flex items-center gap-2 rounded-full border border-green-500/10 bg-green-500/5 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-green-600 uppercase">
-                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
-                  Partner With Us
-                </div>
+                <p className="mt-3 text-base leading-relaxed text-slate-600">
+                  We&apos;re always open to working with forward-thinking teams.
+                </p>
               </div>
-
-              <h3 className="mb-6 font-serif text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl sm:mb-8 md:text-5xl lg:text-6xl xl:text-7xl">
-                Want to partner with{" "}
-                <span className="text-green-600">EaziWage?</span>
-              </h3>
-
-              <p className="mx-auto mb-8 max-w-2xl text-lg text-slate-500 sm:text-xl sm:mb-12">
-                We&apos;re always open to working with forward-thinking teams.
-              </p>
 
               <Link
                 href="/partners/onboarding"
-                className="group relative inline-flex items-center gap-3 rounded-2xl bg-slate-900 px-8 py-4 text-base font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-green-600 hover:shadow-green-500/25 sm:px-10 sm:py-5 sm:text-lg"
+                className="inline-flex w-fit shrink-0 items-center gap-2 rounded-xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none"
               >
                 <span>Apply for Partnership</span>
-                <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </main>
