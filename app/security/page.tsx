@@ -137,7 +137,7 @@ export default function SecurityPage() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden bg-white text-slate-900"><div className="relative z-10">
+    <section className="relative min-h-dvh overflow-hidden bg-white text-slate-900"><div className="relative z-10">
       <div className="pointer-events-none absolute inset-0">
         <FloatingOrb
           color="bg-green-100"
@@ -208,7 +208,7 @@ export default function SecurityPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.5, delay: 0.1 }}
             aria-labelledby="security-at-a-glance"
-            className="rounded-[2rem] border border-slate-200/60 bg-white/75 p-6 shadow-xl shadow-green-900/5 backdrop-blur-2xl sm:p-8"
+            className="rounded-4xl border border-slate-200/60 bg-white/75 p-6 shadow-xl shadow-green-900/5 backdrop-blur-2xl sm:p-8"
           >
             <div className="mb-5 flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-50 text-green-700 ring-1 ring-green-500/10">
@@ -276,7 +276,7 @@ export default function SecurityPage() {
                     duration: reduceMotion ? 0 : 0.4,
                     delay: reduceMotion ? 0 : (index % 2) * 0.06,
                   }}
-                  className={`overflow-hidden rounded-[2rem] border p-6 transition-all duration-300 sm:p-8 ${
+                  className={`overflow-hidden rounded-4xl border p-6 transition-all duration-300 sm:p-8 ${
                     isActive
                       ? "border-green-600/40 bg-white shadow-lg shadow-green-900/5"
                       : "border-slate-200/80 bg-white/80 shadow-sm hover:border-green-500/40 hover:shadow-lg hover:shadow-green-900/5"

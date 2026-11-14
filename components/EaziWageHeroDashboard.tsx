@@ -320,7 +320,7 @@ function EmployeeDashboard({
         <button
           type="button"
           onClick={() => setPreviewReady(true)}
-          className="mt-3 w-full rounded-lg bg-emerald-700 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="mt-3 w-full rounded-lg bg-green-600 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-green-700 focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 focus-visible:outline-none"
         >
           Preview withdrawal
         </button>

@@ -149,7 +149,7 @@ export default function AdminResetPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-lg bg-emerald-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-lg bg-green-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? "Sending..." : "Send reset link"}
               </button>
@@ -225,7 +225,7 @@ export default function AdminResetPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-lg bg-emerald-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-lg bg-green-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? "Updating..." : "Update password"}
               </button>
@@ -246,7 +246,7 @@ export default function AdminResetPasswordPage() {
             </p>
             <Link
               href="/admin/login"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-emerald-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900 active:scale-[0.99]"
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-green-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700 active:scale-[0.99]"
             >
               Go to sign in
             </Link>

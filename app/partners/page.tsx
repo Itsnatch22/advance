@@ -155,7 +155,7 @@ export default function PartnersPage() {
 
               <Link
                 href="/partners/onboarding"
-                className="inline-flex w-fit shrink-0 items-center gap-2 rounded-xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none"
+                className="inline-flex w-fit shrink-0 items-center gap-2 rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 motion-reduce:transition-none"
               >
                 <span>Apply for Partnership</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />

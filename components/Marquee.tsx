@@ -11,7 +11,7 @@ const partnerLogos = partners.map((partner) => ({
 
 export default function Marquee() {
   return (
-    <section className="relative overflow-hidden bg-linear-to-b from-white via-slate-50 to-white py-40">
+    <section className="relative overflow-hidden bg-linear-to-b from-white via-slate-50 to-white py-24 sm:py-28">
       <div className="absolute inset-0 -z-10">
         <div className="bg-primary/10 absolute top-0 left-1/2 h-125 w-125 -translate-x-1/2 rounded-full blur-[140px]" />
       </div>

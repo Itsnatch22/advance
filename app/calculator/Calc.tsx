@@ -7,7 +7,6 @@ import {
   getCurrencyFromCountry,
   type CountryCode,
 } from "@/lib/currency/currency";
-import { TiltCard } from "@/components/shared/TiltCard";
 import { PLATFORM_CONFIG } from "@/constants/config";
 
 type Country = "KE" | "UG" | "TZ" | "RW";
@@ -364,7 +363,7 @@ export default function Calculator() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:items-start">
-      <TiltCard className="w-full rounded-2xl p-5 shadow-sm sm:p-7 lg:p-8">
+      <div className="w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 lg:p-8">
         <section aria-labelledby="calculator-input-heading">
           <div className="mb-7">
             <h2
@@ -660,12 +659,12 @@ export default function Calculator() {
             type="button"
             onClick={callBackendCalc}
             disabled={!salary || isCalculating}
-            className="mt-8 min-h-12 w-full rounded-xl bg-emerald-700 px-5 py-3 text-base font-semibold text-white transition-colors hover:bg-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 active:bg-emerald-900 disabled:cursor-not-allowed disabled:bg-slate-300"
+            className="mt-8 min-h-12 w-full rounded-xl bg-green-600 px-5 py-3 text-base font-semibold text-white transition-colors hover:bg-green-700 focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 active:bg-green-800 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
             {isCalculating ? "Calculating..." : "Calculate my estimate"}
           </button>
         </section>
-      </TiltCard>
+      </div>
 
       <aside
         aria-labelledby="calculator-result-heading"

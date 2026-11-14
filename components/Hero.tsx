@@ -49,7 +49,7 @@ export default function Hero() {
   const entrance = prefersReducedMotion ? false : { opacity: 0, y: 18 };
 
   return (
-    <section className="relative overflow-hidden bg-white py-24 sm:py-32 lg:py-40">
+    <section className="relative overflow-hidden bg-white pt-24 pb-16 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-24">
       <div className="relative z-10">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute top-0 right-[-10%] h-200 w-200 rounded-full bg-green-50/50 blur-[120px]" />

@@ -40,7 +40,7 @@ export default function WordReveal() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full py-28 px-6 flex items-center justify-center overflow-hidden"
+      className="relative w-full py-20 sm:py-24 px-6 flex items-center justify-center overflow-hidden"
       aria-label="Brand statement"
     >
       <div

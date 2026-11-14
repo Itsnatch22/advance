@@ -276,9 +276,9 @@ export default function FAQPage() {
                 setOpenItems(0);
               }}
               aria-pressed={activeCategory === cat.id}
-              className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none ${
+              className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 motion-reduce:transition-none ${
                 activeCategory === cat.id
-                  ? "border-emerald-700 bg-emerald-800 text-white"
+                  ? "border-green-600 bg-green-600 text-white"
                   : "border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50/50 hover:text-emerald-800"
               }`}
             >
